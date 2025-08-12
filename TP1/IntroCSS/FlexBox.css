@@ -1,0 +1,15 @@
+.container{
+	background-color: rebeccapurple;
+	border: 1px solid #000;
+	height: 30vh;
+	widows: 100vw;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	gap: 2vh;
+}
+
+.element{
+	border: 1px solid #000;
+}

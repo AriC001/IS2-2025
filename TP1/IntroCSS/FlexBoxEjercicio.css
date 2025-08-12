@@ -1,0 +1,34 @@
+.lista-tareas{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1vh;
+	margin-top: 2vh;
+	border: 1px solid #000;
+	height: 50vh;
+}
+
+.tarea{
+	padding: 0.4rem;
+	border: 1px solid grey;
+	width: 80%;
+	text-align: center;
+}
+
+.completed{
+	background-color: green;
+}
+
+.incompleted{
+	background-color: rgba(255,0,0,0.685);
+}
+
+button{
+	padding: 0.4rem;
+	border: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: white;
+	background-color: rgb(63,115,230);
+}
