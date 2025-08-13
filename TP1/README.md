@@ -1,3 +1,10 @@
+# Repositorio TP1
+[TP1](https://github.com/AriC001/IS2-2025/tree/master/TP1)
+
+```
+https://github.com/AriC001/IS2-2025/tree/master/TP1
+```
+---
 ## Indice de respuestas respondidas del TP1
 
 #### 1-A
