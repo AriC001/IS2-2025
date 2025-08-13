@@ -440,7 +440,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="qTQFfNF2dCPd7JVS-2SB-3" value="Alta&lt;br&gt;Baja&lt;br&gt;Modificación&lt;br&gt;Company" style="ellipse;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="-608.5" y="1550" width="165" height="80" as="geometry" />
+          <mxGeometry x="-610" y="1520" width="165" height="80" as="geometry" />
         </mxCell>
         <mxCell id="qTQFfNF2dCPd7JVS-2SB-4" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;Consultar&lt;br&gt;Company" style="ellipse;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="-355" y="1520" width="165" height="80" as="geometry" />
