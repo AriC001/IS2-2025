@@ -29,7 +29,7 @@ archivo: **tp1_2_a.drawio**
 
 #### 2-B
 Introducción a Bootstrap
-carpeta: **a realizar**
+carpeta: **IntroBootstrap**
 
 #### 2-C
 Plantillas HTML
