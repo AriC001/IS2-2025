@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+    <br>
+    <div class="container py-4">
+        <form action="">
+            <div class="mb-3">
+                <label class="form-label" for="formfile">Subir archivo</label>
+                <input class="form-control form-control-lg" type="file" name="formfile" id="formfile">
+            </div>
+
+            <div class="mb-3">
+                <label for="formFileMultiple">Subir varios archivos</label>
+                <input class="form-control" type="file" name="formfile" id="formFileMultiple" multiple>
+            </div>
+
+              <div class="mb-3">
+                <label for="formFileDisabled">Envío</label>
+                <input class="form-control form-control-sm" type="file" name="formfile" id="formFileDisabled"disabled>
+            </div>
+        </form>
+        
+    </div>
+    <div class="container">
+        <form action="">
+            <label class="form-label" for="colorInput">Selector de color</label>
+            <input class="form-control form-control-color"type="color" value="#8A5DC0"id="colorInput"></input>
+           
+        </form>
+    </div>
+    <br>
+    <!-- Desplegables -->
+     <div class="container">
+        <form action="">
+            <select class="form-select form-select-lg mb-3"name ="" id="">
+                <option value="1">Uno</option>
+                <option value="2">Dos</option>
+                <option value="3">Tres</option>
+                <option value="4">Cuatro</option>
+                <option value="5">Cinco</option>
+                <option value="6">Seis</option>
+            </select> 
+            <select class="form-select form-select-sm mb-3"name ="" id="" multiple>
+                <option value="1">Uno</option>
+                <option value="2">Dos</option>
+                <option value="3">Tres</option>
+                <option value="4">Cuatro</option>
+                <option value="5">Cinco</option>
+                <option value="6">Seis</option>
+            </select> 
+        </form>
+    </div>
+    <!-- Checkbox y radio -->
+    <div class="container py-4">
+        <h2>Checkbox</h2>
+        <form action="">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="" id="checkbox1">
+                <label class="form-check-label" for="checkbox1">Caja 1</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="" id="checkbox2">
+                <label class="form-check-label" for="checkbox2">Caja 2</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="" id="checkbox3" checked>
+                <label class="form-check-label" for="checkbox3">Caja 3</label>
+            </div>
+        </form>
+        <h2>Radio</h2>
+        <form action="">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="prueba" id="radio1">
+                <label class="form-check-label" for="radio1">Radio 1</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="prueba" id="radio2">
+                <label class="form-check-label" for="radio2">Radio 2</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="prueba" id="radio3">
+                <label class="form-check-label" for="radio3">Radio 3</label>
+            </div>
+        </form>
+        
+    </div>
+</body>
+</html>
