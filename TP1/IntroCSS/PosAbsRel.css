@@ -1,0 +1,35 @@
+.box{
+	background-color: red;
+	width: 200px;
+	height: 200px;
+	border: 1px solid black;
+	margin: 10px;
+	padding: 5px;
+	border-radius: 0.4rem;
+	box-shadow: 5px 4px 10px 2px black;
+}
+/*
+top
+bottom
+left
+right
+*/
+
+.boxpadre {
+	width: 100vw;
+	height: 50vw;
+	position: relative;
+	background-color: black;
+
+}
+.box2{
+	background-color: blue;
+	position: absolute;
+	z-index: 15;
+}
+.box3{
+	background-color: orange;
+	position: absolute;
+	left: 10%;
+	z-index: 5;
+}
