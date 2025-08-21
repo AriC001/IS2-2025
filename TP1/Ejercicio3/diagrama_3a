@@ -1,0 +1,71 @@
+<diagram program="umletino" version="15.1"><zoom_level>5</zoom_level><element><id>UMLClass</id><coordinates><x>610</x><y>580</y><w>105</w><h>95</h></coordinates><panel_attributes>Producto
+--
+-cod barra: long
+-nombre: String
+-tipo: String
+--
+/getters y setters
+-actualizarStock():void
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>955</x><y>735</y><w>115</w><h>95</h></coordinates><panel_attributes>Proveedor
+--
+-cuit: long
+-nombre: String
+-telefono: String
+--
+
+/getters y setters
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>835</x><y>325</y><w>105</w><h>95</h></coordinates><panel_attributes>&lt;&lt;Abstract&gt;&gt;
+Operacion
+
+--
+-num operacion: long
+-fecha: String
+-total. int
+-detalle:List&lt;Articulo&gt;
+
+--
+/getters y setters
+
+-generarFactura():void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>960</x><y>445</y><w>105</w><h>95</h></coordinates><panel_attributes>Compra
+--
+-producto:Producto
+-cantidad:int
+-precio:double
+-proveedor:Proveedor
+
+
+
+--
+/getters y setters
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>690</x><y>475</y><w>55</w><h>35</h></coordinates><panel_attributes>1</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>605</x><y>465</y><w>115</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+
+m2=1..n
+
+</panel_attributes><additional_attributes>210;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1005</x><y>535</y><w>25</w><h>210</h></coordinates><panel_attributes>lt=&lt;-
+m1=1..n</panel_attributes><additional_attributes>10;400;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>505</x><y>430</y><w>105</w><h>95</h></coordinates><panel_attributes>Articulo
+--
+
+-cantidad: int
+-precio: double
+--
+/getters y setters</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>710</x><y>430</y><w>105</w><h>95</h></coordinates><panel_attributes>Venta
+--
+-articulos:List&lt;Articulo&gt;
+-dniCliente: String
+-
+/getters y setters</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>760</x><y>355</y><w>85</w><h>85</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;150;10;10;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>935</x><y>355</y><w>90</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>160;180;160;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>555</x><y>520</y><w>65</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-
+</panel_attributes><additional_attributes>110;220;10;220;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>1015</x><y>545</y><w>50</w><h>35</h></coordinates><panel_attributes>1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>550</x><y>260</y><w>105</w><h>95</h></coordinates><panel_attributes>Cliente
+--
+
+-nombre: String
+-apellido: String
+-dni: String
+-dinero_disponible: int
+--
+/getters y setters</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>650</x><y>295</y><w>95</w><h>145</h></coordinates><panel_attributes>lt=&lt;-
+m1=1..n</panel_attributes><additional_attributes>10;10;170;270</additional_attributes></element><element><id>Text</id><coordinates><x>715</x><y>415</y><w>15</w><h>15</h></coordinates><panel_attributes>1</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>710</x><y>480</y><w>265</w><h>155</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m2=1..n
+</panel_attributes><additional_attributes>503;18;250;150;10;290</additional_attributes></element><element><id>Text</id><coordinates><x>950</x><y>475</y><w>15</w><h>15</h></coordinates><panel_attributes>1</panel_attributes><additional_attributes></additional_attributes></element></diagram>
