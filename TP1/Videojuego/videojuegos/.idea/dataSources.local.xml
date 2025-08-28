@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-242.26775.15">
+    <data-source name="videobd@localhost" uuid="a19cdfc9-c5bb-4f29-a0fa-93b795a1c433">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <user-name>luciana</user-name>
+      <schema-mapping />
+    </data-source>
+    <data-source name="videojuegos@localhost" uuid="cd5191ab-87cc-4846-8e02-1485694e248b">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <user-name>root</user-name>
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>
