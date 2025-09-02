@@ -34,10 +34,7 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/registro">Registro</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login">Log In</a>
+            <a class="nav-link" href="/logout">Log Out</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/inicio">Inicio</a>
@@ -56,8 +53,8 @@
       <div class="row align-items-center">
         <div class="col-lg-12 order-lg-12">
             
-            <a th:href="@{/mascota/debaja-mascotas}" class="btn btn-primary btn-x rounded-pill mt-5" style="float:right ; margin-bottom:5px ; padding: 14px">Mascotas Dadas de Baja</a>
-            <a th:href="@{/mascota/editar-perfil}" class="btn btn-primary btn-x rounded-pill mt-5" style="float:right ; margin-bottom:5px ; padding: 14px">¡Agrega una Mascota!</a>
+            <a th:href="@{/mascotas/debaja-mascotas}" class="btn btn-primary btn-x rounded-pill mt-5" style="float:right ; margin-bottom:5px ; padding: 14px">Mascotas Dadas de Baja</a>
+            <a th:href="@{/mascotas/alta-mascota}" class="btn btn-primary btn-x rounded-pill mt-5" style="float:right ; margin-bottom:5px ; padding: 14px">¡Agrega una Mascota!</a>
          <br/>
             
             <table class="table table-light table-hover">
@@ -66,7 +63,6 @@
                         <th>Foto</th>
                         <th>Nombre</th>
                         <th>Sexo</th>
-                        <th>Tipo</th>
                         <th>Acciones</th>
                         
                     </tr>
@@ -80,7 +76,6 @@
                         </td>
                         <td th:text="${mascota.nombre}"></td>
                         <td th:text="${mascota.sexo}"></td>
-                        <td th:text="${mascota.tipo}"></td>
                         
                         <td>
                            <a th:href="@{/mascota/editar-perfil(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -

@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +29,7 @@ public class MascotaServicio {
     private FotoServicio fotoServicio;
 
     @Transactional
-    public void agregar(MultipartFile archivo, Long idUsuario, String nombreMascota, Sexo sexo) throws ErrorServicio {
+    public void crearMascota(Long idUsuario, String nombreMascota, Sexo sexo,MultipartFile archivo) throws ErrorServicio {
         validar(nombreMascota, sexo);
 
         Optional<Usuario> usuario = usuarioRepositorio.findById(idUsuario);
@@ -45,6 +47,8 @@ public class MascotaServicio {
             throw new ErrorServicio("Usuario no encontrado");
         }
     }
+
+
 
     @Transactional
     public void modificar(MultipartFile archivo, Long idUsuario, Long idMascota, String nombreMascota, Sexo sexo) throws ErrorServicio {
@@ -96,7 +100,15 @@ public class MascotaServicio {
         }
     }
 
+    public List<Mascota> listarMascotas(Long id) throws ErrorServicio {
+        List<Mascota> mascotas;
+        try{
+            mascotas = mascotaRepositorio.findAllMascotasByUsario(id);
+            return mascotas;
+        }catch (Exception e){
+           throw new ErrorServicio("No se encontraron Mascotas");
+        }
 
-
+    }
 
 }

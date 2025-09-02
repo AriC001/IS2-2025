@@ -12,7 +12,7 @@ import java.util.List;
 public interface MascotaRepositorio extends JpaRepository<Mascota, Long> {
 
     @Query(value = "SELECT * FROM mascota m WHERE m.usuario_id = :usuario_id", nativeQuery = true)
-    public List<Mascota> findAllPetByUser(@Param("usuario_id") Long usuario_id);
+    public List<Mascota> findAllMascotasByUsario(@Param("usuario_id") Long usuario_id);
 
     @Query(value = "SELECT * FROM mascota m WHERE m.usuario_id = :usuario_id and m.activo = true", nativeQuery = true)
     public List<Mascota> findAllActivePetByUser(@Param("usuario_id") Long usuario_id);

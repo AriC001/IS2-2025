@@ -37,7 +37,7 @@ public class PortalControlador {
     }
 
     @GetMapping("/logout")
-    public String logaout(HttpSession session) {
+    public String logout(HttpSession session) {
         session.setAttribute("usuariosession", null);
         return "redirect:/inicio";
     }
@@ -52,5 +52,10 @@ public class PortalControlador {
     @GetMapping("/inicio")
     public String inicio(Model model) {
         return "inicio"; // Thymeleaf busca inicio.html en templates/
+    }
+
+    @GetMapping("/mascotas")
+    public String mascotas(Model model){
+        return "mascotas";
     }
 }
