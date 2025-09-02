@@ -1,9 +1,13 @@
 package edu.egg.tinder;
 
+import edu.egg.tinder.entidades.Zona;
+import edu.egg.tinder.repositorios.ZonaRepositorio;
 import edu.egg.tinder.servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class WebApplication {
@@ -13,6 +17,19 @@ public class WebApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebApplication.class, args);
+	}
+	@Bean
+	CommandLineRunner init(ZonaRepositorio zonaRepositorio) {
+		return args -> {
+			if (zonaRepositorio.count() == 0) {
+				Zona z = Zona.builder()
+						.nombre("Godoy Cruz")
+						.descripcion("zona de mendoza")
+						.activo(true)
+						.build();
+				zonaRepositorio.save(z);
+			}
+		};
 	}
 
   //  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

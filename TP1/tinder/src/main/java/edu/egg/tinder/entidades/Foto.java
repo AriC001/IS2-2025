@@ -10,8 +10,8 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 
 @Entity

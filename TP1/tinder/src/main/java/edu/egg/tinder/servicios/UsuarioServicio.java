@@ -4,14 +4,13 @@ import edu.egg.tinder.entidades.Foto;
 import edu.egg.tinder.entidades.Usuario;
 import edu.egg.tinder.errores.ErrorServicio;
 import edu.egg.tinder.repositorios.UsuarioRepositorio;
+import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,8 +25,8 @@ public class UsuarioServicio {
     private NotificacionServicio notificacionServicio;
 
     @Transactional
-    public void registrar(MultipartFile archivo, String nombre, String apellido, String mail, String password) throws ErrorServicio {
-        validar(nombre, apellido, mail, password);
+    public Usuario registrar(MultipartFile archivo, String nombre, String apellido, String mail, String password, String password2) throws ErrorServicio {
+        validar(nombre, apellido, mail, password, password2);
 
         Usuario usuario = Usuario.builder().nombre(nombre).
                 apellido(apellido).mail(mail).
@@ -38,11 +37,12 @@ public class UsuarioServicio {
         usuarioRepositorio.save(usuario);
 
         notificacionServicio.enviarMail("Bienvenido a Tinder Mascota " + nombre, "Tinder de Mascota", usuario.getMail());
+        return usuario;
     }
 
     @Transactional
-    public void modificar(MultipartFile archivo, Long id, String nombre, String apellido, String mail, String password) throws ErrorServicio {
-        validar(nombre, apellido, mail, password);
+    public void modificar(MultipartFile archivo, Long id, String nombre, String apellido, String mail, String password,String password2) throws ErrorServicio {
+        validar(nombre, apellido, mail, password, password2);
         Optional<Usuario> opt = usuarioRepositorio.findById(id);
         if(opt.isPresent()){
             Usuario usuario = opt.get();
@@ -90,7 +90,7 @@ public class UsuarioServicio {
         }
     }
 
-    private void validar(String nombre, String apellido, String mail, String password) throws ErrorServicio {
+    private void validar(String nombre, String apellido, String mail, String password, String password2) throws ErrorServicio {
         if (nombre == null || nombre.isEmpty()) {
             throw new ErrorServicio("El nombre no puede ser nulo");
         }
@@ -103,9 +103,44 @@ public class UsuarioServicio {
         if (password == null || password.length() < 6) {
             throw new ErrorServicio("La contraseña no puede ser nula y debe tener al menos 6 caracteres");
         }
+        if (password2 == null || password2.length() < 6) {
+            throw new ErrorServicio("La contraseña no puede ser nula y debe tener al menos 6 caracteres");
+        }
+        if (!password.equals(password2)){
+            throw new ErrorServicio("Las contraseñas deben coincidir");
+        }
     }
 
-    //    @Override
+    public Usuario login(String email, String clave) throws ErrorServicio {
+
+        try {
+
+            if (email == null || email.trim().isEmpty()) {
+                throw new ErrorServicio("Debe indicar el usuario");
+            }
+
+            if (clave == null || clave.trim().isEmpty()) {
+                throw new ErrorServicio("Debe indicar la clave");
+            }
+
+            Usuario usuario = null;
+            try {
+                usuario = usuarioRepositorio.findByMailAndPassword(email, clave);
+            } catch (NoResultException ex) {
+                throw new ErrorServicio("No existe usuario para el correo y clave indicado");
+            }
+
+            return usuario;
+
+        } catch (ErrorServicio e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio("Error de Sistemas");
+        }
+    }
+
+        //    @Override
     //    public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException {
     //        Usuario usuario = usuarioRepositorio.findByMail(mail);
     //        if (usuario != null) {
