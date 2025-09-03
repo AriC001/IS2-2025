@@ -40,7 +40,7 @@ public class Mascota implements Serializable {
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
 
-    private boolean activo;
+    private boolean activo = true;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")

@@ -28,31 +28,29 @@ public class VotoServicio {
         if (idMascota1.equals(idMascota2)) {
             throw new ErrorServicio("No se puede votarse a uno mismo");
         }
-
-        Optional<Mascota> opt1 = mascotaRepositorio.findById(idMascota1);
-        if (opt1.isPresent()) {
-            Mascota mascota1 = opt1.get();
-            if (!mascota1.getUsuario().getId().equals(idUsuario)) {
-                throw new ErrorServicio("No tiene permiso para votar con esta mascota");
-            }
-        } else {
+        Mascota mascota1 = new Mascota();
+        Mascota mascota2 = new Mascota();
+        try{
+            mascota1 = mascotaRepositorio.findByid(idMascota1);
+        }catch (Exception e){
             throw new ErrorServicio("No se encontró la mascota solicitada");
         }
+        if (!mascota1.getUsuario().getId().equals(idUsuario)) {
+            throw new ErrorServicio("No tiene permiso para votar con esta mascota");
+        }
 
-        Optional<Mascota> opt2 = mascotaRepositorio.findById(idMascota2);
-        if (opt2.isPresent()) {
-            Mascota mascota2 = opt2.get();
-            Voto voto = Voto.builder().fecha(new Date()).mascota1(opt1.get()).mascota2(mascota2).build();
-
-            notificacionServicio.enviarMail("Tu mascota " + mascota2.getNombre() +
+        try{
+            mascota2 = mascotaRepositorio.findByid(idMascota2);
+        }catch (Exception e){
+            throw new ErrorServicio("No se encontró la mascota solicitada");
+        }
+        /*Voto voto = Voto.builder().fecha(new Date()).mascota1.mascota2(mascota2).build();
+        notificacionServicio.enviarMail("Tu mascota " + mascota2.getNombre() +
                             " ha recibido un nuevo voto!",
                     "Tinder de Mascota",
                     mascota2.getUsuario().getMail());
 
-            votoRepositorio.save(voto);
-        } else {
-            throw new ErrorServicio("No se encontró la mascota solicitada");
-        }
+        votoRepositorio.save(voto);*/
     }
 
     @Transactional

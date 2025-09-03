@@ -8,6 +8,7 @@ import edu.egg.tinder.errores.ErrorServicio;
 import edu.egg.tinder.servicios.MascotaServicio;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -26,11 +27,10 @@ public class MascotaControlador {
         @Autowired
         private MascotaServicio mascotaServicio;
 
-        @PostMapping("/eliminar-perfil")
+        @GetMapping("/eliminar-mascota")
         public String eliminar(HttpSession session, @RequestParam Long id) {
 
             try {
-
                 Usuario login = (Usuario) session.getAttribute("usuariosession");
                 mascotaServicio.eliminar(login.getId(), id);
 
@@ -88,24 +88,60 @@ public class MascotaControlador {
         return "mascota";
     }
 
-    /*
-    @GetMapping("/mascota/editar/{id}")
-    public String editarMascota(@PathVariable Long id, Model model, HttpSession session) {
+    //<a th:href="@{/mascota/editar-perfil(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
+    @GetMapping("/editar-mascota")
+    public String editarMascota(@RequestParam Long id, @RequestParam(required = false) String accion, Model model, HttpSession session) throws ErrorServicio {
         Usuario login = (Usuario) session.getAttribute("usuariosession");
         if (login != null) {
-            Mascota mascota = mascotaServicio.modificar();
-            model.addAttribute("mascota", mascota);
-            model.addAttribute("sexos", Sexo.values());
+            Mascota mascota = mascotaServicio.buscarMascota(id);
+
+            if (mascota != null) {
+                model.addAttribute("mascota", mascota);
+                model.addAttribute("sexos", Sexo.values());
+                model.addAttribute("accion", (accion != null) ? accion : "Actualizar");
+            }
             return "mascota";
         }
         return "redirect:/login";
-    }*/
+    }
 
     @PostMapping("/actualizar-mascota")
-    public String actualizarYCrearMacota(HttpSession session,@RequestParam String nombre, @RequestParam Sexo sexo, @RequestParam MultipartFile archivo){
+    public String actualizarYCrearMacota(HttpSession session,@RequestParam(required = false) Long id,@RequestParam String nombre, @RequestParam Sexo sexo, @RequestParam MultipartFile archivo){
+        System.out.println(id);
         try{
             Usuario login = (Usuario) session.getAttribute("usuariosession");
-            mascotaServicio.crearMascota(login.getId(), nombre,sexo,archivo);
+            if(id != null){
+                System.out.println("Hola");
+                System.out.println(id);
+                mascotaServicio.modificar(archivo, login.getId(), id,nombre,sexo,true);
+            }else {
+                mascotaServicio.crearMascota(login.getId(), nombre, sexo, archivo);
+            }
+        } catch (ErrorServicio e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/mascotas/mis-mascotas";
+    }
+
+    @GetMapping("/debaja-mascotas")
+    public String mascotasInactivas(HttpSession session, ModelMap model){
+            try {
+                Usuario login = (Usuario) session.getAttribute("usuariosession");
+                List<Mascota> mascotas;
+                mascotas = mascotaServicio.listarMascotasInactivas(login.getId());
+                model.put("mascotas", mascotas);
+                return "mascotasdebaja";
+            } catch (ErrorServicio e) {
+                throw new RuntimeException(e);
+            }
+    }
+
+    @PostMapping("/alta-mascota")
+    public String altaMacota(HttpSession session,@RequestParam Long id,@RequestParam String nombre, @RequestParam Sexo sexo, @RequestParam(required = false) MultipartFile archivo){
+        try{
+            Usuario login = (Usuario) session.getAttribute("usuariosession");
+            mascotaServicio.modificar(archivo, login.getId(), id,nombre,sexo,true);
+
         } catch (ErrorServicio e) {
             throw new RuntimeException(e);
         }

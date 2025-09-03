@@ -50,7 +50,7 @@
       <div class="row align-items-center">
         <div class="col-lg-6 order-lg-2">
           <div th:if="${mascota != null and mascota.foto != null}">
-            <img th:src="@{/foto/mascota/{id}(id=${mascota.id})}" alt="Foto de mascota"/>
+            <img th:src="@{/foto/mascota/{id}(id=${mascota.id})}" alt="Foto de mascota"  style="max-width: 100%; height: auto; border-radius: 8px;">
           </div>
         </div>
         <div class="col-lg-6 order-lg-1">
@@ -60,9 +60,10 @@
                <p th:if="${error != null}" th:text="${error}" style="color:red;"></p> 
                
                <input type="hidden" name="id" th:value="${mascota.id}"/>
+               <p th:text="'ID cargado: ' + ${mascota.id}"></p>
                 
               <label>Nombre de la mascota</label>
-              <input type="text" class="form-control" name="nombre" th:value="${mascota.nombre}" th:disabled="${accion == 'Eliminar' || accion == 'Alta'}"/>
+              <input type="text" class="form-control" name="nombre" th:value="${mascota.nombre}" th:readonly="${accion == 'Eliminar' || accion == 'Alta'}"/>
               
               <!--
               <label>Tipo</label>
@@ -72,16 +73,16 @@
               -->
               
               <label>Sexo</label>
-              <select class="form-control" name="sexo" th:disabled="${accion == 'Eliminar' || accion == 'Alta'}">
+              <select class="form-control" name="sexo" th:readonly="${accion == 'Eliminar' || accion == 'Alta'}">
                  <option th:each="sexo : ${sexos}" th:value="${sexo}" th:text="${sexo}" th:selected="${mascota.sexo != null && sexo == mascota.sexo}"></option>
               </select>
 
               <label th:if="${accion != 'Eliminar'}">Foto</label>
-              <input type="file" class="form-control" name="archivo" th:if="${accion != 'Eliminar' || accion == 'Alta'}"/>
+              <input type="file" class="form-control" name="archivo" th:if="${accion == 'Crear' || accion == 'Actualizar'}"/>
               
               <br/>
               
-                 <button type="submit" class="btn btn-dark" formaction="/mascota/mis-mascotas" formmethod="GET">Volver</button>
+                 <button type="submit" class="btn btn-dark" formaction="/mascotas/mis-mascotas" formmethod="GET">Volver</button>
                  <button th:if="${accion == 'Crear'}" type="submit" class="btn btn-primary" formaction="/mascotas/actualizar-mascota" formmethod="POST">Crear Mascota</button>
                  <button th:if="${accion == 'Actualizar'}" type="submit" class="btn btn-primary" formaction="/mascotas/actualizar-mascota" formmethod="POST">Actualizar Mascota</button>
                  <button th:if="${accion == 'Eliminar'}" type="submit" class="btn btn-danger" formaction="/mascotas/eliminar-mascota" formmethod="POST">Eliminar Mascota</button>

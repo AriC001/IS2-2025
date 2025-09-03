@@ -64,7 +64,7 @@
                         <th>Foto</th>
                         <th>Nombre</th>
                         <th>Sexo</th>
-                        <th>Tipo</th>
+                        <!-- <th>Tipo</th> -->
                         <th>Acciones</th>
                         
                     </tr>
@@ -78,11 +78,11 @@
                         </td>
                         <td th:text="${mascota.nombre}"></td>
                         <td th:text="${mascota.sexo}"></td>
-                        <td th:text="${mascota.tipo}"></td>
+                        <!-- <td th:text="${mascota.tipo}"></td> -->
                         
                         <td>
-                           <a th:href="@{/mascota/editar-perfil(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
-                           <a th:href="@{/mascota/editar-perfil(id=__${mascota.id}__,accion=Alta)}">Dar Alta</a>
+                           <a th:href="@{/mascotas/editar-mascota(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
+                           <a th:href="@{/mascotas/editar-mascota(id=__${mascota.id}__,accion=Alta)}">Dar Alta</a>
                         </td>
                     </tr>                  
                 </tbody>

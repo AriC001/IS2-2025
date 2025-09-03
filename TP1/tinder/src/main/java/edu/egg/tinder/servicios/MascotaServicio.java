@@ -34,9 +34,13 @@ public class MascotaServicio {
 
         Optional<Usuario> usuario = usuarioRepositorio.findById(idUsuario);
         if (usuario.isPresent()) {
-            Mascota mascota = Mascota.builder().nombre(nombreMascota).
-                    sexo(sexo).alta(new Date()).usuario(usuario.get()).
-                    build();
+            Mascota mascota = Mascota.builder()
+                    .nombre(nombreMascota)
+                    .sexo(sexo)
+                    .alta(new Date())
+                    .usuario(usuario.get())
+                    .activo(true)
+                    .build();
 
             Foto foto = fotoServicio.guardar(archivo);
             mascota.setFoto(foto);
@@ -51,44 +55,49 @@ public class MascotaServicio {
 
 
     @Transactional
-    public void modificar(MultipartFile archivo, Long idUsuario, Long idMascota, String nombreMascota, Sexo sexo) throws ErrorServicio {
+    public void modificar(MultipartFile archivo, Long idUsuario, Long idMascota, String nombreMascota, Sexo sexo,Boolean activo) throws ErrorServicio {
         validar(nombreMascota, sexo);
-
-        Optional<Mascota> opt = mascotaRepositorio.findById(idMascota);
-        if (opt.isPresent()) {
-            Mascota mascota = opt.get();
-            if (!mascota.getUsuario().getId().equals(idUsuario)) {
-                throw new ErrorServicio("No tiene permiso para modificar esta mascota");
-            }
-            mascota.setNombre(nombreMascota);
-            mascota.setSexo(sexo);
-
-            Long idFoto = null;
-            if (mascota.getFoto() != null) {
-                idFoto = mascota.getFoto().getId();
-            }
-            Foto foto = fotoServicio.actualizar(idFoto, archivo);
-            mascota.setFoto(foto);
-
-            mascotaRepositorio.save(mascota);
-        } else {
+        System.out.println(idMascota);
+        Mascota mascota = new Mascota();
+        try{
+            mascota = mascotaRepositorio.findByid(idMascota);
+        }catch (Exception e){
             throw new ErrorServicio("No se encontró la mascota solicitada");
         }
+        if (!mascota.getUsuario().getId().equals(idUsuario)) {
+            throw new ErrorServicio("No tiene permiso para modificar esta mascota");
+        }
+        mascota.setNombre(nombreMascota);
+        mascota.setSexo(sexo);
+        mascota.setActivo(activo);
+
+        if (archivo != null && !archivo.isEmpty()) {
+            if (mascota.getFoto() != null) {
+                Foto actualizada = fotoServicio.actualizar(mascota.getFoto().getId(), archivo);
+                mascota.setFoto(actualizada);
+            } else {
+                Foto nueva = fotoServicio.guardar(archivo);
+                mascota.setFoto(nueva);
+            }
+        }
+
+        mascotaRepositorio.save(mascota);
     }
 
     @Transactional
     public void eliminar(Long idUsuario,Long idMascota) throws ErrorServicio {
-        Optional<Mascota> opt = mascotaRepositorio.findById(idMascota);
-        if (opt.isPresent()) {
-            Mascota mascota = opt.get();
-            if (!mascota.getUsuario().getId().equals(idUsuario)) {
-                throw new ErrorServicio("No tiene permiso para eliminar esta mascota");
-            }
-            mascota.setBaja(new Date());
-            mascotaRepositorio.save(mascota);
-        } else {
+        Mascota mascota = new Mascota();
+        try{
+            mascota = mascotaRepositorio.findByid(idMascota);
+        }catch (Exception e){
             throw new ErrorServicio("No se encontró la mascota solicitada");
         }
+        if (!mascota.getUsuario().getId().equals(idUsuario)) {
+            throw new ErrorServicio("No tiene permiso para eliminar esta mascota");
+        }
+        mascota.setBaja(new Date());
+        mascota.setActivo(false);
+        mascotaRepositorio.save(mascota);
     }
 
     private void validar(String nombre, Sexo sexo) throws ErrorServicio {
@@ -111,4 +120,27 @@ public class MascotaServicio {
 
     }
 
+    public List<Mascota> listarMascotasInactivas(Long id) throws ErrorServicio {
+        List<Mascota> mascotas;
+        try{
+            mascotas = mascotaRepositorio.findAllMascotasInactivasByUsuario(id);
+            return mascotas;
+        }catch (Exception e){
+            throw new ErrorServicio("No se encontraron Mascotas Inactivas");
+        }
+
+    }
+
+    public Mascota buscarMascota(Long id)throws ErrorServicio {
+        Mascota mascota = new Mascota();
+        try{
+            mascota = mascotaRepositorio.findByid(id);
+        }catch (Exception e){
+            throw new ErrorServicio("No se encontró la mascota solicitada");
+        }
+        return mascota;
+    }
+
 }
+
+
