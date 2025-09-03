@@ -103,54 +103,61 @@ public class controladorVideojuego {
 
 
     @PostMapping("/formulario/videojuego/{id}")
-    public String guardarVideojuego(@RequestParam ("archivo") MultipartFile archivo,
-                                    @Valid @ModelAttribute ("videojuego") Videojuego videojuego, Model model,
+    public String guardarVideojuego(@RequestParam("archivo") MultipartFile archivo,
+                                    @Valid @ModelAttribute("videojuego") Videojuego videojuego,
                                     BindingResult result,
-                                    @PathVariable("id")long id){
+                                    Model model,
+                                    @PathVariable("id") long id) {
         try {
-            model.addAttribute("categorias",this.svcCategoria.findAll());
-            model.addAttribute("estudios",this.svcEstudio.findAll());
-            if (result.hasErrors()){
+            // Siempre cargamos categorías y estudios para el formulario
+            model.addAttribute("categorias", this.svcCategoria.findAll());
+            model.addAttribute("estudios", this.svcEstudio.findAll());
+
+            // Validación de datos del formulario
+            if (result.hasErrors()) {
                 return "views/formulario/videojuego";
             }
-            if(!this.validarExtension(archivo)){
-                model.addAttribute("errorImagenMsg","La extensión no es válida");
+
+            // Validación del archivo
+            if (!archivo.isEmpty() && !this.validarExtension(archivo)) {
+                model.addAttribute("errorImagenMsg", "La extensión no es válida");
                 return "views/formulario/videojuego";
             }
-            String ruta="C://imagenes";
-            int index = archivo.getOriginalFilename().lastIndexOf(".");
-            String extension="";
-            extension="."+archivo.getOriginalFilename().substring(index+1);
-            String nombreFoto = Calendar.getInstance().getTimeInMillis()+extension;
-            Path rutaAbsoluta = id !=0 ? Paths.get(ruta+"//"+videojuego.getImagen()) :
-                Paths.get(ruta+"//"+nombreFoto);
-           if(id==0){
-               if(archivo.isEmpty()){
-                   model.addAttribute("errorImagenMsg","Debe añadir una imagen");
-                   return "views/formulario/videojuego";
-               }
-                Files.write(rutaAbsoluta,archivo.getBytes());
+
+            String ruta = "C://imagenes";
+            String nombreFoto = videojuego.getImagen(); // por defecto mantenemos la existente
+
+            if (!archivo.isEmpty()) {
+                int index = archivo.getOriginalFilename().lastIndexOf(".");
+                String extension = archivo.getOriginalFilename().substring(index + 1);
+                nombreFoto = Calendar.getInstance().getTimeInMillis() + "." + extension;
+
+                // Guardamos archivo en disco
+                Path rutaAbsoluta = Paths.get(ruta, nombreFoto);
+                Files.write(rutaAbsoluta, archivo.getBytes());
+
+                // Actualizamos referencia en videojuego
                 videojuego.setImagen(nombreFoto);
+            }
+
+            // Lógica de crear o actualizar
+            if (id == 0) {
+                if (archivo.isEmpty()) {
+                    model.addAttribute("errorImagenMsg", "Debe añadir una imagen");
+                    return "views/formulario/videojuego";
+                }
                 this.svcVideojuego.saveOne(videojuego);
-           }else {
-               if(!archivo.isEmpty()){
-                   if(!this.validarExtension(archivo)){
-                       model.addAttribute("errorImagenMsg","La extensión no es válida");
-                       return "views/formulario/videojuego";
-                   }
-                   Files.write(rutaAbsoluta,archivo.getBytes());
-               }
-               if(archivo.getSize()>=15000000){
-                   model.addAttribute("errorImagenMsg","Excede 15MB");
-               }
-               this.svcVideojuego.updateOne(videojuego,id);
-           }
-           return "redirect:/crud";
-        }catch(Exception e){
+            } else {
+                this.svcVideojuego.updateOne(videojuego, id);
+            }
+
+            return "redirect:/crud";
+        } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
     }
+
 
 
 

@@ -1,9 +1,6 @@
 package com.colmena.videojuegos.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 public class Categoria {
     @Id
@@ -25,6 +23,8 @@ public class Categoria {
 
     @OneToMany(mappedBy = "categoria")
     private List<Videojuego> videojuegos;
+
+
     public void setActivo(boolean activo) {
         this.activo = activo;
     }

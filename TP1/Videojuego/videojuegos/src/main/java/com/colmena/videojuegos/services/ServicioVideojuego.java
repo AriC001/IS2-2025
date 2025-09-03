@@ -10,65 +10,70 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ServicioVideojuego implements ServicioBase<Videojuego>{
+public class ServicioVideojuego {
     @Autowired
-    private RepositorioVideojuego repositorio;
+    private RepositorioVideojuego videojuegoRepositorio;
 
-    @Override
+    //@Override
     @Transactional
     public List<Videojuego> findAll() throws Exception {
         try {
-            List<Videojuego> entities = this.repositorio.findAll();
+            List<Videojuego> entities = this.videojuegoRepositorio.findAll();
             return entities;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public Videojuego findById(long id) throws Exception {
         try {
-            Optional<Videojuego> opt = this.repositorio.findById(id);
+            Optional<Videojuego> opt = this.videojuegoRepositorio.findById(id);
             return opt.get();
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public Videojuego saveOne(Videojuego entity) throws Exception {
         try {
-            Videojuego videojuego = this.repositorio.save(entity);
+            Videojuego videojuego = this.videojuegoRepositorio.save(entity);
             return videojuego;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
-    @Override
+    //@Override
     @Transactional
-    public Videojuego updateOne(Videojuego entity, long id) throws Exception {
-        try {
-            Optional<Videojuego> opt = this.repositorio.findById(id);
-            Videojuego videojuego = opt.get();
-            videojuego = this.repositorio.save(entity);
-            return videojuego;
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+    public void updateOne(Videojuego v, long id)  {
+        Optional<Videojuego> opt = videojuegoRepositorio.findById(id);
+
+        Videojuego existente = opt.get();
+
+        // Actualizamos solo los campos que se modifican
+        existente.setTitulo(v.getTitulo());
+        existente.setCategoria(v.getCategoria());
+        existente.setEstudio(v.getEstudio());
+        if(v.getImagen() != null && !v.getImagen().isEmpty()){
+            existente.setImagen(v.getImagen());
         }
+
+        videojuegoRepositorio.save(existente);
     }
 
-    @Override
+    //@Override
     @Transactional
     public boolean deleteById(long id) throws Exception {
         try {
-            Optional<Videojuego> opt = this.repositorio.findById(id);
+            Optional<Videojuego> opt = this.videojuegoRepositorio.findById(id);
             if (!opt.isEmpty()) {
                 Videojuego videojuego = opt.get();
                 videojuego.setActivo(false);
-                this.repositorio.save(videojuego);
+                this.videojuegoRepositorio.save(videojuego);
             } else {
                 throw new Exception();
             }
@@ -83,7 +88,7 @@ public class ServicioVideojuego implements ServicioBase<Videojuego>{
     @Transactional
     public List<Videojuego> findAllByActivo() throws Exception{
         try {
-            List<Videojuego> entities = this.repositorio.findAllByActivo();
+            List<Videojuego> entities = this.videojuegoRepositorio.findAllByActivo();
             return entities;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -93,7 +98,7 @@ public class ServicioVideojuego implements ServicioBase<Videojuego>{
     @Transactional
     public Videojuego findByIdAndActivo(long id) throws Exception {
         try {
-            Optional<Videojuego> opt = this.repositorio.findByIdAndActivo(id);
+            Optional<Videojuego> opt = this.videojuegoRepositorio.findByIdAndActivo(id);
             return opt.get();
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -103,7 +108,7 @@ public class ServicioVideojuego implements ServicioBase<Videojuego>{
     @Transactional
     public List<Videojuego> findByTitle(String q) throws Exception{
         try{
-            List<Videojuego> entities = this.repositorio.findByTitle(q);
+            List<Videojuego> entities = this.videojuegoRepositorio.findByTitle(q);
             return entities;
         } catch (Exception e) {
             throw new Exception(e.getMessage());

@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ServicioEstudio implements ServicioBase<Estudio> {
+public class ServicioEstudio {
     @Autowired
     private RepositorioEstudio repositorio;
 
-    @Override
+    //@Override
     @Transactional
     public List<Estudio> findAll() throws Exception {
         try {
@@ -25,7 +25,7 @@ public class ServicioEstudio implements ServicioBase<Estudio> {
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public Estudio findById(long id) throws Exception {
         try {
@@ -36,7 +36,7 @@ public class ServicioEstudio implements ServicioBase<Estudio> {
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public Estudio saveOne(Estudio entity) throws Exception {
         try {
@@ -47,7 +47,7 @@ public class ServicioEstudio implements ServicioBase<Estudio> {
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public Estudio updateOne(Estudio entity, long id) throws Exception {
         try {
@@ -60,7 +60,7 @@ public class ServicioEstudio implements ServicioBase<Estudio> {
         }
     }
 
-    @Override
+    //@Override
     @Transactional
     public boolean deleteById(long id) throws Exception {
         try {
