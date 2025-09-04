@@ -156,6 +156,10 @@ public class MascotaServicio {
                 .stream()
                 .map(Voto::getMascota1)
                 .toList();
+        //recibo la lista de votos que emití
+        // Stream(): Convierte la lista en un flujo (stream), lo que permite operar sobre sus elementos de manera funcional (filtrar, mapear, contar, etc.).
+        //map mapea cada elemento que era un Voto, y Voto::getMascota21 toma la mascota que emitio ese voto
+        //toList me devuelve la lista de mascotas
     }
 
     public List<Mascota> votoDado(Mascota mascota) {
@@ -164,6 +168,10 @@ public class MascotaServicio {
                 .stream()
                 .map(Voto::getMascota2)
                 .toList();
+        //recibo la lista de votos que emití
+        // Stream(): Convierte la lista en un flujo (stream), lo que permite operar sobre sus elementos de manera funcional (filtrar, mapear, contar, etc.).
+        //map mapea cada elemento que era un Voto, y Voto::getMascota2 toma la mascota que recibió ese voto
+        //toList me devuelve la lista de mascotas
     }
 
     public boolean huboVotoReciproco(Mascota votante, Mascota votada) {
