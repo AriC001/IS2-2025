@@ -40,6 +40,7 @@ public class Mascota implements Serializable {
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
 
+    @Builder.Default
     private boolean activo = true;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -57,6 +58,44 @@ public class Mascota implements Serializable {
     @OneToOne
     @JoinColumn(name = "foto_id")
     private Foto foto;
-
-
+    //Getters y Setters
+    public Long getId(){
+        return this.id;
+    }
+    public boolean isActivo(){
+        return this.activo;
+    }
+    public void desactivar(){
+        this.activo=false;
+    }
+    public String getNombre(){
+        return this.nombre;
+    }
+    public void setNombre(String nombre){
+        this.nombre=nombre;
+    }
+    public Date getAlta(){
+        return this.alta;
+    }
+    public Date getBaja(){
+        return this.baja;
+    }
+    public Sexo getSexo(){
+        return this.sexo;
+    }
+    public void setSexo(Sexo sexo){
+        this.sexo=sexo;
+    }
+    public Usuario getUsuario(){
+        return this.usuario;
+    }
+    public void setUsuario(Usuario usuario){
+        this.usuario=usuario;
+    }
+    public Foto getFoto(){
+        return this.foto;
+    }
+    public void setFoto(Foto foto){
+        this.foto=foto;
+    }
 }

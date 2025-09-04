@@ -40,5 +40,21 @@ public class Voto implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "mascota2_id")
     private Mascota mascota2;
+    //getters y setters
 
+    public long getId(){
+        return this.id;
+    }
+    public void setMascota1(Mascota mascota1){
+        this.mascota1=mascota1;
+    }
+    public void setMascota2(Mascota mascota2){
+        this.mascota2=mascota2;
+    }
+    public Mascota getMascota1(){
+        return this.mascota1;
+    }
+    public Mascota getMascota2(){
+        return this.mascota2;
+    }
 }

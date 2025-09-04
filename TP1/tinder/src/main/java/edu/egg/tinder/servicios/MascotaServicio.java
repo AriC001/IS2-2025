@@ -140,6 +140,15 @@ public class MascotaServicio {
         }
         return mascota;
     }
+    public List<Mascota> listarAllMascotas() throws ErrorServicio{
+        List<Mascota> mascotas;
+        try{
+            mascotas= mascotaRepositorio.findAllMascotasActivas();
+            return mascotas;
+        }catch(Exception e){
+            throw new ErrorServicio("No se encontraron mascotas activas");
+        }
+    }
 
 }
 

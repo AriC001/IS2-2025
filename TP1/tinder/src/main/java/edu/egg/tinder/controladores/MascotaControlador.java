@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.management.RuntimeErrorException;
+
 @Controller
 @RequestMapping("/mascotas")
 public class MascotaControlador {
@@ -146,6 +148,22 @@ public class MascotaControlador {
             throw new RuntimeException(e);
         }
         return "redirect:/mascotas/mis-mascotas";
+    }
+    @GetMapping("/votar-mascotas")
+    public String votarMascotas(HttpSession session, Model modelo) {
+        try {
+            Usuario login = (Usuario) session.getAttribute("usuariosession");
+            
+            // Obtenemos las mascotas activas
+            List<Mascota> mascotas = mascotaServicio.listarAllMascotas();
+            
+            modelo.addAttribute("mascotas", mascotas);
+
+            return "votos";  // corresponde a votos.html o votos.jsp según uses Thymeleaf/JSP
+
+        } catch (ErrorServicio e) {
+            throw new RuntimeException(e);
+            }
     }
 
 }
