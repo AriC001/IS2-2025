@@ -159,7 +159,7 @@ public class MascotaControlador {
             
             modelo.addAttribute("mascotas", mascotas);
 
-            return "votos";  // corresponde a votos.html o votos.jsp según uses Thymeleaf/JSP
+            return "mascotasvotar";  // corresponde a votos.html
 
         } catch (ErrorServicio e) {
             throw new RuntimeException(e);
@@ -176,6 +176,7 @@ public class MascotaControlador {
         votantes.forEach(m -> m.setVotoReciproco(mascotaServicio.huboVotoReciproco(m, mascota)));
 
         model.addAttribute("mascotas", votantes);
+        model.addAttribute("tipoVoto", "Recibidos");
         return "votos";
     }
 
@@ -191,6 +192,7 @@ public class MascotaControlador {
         ));
 
         model.addAttribute("mascotas", votados);
+        model.addAttribute("tipoVoto", "Dados");
         return "votos";
     }
 
