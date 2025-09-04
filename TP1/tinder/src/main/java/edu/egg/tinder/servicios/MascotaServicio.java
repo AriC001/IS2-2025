@@ -158,7 +158,7 @@ public class MascotaServicio {
                 .toList();
         //recibo la lista de votos que emití
         // Stream(): Convierte la lista en un flujo (stream), lo que permite operar sobre sus elementos de manera funcional (filtrar, mapear, contar, etc.).
-        //map mapea cada elemento que era un Voto, y Voto::getMascota21 toma la mascota que emitio ese voto
+        //map mapea cada elemento que era un Voto, y Voto::getMascota1 toma la mascota que emitio ese voto
         //toList me devuelve la lista de mascotas
     }
 
