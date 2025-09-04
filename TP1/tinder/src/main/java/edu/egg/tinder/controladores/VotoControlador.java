@@ -35,6 +35,11 @@ public class VotoControlador {
     @Autowired
     private VotoServicio votoServicio;
 
+    @GetMapping("mascotasvotar")
+    public String mascotasVotar(){
+        return "mascotasvotar";
+    }
+
     // Paso 1: mostrar pantalla de votación
     @GetMapping("/{idMascota}")
     public String mostrarPantallaVoto(@PathVariable Long idMascota,
@@ -64,7 +69,8 @@ public class VotoControlador {
         Usuario login = (Usuario) session.getAttribute("usuariosession");
         try {
             votoServicio.votar(login.getId(), idMascotaVotante, idMascotaVotada);
-            return "mascotas/votar-mascotas";  //si todo salió bien
+            redirectAttributes.addFlashAttribute("exitoMensaje", "¡Voto registrado correctamente!");
+            return "redirect:/mascotas/votar-mascotas";
         } catch (ErrorServicio e) {
             // Pasamos el mensaje de error a la vista
             redirectAttributes.addFlashAttribute("errorMensaje", e.getMessage());
