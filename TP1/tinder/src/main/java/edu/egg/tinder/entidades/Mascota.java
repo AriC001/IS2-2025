@@ -60,4 +60,11 @@ public class Mascota implements Serializable {
     public void desactivar(){
         this.activo=false;
     }
+
+    @Transient
+    private boolean votoReciproco;
+
+    public boolean isVotoReciproco() { return votoReciproco; }
+    public void setVotoReciproco(boolean votoReciproco) { this.votoReciproco = votoReciproco; }
+
 }

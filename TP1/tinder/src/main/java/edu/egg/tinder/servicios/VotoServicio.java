@@ -46,7 +46,7 @@ public class VotoServicio {
             throw new ErrorServicio("No se encontró la mascota solicitada");
         }
         if (idMascota1.equals(idMascota2) || mascota2.getUsuario().getId().equals(idUsuario)) {
-            throw new ErrorServicio("No se puede votarse a uno mismo");
+            throw new ErrorServicio("No se puede votar a uno mismo");
         }else{
             voto.setMascota1(mascota1);
             voto.setMascota2(mascota2);

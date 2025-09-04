@@ -1,10 +1,8 @@
 package edu.egg.tinder.entidades;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,7 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@Getter
+@Setter
 @Entity
 @Table(name = "voto")
 public class Voto implements Serializable {

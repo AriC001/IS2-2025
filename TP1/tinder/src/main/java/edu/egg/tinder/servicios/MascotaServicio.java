@@ -1,5 +1,5 @@
 package edu.egg.tinder.servicios;
-
+import edu.egg.tinder.entidades.Voto;
 import edu.egg.tinder.entidades.Foto;
 import edu.egg.tinder.entidades.Mascota;
 import edu.egg.tinder.entidades.Usuario;
@@ -148,6 +148,29 @@ public class MascotaServicio {
         }catch(Exception e){
             throw new ErrorServicio("No se encontraron mascotas activas");
         }
+    }
+
+    public List<Mascota> votantesDe(Mascota mascota) {
+        // Cada voto recibido tiene "mascota1" como quien votó
+        return mascota.getVotosRecibidos()
+                .stream()
+                .map(Voto::getMascota1)
+                .toList();
+    }
+
+    public List<Mascota> votoDado(Mascota mascota) {
+        // Cada voto enviado tiene "mascota1" como quien votó por ende necesitamos mascota2 par ver quien lo recibio
+        return mascota.getVotosOriginados()
+                .stream()
+                .map(Voto::getMascota2)
+                .toList();
+    }
+
+    public boolean huboVotoReciproco(Mascota votante, Mascota votada) {
+        // Buscamos si votante recibió un voto de la mascota votada
+        return votante.getVotosRecibidos()
+                .stream()
+                .anyMatch(v -> v.getMascota1().equals(votada));
     }
 
 }

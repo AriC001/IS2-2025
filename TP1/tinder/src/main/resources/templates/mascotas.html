@@ -64,6 +64,8 @@
                         <th>Nombre</th>
                         <th>Sexo</th>
                         <th>Acciones</th>
+                        <th>Votos Recibidos</th>
+                        <th>Votos Dados</th>
                         
                     </tr>
                 </thead>
@@ -78,9 +80,19 @@
                         <td th:text="${mascota.sexo}"></td>
                         
                         <td>
-                           <a th:href="@{/mascotas/editar-mascota(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
-                           <a th:href="@{/mascotas/editar-mascota(id=__${mascota.id}__,accion=Eliminar)}">Eliminar</a>
+                            <a th:href="@{/mascotas/editar-mascota(id=${mascota.id},accion=Actualizar)}">Editar</a> -
+                            <a th:href="@{/mascotas/editar-mascota(id=${mascota.id},accion=Eliminar)}">Eliminar</a>
                         </td>
+                        <td>
+                            <a th:href="@{/mascotas/votos(id=${mascota.id})}" class="btn btn-link"
+                               th:text="${#lists.size(mascota.votosRecibidos)}">0</a>
+                        </td>
+                        <td>
+                            <a th:href="@{/mascotas/votos-dados(id=${mascota.id})}" class="btn btn-link"
+                               th:text="${#lists.size(mascota.votosOriginados)}">0</a>
+                        </td>
+
+
                     </tr>                  
                 </tbody>
                           

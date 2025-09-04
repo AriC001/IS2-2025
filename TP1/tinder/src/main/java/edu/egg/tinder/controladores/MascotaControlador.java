@@ -166,4 +166,33 @@ public class MascotaControlador {
             }
     }
 
+    @GetMapping("/votos")
+    public String votosRecibidos(@RequestParam Long id, ModelMap model) throws ErrorServicio {
+        Mascota mascota = mascotaServicio.buscarMascota(id);
+
+        List<Mascota> votantes = mascotaServicio.votantesDe(mascota);
+
+        // Marcamos si hubo voto recíproco
+        votantes.forEach(m -> m.setVotoReciproco(mascotaServicio.huboVotoReciproco(m, mascota)));
+
+        model.addAttribute("mascotas", votantes);
+        return "votos";
+    }
+
+    @GetMapping("/votos-dados")
+    public String votosDados(@RequestParam Long id, ModelMap model) throws ErrorServicio {
+        Mascota mascota = mascotaServicio.buscarMascota(id);
+
+        List<Mascota> votados = mascotaServicio.votoDado(mascota);
+
+        // Marcamos si hubo voto recíproco
+        votados.forEach(m -> m.setVotoReciproco(
+                mascotaServicio.huboVotoReciproco(mascota, m)
+        ));
+
+        model.addAttribute("mascotas", votados);
+        return "votos";
+    }
+
+
 }

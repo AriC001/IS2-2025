@@ -64,7 +64,7 @@ public class VotoControlador {
         Usuario login = (Usuario) session.getAttribute("usuariosession");
         try {
             votoServicio.votar(login.getId(), idMascotaVotante, idMascotaVotada);
-            return "redirect:/votos";  // si todo salió bien
+            return "mascotas/votar-mascotas";  //si todo salió bien
         } catch (ErrorServicio e) {
             // Pasamos el mensaje de error a la vista
             redirectAttributes.addFlashAttribute("errorMensaje", e.getMessage());
