@@ -51,13 +51,15 @@ public class UsuarioServicio {
             usuario.setMail(mail);
             usuario.setPassword(password);
 
-            Long idFoto = null;
-            if (usuario.getFoto() != null) {
-                idFoto = usuario.getFoto().getId();
+            if (archivo != null && !archivo.isEmpty()) {
+                if (usuario.getFoto() != null) {
+                    Foto actualizada = fotoServicio.actualizar(usuario.getFoto().getId(), archivo);
+                    usuario.setFoto(actualizada);
+                } else {
+                    Foto nueva = fotoServicio.guardar(archivo);
+                    usuario.setFoto(nueva);
+                }
             }
-
-            Foto foto = fotoServicio.actualizar(idFoto, archivo);
-            usuario.setFoto(foto);
 
             usuarioRepositorio.save(usuario);
         } else {
@@ -137,6 +139,16 @@ public class UsuarioServicio {
         } catch (Exception e) {
             e.printStackTrace();
             throw new ErrorServicio("Error de Sistemas");
+        }
+    }
+
+    public Usuario findById(Long idUsuario) throws ErrorServicio {
+        Optional<Usuario> opt = usuarioRepositorio.findById(idUsuario);
+        if(opt.isPresent()){
+            Usuario us = opt.get();
+            return us;
+        } else {
+            throw new ErrorServicio("No se encontró el usuario solicitado");
         }
     }
 

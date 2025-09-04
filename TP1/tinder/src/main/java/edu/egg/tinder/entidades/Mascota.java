@@ -2,10 +2,7 @@ package edu.egg.tinder.entidades;
 
 import edu.egg.tinder.enumeracion.Sexo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 
 @Entity
 @Table(name = "mascota")
@@ -58,44 +57,7 @@ public class Mascota implements Serializable {
     @OneToOne
     @JoinColumn(name = "foto_id")
     private Foto foto;
-    //Getters y Setters
-    public Long getId(){
-        return this.id;
-    }
-    public boolean isActivo(){
-        return this.activo;
-    }
     public void desactivar(){
         this.activo=false;
-    }
-    public String getNombre(){
-        return this.nombre;
-    }
-    public void setNombre(String nombre){
-        this.nombre=nombre;
-    }
-    public Date getAlta(){
-        return this.alta;
-    }
-    public Date getBaja(){
-        return this.baja;
-    }
-    public Sexo getSexo(){
-        return this.sexo;
-    }
-    public void setSexo(Sexo sexo){
-        this.sexo=sexo;
-    }
-    public Usuario getUsuario(){
-        return this.usuario;
-    }
-    public void setUsuario(Usuario usuario){
-        this.usuario=usuario;
-    }
-    public Foto getFoto(){
-        return this.foto;
-    }
-    public void setFoto(Foto foto){
-        this.foto=foto;
     }
 }

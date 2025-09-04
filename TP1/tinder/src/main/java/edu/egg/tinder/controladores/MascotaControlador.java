@@ -90,7 +90,7 @@ public class MascotaControlador {
         return "mascota";
     }
 
-    //<a th:href="@{/mascota/editar-perfil(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
+    //<a th:href="@{/mascota/editar-mascota(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
     @GetMapping("/editar-mascota")
     public String editarMascota(@RequestParam Long id, @RequestParam(required = false) String accion, Model model, HttpSession session) throws ErrorServicio {
         Usuario login = (Usuario) session.getAttribute("usuariosession");

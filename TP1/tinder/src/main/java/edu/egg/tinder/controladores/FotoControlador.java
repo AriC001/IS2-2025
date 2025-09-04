@@ -2,7 +2,9 @@ package edu.egg.tinder.controladores;
 
 import edu.egg.tinder.entidades.Foto;
 import edu.egg.tinder.entidades.Mascota;
+import edu.egg.tinder.entidades.Usuario;
 import edu.egg.tinder.servicios.MascotaServicio;
+import edu.egg.tinder.servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ public class FotoControlador {
 
     @Autowired
     private MascotaServicio mascotaServicio;
+    @Autowired
+    private UsuarioServicio usuairoServicio;
 
     @GetMapping("/mascota/{id}")
     @ResponseBody
@@ -30,6 +34,27 @@ public class FotoControlador {
             }
 
             Foto foto = mascota.getFoto();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, foto.getMime())
+                    .body(foto.getContenido());
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    //<img th:if="${perfil.foto != null}" class="img-fluid rounded-circle" th:src="${'/foto/usuario/' + perfil.id}" alt="">
+    @GetMapping("/usuario/{id}")
+    @ResponseBody
+    public ResponseEntity<byte[]> fotoUsuario(@PathVariable Long id) {
+        try {
+            Usuario usuario = usuairoServicio.findById(id);
+
+            if (usuario.getFoto() == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Foto foto = usuario.getFoto();
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, foto.getMime())
