@@ -3,6 +3,7 @@ package edu.egg.tinder.controladores;
 
 import edu.egg.tinder.entidades.Mascota;
 import edu.egg.tinder.entidades.Usuario;
+import edu.egg.tinder.entidades.Voto;
 import edu.egg.tinder.enumeracion.Sexo;
 import edu.egg.tinder.errores.ErrorServicio;
 import edu.egg.tinder.servicios.MascotaServicio;
@@ -171,14 +172,17 @@ public class MascotaControlador {
         Mascota mascota = mascotaServicio.buscarMascota(id);
 
         List<Mascota> votantes = mascotaServicio.votantesDe(mascota);
+        List<Voto> votos = mascotaServicio.votosDe(mascota);
 
         // Marcamos si hubo voto recíproco
         votantes.forEach(m -> m.setVotoReciproco(mascotaServicio.huboVotoReciproco(m, mascota)));
 
         model.addAttribute("mascotas", votantes);
         model.addAttribute("tipoVoto", "Recibidos");
+        model.addAttribute("votos", votos);
         return "votos";
     }
+
 
     @GetMapping("/votos-dados")
     public String votosDados(@RequestParam Long id, ModelMap model) throws ErrorServicio {

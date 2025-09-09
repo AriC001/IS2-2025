@@ -63,6 +63,9 @@ public class Mascota implements Serializable {
 
     @Transient
     private boolean votoReciproco;
+    public Long getId(){
+        return this.id;
+    }
 
     public boolean isVotoReciproco() { return votoReciproco; }
     public void setVotoReciproco(boolean votoReciproco) { this.votoReciproco = votoReciproco; }

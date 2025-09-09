@@ -41,7 +41,7 @@ public class Voto implements Serializable {
     private Mascota mascota2;
     //getters y setters
 
-    public long getId(){
+    public Long getId(){
         return this.id;
     }
     public void setMascota1(Mascota mascota1){

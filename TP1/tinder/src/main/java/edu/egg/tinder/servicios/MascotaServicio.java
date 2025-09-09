@@ -181,6 +181,10 @@ public class MascotaServicio {
                 .anyMatch(v -> v.getMascota1().equals(votada));
     }
 
+    public List<Voto> votosDe(Mascota mascota) {
+        return mascota.getVotosRecibidos();
+    }
+
 }
 
 

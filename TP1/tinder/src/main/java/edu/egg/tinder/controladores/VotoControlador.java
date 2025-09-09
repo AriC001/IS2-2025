@@ -77,4 +77,18 @@ public class VotoControlador {
             return "redirect:/votar/" + idMascotaVotada; // aquí poné la página donde se muestra el formulario
         }
     }
+
+    @PostMapping("/responder")
+    public String responder(@RequestParam Long id,
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            Usuario usuario = (Usuario) session.getAttribute("usuariosession");
+            votoServicio.responder(usuario.getId(), id);
+            redirectAttributes.addFlashAttribute("exito", "Has respondido al voto.");
+        } catch (ErrorServicio e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/mascotas/votos";
+    }
 }

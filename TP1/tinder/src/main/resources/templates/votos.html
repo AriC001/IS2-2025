@@ -70,17 +70,32 @@
                     <tbody>
                     <tr th:each="mascota : ${mascotas}">
                         <td>
-                            <img th:if="${mascota.foto != null}" th:src="@{'/foto/mascota/' + ${mascota.id}}" style="max-height:60px; border-radius:100%">
-                            <img th:if="${mascota.foto == null}" src="/img/m1.jpeg" style="max-height:60px; border-radius:100%">
+                            <img th:if="${mascota.foto != null}"
+                                 th:src="@{'/foto/mascota/' + ${mascota.id}}"
+                                 style="max-height:60px; border-radius:100%">
+                            <img th:if="${mascota.foto == null}"
+                                 src="/img/m1.jpeg"
+                                 style="max-height:60px; border-radius:100%">
                         </td>
                         <td th:text="${mascota.nombre}"></td>
                         <td th:text="${mascota.sexo}"></td>
                         <td th:text="${mascota.votoReciproco ? 'Sí' : 'No'}"></td>
                     </tr>
-                    </tbody>
-                </table>
-                    <a class="btn btn-dark" href="/mascotas/mis-mascotas">Volver</a>
 
+                    <tr th:each="voto : ${votos}">
+                        <td colspan="4">
+                            <form th:action="@{/votar/responder}" method="POST">
+                                <input type="hidden" name="id" th:value="${voto.id}"/>
+                                <button type="submit"
+                                        th:if="${voto.respuesta == null}"
+                                        class="btn btn-success btn-sm">
+                                    Responder
+                                </button>
+                                <span th:if="${voto.respuesta != null}" class="text-muted">Respondido</span>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
             </div>
         </div>
     </div>

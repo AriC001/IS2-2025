@@ -16,15 +16,15 @@ public class NotificacionServicio {
 
     @Transactional
     @Async
-    public void enviarMail(String body, String title, String mail) {
-        return;
-        /*SimpleMailMessage mensaje = new SimpleMailMessage();
-        mensaje.setTo(mail);
-        mensaje.setFrom("noreply@tinder-mascota.com");
-        mensaje.setSubject(title);
-        mensaje.setText(body);
+    public void enviarMail(String cuerpo, String titulo, String destinatario) {
 
-        mailSender.send(mensaje);*/
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(destinatario);
+        mensaje.setFrom("noreply@tinder-mascota.com");
+        mensaje.setSubject(titulo);
+        mensaje.setText(cuerpo);
+
+        mailSender.send(mensaje);
 
     }
 }
