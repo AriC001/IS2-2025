@@ -60,7 +60,6 @@
                <p th:if="${error != null}" th:text="${error}" style="color:red;"></p> 
                
                <input type="hidden" name="id" th:value="${mascota.id}"/>
-               <p th:text="'ID cargado: ' + ${mascota.id}"></p>
                 
               <label>Nombre de la mascota</label>
               <input type="text" class="form-control" name="nombre" th:value="${mascota.nombre}" th:readonly="${accion == 'Eliminar' || accion == 'Alta'}"/>

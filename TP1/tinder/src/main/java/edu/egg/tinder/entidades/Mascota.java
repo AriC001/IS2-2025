@@ -2,10 +2,7 @@ package edu.egg.tinder.entidades;
 
 import edu.egg.tinder.enumeracion.Sexo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 
 @Entity
 @Table(name = "mascota")
@@ -40,6 +39,7 @@ public class Mascota implements Serializable {
     @Enumerated(EnumType.STRING)
     private Sexo sexo;
 
+    @Builder.Default
     private boolean activo = true;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -57,6 +57,17 @@ public class Mascota implements Serializable {
     @OneToOne
     @JoinColumn(name = "foto_id")
     private Foto foto;
+    public void desactivar(){
+        this.activo=false;
+    }
 
+    @Transient
+    private boolean votoReciproco;
+    public Long getId(){
+        return this.id;
+    }
+
+    public boolean isVotoReciproco() { return votoReciproco; }
+    public void setVotoReciproco(boolean votoReciproco) { this.votoReciproco = votoReciproco; }
 
 }

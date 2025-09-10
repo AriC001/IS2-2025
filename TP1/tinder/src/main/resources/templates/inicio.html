@@ -48,6 +48,7 @@
          <h2 class="masthead-subheading mb-0" th:if="${session.usuariosession != null}" th:text="${session.usuariosession.nombre + ' ' + session.usuariosession.apellido}"></h2> 
         <a th:href="@{/usuario/editar-perfil(id=__${session.usuariosession.id}__)}" class="btn btn-primary btn-xl rounded-pill mt-5">¡Configura tu Perfil!</a>
         <a th:href="@{/mascotas/mis-mascotas}" class="btn btn-primary btn-xl rounded-pill mt-5">¡Mis Mascotas!</a>
+        <a th:href="@{/mascotas/votar-mascotas}" class="btn btn-primary btn-xl rounded-pill mt-5">Ver Mascotas Activas</a>
       </div>
     </div>
     <div class="bg-circle-1 bg-circle"></div>

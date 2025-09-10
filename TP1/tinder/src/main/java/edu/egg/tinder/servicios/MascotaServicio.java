@@ -1,5 +1,5 @@
 package edu.egg.tinder.servicios;
-
+import edu.egg.tinder.entidades.Voto;
 import edu.egg.tinder.entidades.Foto;
 import edu.egg.tinder.entidades.Mascota;
 import edu.egg.tinder.entidades.Usuario;
@@ -139,6 +139,50 @@ public class MascotaServicio {
             throw new ErrorServicio("No se encontró la mascota solicitada");
         }
         return mascota;
+    }
+    public List<Mascota> listarAllMascotas() throws ErrorServicio{
+        List<Mascota> mascotas;
+        try{
+            mascotas= mascotaRepositorio.findAllMascotasActivas();
+            return mascotas;
+        }catch(Exception e){
+            throw new ErrorServicio("No se encontraron mascotas activas");
+        }
+    }
+
+    public List<Mascota> votantesDe(Mascota mascota) {
+        // Cada voto recibido tiene "mascota1" como quien votó
+        return mascota.getVotosRecibidos()
+                .stream()
+                .map(Voto::getMascota1)
+                .toList();
+        //recibo la lista de votos que emití
+        // Stream(): Convierte la lista en un flujo (stream), lo que permite operar sobre sus elementos de manera funcional (filtrar, mapear, contar, etc.).
+        //map mapea cada elemento que era un Voto, y Voto::getMascota1 toma la mascota que emitio ese voto
+        //toList me devuelve la lista de mascotas
+    }
+
+    public List<Mascota> votoDado(Mascota mascota) {
+        // Cada voto enviado tiene "mascota1" como quien votó por ende necesitamos mascota2 par ver quien lo recibio
+        return mascota.getVotosOriginados()
+                .stream()
+                .map(Voto::getMascota2)
+                .toList();
+        //recibo la lista de votos que emití
+        // Stream(): Convierte la lista en un flujo (stream), lo que permite operar sobre sus elementos de manera funcional (filtrar, mapear, contar, etc.).
+        //map mapea cada elemento que era un Voto, y Voto::getMascota2 toma la mascota que recibió ese voto
+        //toList me devuelve la lista de mascotas
+    }
+
+    public boolean huboVotoReciproco(Mascota votante, Mascota votada) {
+        // Buscamos si votante recibió un voto de la mascota votada
+        return votante.getVotosRecibidos()
+                .stream()
+                .anyMatch(v -> v.getMascota1().equals(votada));
+    }
+
+    public List<Voto> votosDe(Mascota mascota) {
+        return mascota.getVotosRecibidos();
     }
 
 }

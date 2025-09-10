@@ -8,6 +8,7 @@ import edu.egg.tinder.repositorios.VotoRepositorio;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.Date;
 import java.util.Optional;
@@ -25,32 +26,38 @@ public class VotoServicio {
 
     @Transactional
     public void votar(Long idUsuario,Long idMascota1, Long idMascota2) throws ErrorServicio {
-        if (idMascota1.equals(idMascota2)) {
-            throw new ErrorServicio("No se puede votarse a uno mismo");
-        }
-        Mascota mascota1 = new Mascota();
-        Mascota mascota2 = new Mascota();
-        try{
-            mascota1 = mascotaRepositorio.findByid(idMascota1);
-        }catch (Exception e){
+        Mascota mascota1 = mascotaRepositorio.findByid(idMascota1);
+        Mascota mascota2 = mascotaRepositorio.findByid(idMascota2);
+
+        if (mascota1 == null || mascota2 == null) {
             throw new ErrorServicio("No se encontró la mascota solicitada");
         }
+
         if (!mascota1.getUsuario().getId().equals(idUsuario)) {
             throw new ErrorServicio("No tiene permiso para votar con esta mascota");
         }
 
-        try{
-            mascota2 = mascotaRepositorio.findByid(idMascota2);
-        }catch (Exception e){
-            throw new ErrorServicio("No se encontró la mascota solicitada");
+        if (idMascota1.equals(idMascota2) || mascota2.getUsuario().getId().equals(idUsuario)) {
+            throw new ErrorServicio("No se puede votar a uno mismo");
         }
+
+        Optional<Voto> existente = votoRepositorio.existeVoto(idMascota1, idMascota2);
+        if (existente.isPresent()) {
+            throw new ErrorServicio("Ya votaste a esta mascota");
+        }
+
+        Voto voto = new Voto();
+        voto.setFecha(new Date());
+        voto.setMascota1(mascota1);
+        voto.setMascota2(mascota2);
+        votoRepositorio.save(voto);
+
         /*Voto voto = Voto.builder().fecha(new Date()).mascota1.mascota2(mascota2).build();
         notificacionServicio.enviarMail("Tu mascota " + mascota2.getNombre() +
                             " ha recibido un nuevo voto!",
                     "Tinder de Mascota",
                     mascota2.getUsuario().getMail());
-
-        votoRepositorio.save(voto);*/
+        */
     }
 
     @Transactional
@@ -72,5 +79,7 @@ public class VotoServicio {
             throw new ErrorServicio("No se encontró el voto solicitado");
         }
     }
+
+
 
 }

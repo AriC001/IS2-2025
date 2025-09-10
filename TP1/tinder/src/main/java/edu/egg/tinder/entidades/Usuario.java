@@ -59,4 +59,16 @@ public class Usuario implements Serializable {
     @JoinColumn(name = "foto_id")
     private Foto foto;
 
+    //getters y setters
+
+    public Long getId(){
+        return this.id;
+    }
+    public String getNombre(){
+        return this.nombre;
+    }
+    public String getApeillido(){
+        return this.apellido;
+    }
+
 }

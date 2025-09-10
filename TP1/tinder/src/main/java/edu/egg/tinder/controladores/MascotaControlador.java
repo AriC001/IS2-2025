@@ -3,6 +3,7 @@ package edu.egg.tinder.controladores;
 
 import edu.egg.tinder.entidades.Mascota;
 import edu.egg.tinder.entidades.Usuario;
+import edu.egg.tinder.entidades.Voto;
 import edu.egg.tinder.enumeracion.Sexo;
 import edu.egg.tinder.errores.ErrorServicio;
 import edu.egg.tinder.servicios.MascotaServicio;
@@ -19,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.management.RuntimeErrorException;
 
 @Controller
 @RequestMapping("/mascotas")
@@ -88,7 +91,7 @@ public class MascotaControlador {
         return "mascota";
     }
 
-    //<a th:href="@{/mascota/editar-perfil(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
+    //<a th:href="@{/mascota/editar-mascota(id=__${mascota.id}__,accion=Actualizar)}">Editar</a> -
     @GetMapping("/editar-mascota")
     public String editarMascota(@RequestParam Long id, @RequestParam(required = false) String accion, Model model, HttpSession session) throws ErrorServicio {
         Usuario login = (Usuario) session.getAttribute("usuariosession");
@@ -147,5 +150,55 @@ public class MascotaControlador {
         }
         return "redirect:/mascotas/mis-mascotas";
     }
+    @GetMapping("/votar-mascotas")
+    public String votarMascotas(HttpSession session, Model modelo) {
+        try {
+            Usuario login = (Usuario) session.getAttribute("usuariosession");
+            
+            // Obtenemos las mascotas activas
+            List<Mascota> mascotas = mascotaServicio.listarAllMascotas();
+            
+            modelo.addAttribute("mascotas", mascotas);
+
+            return "mascotasvotar";  // corresponde a votos.html
+
+        } catch (ErrorServicio e) {
+            throw new RuntimeException(e);
+            }
+    }
+
+    @GetMapping("/votos")
+    public String votosRecibidos(@RequestParam Long id, ModelMap model) throws ErrorServicio {
+        Mascota mascota = mascotaServicio.buscarMascota(id);
+
+        List<Mascota> votantes = mascotaServicio.votantesDe(mascota);
+        List<Voto> votos = mascotaServicio.votosDe(mascota);
+
+        // Marcamos si hubo voto recíproco
+        votantes.forEach(m -> m.setVotoReciproco(mascotaServicio.huboVotoReciproco(m, mascota)));
+
+        model.addAttribute("mascotas", votantes);
+        model.addAttribute("tipoVoto", "Recibidos");
+        model.addAttribute("votos", votos);
+        return "votos";
+    }
+
+
+    @GetMapping("/votos-dados")
+    public String votosDados(@RequestParam Long id, ModelMap model) throws ErrorServicio {
+        Mascota mascota = mascotaServicio.buscarMascota(id);
+
+        List<Mascota> votados = mascotaServicio.votoDado(mascota);
+
+        // Marcamos si hubo voto recíproco
+        votados.forEach(m -> m.setVotoReciproco(
+                mascotaServicio.huboVotoReciproco(mascota, m)
+        ));
+
+        model.addAttribute("mascotas", votados);
+        model.addAttribute("tipoVoto", "Dados");
+        return "votos";
+    }
+
 
 }
