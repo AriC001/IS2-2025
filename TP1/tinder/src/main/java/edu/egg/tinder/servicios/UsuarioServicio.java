@@ -92,7 +92,7 @@ public class UsuarioServicio {
         }
     }
 
-    private void validar(String nombre, String apellido, String mail, String password, String password2) throws ErrorServicio {
+    public void validar(String nombre, String apellido, String mail, String password, String password2) throws ErrorServicio {
         if (nombre == null || nombre.isEmpty()) {
             throw new ErrorServicio("El nombre no puede ser nulo");
         }
