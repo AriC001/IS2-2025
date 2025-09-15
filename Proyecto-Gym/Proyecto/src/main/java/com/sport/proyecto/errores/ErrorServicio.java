@@ -5,3 +5,4 @@ public class ErrorServicio extends RuntimeException {
     super(message);
   }
 }
+

@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import javax.management.RuntimeErrorException;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/pais")
 public class PaisControlador {
 
 }
