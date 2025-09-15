@@ -52,7 +52,8 @@ public class PaisServicio implements ServicioBase<Pais> {
   @Override
   public void guardar(Pais pais) throws ErrorServicio {
     validar(pais);
-    pais.setEliminado(false);
+    boolean falso = false;
+    pais.setEliminado(falso);
     repositorio.save(pais);
   }
 

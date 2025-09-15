@@ -3,10 +3,10 @@ package com.sport.proyecto.entidades;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @Builder
 
 @Entity

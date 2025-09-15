@@ -1,7 +1,6 @@
 package com.sport.proyecto.servicios;
 
 import com.sport.proyecto.entidades.Departamento;
-import com.sport.proyecto.entidades.Pais;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.DepartamentoRepositorio;
 import jakarta.transaction.Transactional;

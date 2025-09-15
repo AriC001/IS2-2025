@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface PaisRepositorio extends JpaRepository<Pais, Long> {
 
-  @Query(value = "SELECT * FROM pais WHERE pais.alta = true", nativeQuery = true)
+  @Query(value = "SELECT * FROM pais WHERE pais.eliminado = false", nativeQuery = true)
   List<Pais> buscarTodosActivos();
 
   @Query(value = "SELECT * FROM pais WHERE pais.id =: id AND pais.alta = true", nativeQuery = true)
