@@ -3,6 +3,8 @@ package com.sport.proyecto.entidades;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,7 +13,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "localidad")
-public class Localidad {
+public class Localidad implements Serializable {
   // Atributos
 
   @Id

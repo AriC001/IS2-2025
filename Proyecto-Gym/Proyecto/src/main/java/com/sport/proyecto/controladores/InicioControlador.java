@@ -1,22 +1,15 @@
 package com.sport.proyecto.controladores;
 
 import com.sport.proyecto.entidades.Persona;
+import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.servicios.PersonaServicio;
+import com.sport.proyecto.servicios.UsuarioServicio;
 import org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.management.RuntimeErrorException;
 
 @Controller
 public class InicioControlador {
@@ -24,18 +17,41 @@ public class InicioControlador {
     @Autowired
     private PersonaServicio personaServicio;
 
+    @Autowired
+    private UsuarioServicio usuarioServicio;
+
     @GetMapping({"/", "/index"})
     public String index(Model model) {
-        return "index";
+        return "views/inicio";
     }
+
 
 
     @GetMapping("/login")
     public String loginForm(Model model) {
-        return "login"; // devuelve el HTML de login
+        model.addAttribute("usuario", new Usuario());
+        return "views/login"; // devuelve el HTML de login
     }
 
     @PostMapping("/login")
+    public String loginUsuario(@ModelAttribute("usuario") Usuario usuario, ModelMap model, HttpSession session) {
+        try {
+            Usuario usuarioLogueado = usuarioServicio.buscarPorNombreUsuarioYClave(usuario);
+            if (usuarioLogueado == null) {
+                model.put("error", "Nombre de usuario o clave incorrecto");
+                return "views/login"; // se queda en la misma página
+            }
+            session.setAttribute("usuariosession", usuarioLogueado);
+            return "redirect:/index"; // login exitoso
+
+        } catch (Exception e) {
+            model.put("error", "Error inesperado: " + e.getMessage());
+            return "views/login";
+        }
+    }
+
+
+/*    @PostMapping("/login")
     public String loginUsuario(@RequestParam String email,
                                @RequestParam String clave,
                                ModelMap model,
@@ -44,16 +60,16 @@ public class InicioControlador {
             Persona persona = personaServicio.login(email, clave);
             if (persona == null) {
                 model.put("error", "Nombre de usuario o clave incorrecto");
-                return "login"; // se queda en la misma página
+                return "views/login"; // se queda en la misma página
             }
 
             session.setAttribute("usuariosession", persona);
             return "redirect:/index"; // login exitoso
         } catch (Exception e) {
             model.put("error", "Error inesperado: " + e.getMessage());
-            return "login";
+            return "views/login";
         }
-    }
+    }*/
 
 
     @GetMapping("/logout")
@@ -84,6 +100,11 @@ public class InicioControlador {
         //List<Localidad> localidades = localidadServicio.mostrarLocalidades localidades(); // trae todas
         //model.addAttribute("localidades", localidades);
         return "/registro";
+    }
+
+    @ModelAttribute("usuariosession")
+    public Usuario usuarioSession(HttpSession session) {
+        return (Usuario) session.getAttribute("usuariosession");
     }
 
 }

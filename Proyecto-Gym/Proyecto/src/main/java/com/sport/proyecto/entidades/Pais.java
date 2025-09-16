@@ -3,6 +3,8 @@ package com.sport.proyecto.entidades;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,7 +13,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "pais")
-public class Pais {
+public class Pais implements Serializable {
   // Atributos
 
   @Id
