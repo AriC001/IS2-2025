@@ -16,4 +16,8 @@ public class Empleado extends Persona {
 
     @Enumerated(EnumType.STRING)
     private com.sport.proyecto.enums.tipoEmpleado tipoEmpleado;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
