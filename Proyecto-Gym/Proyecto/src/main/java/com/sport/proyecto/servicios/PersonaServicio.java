@@ -53,6 +53,19 @@ public class PersonaServicio implements ServicioBase<Persona>{
     @Override
     @Transactional
     public void eliminarPorId(Long id) throws Exception {
+        Optional<Persona> opt = personaRepositorio.findById(id);
+        if(opt.isPresent()){
+
+            Persona persona = opt.get();
+            // Eliminación lógica de la persona
+            persona.setEliminado(true);
+            // Eliminación lógica del usuario asociado
+            if (persona.getUsuario() != null) {
+                persona.getUsuario().setEliminado(true);
+            }
+            personaRepositorio.save(persona);
+        }
+
 
     }
 

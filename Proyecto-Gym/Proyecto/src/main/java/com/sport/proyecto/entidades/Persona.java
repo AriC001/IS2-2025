@@ -36,11 +36,10 @@ public abstract class Persona implements Serializable {
     @Column(nullable = false)
     private boolean eliminado;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 }
-
 //Persona
 //-nombre: string
 //-apellido: string
