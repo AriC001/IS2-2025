@@ -1,5 +1,6 @@
 package com.sport.proyecto.servicios;
 
+import com.sport.proyecto.entidades.Persona;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.UsuarioRepositorio;
@@ -14,21 +15,21 @@ import java.util.Optional;
 @Service
 public class UsuarioServicio implements ServicioBase<Usuario>{
   @Autowired
-  private UsuarioRepositorio repositorio;
+  private UsuarioRepositorio usuarioRepositorio;
 
   @Transactional
   @Override
   public List<Usuario> buscarTodos() throws ErrorServicio {
-    if (repositorio.findAll().isEmpty()) {
+    if (usuarioRepositorio.findAll().isEmpty()) {
       throw new Error("No hay usuarios cargados");
     }
-    return repositorio.findAll();
+    return usuarioRepositorio.findAll();
   }
 
   @Transactional
   @Override
   public Usuario buscarPorId(Long id) throws ErrorServicio {
-    Optional<Usuario> opt = repositorio.findById(id);
+    Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if (opt.isPresent()) {
       Usuario usuario = opt.get();
       return usuario;
@@ -40,7 +41,7 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
   @Transactional
   public Usuario buscarPorNombreUsuarioYClave(Usuario usuario) throws ErrorServicio {
     validar(usuario);
-    Optional<Usuario> opt = repositorio.buscarPorNombreUsuarioYClave(usuario.getNombreUsuario(), usuario.getClave());
+    Optional<Usuario> opt = usuarioRepositorio.buscarPorNombreUsuarioYClave(usuario.getNombreUsuario(), usuario.getClave());
     if (opt.isPresent()) {
       return opt.get();
     } else {
@@ -53,18 +54,18 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
   public void guardar(Usuario usuario) throws ErrorServicio {
     validar(usuario);
     usuario.setEliminado(false);
-    repositorio.save(usuario);
+    usuarioRepositorio.save(usuario);
   }
 
   @Override
   public Usuario actualizar(Usuario usuario, Long id) throws ErrorServicio {
     validar(usuario);
-    Optional<Usuario> opt = repositorio.findById(id);
+    Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if (opt.isPresent()) {
       Usuario usuarioActualizado = opt.get();
       usuarioActualizado.setNombreUsuario(usuario.getNombreUsuario());
       usuarioActualizado.setClave(usuario.getClave());
-      return repositorio.save(usuarioActualizado);
+      return usuarioRepositorio.save(usuarioActualizado);
     } else {
       throw new ErrorServicio("No se encontro el usuario solicitado");
     }
@@ -72,11 +73,11 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
 
   @Override
   public void eliminarPorId(Long id) throws ErrorServicio {
-    Optional<Usuario> opt = repositorio.findById(id);
+    Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if (opt.isPresent()) {
       Usuario usuario = opt.get();
       usuario.setEliminado(true);
-      repositorio.save(usuario);
+      usuarioRepositorio.save(usuario);
     } else {
       throw new ErrorServicio("No se encontro el usuario solicitado");
     }
@@ -92,5 +93,18 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
     if (usuario.getClave().length() < 6 || usuario.getClave().length() > 12) {
       throw new ErrorServicio("La clave debe tener entre 6 y 12 caracteres");
     }
+  }
+
+  public boolean esAdmin(Long id){
+    Optional<Usuario> opt = usuarioRepositorio.findById(id);
+    if(opt.isPresent()){
+      Usuario u = opt.get();
+      if(u.getId() == 1L){
+        return true;
+      }else {
+        return false;
+      }
+    }
+    return false;
   }
 }

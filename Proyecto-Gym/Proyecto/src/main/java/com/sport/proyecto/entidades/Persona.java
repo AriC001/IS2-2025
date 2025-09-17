@@ -35,6 +35,10 @@ public abstract class Persona implements Serializable {
 
     @Column(nullable = false)
     private boolean eliminado;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
 
 //Persona

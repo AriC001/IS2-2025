@@ -30,6 +30,11 @@
                 <input type="password" id="clave" th:field="*{clave}" class="form-control" placeholder="Ingrese su contraseña" required>
               </div>
 
+              <div th:if="${error}">
+                <label for="clave" class="form-label text-danger" th:text="${error}"></label>
+              </div>
+
+
               <!-- Botón -->
               <div class="d-grid">
                 <button type="submit" class="btn btn-dark">Ingresar</button>

@@ -3,6 +3,8 @@ package com.sport.proyecto.servicios;
 import com.sport.proyecto.entidades.Empleado;
 import com.sport.proyecto.entidades.Persona;
 import com.sport.proyecto.entidades.Socio;
+import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.enums.Rol;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.EmpleadoRepositorio;
 import com.sport.proyecto.repositorios.PersonaRepositorio;
@@ -95,17 +97,19 @@ public class PersonaServicio implements ServicioBase<Persona>{
         validar(nombre,apellido,email,clave1,clave2);
         Persona p;
         if(esEmpleado){
+            Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.EMPLEADO).build();
             p = Empleado.builder().nombre(nombre).
                     apellido(apellido).email(email).
-                    clave(clave1).build();
+                    clave(clave1).usuario(u).build();
             //if(p instanceof Empleado e){
             //    e.setTipoEmpleado();
             //    p = e;
             //}
         }else{
+            Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.SOCIO).build();
             p = Socio.builder().nombre(nombre).
                     apellido(apellido).email(email).
-                    clave(clave1).build();
+                    clave(clave1).usuario(u).build();
             if(p instanceof Socio s){
                 s.setNumeroSocio(socioRepositorio.obtenerUltimoNumeroSocio()+1);
                 p = s;
@@ -118,17 +122,6 @@ public class PersonaServicio implements ServicioBase<Persona>{
         return p;
     }
 
-    public boolean esAdmin(Long id){
-        Optional<Persona> opt = personaRepositorio.findById(id);
-        if(opt.isPresent()){
-            Persona p = opt.get();
-            if(p.getId() == 1L){
-                return true;
-            }else {
-                return false;
-            }
-        }
-        return false;
-    }
+
 
 }

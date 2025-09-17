@@ -22,7 +22,7 @@ public class InicioControlador {
 
     @GetMapping({"/", "/index"})
     public String index(Model model) {
-        return "views/inicio";
+        return "views/index";
     }
 
 
@@ -60,14 +60,14 @@ public class InicioControlador {
             Persona persona = personaServicio.login(email, clave);
             if (persona == null) {
                 model.put("error", "Nombre de usuario o clave incorrecto");
-                return "views/login"; // se queda en la misma página
+                return "login"; // se queda en la misma página
             }
 
             session.setAttribute("usuariosession", persona);
             return "redirect:/index"; // login exitoso
         } catch (Exception e) {
             model.put("error", "Error inesperado: " + e.getMessage());
-            return "views/login";
+            return "login";
         }
     }*/
 
@@ -75,19 +75,19 @@ public class InicioControlador {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.setAttribute("usuariosession", null);
-        return "redirect:/inicio";
+        return "redirect:/index";
     }
 
     @GetMapping("/registro")
     public String registro(HttpSession session,Model model) {
-        Persona login = null;
+        Usuario login = null;
         if(session != null) {
-            login = (Persona) session.getAttribute("usuariosession");
+            login = (Usuario) session.getAttribute("usuariosession");
         }
 
         boolean esEmpleado = false; // por defecto false
         if(login != null && login.getId() != null){
-            if(personaServicio.esAdmin(login.getId())){
+            if(usuarioServicio.esAdmin(login.getId())){
                 esEmpleado = true;
             }
         }
@@ -99,7 +99,7 @@ public class InicioControlador {
         //model.addAttribute("provincias", provincias);
         //List<Localidad> localidades = localidadServicio.mostrarLocalidades localidades(); // trae todas
         //model.addAttribute("localidades", localidades);
-        return "/registro";
+        return "views/registro";
     }
 
     @ModelAttribute("usuariosession")

@@ -1,6 +1,6 @@
 package com.sport.proyecto.entidades;
 
-
+import com.sport.proyecto.enums.tipoEmpleado;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -15,9 +15,5 @@ import lombok.experimental.SuperBuilder;
 public class Empleado extends Persona {
 
     @Enumerated(EnumType.STRING)
-    private com.sport.proyecto.enums.tipoEmpleado tipoEmpleado;
-
-    @OneToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private tipoEmpleado tipoEmpleado;
 }
