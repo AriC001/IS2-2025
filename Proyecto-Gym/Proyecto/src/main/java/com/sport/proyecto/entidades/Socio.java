@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@DiscriminatorValue("SOCIO")
 @Getter
 @Setter
 @NoArgsConstructor

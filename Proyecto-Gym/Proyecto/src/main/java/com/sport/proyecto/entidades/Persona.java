@@ -1,10 +1,12 @@
 package com.sport.proyecto.entidades;
 
+import com.sport.proyecto.enums.tipoDocumento;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -12,13 +14,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo_persona", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "persona")
 public abstract class Persona implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
@@ -28,17 +29,37 @@ public abstract class Persona implements Serializable {
     private String apellido;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String correoElectronico;
 
     @Column
     private String clave;
 
+    @Column
+    private String telefono;
+
+    @Column
+    private tipoDocumento tipoDocumento;
+
+    @Column(unique = true)
+    private String numeroDocumento;
+
+    @Column
+    private Date fechaNacimiento;
+
     @Column(nullable = false)
     private boolean eliminado;
+
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id")
+    private Sucursal sucursal;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id")
+    private Direccion direccion;
 }
 //Persona
 //-nombre: string

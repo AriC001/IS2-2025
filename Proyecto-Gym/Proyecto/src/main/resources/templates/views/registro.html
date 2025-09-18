@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Tinder de Mascota - Registro</title>
+  <title th:text="${titulo}"></title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -25,30 +25,12 @@
 <body>
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="/static">Tinder de Mascota</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/registro">Registro</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login">Log In</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <div th:replace="~{components/navbar :: nav_bar}"></div>
 
   <header class="masthead text-center text-white">
     <div class="masthead-content">
       <div class="container">
-        <h1 class="masthead-heading mb-0">Tinder de Mascota</h1>
-        <h2 class="masthead-subheading mb-0">Encontrale pareja a tu choco.</h2>
+        <h1 class="masthead-heading mb-0">Gimnasio SPORT</h1>
         <a href="/registro" class="btn btn-primary btn-xl rounded-pill mt-5">¡Registrate!</a>
       </div>
     </div>
@@ -71,7 +53,7 @@
             <h2 class="display-4">Registrate</h2>
             <form action="/persona/registro" method="POST" enctype="multipart/form-data">
                 
-               <p th:if="${error != null}" th:text="${error}" style="color:red;"></p> 
+              <p th:if="${error != null}" th:text="${error}" style="color:red;"></p>
                 
               <label>Nombre</label>
               <input type="text" class="form-control" name="nombre" th:value="${nombre}"/>

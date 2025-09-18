@@ -31,7 +31,7 @@ public class InicializadorDatos implements CommandLineRunner {
             Usuario usuarioAdmin = Usuario.builder()
                     .nombreUsuario("admin")
                     .clave("admin123") // idealmente cifrada
-                    .rol(Rol.ADMIN) // si tenés un enum Rol
+                    .rol(Rol.EMPLEADO_ADMINISTRATIVO) // si tenés un enum Rol
                     .eliminado(false)
                     .build();
 

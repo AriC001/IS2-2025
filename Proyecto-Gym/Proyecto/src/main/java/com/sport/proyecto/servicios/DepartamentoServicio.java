@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DepartamentoServicio implements ServicioBase<Departamento> {
+public class DepartamentoServicio {
   @Autowired
   private DepartamentoRepositorio repositorio;
 
   // Busqueda
 
   @Transactional
-  @Override
   public List<Departamento> buscarTodos() throws ErrorServicio {
     List<Departamento> departamentos = repositorio.findAll();
     if (departamentos.isEmpty()) {
@@ -37,7 +36,6 @@ public class DepartamentoServicio implements ServicioBase<Departamento> {
   }
 
   @Transactional
-  @Override
   public Departamento buscarPorId(Long id) throws ErrorServicio {
     Optional<Departamento> opt = repositorio.findById(id);
     if (opt.isPresent()) {
@@ -52,7 +50,6 @@ public class DepartamentoServicio implements ServicioBase<Departamento> {
   // Escritura
 
   @Transactional
-  @Override
   public void guardar(Departamento departamento) throws ErrorServicio {
     validar(departamento);
     departamento.setEliminado(false);
@@ -60,7 +57,6 @@ public class DepartamentoServicio implements ServicioBase<Departamento> {
   }
 
   @Transactional
-  @Override
   public Departamento actualizar(Departamento departamento, Long id) throws ErrorServicio {
     validar(departamento);
     Optional<Departamento> opt = repositorio.findById(id);
@@ -76,7 +72,6 @@ public class DepartamentoServicio implements ServicioBase<Departamento> {
   // Eliminacion
 
   @Transactional
-  @Override
   public void eliminarPorId(Long id) throws ErrorServicio {
     Optional<Departamento> opt = repositorio.findById(id);
     if (opt.isPresent()) {

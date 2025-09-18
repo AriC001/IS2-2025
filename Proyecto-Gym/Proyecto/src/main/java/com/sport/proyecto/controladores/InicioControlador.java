@@ -34,9 +34,9 @@ public class InicioControlador {
     }
 
     @PostMapping("/login")
-    public String loginUsuario(@ModelAttribute("usuario") Usuario usuario, ModelMap model, HttpSession session) {
+    public String loginUsuario(@RequestParam String nombreUsuario, @RequestParam String clave, ModelMap model, HttpSession session) {
         try {
-            Usuario usuarioLogueado = usuarioServicio.buscarPorNombreUsuarioYClave(usuario);
+            Usuario usuarioLogueado = usuarioServicio.buscarPorNombreUsuarioYClave(nombreUsuario, clave);
             if (usuarioLogueado == null) {
                 model.put("error", "Nombre de usuario o clave incorrecto");
                 return "views/login"; // se queda en la misma página

@@ -11,14 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PaisServicio implements ServicioBase<Pais> {
+public class PaisServicio {
   @Autowired
   private PaisRepositorio repositorio;
 
   // Busqueda
 
   @Transactional
-  @Override
   public List<Pais> buscarTodos() throws ErrorServicio {
     if (repositorio.findAll().isEmpty()) {
       throw new Error("No hay paises cargados");
@@ -34,8 +33,7 @@ public class PaisServicio implements ServicioBase<Pais> {
     return paises;
   }
 
-
-  @Override
+  @Transactional
   public Pais buscarPorId(Long id) throws ErrorServicio {
     Optional<Pais> opt = repositorio.findById(id);
     if (opt.isPresent()) {
@@ -49,7 +47,7 @@ public class PaisServicio implements ServicioBase<Pais> {
 
   // Escritura
 
-  @Override
+  @Transactional
   public void guardar(Pais pais) throws ErrorServicio {
     validar(pais);
     boolean falso = false;
@@ -57,7 +55,7 @@ public class PaisServicio implements ServicioBase<Pais> {
     repositorio.save(pais);
   }
 
-  @Override
+  @Transactional
   public Pais actualizar(Pais pais, Long id) throws ErrorServicio {
     validar(pais);
     Optional<Pais> opt = repositorio.findById(id);
@@ -72,7 +70,7 @@ public class PaisServicio implements ServicioBase<Pais> {
 
   // Eliminacion
 
-  @Override
+  @Transactional
   public void eliminarPorId(Long id) throws ErrorServicio {
     Optional<Pais> opt = repositorio.findById(id);
     if (opt.isPresent()) {

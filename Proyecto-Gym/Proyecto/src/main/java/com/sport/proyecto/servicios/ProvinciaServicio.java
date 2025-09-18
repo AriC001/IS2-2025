@@ -13,14 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProvinciaServicio implements ServicioBase<Provincia>{
+public class ProvinciaServicio {
   @Autowired
   private ProvinciaRepositorio repositorio;
 
   // Busqueda
 
   @Transactional
-  @Override
   public List<Provincia> buscarTodos() throws ErrorServicio {
     List<Provincia> provincias = repositorio.findAll();
     if (provincias.isEmpty()) {
@@ -39,7 +38,6 @@ public class ProvinciaServicio implements ServicioBase<Provincia>{
   }
 
   @Transactional
-  @Override
   public Provincia buscarPorId(Long id) throws ErrorServicio {
     Optional<Provincia> opt = repositorio.findById(id);
     if (opt.isPresent()) {
@@ -53,7 +51,6 @@ public class ProvinciaServicio implements ServicioBase<Provincia>{
   // Escritura
 
   @Transactional
-  @Override
   public void guardar(Provincia provincia) throws ErrorServicio {
     validar(provincia);
     provincia.setEliminado(false);
@@ -61,7 +58,6 @@ public class ProvinciaServicio implements ServicioBase<Provincia>{
   }
 
   @Transactional
-  @Override
   public Provincia actualizar(Provincia provincia, Long id) throws ErrorServicio {
     validar(provincia);
     Optional<Provincia> opt = repositorio.findById(id);
@@ -77,7 +73,6 @@ public class ProvinciaServicio implements ServicioBase<Provincia>{
   // Eliminacion
 
   @Transactional
-  @Override
   public void eliminarPorId(Long id) throws ErrorServicio {
     Optional<Provincia> opt = repositorio.findById(id);
     if (opt.isPresent()) {

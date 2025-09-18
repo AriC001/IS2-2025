@@ -12,19 +12,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MensajeServicio implements ServicioBase<Mensaje> {
+public class MensajeServicio {
 
     @Autowired
     private MensajeRepositorio repositorio;
 
     @Transactional
-    @Override
     public List<Mensaje> buscarTodos() throws Exception {
         return List.of();
     }
 
     @Transactional
-    @Override
     public Mensaje buscarPorId(Long id) throws Exception {
         Optional opt = repositorio.findById(id);
         if (opt.isPresent()) {
@@ -36,17 +34,14 @@ public class MensajeServicio implements ServicioBase<Mensaje> {
 
     }
 
-    @Override
     public void guardar(Mensaje entity) throws Exception {
 
     }
 
-    @Override
     public Mensaje actualizar(Mensaje entity, Long id) throws Exception {
         return null;
     }
 
-    @Override
     public void eliminarPorId(Long id) throws Exception {
 
     }

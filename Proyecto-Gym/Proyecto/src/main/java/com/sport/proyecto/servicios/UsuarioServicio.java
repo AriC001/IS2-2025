@@ -13,12 +13,11 @@ import java.util.Optional;
 
 
 @Service
-public class UsuarioServicio implements ServicioBase<Usuario>{
+public class UsuarioServicio {
   @Autowired
   private UsuarioRepositorio usuarioRepositorio;
 
   @Transactional
-  @Override
   public List<Usuario> buscarTodos() throws ErrorServicio {
     if (usuarioRepositorio.findAll().isEmpty()) {
       throw new Error("No hay usuarios cargados");
@@ -27,7 +26,6 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
   }
 
   @Transactional
-  @Override
   public Usuario buscarPorId(Long id) throws ErrorServicio {
     Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if (opt.isPresent()) {
@@ -39,9 +37,9 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
   }
 
   @Transactional
-  public Usuario buscarPorNombreUsuarioYClave(Usuario usuario) throws ErrorServicio {
-    validar(usuario);
-    Optional<Usuario> opt = usuarioRepositorio.buscarPorNombreUsuarioYClave(usuario.getNombreUsuario(), usuario.getClave());
+  public Usuario buscarPorNombreUsuarioYClave(String nombreUsuario, String clave) throws ErrorServicio {
+    validar(nombreUsuario, clave);
+    Optional<Usuario> opt = usuarioRepositorio.buscarPorNombreUsuarioYClave(nombreUsuario, clave);
     if (opt.isPresent()) {
       return opt.get();
     } else {
@@ -49,29 +47,31 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
     }
   }
 
-
-  @Override
-  public void guardar(Usuario usuario) throws ErrorServicio {
-    validar(usuario);
+  @Transactional
+  public void guardar(String nombreUsuario, String clave) throws ErrorServicio {
+    validar(nombreUsuario, clave);
+    Usuario usuario = new Usuario();
+    usuario.setNombreUsuario(nombreUsuario);
+    usuario.setClave(clave);
     usuario.setEliminado(false);
     usuarioRepositorio.save(usuario);
   }
 
-  @Override
-  public Usuario actualizar(Usuario usuario, Long id) throws ErrorServicio {
-    validar(usuario);
+  @Transactional
+  public Usuario actualizar(String nombreUsuario, String clave, Long id) throws ErrorServicio {
+    validar(nombreUsuario, clave);
     Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if (opt.isPresent()) {
       Usuario usuarioActualizado = opt.get();
-      usuarioActualizado.setNombreUsuario(usuario.getNombreUsuario());
-      usuarioActualizado.setClave(usuario.getClave());
+      usuarioActualizado.setNombreUsuario(nombreUsuario);
+      usuarioActualizado.setClave(clave);
       return usuarioRepositorio.save(usuarioActualizado);
     } else {
       throw new ErrorServicio("No se encontro el usuario solicitado");
     }
   }
 
-  @Override
+  @Transactional
   public void eliminarPorId(Long id) throws ErrorServicio {
     Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if (opt.isPresent()) {
@@ -83,14 +83,14 @@ public class UsuarioServicio implements ServicioBase<Usuario>{
     }
   }
 
-  private void validar(Usuario usuario) throws ErrorServicio {
-    if(usuario.getNombreUsuario() == null || usuario.getNombreUsuario().isEmpty()){
+  private void validar(String nombreUsuario, String clave) throws ErrorServicio {
+    if(nombreUsuario == null || nombreUsuario.isEmpty()){
       throw new ErrorServicio("El nombre de usuario no puede ser nulo o estar vacío");
     }
-    if(usuario.getClave() == null || usuario.getClave().isEmpty()){
+    if(clave == null || clave.isEmpty()){
       throw new ErrorServicio("La clave no puede ser nula o estar vacía");
     }
-    if (usuario.getClave().length() < 6 || usuario.getClave().length() > 12) {
+    if (clave.length() < 6 || clave.length() > 12) {
       throw new ErrorServicio("La clave debe tener entre 6 y 12 caracteres");
     }
   }

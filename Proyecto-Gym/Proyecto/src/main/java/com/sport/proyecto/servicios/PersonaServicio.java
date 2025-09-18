@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PersonaServicio implements ServicioBase<Persona>{
+public class PersonaServicio {
 
     @Autowired
     private SocioRepositorio socioRepositorio;
@@ -26,31 +26,27 @@ public class PersonaServicio implements ServicioBase<Persona>{
     @Autowired
     private EmpleadoRepositorio empleadoRepositorio;
 
-    @Override
     @Transactional
     public List<Persona> buscarTodos() throws Exception {
         return List.of();
     }
 
-    @Override
+    @Transactional
     public Persona buscarPorId(Long id) throws Exception {
 
         return null;
     }
 
-    @Override
     @Transactional
     public void guardar(Persona entity) throws Exception {
 
     }
 
-    @Override
     @Transactional
     public Persona actualizar(Persona entity, Long id) throws Exception {
         return null;
     }
 
-    @Override
     @Transactional
     public void eliminarPorId(Long id) throws Exception {
         Optional<Persona> opt = personaRepositorio.findById(id);
@@ -110,9 +106,9 @@ public class PersonaServicio implements ServicioBase<Persona>{
         validar(nombre,apellido,email,clave1,clave2);
         Persona p;
         if(esEmpleado){
-            Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.EMPLEADO).build();
+            Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.EMPLEADO_PROFESOR).build();
             p = Empleado.builder().nombre(nombre).
-                    apellido(apellido).email(email).
+                    apellido(apellido).correoElectronico(email).
                     clave(clave1).usuario(u).build();
             //if(p instanceof Empleado e){
             //    e.setTipoEmpleado();
@@ -121,7 +117,7 @@ public class PersonaServicio implements ServicioBase<Persona>{
         }else{
             Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.SOCIO).build();
             p = Socio.builder().nombre(nombre).
-                    apellido(apellido).email(email).
+                    apellido(apellido).correoElectronico(email).
                     clave(clave1).usuario(u).build();
             if(p instanceof Socio s){
                 s.setNumeroSocio(socioRepositorio.obtenerUltimoNumeroSocio()+1);

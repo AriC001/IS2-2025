@@ -13,11 +13,12 @@
       <!-- Contenido -->
       <div class="collapse navbar-collapse" id="navbarsMain">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" th:href="@{/empleados}" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">Gestionar Empleados</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/socios}" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">Gestionar Socios</a></li>
-          <li class="nav-item" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">
-            <a class="nav-link" th:href="@{/admin/panel}">Panel Admin</a>
-          </li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/empleado}" th:if="${usuariosession != null and usuariosession.rol ==
+          T(com.sport.proyecto.enums.Rol).EMPLEADO_ADMINISTRATIVO}">Gestionar Empleados</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/socio}" th:if="${usuariosession != null and usuariosession.rol ==
+          T(com.sport.proyecto.enums.Rol).EMPLEADO_ADMINISTRATIVO}">Gestionar Socios</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/sucursal}" th:if="${usuariosession != null and usuariosession.rol ==
+          T(com.sport.proyecto.enums.Rol).EMPLEADO_ADMINISTRATIVO}">Gestionar Sucursales</a></li>
         </ul>
 
         <!-- Buscador -->
@@ -30,10 +31,13 @@
         <ul class="navbar-nav ms-3">
           <li class="nav-item">
                     <span class="navbar-text text-white me-3"
-                          th:text="${usuariosession != null ? usuariosession.nombreUsuario : 'Invitado'}"></span>
+                          th:text="${usuariosession != null ? usuariosession.nombreUsuario : ''}"></span>
           </li>
           <li class="nav-item" th:if="${usuariosession != null}">
             <a class="nav-link" th:href="@{/logout}">Logout</a>
+          </li>
+          <li class="nav-item" th:if="${usuariosession == null}">
+            <a class="nav-link" th:href="@{/persona/registro}">Registrate</a>
           </li>
           <li class="nav-item" th:if="${usuariosession == null}">
             <a class="nav-link" th:href="@{/login}">Login</a>
