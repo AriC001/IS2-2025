@@ -59,7 +59,7 @@ public class EmpresaServicio {
   }
 
   @Transactional
-  public Empresa buscarPorNombre(String nombre) throws ErrorServicio {
+  public Empresa buscarEmpresaPorNombre(String nombre) throws ErrorServicio {
     try {
       Empresa empresa = empresaRepositorio.findByName(nombre);
       if (empresa == null) {
@@ -89,7 +89,7 @@ public class EmpresaServicio {
   }
 
   @Transactional
-  public void modificarEmpresa(String nombre, String telefono, String correoElectronico, Long id) throws ErrorServicio {
+  public void modificarEmpresa(Long id, String nombre, String telefono, String correoElectronico) throws ErrorServicio {
     validar(nombre, telefono, correoElectronico);
     try {
       Empresa empresa = buscarEmpresa(id);
@@ -129,6 +129,9 @@ public class EmpresaServicio {
     }
     if (correoElectronico == null || correoElectronico.isEmpty()) {
       throw new ErrorServicio("El correo electronico no puede ser nulo o estar vacio");
+    }
+    if (!UtilServicio.esEmailValido(correoElectronico)) {
+      throw new ErrorServicio("El correo electronico no es valido");
     }
   }
 }
