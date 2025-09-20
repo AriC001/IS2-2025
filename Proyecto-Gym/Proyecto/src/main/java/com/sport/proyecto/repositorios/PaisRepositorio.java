@@ -13,13 +13,10 @@ import java.util.Optional;
 public interface PaisRepositorio extends JpaRepository<Pais, Long> {
 
   @Query(value = "SELECT * FROM pais WHERE pais.eliminado = false", nativeQuery = true)
-  List<Pais> buscarTodosActivos();
+  List<Pais> findAllActives();
 
-  @Query(value = "SELECT * FROM pais WHERE pais.id =: id AND pais.alta = true", nativeQuery = true)
-  Pais buscarPorIdActivo(@Param("id") Long id);
-
-  @Query(value = "SELECT * FROM pais WHERE pais.nombre = :nombre", nativeQuery = true)
-  Pais buscarPorNombre(@Param("nombre") String nombre);
+  @Query(value = "SELECT * FROM pais WHERE pais.nombre = :nombre and pais.eliminado = false", nativeQuery = true)
+  Pais findByName(@Param("nombre") String nombre);
 
 
 

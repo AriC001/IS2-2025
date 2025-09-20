@@ -13,87 +13,125 @@ import java.util.Optional;
 @Service
 public class PaisServicio {
   @Autowired
-  private PaisRepositorio repositorio;
+  private PaisRepositorio repositorioPais;
 
   // Busqueda
 
   @Transactional
-  public List<Pais> buscarTodos() throws ErrorServicio {
-    if (repositorio.findAll().isEmpty()) {
-      throw new Error("No hay paises cargados");
+  public List<Pais> listarPais() throws ErrorServicio {
+    try {
+      List<Pais> paises = repositorioPais.findAll();
+      if (paises.isEmpty()) {
+        throw new ErrorServicio("No hay paises cargados");
+      }
+      return paises;
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
     }
-    return repositorio.findAll();
-  }
-
-  public List<Pais> buscarTodosActivos() throws ErrorServicio {
-    List<Pais> paises = repositorio.buscarTodosActivos();
-    if (paises.isEmpty()) {
-      throw new Error("No hay paises activos");
-    }
-    return paises;
   }
 
   @Transactional
-  public Pais buscarPorId(Long id) throws ErrorServicio {
-    Optional<Pais> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Pais pais = opt.get();
-      return pais;
-    } else {
-      throw new ErrorServicio("No se encontro el país solicitado");
+  public List<Pais> listarPaisActivo() throws ErrorServicio {
+    try {
+      List<Pais> paises = repositorioPais.findAllActives();
+      if (paises.isEmpty()) {
+        throw new ErrorServicio("No hay paises cargados");
+      }
+      return paises;
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
     }
+  }
 
+  @Transactional
+  public Pais buscarPais(Long id) throws ErrorServicio {
+    try {
+      Optional<Pais> opt = repositorioPais.findById(id);
+      if (opt.isPresent()) {
+        Pais pais = opt.get();
+        return pais;
+      } else {
+        throw new ErrorServicio("No se encontro el país solicitado");
+      }
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
+    }
+  }
+
+  @Transactional
+  public Pais buscarPaisPorNombre(String nombre) throws ErrorServicio {
+    try {
+      Pais pais = repositorioPais.findByName(nombre);
+      if (pais != null) {
+        return pais;
+      } else {
+        throw new ErrorServicio("No se encontro el país solicitado");
+      }
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
+    }
   }
 
   // Escritura
 
   @Transactional
-  public void guardar(Pais pais) throws ErrorServicio {
-    validar(pais);
-    boolean falso = false;
-    pais.setEliminado(falso);
-    repositorio.save(pais);
+  public void crearPais(String nombre) throws ErrorServicio {
+    validar(nombre);
+    try{
+      if (repositorioPais.findByName(nombre) != null) {
+        throw new ErrorServicio("El país ya se encuentra registrado");
+      }
+      Pais pais = new Pais();
+      pais.setNombre(nombre);
+      pais.setEliminado(false);
+      repositorioPais.save(pais);
+    }catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
+    }
   }
 
   @Transactional
-  public Pais actualizar(Pais pais, Long id) throws ErrorServicio {
-    validar(pais);
-    Optional<Pais> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Pais paisActualizado = opt.get();
-      paisActualizado.setNombre(pais.getNombre());
-      return repositorio.save(paisActualizado);
-    } else {
-      throw new ErrorServicio("No se encontro el país solicitado");
+  public Pais modificarPais(String nombre, Long id) throws ErrorServicio {
+    validar(nombre);
+    try{
+      if (id == null) {
+        throw new ErrorServicio("El id del país no puede ser nulo");
+      }
+      Pais pais = buscarPais(id);
+      if (pais == null) {
+        throw new ErrorServicio("No se encontro el país solicitado");
+      }
+      pais.setNombre(nombre);
+      return repositorioPais.save(pais);
+    }catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Eliminacion
 
   @Transactional
-  public void eliminarPorId(Long id) throws ErrorServicio {
-    Optional<Pais> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Pais pais = opt.get();
+  public void eliminarPais(Long id) throws ErrorServicio {
+    try{
+      if (id == null) {
+        throw new ErrorServicio("El id del país no puede ser nulo");
+      }
+      Pais pais = buscarPais(id);
+      if (pais == null) {
+        throw new ErrorServicio("No se encontro el país solicitado");
+      }
       pais.setEliminado(true);
-      repositorio.save(pais);
-    } else {
-      throw new ErrorServicio("No se encontro el país solicitado");
+      repositorioPais.save(pais);
+    }catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Validacion
 
-  private void validar(Pais pais) throws ErrorServicio {
-    if (pais == null) {
-      throw new ErrorServicio("El país no puede ser nulo");
-    }
-    if (pais.getNombre() == null || pais.getNombre().isEmpty()) {
+  private void validar(String nombre) throws ErrorServicio {
+    if (nombre == null || nombre.isEmpty()) {
       throw new ErrorServicio("El nombre del país no puede ser nulo o vacío");
-    }
-    Pais paisExistente = repositorio.buscarPorNombre(pais.getNombre());
-    if (paisExistente != null) {
-      throw new ErrorServicio("El país ya con nombre " + pais.getNombre() + " ya existe");
     }
   }
 

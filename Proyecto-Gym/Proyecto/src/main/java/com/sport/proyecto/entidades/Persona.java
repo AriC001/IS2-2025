@@ -32,9 +32,6 @@ public abstract class Persona implements Serializable {
     private String correoElectronico;
 
     @Column
-    private String clave;
-
-    @Column
     private String telefono;
 
     @Column

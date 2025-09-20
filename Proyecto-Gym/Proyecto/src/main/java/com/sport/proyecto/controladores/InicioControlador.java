@@ -29,14 +29,13 @@ public class InicioControlador {
 
     @GetMapping("/login")
     public String loginForm(Model model) {
-        model.addAttribute("usuario", new Usuario());
         return "views/login"; // devuelve el HTML de login
     }
 
     @PostMapping("/login")
     public String loginUsuario(@RequestParam String nombreUsuario, @RequestParam String clave, ModelMap model, HttpSession session) {
         try {
-            Usuario usuarioLogueado = usuarioServicio.buscarPorNombreUsuarioYClave(nombreUsuario, clave);
+            Usuario usuarioLogueado = usuarioServicio.login(nombreUsuario, clave);
             if (usuarioLogueado == null) {
                 model.put("error", "Nombre de usuario o clave incorrecto");
                 return "views/login"; // se queda en la misma página
@@ -74,7 +73,7 @@ public class InicioControlador {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.setAttribute("usuariosession", null);
+        session.invalidate();
         return "redirect:/index";
     }
 

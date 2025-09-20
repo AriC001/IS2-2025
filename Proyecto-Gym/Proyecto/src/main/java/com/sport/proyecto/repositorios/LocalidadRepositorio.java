@@ -11,16 +11,13 @@ import java.util.List;
 @Repository
 public interface LocalidadRepositorio extends JpaRepository<Localidad, Long> {
   
-  @Query(value = "SELECT * FROM localidad WHERE localidad.alta = true", nativeQuery = true)
-  List<Localidad> buscarTodosActivos();
+  @Query(value = "SELECT * FROM localidad WHERE localidad.eliminado = false", nativeQuery = true)
+  List<Localidad> findAllActives();
 
-  @Query(value = "SELECT * FROM localidad WHERE localidad.id =: id AND localidad.alta = true", nativeQuery = true)
-  Localidad buscarPorIdActivo(@Param("id") Long id);
-
-  @Query(value = "SELECT * FROM localidad WHERE localidad.codigo_postal = :codigoPostal", nativeQuery = true)
-  Localidad buscarPorCodigoPostal(@Param("codigoPostal") String codigoPostal);
+  @Query(value = "SELECT * FROM localidad WHERE localidad.codigo_postal = :codigoPostal and localidad.eliminado = false", nativeQuery = true)
+  Localidad findByPostalCode(@Param("codigoPostal") String codigoPostal);
   
-  @Query(value = "SELECT * FROM localidad WHERE localidad.nombre = :nombre", nativeQuery = true)
-  Localidad buscarPorNombre(@Param("nombre") String nombre);
+  @Query(value = "SELECT * FROM localidad WHERE localidad.nombre = :nombre and localidad.eliminado = false", nativeQuery = true)
+  Localidad findByName(@Param("nombre") String nombre);
 
 }
