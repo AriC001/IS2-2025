@@ -21,6 +21,8 @@
           T(com.sport.proyecto.enums.Rol).EMPLEADO_ADMINISTRATIVO}">Gestionar Sucursales</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/direccion}" th:if="${usuariosession != null and usuariosession.rol ==
           T(com.sport.proyecto.enums.Rol).EMPLEADO_ADMINISTRATIVO}">Gestionar Direcciones</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/empresa}" th:if="${usuariosession != null and usuariosession.rol ==
+          T(com.sport.proyecto.enums.Rol).EMPLEADO_ADMINISTRATIVO}">Empresa</a></li>
         </ul>
 
         <!-- Buscador -->
