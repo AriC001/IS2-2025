@@ -1,6 +1,7 @@
 package com.sport.proyecto.servicios;
 
 import com.sport.proyecto.entidades.Departamento;
+import com.sport.proyecto.entidades.Provincia;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.DepartamentoRepositorio;
 import jakarta.transaction.Transactional;
@@ -11,95 +12,141 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DepartamentoServicio implements ServicioBase<Departamento> {
+public class DepartamentoServicio {
   @Autowired
-  private DepartamentoRepositorio repositorio;
+  private DepartamentoRepositorio repositorioDepartamento;
+
+  @Autowired
+  private ProvinciaServicio provinciaServicio;
 
   // Busqueda
 
   @Transactional
-  @Override
-  public List<Departamento> buscarTodos() throws ErrorServicio {
-    List<Departamento> departamentos = repositorio.findAll();
-    if (departamentos.isEmpty()) {
-      throw new ErrorServicio("No hay departamentos cargados");
+  public List<Departamento> listarDepartamento() throws ErrorServicio {
+    try {
+      List<Departamento> departamentos = repositorioDepartamento.findAll();
+      if (departamentos.isEmpty()) {
+        throw new ErrorServicio("No hay departamentos cargados");
+      }
+      return departamentos;
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
-    return departamentos;
   }
 
   @Transactional
-  public List<Departamento> buscarTodosActivos() throws ErrorServicio {
-    List<Departamento> departamentos = repositorio.buscarTodosActivos();
-    if (departamentos.isEmpty()) {
-      throw new ErrorServicio("No hay departamentos activos");
+  public List<Departamento> listarDepartamentoActivo() throws ErrorServicio {
+    try{
+      List<Departamento> departamentos = repositorioDepartamento.findAllActives();
+      if (departamentos.isEmpty()) {
+        throw new ErrorServicio("No hay departamentos cargados");
+      }
+      return departamentos;
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
-    return departamentos;
   }
 
   @Transactional
-  @Override
-  public Departamento buscarPorId(Long id) throws ErrorServicio {
-    Optional<Departamento> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Departamento departamento = opt.get();
-      return departamento;
-    } else {
-      throw new ErrorServicio("No se encontro el departamento solicitado");
+  public Departamento buscarDepartamento(Long id) throws ErrorServicio {
+    try{
+      Optional<Departamento> opt = repositorioDepartamento.findById(id);
+      if (opt.isPresent()) {
+        return opt.get();
+      } else {
+        throw new ErrorServicio("No se encontro el departamento solicitado");
+      }
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
+  }
 
+  @Transactional
+  public Departamento buscarDepartamentoPorNombre(String nombre) throws ErrorServicio {
+    try{
+      Departamento departamento = repositorioDepartamento.findByName(nombre);
+      if (departamento != null) {
+        return departamento;
+      } else {
+        throw new ErrorServicio("No se encontro el departamento solicitado");
+      }
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
+    }
   }
 
   // Escritura
 
   @Transactional
-  @Override
-  public void guardar(Departamento departamento) throws ErrorServicio {
-    validar(departamento);
-    departamento.setEliminado(false);
-    repositorio.save(departamento);
+  public void crearDepartamento(String nombre, Long idProvincia) throws ErrorServicio {
+    validar(nombre, idProvincia);
+    try{
+      Provincia provincia = provinciaServicio.buscarProvincia(idProvincia);
+      if (provincia == null) {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+      Departamento departamento = new Departamento();
+      departamento.setNombre(nombre);
+      departamento.setProvincia(provincia);
+      departamento.setEliminado(false);
+      repositorioDepartamento.save(departamento);
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
+    }
   }
 
   @Transactional
-  @Override
-  public Departamento actualizar(Departamento departamento, Long id) throws ErrorServicio {
-    validar(departamento);
-    Optional<Departamento> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Departamento departamentoActualizado = opt.get();
-      departamentoActualizado.setNombre(departamento.getNombre());
-      return repositorio.save(departamentoActualizado);
-    } else {
-      throw new ErrorServicio("No se encontro el departamento solicitado");
+  public void modificarDepartamento(Long id, String nombre, Long idProvincia) throws ErrorServicio {
+    validar(nombre, idProvincia);
+    try{
+      if (id == null) {
+        throw new ErrorServicio("El id del departamento no puede ser nulo");
+      }
+      Departamento departamento = buscarDepartamento(id);
+      if (departamento == null) {
+        throw new ErrorServicio("No se encontro el departamento solicitado");
+      }
+      Provincia provincia = provinciaServicio.buscarProvincia(idProvincia);
+      if (provincia == null) {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+      departamento.setNombre(nombre);
+      departamento.setProvincia(provincia);
+      repositorioDepartamento.save(departamento);
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Eliminacion
 
   @Transactional
-  @Override
-  public void eliminarPorId(Long id) throws ErrorServicio {
-    Optional<Departamento> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Departamento departamento = opt.get();
-      departamento.setEliminado(true);
-      repositorio.save(departamento);
-    } else {
-      throw new ErrorServicio("No se encontro el departamento solicitado");
+  public void eliminarDepartamento(Long id) throws ErrorServicio {
+    try{
+      if (id == null) {
+        throw new ErrorServicio("El id del departamento no puede ser nulo");
+      }
+      Optional<Departamento> opt = repositorioDepartamento.findById(id);
+      if (opt.isPresent()) {
+        Departamento departamento = opt.get();
+        departamento.setEliminado(true);
+        repositorioDepartamento.save(departamento);
+      } else {
+        throw new ErrorServicio("No se encontro el departamento solicitado");
+      }
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Validacion
 
-  private void validar(Departamento departamento) throws ErrorServicio {
-    if (departamento == null) {
-      throw new ErrorServicio("El país no puede ser nulo");
+  private void validar(String nombre, Long idProvincia) throws ErrorServicio {
+    if (nombre == null || nombre.isEmpty()) {
+      throw new ErrorServicio("El nombre del departamento no puede ser nulo o estar vacio");
     }
-    if (departamento.getNombre() == null || departamento.getNombre().isEmpty()) {
-      throw new ErrorServicio("El nombre del país no puede ser nulo o vacío");
-    }
-    Departamento departamentoExistente = repositorio.buscarPorNombre(departamento.getNombre());
-    if (departamentoExistente != null) {
-      throw new ErrorServicio("El país ya con nombre " + departamento.getNombre() + " ya existe");
+    if (idProvincia == null || idProvincia.toString().isEmpty()) {
+      throw new ErrorServicio("El id de la provincia no puede ser nulo o estar vacio");
     }
   }
 

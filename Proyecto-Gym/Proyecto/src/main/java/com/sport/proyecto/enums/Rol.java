@@ -1,5 +1,7 @@
 package com.sport.proyecto.enums;
 
 public enum Rol {
-  ADMIN, EMPLEADO, SOCIO;
+  EMPLEADO_ADMINISTRATIVO,
+  EMPLEADO_PROFESOR,
+  SOCIO;
 }

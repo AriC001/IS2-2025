@@ -17,23 +17,20 @@
           </div>
           <div class="card-body">
             <!-- Formulario de Login -->
-            <form th:action="@{/login}" th:object="${usuario}" method="post">
+            <form th:action="@{/login}" method="post">
+
+              <p th:if="${error != null}" th:text="${error}" style="color:red;"></p>
               <!-- Usuario -->
               <div class="mb-3">
-                <label for="nombreUsuario" class="form-label">Usuario</label>
-                <input type="text" id="nombreUsuario" th:field="*{nombreUsuario}" class="form-control" placeholder="Ingrese su usuario" required>
+                <label class="form-label">Usuario</label>
+                <input type="text" name="nombreUsuario" th:value="${nombreUsuario}" class="form-control" placeholder="Ingrese su usuario" required>
               </div>
 
               <!-- Contraseña -->
               <div class="mb-3">
-                <label for="clave" class="form-label">Contraseña</label>
-                <input type="password" id="clave" th:field="*{clave}" class="form-control" placeholder="Ingrese su contraseña" required>
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="clave" th:value="${clave}" class="form-control" placeholder="Ingrese su contraseña" required>
               </div>
-
-              <div th:if="${error}">
-                <label for="clave" class="form-label text-danger" th:text="${error}"></label>
-              </div>
-
 
               <!-- Botón -->
               <div class="d-grid">
