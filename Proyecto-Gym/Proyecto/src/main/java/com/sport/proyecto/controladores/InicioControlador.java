@@ -25,8 +25,6 @@ public class InicioControlador {
         return "views/index";
     }
 
-
-
     @GetMapping("/login")
     public String loginForm(Model model) {
         return "views/login"; // devuelve el HTML de login
@@ -44,7 +42,7 @@ public class InicioControlador {
             return "redirect:/index"; // login exitoso
 
         } catch (Exception e) {
-            model.put("error", "Error inesperado: " + e.getMessage());
+            model.put("error", "Error inesperado");
             return "views/login";
         }
     }

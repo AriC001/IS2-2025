@@ -88,7 +88,8 @@ public class DireccionServicio {
       Direccion direccion = new Direccion();
       direccion.setCalle(calle);
       direccion.setNumeracion(numeracion);
-      direccion.setBarrio(barrio);direccion.setManzanaPiso(manzanaPiso);
+      direccion.setBarrio(barrio);
+      direccion.setManzanaPiso(manzanaPiso);
       direccion.setCasaDepartamento(casaDepartamento);
       direccion.setReferencia(referencia);
       direccion.setEliminado(false);
@@ -157,9 +158,6 @@ public class DireccionServicio {
     }
     if (casaDepartamento == null || casaDepartamento.isEmpty()) {
       throw new ErrorServicio("La casa/departamento no puede ser nulo o estar vacio");
-    }
-    if (referencia == null || referencia.isEmpty()) {
-      throw new ErrorServicio("La referencia no puede ser nula o estar vacia");
     }
     if (idLocalidad == null || idLocalidad.toString().isEmpty()) {
       throw new ErrorServicio("La localidad no puede ser nula o estar vacia");

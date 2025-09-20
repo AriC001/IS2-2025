@@ -1,25 +1,215 @@
 package com.sport.proyecto.servicios;
 
 import com.sport.proyecto.entidades.Socio;
+import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.enums.tipoDocumento;
+import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.SocioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class SocioServicio {
     @Autowired
-    private SocioRepositorio repositorio;
+    private SocioRepositorio repositorioSocio;
+
+    @Autowired
+    private UsuarioServicio usuarioServicio;
+
+    @Autowired
+    private SucursalServicio sucursalServicio;
+
+    @Autowired
+    private DireccionServicio direccionServicio;
+
+    // Busqueda
+
+    @Transactional
+    public List<Socio> listarSocio() throws ErrorServicio {
+        try {
+            List<Socio> socios = repositorioSocio.findAll();
+            if (socios.isEmpty()) {
+                throw new ErrorServicio("No existen socios registrados");
+            }
+            return socios;
+        } catch (Exception e) {
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
+    @Transactional
+    public List<Socio> listarSocioActivos() throws ErrorServicio {
+        try {
+            List<Socio> socios = repositorioSocio.findAllActives();
+            if (socios.isEmpty()) {
+                throw new ErrorServicio("No existen socios registrados");
+            }
+            return socios;
+        } catch (Exception e) {
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
+    @Transactional
+    public Socio buscarSocio(Long id) throws ErrorServicio {
+        try{
+            Optional<Socio> opt = repositorioSocio.findById(id);
+            if (opt.isPresent()) {
+                return opt.get();
+            } else {
+                throw new ErrorServicio("No se encontro el socio solicitado");
+            }
+        }catch (Exception e){
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
+    // Alta
+
+    @Transactional
+    public void crearSocio(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
+        , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
+        validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
+        try{
+            if (repositorioSocio.findByNumeroDocumentoYTipo(numeroDocumento, tipoDocumento.toString()) != null) {
+                throw new ErrorServicio("Ya existe un socio con el tipo y número de documento ingresado");
+            }
+            if (sucursalServicio.buscarSucursal(idSucursal) == null) {
+                throw new ErrorServicio("No se encontro la sucursal solicitada");
+            }
+
+            Socio socio = new Socio();
+            socio.setNombre(nombre);
+            socio.setApellido(apellido);
+            socio.setFechaNacimiento(fechaNacimiento);
+            socio.setTipoDocumento(tipoDocumento);
+            socio.setNumeroDocumento(numeroDocumento);
+            socio.setTelefono(telefono);
+            socio.setCorreoElectronico(correoElectronico);
+            socio.setEliminado(false);
+            socio.setNumeroSocio(generarNumeroSocio());
+            socio.setSucursal(sucursalServicio.buscarSucursal(idSucursal));
+            socio.setDireccion(direccionServicio.buscarDireccion(idDireccion));
+            socio.setUsuario(usuario);
+            repositorioSocio.save(socio);
+        }catch (Exception e){
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
+    // Modificacion
+
+    @Transactional
+    public void modificarSocio(Long id, String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
+        , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
+        validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
+        try{
+            Socio socio = buscarSocio(id);
+            if (socio == null) {
+                throw new ErrorServicio("No se encontro el socio solicitado");
+            }
+            if (!socio.getNumeroDocumento().equals(numeroDocumento) || !socio.getTipoDocumento().toString().equals(tipoDocumento.toString())) {
+                if (repositorioSocio.findByNumeroDocumentoYTipo(numeroDocumento, tipoDocumento.toString()) != null) {
+                    throw new ErrorServicio("Ya existe un socio con el tipo y número de documento ingresado");
+                }
+            }
+            if (sucursalServicio.buscarSucursal(idSucursal) == null) {
+                throw new ErrorServicio("No se encontro la sucursal solicitada");
+            }
+
+            socio.setNombre(nombre);
+            socio.setApellido(apellido);
+            socio.setFechaNacimiento(fechaNacimiento);
+            socio.setTipoDocumento(tipoDocumento);
+            socio.setNumeroDocumento(numeroDocumento);
+            socio.setTelefono(telefono);
+            socio.setCorreoElectronico(correoElectronico);
+            socio.setSucursal(sucursalServicio.buscarSucursal(idSucursal));
+            socio.setDireccion(direccionServicio.buscarDireccion(idDireccion));
+            socio.setUsuario(usuario);
+            repositorioSocio.save(socio);
+        }catch (Exception e){
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
+    // Baja
+
+    @Transactional
+    public void eliminarSocio(Long id) throws ErrorServicio {
+        try{
+            Socio socio = buscarSocio(id);
+            if (socio == null) {
+                throw new ErrorServicio("No se encontro el socio solicitado");
+            }
+            socio.setEliminado(true);
+            repositorioSocio.save(socio);
+        }catch (Exception e){
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
 
     @Transactional
     public Long generarNumeroSocio() {
-        Long ultimo = repositorio.obtenerUltimoNumeroSocio();
+        Long ultimo = repositorioSocio.obtenerUltimoNumeroSocio();
         return ultimo + 1;
     }
 
     @Transactional
-    public Socio crearSocio(Socio socio) {
-        socio.setNumeroSocio(generarNumeroSocio());
-        return repositorio.save(socio);
+    public void asociarSocioUsuario(Long idSocio, Long idUsuario) throws ErrorServicio {
+        try{
+            Socio socio = buscarSocio(idSocio);
+            if (socio == null) {
+                throw new ErrorServicio("No se encontro el socio solicitado");
+            }
+            socio.setUsuario(usuarioServicio.buscarUsuario(idUsuario));
+            repositorioSocio.save(socio);
+        }catch (Exception e){
+            throw new ErrorServicio("Error del sistema");
+        }
+    }
+
+    // Validacion
+
+    private void validar(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, Long idSucursal, Usuario usuario, Long idDireccion) throws ErrorServicio {
+        if (nombre == null || nombre.isEmpty()) {
+            throw new ErrorServicio("El nombre no puede ser nulo o estar vacio");
+        }
+        if (apellido == null || apellido.isEmpty()) {
+            throw new ErrorServicio("El apellido no puede ser nulo o estar vacio");
+        }
+        if (fechaNacimiento == null) {
+            throw new ErrorServicio("La fecha de nacimiento no puede ser nula");
+        }
+        if (tipoDocumento == null) {
+            throw new ErrorServicio("El tipo de documento no puede ser nulo");
+        }
+        if (numeroDocumento == null || numeroDocumento.isEmpty()) {
+            throw new ErrorServicio("El numero de documento no puede ser nulo o estar vacio");
+        }
+        if (telefono == null || telefono.isEmpty()) {
+            throw new ErrorServicio("El telefono no puede ser nulo o estar vacio");
+        }
+        if (correoElectronico == null || correoElectronico.isEmpty()) {
+            throw new ErrorServicio("El correo electronico no puede ser nulo o estar vacio");
+        }
+        if (!UtilServicio.esEmailValido(correoElectronico)) {
+            throw new ErrorServicio("El correo electrónico no es válido");
+        }
+        if (idSucursal == null || idSucursal.toString().isEmpty()) {
+            throw new ErrorServicio("La sucursal no puede ser nula o estar vacia");
+        }
+        if (usuario == null) {
+            throw new ErrorServicio("El usuario no puede ser nulo");
+        }
+        if (idDireccion == null) {
+            throw new ErrorServicio("La direccion no puede ser nula");
+        }
     }
 }

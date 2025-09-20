@@ -17,5 +17,6 @@ public interface DepartamentoRepositorio extends JpaRepository<Departamento, Lon
   @Query(value = "SELECT * FROM departamento WHERE departamento.nombre = :nombre and departamento.eliminado = false", nativeQuery = true)
   Departamento findByName(@Param("nombre") String nombre);
 
-
+  @Query(value = "SELECT * FROM departamento WHERE departamento.provincia_id = :idPais and departamento.eliminado = false", nativeQuery = true)
+  List<Departamento> findByProvincia(@Param("idPais") Long idPais);
 }
