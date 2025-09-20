@@ -75,6 +75,23 @@ public class DepartamentoServicio {
     }
   }
 
+  @Transactional
+  public List<Departamento> buscarDepartamentoPorProvincia(Long idProvincia) throws ErrorServicio {
+    try{
+      Provincia provincia = provinciaServicio.buscarProvincia(idProvincia);
+      if (provincia == null) {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+      List<Departamento> departamentos = repositorioDepartamento.findByProvincia(idProvincia);
+      if (departamentos.isEmpty()) {
+        throw new ErrorServicio("No hay departamentos cargados para la provincia solicitada");
+      }
+      return departamentos;
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
+    }
+  }
+
   // Escritura
 
   @Transactional

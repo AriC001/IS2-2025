@@ -20,4 +20,7 @@ public interface LocalidadRepositorio extends JpaRepository<Localidad, Long> {
   @Query(value = "SELECT * FROM localidad WHERE localidad.nombre = :nombre and localidad.eliminado = false", nativeQuery = true)
   Localidad findByName(@Param("nombre") String nombre);
 
+  @Query(value = "SELECT * FROM localidad WHERE localidad.id_departamento = :idDepartamento and localidad.eliminado = false", nativeQuery = true)
+  List<Localidad> findByDepartamento(@Param("idDepartamento") Long idDepartamento);
+
 }

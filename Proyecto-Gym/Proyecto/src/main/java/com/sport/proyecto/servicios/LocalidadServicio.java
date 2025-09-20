@@ -90,6 +90,23 @@ public class LocalidadServicio {
     }
   }
 
+  @Transactional
+  public List<Localidad> buscarLocalidadPorDepartamento(Long idDepartamento) throws ErrorServicio{
+    try{
+      Departamento departamento = departamentoServicio.buscarDepartamento(idDepartamento);
+      if (departamento == null) {
+        throw new ErrorServicio("No se encontro el departamento solicitado");
+      }
+      List<Localidad> localidades = localidadRepositorio.findByDepartamento(idDepartamento);
+      if (localidades.isEmpty()) {
+        throw new ErrorServicio("No hay localidades cargadas para el departamento seleccionado");
+      }
+      return localidades;
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
+    }
+  }
+
   // Escritura
 
   @Transactional

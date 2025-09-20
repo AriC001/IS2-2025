@@ -1,6 +1,5 @@
 package com.sport.proyecto.servicios;
 
-import com.sport.proyecto.entidades.Persona;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.enums.Rol;
 import com.sport.proyecto.errores.ErrorServicio;
@@ -17,6 +16,9 @@ import java.util.Optional;
 public class UsuarioServicio {
   @Autowired
   private UsuarioRepositorio usuarioRepositorio;
+
+  @Autowired
+  private UtilServicio utilServicio;
 
   // Busqueda
 
@@ -77,7 +79,7 @@ public class UsuarioServicio {
   // Escritura
 
   @Transactional
-  public void crearUsuario(String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
+  public Usuario crearUsuario(String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
     validar(nombreUsuario, clave, rol);
     try{
       if (buscarUsuarioPorNombre(nombreUsuario) != null) {
@@ -85,12 +87,13 @@ public class UsuarioServicio {
       }
       Usuario usuario = new Usuario();
       usuario.setNombreUsuario(nombreUsuario);
-      usuario.setClave(clave);
+      usuario.setClave(UtilServicio.encriptarClave(clave));
       usuario.setRol(rol);
       usuario.setEliminado(false);
       usuarioRepositorio.save(usuario);
+      return usuario;
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -106,7 +109,7 @@ public class UsuarioServicio {
         throw new ErrorServicio("No se encontro el usuario solicitado");
       }
       usuario.setNombreUsuario(nombreUsuario);
-      usuario.setClave(clave);
+      usuario.setClave(UtilServicio.encriptarClave(clave));
       usuario.setRol(rol);
       usuarioRepositorio.save(usuario);
 
@@ -150,7 +153,7 @@ public class UsuarioServicio {
       if (usuario == null) {
         throw new ErrorServicio("No se encontro el usuario solicitado");
       }
-      if (!usuario.getClave().equals(clave)) {
+      if (!usuario.getClave().equals(UtilServicio.encriptarClave(clave))) {
         throw new ErrorServicio("La clave es incorrecta");
       }
       return usuario;

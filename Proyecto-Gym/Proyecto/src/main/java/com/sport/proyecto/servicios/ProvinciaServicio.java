@@ -64,6 +64,7 @@ public class ProvinciaServicio {
     }
   }
 
+  @Transactional
   public Provincia buscarProvinciaPorNombre(String nombre) throws ErrorServicio {
     try {
       Provincia provincia = repositorioProvincia.findByName(nombre);
@@ -71,6 +72,20 @@ public class ProvinciaServicio {
         return provincia;
       } else {
         throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
+    }
+  }
+
+  @Transactional
+  public List<Provincia> buscarProvinciaPorPais(Long id) throws ErrorServicio {
+    try {
+      List<Provincia> provincias = repositorioProvincia.findByPais(id);
+      if (provincias != null && !provincias.isEmpty()) {
+        return provincias;
+      } else {
+        throw new ErrorServicio("No se encontraron provincias para el pais solicitado");
       }
     } catch (Exception e) {
       throw new ErrorServicio("Error del sistema");

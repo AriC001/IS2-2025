@@ -6,7 +6,6 @@ import com.sport.proyecto.enums.tipoDocumento;
 import com.sport.proyecto.enums.tipoEmpleado;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.EmpleadoRepositorio;
-import com.sport.proyecto.servicios.util.UtilServicio;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
