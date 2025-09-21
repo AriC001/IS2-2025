@@ -27,7 +27,8 @@ public class EmpresaServicio {
       }
       return empresas;
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -40,7 +41,8 @@ public class EmpresaServicio {
       }
       return empresas;
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -54,7 +56,8 @@ public class EmpresaServicio {
         throw new ErrorServicio("No se encontro la empresa solicitada");
       }
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -67,7 +70,8 @@ public class EmpresaServicio {
       }
       return empresa;
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -84,7 +88,8 @@ public class EmpresaServicio {
       empresa.setEliminado(false);
       empresaRepositorio.save(empresa);
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -101,7 +106,8 @@ public class EmpresaServicio {
       empresa.setCorreoElectronico(correoElectronico);
       empresaRepositorio.save(empresa);
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -115,7 +121,8 @@ public class EmpresaServicio {
       empresa.setEliminado(true);
       empresaRepositorio.save(empresa);
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 

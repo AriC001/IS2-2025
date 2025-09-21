@@ -22,13 +22,13 @@ public class Sucursal implements Serializable {
 
   private String nombre;
 
-  private boolean eliminado;
-
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "direccion_id")
   private Direccion direccion;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "empresa_id")
   private Empresa empresa;
+
+  private boolean eliminado;
 }
