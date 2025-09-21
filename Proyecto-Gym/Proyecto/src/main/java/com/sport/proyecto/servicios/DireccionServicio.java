@@ -31,7 +31,8 @@ public class DireccionServicio {
       }
       return direcciones;
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -44,7 +45,8 @@ public class DireccionServicio {
       }
       return direcciones;
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
   @Transactional
@@ -57,7 +59,8 @@ public class DireccionServicio {
         throw new ErrorServicio("No se encontro la direccion solicitada");
       }
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -71,7 +74,8 @@ public class DireccionServicio {
         throw new ErrorServicio("No se encontro la direccion solicitada");
       }
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -97,7 +101,8 @@ public class DireccionServicio {
       direccionRepositorio.save(direccion);
 
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -123,7 +128,8 @@ public class DireccionServicio {
       direccionRepositorio.save(direccion);
 
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -137,7 +143,8 @@ public class DireccionServicio {
       direccion.setEliminado(true);
       direccionRepositorio.save(direccion);
     } catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -163,7 +170,5 @@ public class DireccionServicio {
       throw new ErrorServicio("La localidad no puede ser nula o estar vacia");
     }
   }
-
-
 
 }

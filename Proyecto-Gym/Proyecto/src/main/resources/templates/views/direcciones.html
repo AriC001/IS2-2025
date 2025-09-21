@@ -25,7 +25,6 @@
   <table class="table table-striped table-hover">
     <thead class="table-dark">
     <tr>
-      <th>ID</th>
       <th>Calle</th>
       <th>Número</th>
       <th>Barrio</th>
@@ -41,7 +40,6 @@
     </thead>
     <tbody>
     <tr th:each="direccion : ${direcciones}">
-      <td th:text="${direccion.id}"></td>
       <td th:text="${direccion.calle}"></td>
       <td th:text="${direccion.numeracion}"></td>
       <td th:text="${direccion.barrio}"></td>

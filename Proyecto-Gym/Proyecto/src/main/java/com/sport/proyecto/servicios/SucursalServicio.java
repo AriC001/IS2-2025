@@ -1,7 +1,10 @@
 package com.sport.proyecto.servicios;
 
+import com.sport.proyecto.entidades.Direccion;
+import com.sport.proyecto.entidades.Empresa;
 import com.sport.proyecto.entidades.Sucursal;
 import com.sport.proyecto.errores.ErrorServicio;
+import com.sport.proyecto.repositorios.DireccionRepositorio;
 import com.sport.proyecto.repositorios.SucursalRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +36,8 @@ public class SucursalServicio {
       }
       return sucursales;
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -46,7 +50,8 @@ public class SucursalServicio {
       }
       return sucursales;
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -60,7 +65,8 @@ public class SucursalServicio {
         throw new ErrorServicio("No se encontro la sucursal solicitada");
       }
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -73,38 +79,42 @@ public class SucursalServicio {
       }
       return sucursal;
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
   // Escritura
 
   @Transactional
-  public Sucursal crearSucursal(String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
+  public void crearSucursal(String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
     validar(nombre, empresaId, direccionId);
     try{
-      if (buscarSucursalPorNombre(nombre) != null) {
+      if (sucursalRepositorio.findByName(nombre) != null) {
         throw new ErrorServicio("Ya existe una sucursal con el nombre ingresado");
       }
-      if (direccionServicio.buscarDireccion(direccionId) == null) {
+      Direccion direccion = direccionServicio.buscarDireccion(direccionId);
+      if (direccion == null) {
         throw new ErrorServicio("No existe la direccion ingresada");
       }
-      if (empresaServicio.buscarEmpresa(empresaId) == null) {
+      Empresa empresa = empresaServicio.buscarEmpresa(empresaId);
+      if (empresa == null) {
         throw new ErrorServicio("No existe la empresa ingresada");
       }
       Sucursal sucursal = new Sucursal();
       sucursal.setNombre(nombre);
-      sucursal.setEmpresa(empresaServicio.buscarEmpresa(empresaId));
-      sucursal.setDireccion(direccionServicio.buscarDireccion(direccionId));
+      sucursal.setEmpresa(empresa);
+      sucursal.setDireccion(direccion);
       sucursal.setEliminado(false);
-      return sucursalRepositorio.save(sucursal);
+      sucursalRepositorio.save(sucursal);
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
   @Transactional
-  public Sucursal modificarSucursal(Long id, String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
+  public void modificarSucursal(Long id, String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
     validar(nombre, empresaId, direccionId);
     try{
       if (id == null || id.toString().isEmpty()) {
@@ -124,9 +134,10 @@ public class SucursalServicio {
       sucursal.setNombre(nombre);
       sucursal.setEmpresa(empresaServicio.buscarEmpresa(empresaId));
       sucursal.setDireccion(direccionServicio.buscarDireccion(direccionId));
-      return sucursalRepositorio.save(sucursal);
+      sucursalRepositorio.save(sucursal);
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -145,7 +156,8 @@ public class SucursalServicio {
       sucursal.setEliminado(true);
       sucursalRepositorio.save(sucursal);
     }catch (Exception e){
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
