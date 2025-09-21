@@ -18,8 +18,10 @@ import java.io.Serializable;
 public abstract class Persona implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @Column(updatable = false, nullable = false)
+    private String id;
+
 
     @Column
     private String nombre;
