@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class LocalidadServicio {
@@ -49,7 +50,7 @@ public class LocalidadServicio {
   }
 
   @Transactional
-  public Localidad buscarLocalidad(Long id) throws ErrorServicio {
+  public Localidad buscarLocalidad(String id) throws ErrorServicio {
     try {
       Optional<Localidad> opt = localidadRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -91,7 +92,7 @@ public class LocalidadServicio {
   }
 
   @Transactional
-  public List<Localidad> buscarLocalidadPorDepartamento(Long idDepartamento) throws ErrorServicio{
+  public List<Localidad> buscarLocalidadPorDepartamento(String idDepartamento) throws ErrorServicio{
     try{
       Departamento departamento = departamentoServicio.buscarDepartamento(idDepartamento);
       if (departamento == null) {
@@ -110,7 +111,7 @@ public class LocalidadServicio {
   // Escritura
 
   @Transactional
-  public void crearLocalidad(String nombre, String codigoPostal, Long idDepartamento) throws ErrorServicio {
+  public void crearLocalidad(String nombre, String codigoPostal, String idDepartamento) throws ErrorServicio {
     validar(nombre, codigoPostal, idDepartamento);
     try {
       Departamento departamento = departamentoServicio.buscarDepartamento(idDepartamento);
@@ -118,6 +119,7 @@ public class LocalidadServicio {
         throw new ErrorServicio("No se encontro el departamento solicitado");
       }
       Localidad localidad = new Localidad();
+      localidad.setId(UUID.randomUUID().toString());
       localidad.setNombre(nombre);
       localidad.setCodigoPostal(codigoPostal);
       localidad.setDepartamento(departamento);
@@ -129,7 +131,7 @@ public class LocalidadServicio {
   }
 
   @Transactional
-  public void modificarLocalidad(Long id, String nombre, String codigoPostal, Long idDepartamento) throws ErrorServicio {
+  public void modificarLocalidad(String id, String nombre, String codigoPostal, String idDepartamento) throws ErrorServicio {
     validar(nombre, codigoPostal, idDepartamento);
     try{
       if (id == null) {
@@ -155,7 +157,7 @@ public class LocalidadServicio {
   // Eliminacion
 
   @Transactional
-  public void eliminarLocalidad(Long id) throws ErrorServicio {
+  public void eliminarLocalidad(String id) throws ErrorServicio {
     try{
       if (id == null) {
         throw new ErrorServicio("El id no puede ser nulo");
@@ -173,14 +175,14 @@ public class LocalidadServicio {
 
   // Validacion
 
-  private void validar(String nombre, String codigoPostal, Long idDepartamento) throws ErrorServicio {
+  private void validar(String nombre, String codigoPostal, String idDepartamento) throws ErrorServicio {
     if (nombre == null || nombre.isEmpty()) {
       throw new ErrorServicio("El nombre no puede ser nulo o vacio");
     }
     if (codigoPostal == null || codigoPostal.isEmpty()) {
       throw new ErrorServicio("El codigo postal no puede ser nulo o vacio");
     }
-    if (idDepartamento == null || idDepartamento.toString().isEmpty()) {
+    if (idDepartamento == null || idDepartamento.isEmpty()) {
       throw new ErrorServicio("El departamento no puede ser nulo o vacio");
     }
   }

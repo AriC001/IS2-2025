@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DepartamentoRepositorio extends JpaRepository<Departamento, Long> {
+public interface DepartamentoRepositorio extends JpaRepository<Departamento, String> {
   
   @Query(value = "SELECT * FROM departamento WHERE departamento.eliminado = false", nativeQuery = true)
   List<Departamento> findAllActives();
@@ -18,5 +18,5 @@ public interface DepartamentoRepositorio extends JpaRepository<Departamento, Lon
   Departamento findByName(@Param("nombre") String nombre);
 
   @Query(value = "SELECT * FROM departamento WHERE departamento.provincia_id = :idPais and departamento.eliminado = false", nativeQuery = true)
-  List<Departamento> findByProvincia(@Param("idPais") Long idPais);
+  List<Departamento> findByProvincia(@Param("idPais") String idPais);
 }

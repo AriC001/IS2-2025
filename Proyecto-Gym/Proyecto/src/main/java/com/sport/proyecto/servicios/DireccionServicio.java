@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class DireccionServicio {
@@ -50,7 +51,7 @@ public class DireccionServicio {
     }
   }
   @Transactional
-  public Direccion buscarDireccion(Long id) throws ErrorServicio {
+  public Direccion buscarDireccion(String id) throws ErrorServicio {
     try {
       Optional<Direccion> opt = direccionRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -82,7 +83,7 @@ public class DireccionServicio {
   // Escritura
 
   @Transactional
-  public void crearDireccion(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, Long idLocalidad) throws ErrorServicio {
+  public void crearDireccion(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
     validar(calle, numeracion, barrio, manzanaPiso, casaDepartamento, referencia, idLocalidad);
     try {
       Localidad localidad = localidadServicio.buscarLocalidad(idLocalidad);
@@ -90,6 +91,7 @@ public class DireccionServicio {
         throw new ErrorServicio("No se encontro la localidad solicitada");
       }
       Direccion direccion = new Direccion();
+      direccion.setId(UUID.randomUUID().toString());
       direccion.setCalle(calle);
       direccion.setNumeracion(numeracion);
       direccion.setBarrio(barrio);
@@ -107,7 +109,7 @@ public class DireccionServicio {
   }
 
   @Transactional
-  public void modificarDireccion(Long id, String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, Long idLocalidad) throws ErrorServicio {
+  public void modificarDireccion(String id, String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
     validar(calle, numeracion, barrio, manzanaPiso, casaDepartamento, referencia, idLocalidad);
     try {
       Direccion direccion = buscarDireccion(id);
@@ -134,7 +136,7 @@ public class DireccionServicio {
   }
 
   @Transactional
-  public void eliminarDireccion(Long id) throws ErrorServicio {
+  public void eliminarDireccion(String id) throws ErrorServicio {
     try {
       Direccion direccion = buscarDireccion(id);
       if (direccion == null) {
@@ -150,7 +152,7 @@ public class DireccionServicio {
 
   // Validacion
 
-  private void validar(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, Long idLocalidad) throws ErrorServicio {
+  private void validar(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
     if (calle == null || calle.isEmpty()) {
       throw new ErrorServicio("La calle no puede ser nula o estar vacia");
     }
@@ -166,7 +168,7 @@ public class DireccionServicio {
     if (casaDepartamento == null || casaDepartamento.isEmpty()) {
       throw new ErrorServicio("La casa/departamento no puede ser nulo o estar vacio");
     }
-    if (idLocalidad == null || idLocalidad.toString().isEmpty()) {
+    if (idLocalidad == null || idLocalidad.isEmpty()) {
       throw new ErrorServicio("La localidad no puede ser nula o estar vacia");
     }
   }

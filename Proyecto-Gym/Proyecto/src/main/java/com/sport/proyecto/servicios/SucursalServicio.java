@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SucursalServicio {
@@ -56,7 +57,7 @@ public class SucursalServicio {
   }
 
   @Transactional
-  public Sucursal buscarSucursal(Long id) throws ErrorServicio {
+  public Sucursal buscarSucursal(String id) throws ErrorServicio {
     try{
       Optional<Sucursal> opt = sucursalRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -87,7 +88,7 @@ public class SucursalServicio {
   // Escritura
 
   @Transactional
-  public void crearSucursal(String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
+  public void crearSucursal(String nombre, String empresaId, String direccionId) throws ErrorServicio {
     validar(nombre, empresaId, direccionId);
     try{
       if (sucursalRepositorio.findByName(nombre) != null) {
@@ -102,6 +103,7 @@ public class SucursalServicio {
         throw new ErrorServicio("No existe la empresa ingresada");
       }
       Sucursal sucursal = new Sucursal();
+      sucursal.setId(UUID.randomUUID().toString());
       sucursal.setNombre(nombre);
       sucursal.setEmpresa(empresa);
       sucursal.setDireccion(direccion);
@@ -114,10 +116,10 @@ public class SucursalServicio {
   }
 
   @Transactional
-  public void modificarSucursal(Long id, String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
+  public void modificarSucursal(String id, String nombre, String empresaId, String direccionId) throws ErrorServicio {
     validar(nombre, empresaId, direccionId);
     try{
-      if (id == null || id.toString().isEmpty()) {
+      if (id == null || id.isEmpty()) {
         throw new ErrorServicio("El id de la sucursal no puede ser nulo o estar vacio");
       }
 
@@ -144,9 +146,9 @@ public class SucursalServicio {
   // Eliminacion
 
   @Transactional
-  public void eliminarSucursal(Long id) throws ErrorServicio {
+  public void eliminarSucursal(String id) throws ErrorServicio {
     try{
-      if (id == null || id.toString().isEmpty()) {
+      if (id == null || id.isEmpty()) {
         throw new ErrorServicio("El id de la sucursal no puede ser nulo o estar vacio");
       }
       Sucursal sucursal = buscarSucursal(id);
@@ -163,14 +165,14 @@ public class SucursalServicio {
 
   // Validacion
 
-  private void validar(String nombre, Long empresaId, Long direccionId) throws ErrorServicio {
+  private void validar(String nombre, String empresaId, String direccionId) throws ErrorServicio {
     if (nombre == null || nombre.isEmpty()) {
       throw new ErrorServicio("El nombre de la sucursal no puede ser nulo o estar vacio");
     }
-    if (empresaId == null || empresaId.toString().isEmpty()) {
+    if (empresaId == null || empresaId.isEmpty()) {
       throw new ErrorServicio("La empresa de la sucursal no puede ser nula o estar vacia");
     }
-    if (direccionId == null || direccionId.toString().isEmpty()) {
+    if (direccionId == null || direccionId.isEmpty()) {
       throw new ErrorServicio("La direccion de la sucursal no puede ser nula o estar vacia");
     }
   }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class DepartamentoServicio {
@@ -48,7 +49,7 @@ public class DepartamentoServicio {
   }
 
   @Transactional
-  public Departamento buscarDepartamento(Long id) throws ErrorServicio {
+  public Departamento buscarDepartamento(String id) throws ErrorServicio {
     try{
       Optional<Departamento> opt = repositorioDepartamento.findById(id);
       if (opt.isPresent()) {
@@ -76,7 +77,7 @@ public class DepartamentoServicio {
   }
 
   @Transactional
-  public List<Departamento> buscarDepartamentoPorProvincia(Long idProvincia) throws ErrorServicio {
+  public List<Departamento> buscarDepartamentoPorProvincia(String idProvincia) throws ErrorServicio {
     try{
       Provincia provincia = provinciaServicio.buscarProvincia(idProvincia);
       if (provincia == null) {
@@ -95,7 +96,7 @@ public class DepartamentoServicio {
   // Escritura
 
   @Transactional
-  public void crearDepartamento(String nombre, Long idProvincia) throws ErrorServicio {
+  public void crearDepartamento(String nombre, String idProvincia) throws ErrorServicio {
     validar(nombre, idProvincia);
     try{
       Provincia provincia = provinciaServicio.buscarProvincia(idProvincia);
@@ -103,6 +104,7 @@ public class DepartamentoServicio {
         throw new ErrorServicio("No se encontro la provincia solicitada");
       }
       Departamento departamento = new Departamento();
+      departamento.setId(UUID.randomUUID().toString());
       departamento.setNombre(nombre);
       departamento.setProvincia(provincia);
       departamento.setEliminado(false);
@@ -113,7 +115,7 @@ public class DepartamentoServicio {
   }
 
   @Transactional
-  public void modificarDepartamento(Long id, String nombre, Long idProvincia) throws ErrorServicio {
+  public void modificarDepartamento(String id, String nombre, String idProvincia) throws ErrorServicio {
     validar(nombre, idProvincia);
     try{
       if (id == null) {
@@ -138,7 +140,7 @@ public class DepartamentoServicio {
   // Eliminacion
 
   @Transactional
-  public void eliminarDepartamento(Long id) throws ErrorServicio {
+  public void eliminarDepartamento(String id) throws ErrorServicio {
     try{
       if (id == null) {
         throw new ErrorServicio("El id del departamento no puede ser nulo");
@@ -158,11 +160,11 @@ public class DepartamentoServicio {
 
   // Validacion
 
-  private void validar(String nombre, Long idProvincia) throws ErrorServicio {
+  private void validar(String nombre, String idProvincia) throws ErrorServicio {
     if (nombre == null || nombre.isEmpty()) {
       throw new ErrorServicio("El nombre del departamento no puede ser nulo o estar vacio");
     }
-    if (idProvincia == null || idProvincia.toString().isEmpty()) {
+    if (idProvincia == null || idProvincia.isEmpty()) {
       throw new ErrorServicio("El id de la provincia no puede ser nulo o estar vacio");
     }
   }

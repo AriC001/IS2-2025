@@ -13,8 +13,7 @@ import lombok.*;
 @Table(name = "mensaje")
 public class Mensaje {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String titulo;
 

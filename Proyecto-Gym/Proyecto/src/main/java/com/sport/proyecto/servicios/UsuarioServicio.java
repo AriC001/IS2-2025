@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -31,7 +32,8 @@ public class UsuarioServicio {
       }
       return usuarios;
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -44,12 +46,13 @@ public class UsuarioServicio {
       }
       return usuarios;
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
   @Transactional
-  public Usuario buscarUsuario(Long id) throws ErrorServicio {
+  public Usuario buscarUsuario(String id) throws ErrorServicio {
     try {
       Optional<Usuario> opt = usuarioRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -58,7 +61,8 @@ public class UsuarioServicio {
         throw new ErrorServicio("No se encontro el usuario solicitado");
       }
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -66,13 +70,14 @@ public class UsuarioServicio {
   public Usuario buscarUsuarioPorNombre(String nombreUsuario) throws ErrorServicio {
     try {
       Usuario usuario = usuarioRepositorio.findByUsername(nombreUsuario);
-      if (usuario != null) {
-        return usuario;
+      if (usuario == null) {
+        throw new ErrorServicio("Usuario no encontrado");
       } else {
-        throw new ErrorServicio("No se encontro el usuario solicitado");
+        return usuario;
       }
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -82,10 +87,11 @@ public class UsuarioServicio {
   public Usuario crearUsuario(String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
     validar(nombreUsuario, clave, rol);
     try{
-      if (buscarUsuarioPorNombre(nombreUsuario) != null) {
+      if (usuarioRepositorio.findByUsername(nombreUsuario) != null) {
         throw new ErrorServicio("El nombre de usuario ya existe");
       }
       Usuario usuario = new Usuario();
+      usuario.setId(UUID.randomUUID().toString());
       usuario.setNombreUsuario(nombreUsuario);
       usuario.setClave(UtilServicio.encriptarClave(clave));
       usuario.setRol(rol);
@@ -93,12 +99,13 @@ public class UsuarioServicio {
       usuarioRepositorio.save(usuario);
       return usuario;
     }catch (Exception e) {
+      e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
   @Transactional
-  public void modificarUsuario(Long id, String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
+  public void modificarUsuario(String id, String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
     validar(nombreUsuario, clave, rol);
     try{
       if (id == null) {
@@ -114,14 +121,15 @@ public class UsuarioServicio {
       usuarioRepositorio.save(usuario);
 
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
   // Eliminacion
 
   @Transactional
-  public void eliminarUsuario(Long id) throws ErrorServicio {
+  public void eliminarUsuario(String id) throws ErrorServicio {
     try{
       if (id == null) {
         throw new ErrorServicio("El id no puede ser nulo");
@@ -133,7 +141,8 @@ public class UsuarioServicio {
       usuario.setEliminado(true);
       usuarioRepositorio.save(usuario);
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -158,7 +167,8 @@ public class UsuarioServicio {
       }
       return usuario;
     }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
 
@@ -179,7 +189,7 @@ public class UsuarioServicio {
     }
   }
 
-  public boolean esAdmin(Long id){
+  /*public boolean esAdmin(String id){
     Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if(opt.isPresent()){
       Usuario u = opt.get();
@@ -190,5 +200,5 @@ public class UsuarioServicio {
       }
     }
     return false;
-  }
+  }*/
 }

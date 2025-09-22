@@ -1,4 +1,4 @@
 package com.sport.proyecto.enums;
 
-public enum tipoMensaje {
+public enum TipoMensaje {
 }

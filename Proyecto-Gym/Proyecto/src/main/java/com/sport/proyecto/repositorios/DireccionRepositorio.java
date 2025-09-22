@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DireccionRepositorio extends JpaRepository<Direccion, Long> {
+public interface DireccionRepositorio extends JpaRepository<Direccion, String> {
 
   @Query(value = "SELECT * FROM direccion WHERE direccion.eliminado = false", nativeQuery = true)
   List<Direccion> findAllActives();

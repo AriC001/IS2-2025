@@ -19,8 +19,7 @@ import java.util.Date;
 public abstract class Persona implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
 
     @Column
     private String nombre;

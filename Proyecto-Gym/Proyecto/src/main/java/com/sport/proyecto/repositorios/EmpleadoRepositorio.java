@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EmpleadoRepositorio  extends JpaRepository<Empleado,Long>  {
+public interface EmpleadoRepositorio  extends JpaRepository<Empleado,String>  {
   @Query(value = "SELECT * FROM empleado WHERE empleado.eliminado = false", nativeQuery = true)
   public List<Empleado> buscarEmpleadosActivos();
 

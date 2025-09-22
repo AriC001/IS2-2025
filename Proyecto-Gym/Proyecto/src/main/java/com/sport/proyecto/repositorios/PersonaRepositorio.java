@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PersonaRepositorio extends JpaRepository<Persona,Long> {
+public interface PersonaRepositorio extends JpaRepository<Persona,String> {
 
     @Query(value = "SELECT * FROM persona p WHERE p.email = :email AND p.clave = :clave AND p.eliminado = false", nativeQuery = true)
     Optional<Persona> findByEmailyClave(@Param("email") String email, @Param("clave") String clave);

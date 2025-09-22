@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SocioServicio {
@@ -56,7 +57,7 @@ public class SocioServicio {
     }
 
     @Transactional
-    public Socio buscarSocio(Long id) throws ErrorServicio {
+    public Socio buscarSocio(String id) throws ErrorServicio {
         try{
             Optional<Socio> opt = repositorioSocio.findById(id);
             if (opt.isPresent()) {
@@ -73,7 +74,7 @@ public class SocioServicio {
 
     @Transactional
     public void crearSocio(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
-        , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
+        , String telefono, String correoElectronico, String idSucursal, String idDireccion, Usuario usuario) throws ErrorServicio {
         validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
         try{
             if (repositorioSocio.findByNumeroDocumentoYTipo(numeroDocumento, tipoDocumento.toString()) != null) {
@@ -84,6 +85,7 @@ public class SocioServicio {
             }
 
             Socio socio = new Socio();
+            socio.setId(UUID.randomUUID().toString());
             socio.setNombre(nombre);
             socio.setApellido(apellido);
             socio.setFechaNacimiento(fechaNacimiento);
@@ -105,8 +107,8 @@ public class SocioServicio {
     // Modificacion
 
     @Transactional
-    public void modificarSocio(Long id, String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
-        , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
+    public void modificarSocio(String id, String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
+        , String telefono, String correoElectronico, String idSucursal, String idDireccion, Usuario usuario) throws ErrorServicio {
         validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
         try{
             Socio socio = buscarSocio(id);
@@ -141,7 +143,7 @@ public class SocioServicio {
     // Baja
 
     @Transactional
-    public void eliminarSocio(Long id) throws ErrorServicio {
+    public void eliminarSocio(String id) throws ErrorServicio {
         try{
             Socio socio = buscarSocio(id);
             if (socio == null) {
@@ -162,7 +164,7 @@ public class SocioServicio {
     }
 
     @Transactional
-    public void asociarSocioUsuario(Long idSocio, Long idUsuario) throws ErrorServicio {
+    public void asociarSocioUsuario(String idSocio, String idUsuario) throws ErrorServicio {
         try{
             Socio socio = buscarSocio(idSocio);
             if (socio == null) {
@@ -177,7 +179,7 @@ public class SocioServicio {
 
     // Validacion
 
-    private void validar(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, Long idSucursal, Usuario usuario, Long idDireccion) throws ErrorServicio {
+    private void validar(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, String idSucursal, Usuario usuario, String idDireccion) throws ErrorServicio {
         if (nombre == null || nombre.isEmpty()) {
             throw new ErrorServicio("El nombre no puede ser nulo o estar vacio");
         }
@@ -202,7 +204,7 @@ public class SocioServicio {
         if (!UtilServicio.esEmailValido(correoElectronico)) {
             throw new ErrorServicio("El correo electrónico no es válido");
         }
-        if (idSucursal == null || idSucursal.toString().isEmpty()) {
+        if (idSucursal == null || idSucursal.isEmpty()) {
             throw new ErrorServicio("La sucursal no puede ser nula o estar vacia");
         }
         if (usuario == null) {

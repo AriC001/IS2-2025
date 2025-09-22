@@ -67,7 +67,7 @@ public class DireccionControlador {
   }
 
   @GetMapping("/editar/{id}")
-  public String editar(@PathVariable Long id, Model model) {
+  public String editar(@PathVariable String id, Model model) {
     try {
       Direccion direccion = direccionServicio.buscarDireccion(id);
       model.addAttribute("direccion", direccion);
@@ -83,7 +83,7 @@ public class DireccionControlador {
   }
 
   @PostMapping("/actualizar/{id}")
-  public String actualizar(@PathVariable Long id, @ModelAttribute("direccion") Direccion direccion, Model model) {
+  public String actualizar(@PathVariable String id, @ModelAttribute("direccion") Direccion direccion, Model model) {
     try {
       direccionServicio.modificarDireccion(id, direccion.getCalle(), direccion.getNumeracion(), direccion.getBarrio(), direccion.getManzanaPiso(), direccion.getCasaDepartamento(),
         direccion.getReferencia(), direccion.getLocalidad().getId());
@@ -99,7 +99,7 @@ public class DireccionControlador {
   }
 
   @GetMapping("/eliminar/{id}")
-  public String eliminar(@PathVariable Long id, Model model) {
+  public String eliminar(@PathVariable String id, Model model) {
     try {
       direccionServicio.eliminarDireccion(id);
       return "redirect:/direccion";

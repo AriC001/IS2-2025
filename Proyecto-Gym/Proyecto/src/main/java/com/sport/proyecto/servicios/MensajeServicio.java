@@ -23,7 +23,7 @@ public class MensajeServicio {
     }
 
     @Transactional
-    public Mensaje buscarPorId(Long id) throws Exception {
+    public Mensaje buscarPorId(String id) throws Exception {
         Optional opt = repositorio.findById(id);
         if (opt.isPresent()) {
             Mensaje mensaje = (Mensaje) opt.get();

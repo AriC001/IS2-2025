@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EmpleadoServicio {
@@ -33,6 +34,7 @@ public class EmpleadoServicio {
     validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, tipoEmpleado, idSucursal, usuario);
 
     Empleado empleado = new Empleado();
+    empleado.setId(UUID.randomUUID().toString());
     empleado.setNombre(nombre);
     empleado.setApellido(apellido);
     empleado.setFechaNacimiento(fechaNacimiento);

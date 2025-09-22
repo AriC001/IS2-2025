@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SucursalRepositorio extends JpaRepository<Sucursal, Long> {
+public interface SucursalRepositorio extends JpaRepository<Sucursal, String> {
 
   @Query(value = "SELECT * FROM sucursal WHERE sucursal.eliminado = false", nativeQuery = true)
   List<Sucursal> findAllActives();

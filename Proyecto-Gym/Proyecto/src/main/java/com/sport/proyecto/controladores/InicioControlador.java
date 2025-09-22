@@ -75,7 +75,7 @@ public class InicioControlador {
         return "redirect:/index";
     }
 
-    @GetMapping("/registro")
+    /*@GetMapping("/registro")
     public String registro(HttpSession session,Model model) {
         Usuario login = null;
         if(session != null) {
@@ -97,7 +97,7 @@ public class InicioControlador {
         //List<Localidad> localidades = localidadServicio.mostrarLocalidades localidades(); // trae todas
         //model.addAttribute("localidades", localidades);
         return "views/registro";
-    }
+    }*/
 
     @ModelAttribute("usuariosession")
     public Usuario usuarioSession(HttpSession session) {

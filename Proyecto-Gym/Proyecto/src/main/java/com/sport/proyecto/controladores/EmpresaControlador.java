@@ -53,7 +53,7 @@ public class EmpresaControlador {
   }
 
   @GetMapping("/editar/{id}")
-  public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+  public String editar(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
     try {
       Empresa empresa = empresaServicio.buscarEmpresa(id);
       model.addAttribute("empresa", empresa);
@@ -65,7 +65,7 @@ public class EmpresaControlador {
   }
 
   @PostMapping("/actualizar/{id}")
-  public String actualizar(@PathVariable Long id, @ModelAttribute("empresa") Empresa empresa, RedirectAttributes redirectAttributes, Model model) {
+  public String actualizar(@PathVariable String id, @ModelAttribute("empresa") Empresa empresa, RedirectAttributes redirectAttributes, Model model) {
     try {
       empresaServicio.modificarEmpresa(id, empresa.getNombre(), empresa.getTelefono(), empresa.getCorreoElectronico());
       redirectAttributes.addFlashAttribute("msg", "Empresa actualizada con exito");
@@ -77,7 +77,7 @@ public class EmpresaControlador {
   }
 
   @GetMapping("/eliminar/{id}")
-  public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+  public String eliminar(@PathVariable String id, RedirectAttributes redirectAttributes) {
     try {
       empresaServicio.eliminarEmpresa(id);
       redirectAttributes.addFlashAttribute("msg", "Empresa eliminada con exito");

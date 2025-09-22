@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SocioRepositorio extends JpaRepository<Socio,Long> {
+public interface SocioRepositorio extends JpaRepository<Socio,String> {
     @Query("SELECT COALESCE(MAX(s.numeroSocio), 0) FROM Socio s")
     Long obtenerUltimoNumeroSocio();
 

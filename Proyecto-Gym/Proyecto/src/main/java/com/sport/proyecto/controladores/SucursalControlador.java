@@ -67,7 +67,7 @@ public class SucursalControlador {
   }
 
   @GetMapping("/editar/{id}")
-  public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+  public String editar(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
     try {
       Sucursal sucursal = sucursalServicio.buscarSucursal(id);
       model.addAttribute("sucursal", sucursal);
@@ -81,7 +81,7 @@ public class SucursalControlador {
   }
 
   @PostMapping("/actualizar/{id}")
-  public String actualizar(@PathVariable Long id,
+  public String actualizar(@PathVariable String id,
                            @ModelAttribute("sucursal") Sucursal sucursal,
                            RedirectAttributes redirectAttributes) {
     try {
@@ -99,7 +99,7 @@ public class SucursalControlador {
   }
 
   @GetMapping("/eliminar/{id}")
-  public String eliminar(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+  public String eliminar(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
     try {
       sucursalServicio.eliminarSucursal(id);
       redirectAttributes.addFlashAttribute("msg", "Sucursal eliminada exitosamente");

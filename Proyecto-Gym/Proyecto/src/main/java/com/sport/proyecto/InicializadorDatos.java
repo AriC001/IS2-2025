@@ -16,6 +16,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Component
 public class InicializadorDatos implements CommandLineRunner {
     @Autowired
@@ -45,67 +47,54 @@ public class InicializadorDatos implements CommandLineRunner {
         Usuario usuarioAdminExiste = usuarioRepositorio.findByUsername("admin");
 
         if (usuarioAdminExiste == null) {
-            // Creamos un Empleado admin
-            // Le asignamos un usuario
             Usuario usuarioAdmin = usuarioServicio.crearUsuario("admin", "admin123", Rol.EMPLEADO_ADMINISTRATIVO);
             usuarioRepositorio.save(usuarioAdmin);
-
-            System.out.println("Admin creado con ID = 1");
+            System.out.println("Admin creado");
         } else {
             System.out.println("El admin ya existe.");
         }
-
         // ================== DATOS GEOGRÁFICOS =====================
         // Solo insertar si no existen
         if (paisRepositorio.findByName("Argentina") == null) {
-            // CARGA DE DATOS GEOGRÁFICOS DE PRUEBA
-
             // PAÍS
-            Pais argentina = Pais.builder().nombre("Argentina").eliminado(false).build();
+            Pais argentina = Pais.builder().id(UUID.randomUUID().toString()).nombre("Argentina").eliminado(false).build();
             paisRepositorio.save(argentina);
-
             // PROVINCIAS
-            Provincia mendoza = Provincia.builder().nombre("Mendoza").pais(argentina).eliminado(false).build();
-            Provincia cordoba = Provincia.builder().nombre("Cordoba").pais(argentina).eliminado(false).build();
+            Provincia mendoza = Provincia.builder().id(UUID.randomUUID().toString()).nombre("Mendoza").pais(argentina).eliminado(false).build();
+            Provincia cordoba = Provincia.builder().id(UUID.randomUUID().toString()).nombre("Cordoba").pais(argentina).eliminado(false).build();
             provinciaRepositorio.save(mendoza);
             provinciaRepositorio.save(cordoba);
-
             // DEPARTAMENTOS
-            Departamento guaymallen = Departamento.builder().nombre("Guaymallén").provincia(mendoza).eliminado(false).build();
-            Departamento godoyCruz = Departamento.builder().nombre("Godoy Cruz").provincia(mendoza).eliminado(false).build();
-            Departamento capitalCba = Departamento.builder().nombre("Capital").provincia(cordoba).eliminado(false).build();
-            Departamento rioCuarto = Departamento.builder().nombre("Río Cuarto").provincia(cordoba).eliminado(false).build();
+            Departamento guaymallen = Departamento.builder().id(UUID.randomUUID().toString()).nombre("Guaymallén").provincia(mendoza).eliminado(false).build();
+            Departamento godoyCruz = Departamento.builder().id(UUID.randomUUID().toString()).nombre("Godoy Cruz").provincia(mendoza).eliminado(false).build();
+            Departamento capitalCba = Departamento.builder().id(UUID.randomUUID().toString()).nombre("Capital").provincia(cordoba).eliminado(false).build();
+            Departamento rioCuarto = Departamento.builder().id(UUID.randomUUID().toString()).nombre("Río Cuarto").provincia(cordoba).eliminado(false).build();
             departamentoRepositorio.save(guaymallen);
             departamentoRepositorio.save(godoyCruz);
             departamentoRepositorio.save(capitalCba);
             departamentoRepositorio.save(rioCuarto);
-
             // LOCALIDADES
-            // Mendoza - Guaymallén
-            Localidad villaNueva = Localidad.builder().nombre("Villa Nueva").codigoPostal("5521").departamento(guaymallen).eliminado(false).build();
-            Localidad dorrego = Localidad.builder().nombre("Dorrego").codigoPostal("5519").departamento(guaymallen).eliminado(false).build();
-            Localidad bermejo = Localidad.builder().nombre("Bermejo").codigoPostal("5523").departamento(guaymallen).eliminado(false).build();
+            Localidad villaNueva = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Villa Nueva").codigoPostal("5521").departamento(guaymallen).eliminado(false).build();
+            Localidad dorrego = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Dorrego").codigoPostal("5519").departamento(guaymallen).eliminado(false).build();
+            Localidad bermejo = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Bermejo").codigoPostal("5523").departamento(guaymallen).eliminado(false).build();
             localidadRepositorio.save(villaNueva);
             localidadRepositorio.save(dorrego);
             localidadRepositorio.save(bermejo);
-            // Mendoza - Godoy Cruz
-            Localidad godoyCruzLoc = Localidad.builder().nombre("Godoy Cruz Centro").codigoPostal("5501").departamento(godoyCruz).eliminado(false).build();
-            Localidad sanFrancisco = Localidad.builder().nombre("San Francisco del Monte").codigoPostal("5503").departamento(godoyCruz).eliminado(false).build();
-            Localidad villaHipodromo = Localidad.builder().nombre("Villa Hipódromo").codigoPostal("5505").departamento(godoyCruz).eliminado(false).build();
+            Localidad godoyCruzLoc = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Godoy Cruz Centro").codigoPostal("5501").departamento(godoyCruz).eliminado(false).build();
+            Localidad sanFrancisco = Localidad.builder().id(UUID.randomUUID().toString()).nombre("San Francisco del Monte").codigoPostal("5503").departamento(godoyCruz).eliminado(false).build();
+            Localidad villaHipodromo = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Villa Hipódromo").codigoPostal("5505").departamento(godoyCruz).eliminado(false).build();
             localidadRepositorio.save(godoyCruzLoc);
             localidadRepositorio.save(sanFrancisco);
             localidadRepositorio.save(villaHipodromo);
-            // Córdoba - Capital
-            Localidad nuevaCordoba = Localidad.builder().nombre("Nueva Córdoba").codigoPostal("5000").departamento(capitalCba).eliminado(false).build();
-            Localidad alberdi = Localidad.builder().nombre("Alberdi").codigoPostal("5001").departamento(capitalCba).eliminado(false).build();
-            Localidad generalPaz = Localidad.builder().nombre("General Paz").codigoPostal("5002").departamento(capitalCba).eliminado(false).build();
+            Localidad nuevaCordoba = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Nueva Córdoba").codigoPostal("5000").departamento(capitalCba).eliminado(false).build();
+            Localidad alberdi = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Alberdi").codigoPostal("5001").departamento(capitalCba).eliminado(false).build();
+            Localidad generalPaz = Localidad.builder().id(UUID.randomUUID().toString()).nombre("General Paz").codigoPostal("5002").departamento(capitalCba).eliminado(false).build();
             localidadRepositorio.save(nuevaCordoba);
             localidadRepositorio.save(alberdi);
             localidadRepositorio.save(generalPaz);
-            // Córdoba - Río Cuarto
-            Localidad rioCuartoLoc = Localidad.builder().nombre("Río Cuarto Centro").codigoPostal("5800").departamento(rioCuarto).eliminado(false).build();
-            Localidad lasHigueras = Localidad.builder().nombre("Las Higueras").codigoPostal("5803").departamento(rioCuarto).eliminado(false).build();
-            Localidad holmberg = Localidad.builder().nombre("Holmberg").codigoPostal("5805").departamento(rioCuarto).eliminado(false).build();
+            Localidad rioCuartoLoc = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Río Cuarto Centro").codigoPostal("5800").departamento(rioCuarto).eliminado(false).build();
+            Localidad lasHigueras = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Las Higueras").codigoPostal("5803").departamento(rioCuarto).eliminado(false).build();
+            Localidad holmberg = Localidad.builder().id(UUID.randomUUID().toString()).nombre("Holmberg").codigoPostal("5805").departamento(rioCuarto).eliminado(false).build();
             localidadRepositorio.save(rioCuartoLoc);
             localidadRepositorio.save(lasHigueras);
             localidadRepositorio.save(holmberg);
