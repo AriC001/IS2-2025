@@ -212,4 +212,21 @@ public class SocioServicio {
             throw new ErrorServicio("La direccion no puede ser nula");
         }
     }
+    @Transactional
+    public  Socio findByNumeroSocio(Long numeroSocio) {
+        return this.repositorio.findByNumeroSocio(numeroSocio);
+    }
+    @Transactional
+    public Socio buscarSocioPorIdUsuario(String idUsuario) {
+        Long nroSocio = this.repositorio.findNroSocioByIdUsuario(idUsuario);
+        return this.repositorio.findByNumeroSocio(nroSocio);
+    }
+    @Transactional
+    public java.util.List<Socio> obtenerSociosActivos() {
+        return this.repositorio.findAllActiveSocios();
+    }
+    @Transactional
+    public Socio buscarPorId(String id) {
+        return this.repositorio.findById(Long.valueOf(id)).orElse(null);
+    }
 }
