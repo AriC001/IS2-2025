@@ -134,8 +134,7 @@ public class RutinaControlador {
                 rutinas = rutinaServicio.listarRutinasPorSocio(socio.getNumeroSocio().toString());
                 break;
 
-            case EMPLEADO_ADMINISTRATIVO:// si querés que los empleados también vean rutinas
-            case EMPLEADO_PROFESOR:
+            case EMPLEADO:// si querés que los empleados también vean rutinas
                 Empleado empleado = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId().toString());
                 rutinas = rutinaServicio.listarRutinasPorProfesor(empleado.getId());
                 break;

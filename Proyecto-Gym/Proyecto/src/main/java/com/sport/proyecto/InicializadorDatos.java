@@ -44,17 +44,22 @@ public class InicializadorDatos implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         // Buscamos si ya existe un empleado con ID = 1 (el admin)
+        // ------------------- ADMIN ---------------------
         Optional<Usuario> usuarioAdminExiste = usuarioRepositorio.findByUsername("admin");
-
         if (!usuarioAdminExiste.isPresent()) {
-            // Creamos un Empleado admin
-            // Le asignamos un usuario
             Usuario usuarioAdmin = usuarioServicio.crearUsuario("admin", "admin123", Rol.ADMIN);
-            usuarioRepositorio.save(usuarioAdmin);
-
-            System.out.println("Admin creado con ID = 1");
-        } else {
-            System.out.println("El admin ya existe.");
+            // Crear la persona asociada al admin si tu sistema lo requiere
+            Persona adminPersona = Empleado.builder()
+                    .nombre("Admin")
+                    .apellido("Sistema")
+                    .email("admin@sistema.com")
+                    .clave("admin123") // o encriptar si querés
+                    .usuario(usuarioAdmin)
+                    .eliminado(false)
+                    .tipoEmpleado(tipoEmpleado.ADMINISTRATIVO)
+                    .build();
+            personaRepositorio.save(adminPersona);
+            System.out.println("Admin creado con ID = " + usuarioAdmin.getId());
         }
 
         // ================== DATOS GEOGRÁFICOS =====================

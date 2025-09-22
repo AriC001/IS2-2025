@@ -7,3 +7,7 @@
 /dataSources/
 /dataSources.local.xml
 *.properties
+*application.properties
+Proyecto/src/main/resources/application.properties
+Proyecto/target/classes/application.properties
+src/main/resources/application.properties

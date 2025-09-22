@@ -1,6 +1,7 @@
 package com.sport.proyecto.servicios;
 
 import java.security.MessageDigest;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import com.sport.proyecto.errores.ErrorServicio;
@@ -43,4 +44,6 @@ public class UtilServicio {
     if (email == null) return false;
     return EMAIL_PATTERN.matcher(email).matches();
   }
+
+
 }

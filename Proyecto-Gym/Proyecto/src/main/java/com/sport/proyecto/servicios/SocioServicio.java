@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class SocioServicio {
     // Alta
 
     @Transactional
-    public void crearSocio(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
+    public void crearSocio(String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
         , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
         validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
         try{
@@ -105,7 +106,7 @@ public class SocioServicio {
     // Modificacion
 
     @Transactional
-    public void modificarSocio(Long id, String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
+    public void modificarSocio(Long id, String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
         , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
         validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
         try{
@@ -177,7 +178,7 @@ public class SocioServicio {
 
     // Validacion
 
-    private void validar(String nombre, String apellido, Date fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, Long idSucursal, Usuario usuario, Long idDireccion) throws ErrorServicio {
+    private void validar(String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, Long idSucursal, Usuario usuario, Long idDireccion) throws ErrorServicio {
         if (nombre == null || nombre.isEmpty()) {
             throw new ErrorServicio("El nombre no puede ser nulo o estar vacio");
         }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmpleadoRepositorio  extends JpaRepository<Empleado,String>  {
@@ -18,4 +19,7 @@ public interface EmpleadoRepositorio  extends JpaRepository<Empleado,String>  {
     public List<Empleado> buscarEmpleadosActivos();
     @Query("SELECT e FROM Empleado e WHERE e.tipoEmpleado = 'PROFESOR' and e.eliminado = false")
     public List<Empleado> findAllProfesores();
+  @Query("SELECT e FROM Empleado e WHERE e.numeroDocumento = :numeroDocumento and e.eliminado = false")
+  public Optional<Empleado> findByNumeroDocumento(@Param("numeroDocumento") String numeroDocumento);
+
 }   

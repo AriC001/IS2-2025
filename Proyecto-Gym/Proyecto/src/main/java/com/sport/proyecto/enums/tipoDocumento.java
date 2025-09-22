@@ -20,9 +20,4 @@ public enum tipoDocumento {
     return descripcion;
   }
 
-  @Override
-  public String toString() {
-    return descripcion;
-  }
-
 }

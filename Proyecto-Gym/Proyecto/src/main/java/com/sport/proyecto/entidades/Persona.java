@@ -1,10 +1,14 @@
 package com.sport.proyecto.entidades;
 
+import java.time.LocalDate;
 import java.util.Date;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import com.sport.proyecto.enums.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 
 @Entity
@@ -20,6 +24,7 @@ public abstract class Persona implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private String id;
 
@@ -39,13 +44,16 @@ public abstract class Persona implements Serializable {
     private String telefono;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private tipoDocumento tipoDocumento;
 
     @Column(unique = true)
     private String numeroDocumento;
 
+
     @Column
-    private Date fechaNacimiento;
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaNacimiento;
 
     @Column(nullable = false)
     private boolean eliminado;
