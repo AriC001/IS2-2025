@@ -55,14 +55,7 @@ public class EmpleadoControlador {
     }*/
     try {
       empleadoServicio.crearEmpleado(
-              empleado.getNombre(),
-              empleado.getApellido(),
-              empleado.getTipoDocumento(),
-              empleado.getNumeroDocumento(),
-              empleado.getFechaNacimiento(),
-              empleado.getTelefono(),
-              empleado.getEmail(),
-              empleado.getTipoEmpleado()
+              empleado
       );
 
       model.addAttribute("msg", "Empleado creado exitosamente");

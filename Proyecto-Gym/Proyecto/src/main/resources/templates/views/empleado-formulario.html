@@ -44,7 +44,7 @@
     <div class="mb-3">
       <label class="form-label">Tipo de DNI</label>
       <select class="form-select" th:field="*{tipoDocumento}" required>
-        <option th:each="tipo : ${tiposDni}"
+        <option th:each="tipo : ${tiposDocumento}"
                 th:value="${tipo}"
                 th:text="${tipo}">
         </option>

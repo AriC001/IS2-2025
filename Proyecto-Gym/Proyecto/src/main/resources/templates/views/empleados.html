@@ -29,7 +29,8 @@
       <th>ID</th>
       <th>Nombre</th>
       <th>Apellido</th>
-      <th>DNI</th>
+      <th>Tipo de documento</th>
+      <th>Numero de documento</th>
       <th>Cargo</th>
       <th>Teléfono</th>
       <th>Activo</th>
@@ -41,10 +42,11 @@
       <td th:text="${empleado.id}"></td>
       <td th:text="${empleado.nombre}"></td>
       <td th:text="${empleado.apellido}"></td>
-      <td th:text="${empleado.dni}"></td>
-      <td th:text="${empleado.cargo}"></td>
+      <td th:text="${empleado.tipoDocumento}"></td>
+      <td th:text="${empleado.numeroDocumento}"></td>
+      <td th:text="${empleado.tipoEmpleado}"></td>
       <td th:text="${empleado.telefono}"></td>
-      <td th:text="${empleado.activo == true ? 'Sí' : 'No'}"></td>
+      <td th:text="${empleado.eliminado == false ? 'Sí' : 'No'}"></td>
       <td>
         <a th:href="@{'/empleados/editar/' + ${empleado.id}}" class="btn btn-sm btn-warning">Editar</a>
         <a th:href="@{'/empleados/eliminar/' + ${empleado.id}}" class="btn btn-sm btn-danger" onclick="return confirm('Eliminar empleado?');">Eliminar</a>
