@@ -25,18 +25,15 @@ public class InicioControlador {
         return "views/index";
     }
 
-
-
     @GetMapping("/login")
     public String loginForm(Model model) {
-        model.addAttribute("usuario", new Usuario());
         return "views/login"; // devuelve el HTML de login
     }
 
     @PostMapping("/login")
-    public String loginUsuario(@ModelAttribute("usuario") Usuario usuario, ModelMap model, HttpSession session) {
+    public String loginUsuario(@RequestParam String nombreUsuario, @RequestParam String clave, ModelMap model, HttpSession session) {
         try {
-            Usuario usuarioLogueado = usuarioServicio.buscarPorNombreUsuarioYClave(usuario);
+            Usuario usuarioLogueado = usuarioServicio.login(nombreUsuario, clave);
             if (usuarioLogueado == null) {
                 model.put("error", "Nombre de usuario o clave incorrecto");
                 return "views/login"; // se queda en la misma página
@@ -45,7 +42,7 @@ public class InicioControlador {
             return "redirect:/index"; // login exitoso
 
         } catch (Exception e) {
-            model.put("error", "Error inesperado: " + e.getMessage());
+            model.put("error", "Error inesperado");
             return "views/login";
         }
     }
@@ -74,7 +71,7 @@ public class InicioControlador {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.setAttribute("usuariosession", null);
+        session.invalidate();
         return "redirect:/index";
     }
 

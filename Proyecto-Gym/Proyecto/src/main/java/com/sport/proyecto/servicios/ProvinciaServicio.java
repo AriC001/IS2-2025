@@ -1,6 +1,7 @@
 package com.sport.proyecto.servicios;
 
 import com.sport.proyecto.entidades.Departamento;
+import com.sport.proyecto.entidades.Pais;
 import com.sport.proyecto.entidades.Provincia;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.ProvinciaRepositorio;
@@ -13,94 +14,157 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProvinciaServicio implements ServicioBase<Provincia>{
+public class ProvinciaServicio {
   @Autowired
-  private ProvinciaRepositorio repositorio;
+  private ProvinciaRepositorio repositorioProvincia;
+
+  @Autowired
+  private PaisServicio paisServicio;
 
   // Busqueda
 
   @Transactional
-  @Override
-  public List<Provincia> buscarTodos() throws ErrorServicio {
-    List<Provincia> provincias = repositorio.findAll();
-    if (provincias.isEmpty()) {
-      throw new ErrorServicio("No hay provincias cargadas");
+  public List<Provincia> listarProvincia() throws ErrorServicio {
+    try{
+      List<Provincia> provincias = repositorioProvincia.findAll();
+      if (provincias.isEmpty()) {
+        throw new ErrorServicio("No hay provincias cargadas");
+      }
+      return repositorioProvincia.findAll();
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
-    return repositorio.findAll();
+
   }
 
   @Transactional
-  public List<Provincia> buscarTodosActivos() throws ErrorServicio {
-    List<Provincia> provincias = repositorio.buscarTodosActivos();
-    if (provincias.isEmpty()) {
-      throw new ErrorServicio("No hay provincias activas");
+  public List<Provincia> listarProvinciaActiva() throws ErrorServicio {
+    try {
+      List<Provincia> provincias = repositorioProvincia.findAllActives();
+      if (provincias.isEmpty()) {
+        throw new ErrorServicio("No hay provincias cargadas");
+      }
+      return repositorioProvincia.findAllActives();
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
     }
-    return provincias;
   }
 
   @Transactional
-  @Override
-  public Provincia buscarPorId(Long id) throws ErrorServicio {
-    Optional<Provincia> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Provincia provincia = opt.get();
-      return provincia;
-    } else {
-      throw new ErrorServicio("No se encontro la provincia solicitada");
+  public Provincia buscarProvincia(Long id) throws ErrorServicio {
+    try {
+      Optional<Provincia> provincia = repositorioProvincia.findById(id);
+      if (provincia.isPresent()) {
+        return provincia.get();
+      } else {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
+    }
+  }
+
+  @Transactional
+  public Provincia buscarProvinciaPorNombre(String nombre) throws ErrorServicio {
+    try {
+      Provincia provincia = repositorioProvincia.findByName(nombre);
+      if (provincia != null) {
+        return provincia;
+      } else {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
+    }
+  }
+
+  @Transactional
+  public List<Provincia> buscarProvinciaPorPais(Long id) throws ErrorServicio {
+    try {
+      List<Provincia> provincias = repositorioProvincia.findByPais(id);
+      if (provincias != null && !provincias.isEmpty()) {
+        return provincias;
+      } else {
+        throw new ErrorServicio("No se encontraron provincias para el pais solicitado");
+      }
+    } catch (Exception e) {
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Escritura
 
   @Transactional
-  @Override
-  public void guardar(Provincia provincia) throws ErrorServicio {
-    validar(provincia);
-    provincia.setEliminado(false);
-    repositorio.save(provincia);
+  public void crearProvincia(String nombre, Long idPais) throws ErrorServicio {
+    validar(nombre, idPais);
+    try{
+      Pais pais = paisServicio.buscarPais(idPais);
+      if (pais == null) {
+        throw new ErrorServicio("No se encontro el pais solicitado");
+      }
+      Provincia provincia = new Provincia();
+      provincia.setNombre(nombre);
+      provincia.setPais(pais);
+      provincia.setEliminado(false);
+      repositorioProvincia.save(provincia);
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
+    }
   }
 
   @Transactional
-  @Override
-  public Provincia actualizar(Provincia provincia, Long id) throws ErrorServicio {
-    validar(provincia);
-    Optional<Provincia> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Provincia provinciaActual = opt.get();
-      provinciaActual.setNombre(provincia.getNombre());
-      return repositorio.save(provinciaActual);
-    } else {
-      throw new ErrorServicio("No se encontro la provincia solicitada");
+  public void modificarProvincia(Long id, String nombre, Long idPais) throws ErrorServicio {
+    validar(nombre, idPais);
+    try{
+      if (id == null) {
+        throw new ErrorServicio("El id de la provincia no puede ser nulo");
+      }
+      Provincia provincia = buscarProvincia(id);
+      if (provincia == null) {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+      Pais pais = paisServicio.buscarPais(idPais);
+      if (pais == null) {
+        throw new ErrorServicio("No se encontro el pais solicitado");
+      }
+      provincia.setNombre(nombre);
+      provincia.setPais(pais);
+      repositorioProvincia.save(provincia);
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Eliminacion
 
   @Transactional
-  @Override
-  public void eliminarPorId(Long id) throws ErrorServicio {
-    Optional<Provincia> opt = repositorio.findById(id);
-    if (opt.isPresent()) {
-      Provincia provincia = opt.get();
-      provincia.setEliminado(true);
-      repositorio.save(provincia);
-    } else {
-      throw new ErrorServicio("No se encontro la provincia solicitada");
+  public void eliminarProvincia(Long id) throws ErrorServicio {
+    try{
+      if (id == null) {
+        throw new ErrorServicio("El id de la provincia no puede ser nulo");
+      }
+      Optional<Provincia> opt = repositorioProvincia.findById(id);
+      if (opt.isPresent()) {
+        Provincia provincia = opt.get();
+        provincia.setEliminado(true);
+        repositorioProvincia.save(provincia);
+      } else {
+        throw new ErrorServicio("No se encontro la provincia solicitada");
+      }
+    }catch (Exception e){
+      throw new ErrorServicio("Error del sistema");
     }
   }
 
   // Validacion
 
-  private void validar(Provincia provincia) throws ErrorServicio {
-    if (provincia == null) {
-      throw new ErrorServicio("El país no puede ser nulo");
+  private void validar(String nombre, Long idPais) throws ErrorServicio {
+    if (nombre == null || nombre.isEmpty()) {
+      throw new ErrorServicio("El nombre de la provincia no puede ser nulo o estar vacio");
     }
-    if (provincia.getNombre() == null || provincia.getNombre().isEmpty()) {
-      throw new ErrorServicio("El nombre del país no puede ser nulo o vacío");
+    if (idPais == null || idPais.toString().isEmpty()) {
+      throw new ErrorServicio("El id del pais no puede ser nulo o estar vacio");
     }
-    Provincia provinciaExistente = repositorio.buscarPorNombre(provincia.getNombre());
-    if (provinciaExistente != null) {
-      throw new ErrorServicio("El país ya con nombre " + provincia.getNombre() + " ya existe");
-    }
+
   }
 }

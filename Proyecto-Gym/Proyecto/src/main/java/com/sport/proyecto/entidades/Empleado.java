@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.sport.proyecto.enums.tipoEmpleado;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@DiscriminatorValue("EMPLEADO")
 @Getter
 @Setter
 @NoArgsConstructor

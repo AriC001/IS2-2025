@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface ProvinciaRepositorio extends JpaRepository<Provincia, Long> {
   
-  @Query(value = "SELECT * FROM provincia WHERE provincia.alta = true", nativeQuery = true)
-  List<Provincia> buscarTodosActivos();
+  @Query(value = "SELECT * FROM provincia WHERE provincia.eliminado = false", nativeQuery = true)
+  List<Provincia> findAllActives();
 
-  @Query(value = "SELECT * FROM provincia WHERE provincia.id =: id AND provincia.alta = true", nativeQuery = true)
-  Provincia buscarPorIdActivo(@Param("id") Long id);
+  @Query(value = "SELECT * FROM provincia WHERE provincia.nombre = :nombre and provincia.eliminado = false", nativeQuery = true)
+  Provincia findByName(@Param("nombre") String nombre);
 
-  @Query(value = "SELECT * FROM provincia WHERE provincia.nombre = :nombre", nativeQuery = true)
-  Provincia buscarPorNombre(@Param("nombre") String nombre);
+  @Query(value = "SELECT * FROM provincia WHERE provincia.id_pais = :idPais and provincia.eliminado = false", nativeQuery = true)
+  List<Provincia> findByPais(@Param("idPais") Long idPais);
 
 }

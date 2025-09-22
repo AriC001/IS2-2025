@@ -11,13 +11,10 @@ import java.util.List;
 @Repository
 public interface SucursalRepositorio extends JpaRepository<Sucursal, Long> {
 
-  @Query(value = "SELECT * FROM sucursal WHERE sucursal.alta = true", nativeQuery = true)
-  List<Sucursal> buscarTodosActivos();
+  @Query(value = "SELECT * FROM sucursal WHERE sucursal.eliminado = false", nativeQuery = true)
+  List<Sucursal> findAllActives();
 
-  @Query(value = "SELECT * FROM sucursal WHERE sucursal.id =: id AND sucursal.alta = true", nativeQuery = true)
-  Sucursal buscarPorIdActivo(@Param("id") Long id);
-
-  @Query(value = "SELECT * FROM sucursal WHERE sucursal.nombre = :nombre", nativeQuery = true)
-  Sucursal buscarPorNombre(@Param("nombre") String nombre);
+  @Query(value = "SELECT * FROM sucursal WHERE sucursal.nombre = :nombre and sucursal.eliminado = false", nativeQuery = true)
+  Sucursal findByName(@Param("nombre") String nombre);
 
 }

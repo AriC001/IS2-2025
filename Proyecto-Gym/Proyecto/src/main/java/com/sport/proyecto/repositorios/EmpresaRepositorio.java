@@ -10,13 +10,10 @@ import java.util.List;
 
 @Repository
 public interface EmpresaRepositorio extends JpaRepository<Empresa, Long> {
-  @Query(value = "SELECT * FROM empresa WHERE empresa.alta = true", nativeQuery = true)
-  List<Empresa> buscarTodosActivos();
+  @Query(value = "SELECT * FROM empresa WHERE empresa.eliminado = false", nativeQuery = true)
+  List<Empresa> findAllActives();
 
-  @Query(value = "SELECT * FROM empresa WHERE empresa.id =: id AND empresa.alta = true", nativeQuery = true)
-  Empresa buscarPorIdActivo(@Param("id") Long id);
-
-  @Query(value = "SELECT * FROM empresa WHERE empresa.nombre = :nombre", nativeQuery = true)
-  Empresa buscarPorNombre(@Param("nombre") String nombre);
+  @Query(value = "SELECT * FROM empresa WHERE empresa.nombre = :nombre and empresa.eliminado = false", nativeQuery = true)
+  Empresa findByName(@Param("nombre") String nombre);
 
 }

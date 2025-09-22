@@ -11,14 +11,12 @@ import java.util.List;
 @Repository
 public interface DepartamentoRepositorio extends JpaRepository<Departamento, Long> {
   
-  @Query(value = "SELECT * FROM departamento WHERE departamento.alta = true", nativeQuery = true)
-  List<Departamento> buscarTodosActivos();
+  @Query(value = "SELECT * FROM departamento WHERE departamento.eliminado = false", nativeQuery = true)
+  List<Departamento> findAllActives();
 
-  @Query(value = "SELECT * FROM departamento WHERE departamento.id =: id AND departamento.alta = true", nativeQuery = true)
-  Departamento buscarPorIdActivo(@Param("id") Long id);
+  @Query(value = "SELECT * FROM departamento WHERE departamento.nombre = :nombre and departamento.eliminado = false", nativeQuery = true)
+  Departamento findByName(@Param("nombre") String nombre);
 
-  @Query(value = "SELECT * FROM departamento WHERE departamento.nombre = :nombre", nativeQuery = true)
-  Departamento buscarPorNombre(@Param("nombre") String nombre);
-
-
+  @Query(value = "SELECT * FROM departamento WHERE departamento.provincia_id = :idPais and departamento.eliminado = false", nativeQuery = true)
+  List<Departamento> findByProvincia(@Param("idPais") Long idPais);
 }
