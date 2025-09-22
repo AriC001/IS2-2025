@@ -16,6 +16,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 public class InicializadorDatos implements CommandLineRunner {
     @Autowired
@@ -42,9 +44,9 @@ public class InicializadorDatos implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         // Buscamos si ya existe un empleado con ID = 1 (el admin)
-        Usuario usuarioAdminExiste = usuarioRepositorio.findByUsername("admin");
+        Optional<Usuario> usuarioAdminExiste = usuarioRepositorio.findByUsername("admin");
 
-        if (usuarioAdminExiste == null) {
+        if (!usuarioAdminExiste.isPresent()) {
             // Creamos un Empleado admin
             // Le asignamos un usuario
             Usuario usuarioAdmin = usuarioServicio.crearUsuario("admin", "admin123", Rol.ADMIN);

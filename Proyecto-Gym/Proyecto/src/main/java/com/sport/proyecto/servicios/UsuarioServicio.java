@@ -64,16 +64,11 @@ public class UsuarioServicio {
 
   @Transactional
   public Usuario buscarUsuarioPorNombre(String nombreUsuario) throws ErrorServicio {
-    try {
-      Usuario usuario = usuarioRepositorio.findByUsername(nombreUsuario);
-      if (usuario != null) {
-        return usuario;
-      } else {
-        throw new ErrorServicio("No se encontro el usuario solicitado");
-      }
-    }catch (Exception e) {
-      throw new ErrorServicio("Error del sistema");
+    Optional<Usuario> opt = usuarioRepositorio.findByUsername(nombreUsuario);
+    if (opt.isEmpty()) {
+      return null; // devolvemos null en vez de tirar excepción
     }
+    return opt.get();
   }
 
   // Escritura
@@ -93,6 +88,7 @@ public class UsuarioServicio {
       usuarioRepositorio.save(usuario);
       return usuario;
     }catch (Exception e) {
+      e.printStackTrace(); // o usar logger.error("Error creando usuario", e);
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
   }
