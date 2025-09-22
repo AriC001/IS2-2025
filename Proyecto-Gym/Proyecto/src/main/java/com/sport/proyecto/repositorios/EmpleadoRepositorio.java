@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
 @Repository
 public interface EmpleadoRepositorio  extends JpaRepository<Empleado,String>  {
     @Query("SELECT e FROM Empleado e WHERE e.tipoEmpleado = 'PROFESOR' and e.eliminado = false and e.id=:id")
@@ -12,5 +15,7 @@ public interface EmpleadoRepositorio  extends JpaRepository<Empleado,String>  {
     @Query("SELECT e FROM Empleado e WHERE e.usuario.id = :idUsuario and e.eliminado = false")
     Empleado findEmpleadoByIdUsuario(String idUsuario);
     @Query("SELECT e FROM Empleado e WHERE e.tipoEmpleado = 'PROFESOR' and e.eliminado = false")
-    java.util.List<Empleado> findAllProfesores();
+    public List<Empleado> buscarEmpleadosActivos();
+    @Query("SELECT e FROM Empleado e WHERE e.tipoEmpleado = 'PROFESOR' and e.eliminado = false")
+    public List<Empleado> findAllProfesores();
 }   

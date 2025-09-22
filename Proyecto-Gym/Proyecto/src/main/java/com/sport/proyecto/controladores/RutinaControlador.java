@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import com.sport.proyecto.enums.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import com.sport.proyecto.entidades.DetalleRutina; 
@@ -134,7 +134,8 @@ public class RutinaControlador {
                 rutinas = rutinaServicio.listarRutinasPorSocio(socio.getNumeroSocio().toString());
                 break;
 
-            case EMPLEADO: // si querés que los empleados también vean rutinas
+            case EMPLEADO_ADMINISTRATIVO:// si querés que los empleados también vean rutinas
+            case EMPLEADO_PROFESOR:
                 Empleado empleado = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId().toString());
                 rutinas = rutinaServicio.listarRutinasPorProfesor(empleado.getId());
                 break;

@@ -18,6 +18,15 @@ public class EmpleadoServicio {
   @Autowired
   private EmpleadoRepositorio empleadoRepositorio;
 
+    @Transactional
+    public Empleado buscarEmpleadoPorIdUsuario(String idUsuario) {
+        return empleadoRepositorio.findEmpleadoByIdUsuario(idUsuario);
+    }
+    @Transactional
+    public List<Empleado> obtenerProfesores() {
+        return empleadoRepositorio.findAllProfesores();
+    }
+
   @Transactional
   public List<Empleado> listaEmpleadosActivos() throws ErrorServicio {
     List<Empleado> empleados = empleadoRepositorio.buscarEmpleadosActivos();
@@ -39,7 +48,7 @@ public class EmpleadoServicio {
     empleado.setTipoDocumento(tipoDocumento);
     empleado.setNumeroDocumento(numeroDocumento);
     empleado.setTelefono(telefono);
-    empleado.setCorreoElectronico(correoElectronico);
+    empleado.setEmail(correoElectronico);
     empleado.setTipoEmpleado(tipoEmpleado);
     empleado.setUsuario(usuario);
     empleado.setEliminado(false);
