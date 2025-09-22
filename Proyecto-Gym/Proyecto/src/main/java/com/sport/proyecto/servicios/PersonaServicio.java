@@ -108,7 +108,7 @@ public class PersonaServicio {
         if(esEmpleado){
             Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.EMPLEADO_PROFESOR).build();
             p = Empleado.builder().nombre(nombre).
-                    apellido(apellido).correoElectronico(email).usuario(u).build();
+                    apellido(apellido).email(email).usuario(u).build();
             //if(p instanceof Empleado e){
             //    e.setTipoEmpleado();
             //    p = e;
@@ -116,7 +116,7 @@ public class PersonaServicio {
         }else{
             Usuario u = Usuario.builder().nombreUsuario(email).clave(clave1).rol(Rol.SOCIO).build();
             p = Socio.builder().nombre(nombre).
-                    apellido(apellido).correoElectronico(email).usuario(u).build();
+                    apellido(apellido).email(email).usuario(u).build();
             if(p instanceof Socio s){
                 s.setNumeroSocio(socioRepositorio.obtenerUltimoNumeroSocio()+1);
                 p = s;

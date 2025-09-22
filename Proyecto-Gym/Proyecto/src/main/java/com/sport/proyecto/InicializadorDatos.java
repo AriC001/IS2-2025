@@ -47,7 +47,7 @@ public class InicializadorDatos implements CommandLineRunner {
         if (usuarioAdminExiste == null) {
             // Creamos un Empleado admin
             // Le asignamos un usuario
-            Usuario usuarioAdmin = usuarioServicio.crearUsuario("admin", "admin123", Rol.EMPLEADO_ADMINISTRATIVO);
+            Usuario usuarioAdmin = usuarioServicio.crearUsuario("admin", "admin123", Rol.ADMIN);
             usuarioRepositorio.save(usuarioAdmin);
 
             System.out.println("Admin creado con ID = 1");

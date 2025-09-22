@@ -1,9 +1,10 @@
 package com.sport.proyecto.entidades;
 
+import java.util.Date;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
+import com.sport.proyecto.enums.*;
 import java.io.Serializable;
 
 @Entity
@@ -22,7 +23,6 @@ public abstract class Persona implements Serializable {
     @Column(updatable = false, nullable = false)
     private String id;
 
-
     @Column
     private String nombre;
 
@@ -35,13 +35,35 @@ public abstract class Persona implements Serializable {
     @Column
     private String clave;
 
+    @Column
+    private String telefono;
+
+    @Column
+    private tipoDocumento tipoDocumento;
+
+    @Column(unique = true)
+    private String numeroDocumento;
+
+    @Column
+    private Date fechaNacimiento;
+
     @Column(nullable = false)
     private boolean eliminado;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id")
+    private Sucursal sucursal;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id")
+    private Direccion direccion;
 }
+
+
 //Persona
 //-nombre: string
 //-apellido: string

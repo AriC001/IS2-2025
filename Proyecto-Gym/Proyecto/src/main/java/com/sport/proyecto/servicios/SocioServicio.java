@@ -45,7 +45,7 @@ public class SocioServicio {
     @Transactional
     public List<Socio> listarSocioActivos() throws ErrorServicio {
         try {
-            List<Socio> socios = repositorioSocio.findAllActives();
+            List<Socio> socios = repositorioSocio.findAllActiveSocios();
             if (socios.isEmpty()) {
                 throw new ErrorServicio("No existen socios registrados");
             }
@@ -90,7 +90,7 @@ public class SocioServicio {
             socio.setTipoDocumento(tipoDocumento);
             socio.setNumeroDocumento(numeroDocumento);
             socio.setTelefono(telefono);
-            socio.setCorreoElectronico(correoElectronico);
+            socio.setEmail(correoElectronico);
             socio.setEliminado(false);
             socio.setNumeroSocio(generarNumeroSocio());
             socio.setSucursal(sucursalServicio.buscarSucursal(idSucursal));
@@ -128,7 +128,7 @@ public class SocioServicio {
             socio.setTipoDocumento(tipoDocumento);
             socio.setNumeroDocumento(numeroDocumento);
             socio.setTelefono(telefono);
-            socio.setCorreoElectronico(correoElectronico);
+            socio.setEmail(correoElectronico);
             socio.setSucursal(sucursalServicio.buscarSucursal(idSucursal));
             socio.setDireccion(direccionServicio.buscarDireccion(idDireccion));
             socio.setUsuario(usuario);
@@ -214,19 +214,19 @@ public class SocioServicio {
     }
     @Transactional
     public  Socio findByNumeroSocio(Long numeroSocio) {
-        return this.repositorio.findByNumeroSocio(numeroSocio);
+        return this.repositorioSocio.findByNumeroSocio(numeroSocio);
     }
     @Transactional
     public Socio buscarSocioPorIdUsuario(String idUsuario) {
-        Long nroSocio = this.repositorio.findNroSocioByIdUsuario(idUsuario);
-        return this.repositorio.findByNumeroSocio(nroSocio);
+        Long nroSocio = this.repositorioSocio.findNroSocioByIdUsuario(idUsuario);
+        return this.repositorioSocio.findByNumeroSocio(nroSocio);
     }
     @Transactional
     public java.util.List<Socio> obtenerSociosActivos() {
-        return this.repositorio.findAllActiveSocios();
+        return this.repositorioSocio.findAllActiveSocios();
     }
     @Transactional
     public Socio buscarPorId(String id) {
-        return this.repositorio.findById(Long.valueOf(id)).orElse(null);
+        return this.repositorioSocio.findById(Long.valueOf(id)).orElse(null);
     }
 }
