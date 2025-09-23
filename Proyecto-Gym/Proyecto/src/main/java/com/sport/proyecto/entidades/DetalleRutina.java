@@ -7,7 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.sport.proyecto.enums.EstadoDetalleRutina;
 
-
+import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
@@ -15,6 +15,7 @@ import com.sport.proyecto.enums.EstadoDetalleRutina;
 public class DetalleRutina {
     @Id
     @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private String id;
 
@@ -23,9 +24,13 @@ public class DetalleRutina {
     @Column
     private String actividad;
     @Column
-    private Date fecha;
+    private LocalDate fecha;
     @Column
     private boolean eliminado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rutina")
+    private Rutina rutina;
 
     public boolean isEliminado() {
         return this.eliminado;

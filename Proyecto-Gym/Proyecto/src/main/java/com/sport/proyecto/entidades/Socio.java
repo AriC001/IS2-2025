@@ -17,4 +17,8 @@ public class Socio extends Persona {
     private Long numeroSocio;
     @OneToMany(mappedBy = "socio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rutina> rutinas;
+
+    public Long getNumeroSocio() {
+        return numeroSocio;
+    }   
 }

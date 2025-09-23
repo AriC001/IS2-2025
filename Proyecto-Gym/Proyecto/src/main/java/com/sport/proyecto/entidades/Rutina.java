@@ -4,11 +4,14 @@ import lombok.*;
 
 import java.io.Serializable;
 import com.sport.proyecto.enums.*;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.mapping.model.SpELContext;
 
-import java.util.Collection;
 import com.sport.proyecto.entidades.DetalleRutina;
 import com.sport.proyecto.entidades.Empleado;
 @Entity
@@ -22,38 +25,41 @@ public class Rutina implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private String id;
 
     @Column
-    private Date fechaInicio;
+    private LocalDate fechaInicio;
 
     @Column
-    private Date fechaFin;
+    private LocalDate fechaFin;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "detalle_rutina_id")
-    private Collection<DetalleRutina> detalleRutina;
+    @OneToMany(mappedBy = "rutina", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<DetalleRutina> detalleRutina = new ArrayList<>();
+    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "socio")
-    private Persona socio;
+    private Socio socio;
 
     @Enumerated(EnumType.STRING)
     private EstadoRutina estado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profesor")
-    private Persona profesor;
+    private Empleado profesor;
 
     @Column
     private boolean eliminado;
 
-    public DetalleRutina crearDetalleRutina(String actividad, Date fecha) {
+      public DetalleRutina crearDetalleRutina(String actividad, LocalDate fecha) {
         DetalleRutina detalle = new DetalleRutina();
         detalle.setActividad(actividad);
         detalle.setFecha(fecha);
         detalle.setEstado(EstadoDetalleRutina.SIN_REALIZAR);
+        detalle.setEliminado(false);
+        detalle.setRutina(this); // clave: relacionar detalle con rutina
         this.detalleRutina.add(detalle);
         return detalle;
     }
@@ -81,10 +87,10 @@ public class Rutina implements Serializable {
             detalle.setEliminado(true);
         }
     }
-    public Persona getProfesor() {
+    public Empleado getProfesor() {
         return this.profesor;
     }
-    public Persona getSocio() {
+    public Socio getSocio() {
         return this.socio;
     }
     public void setProfesor(Empleado profesor) {

@@ -17,8 +17,9 @@ import java.io.Serializable;
 public class Usuario implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(generator = "UUID")
+  @Column(updatable = false, nullable = false)
+  private String id;
 
   @Column(name = "nombre_usuario")
   private String nombreUsuario;

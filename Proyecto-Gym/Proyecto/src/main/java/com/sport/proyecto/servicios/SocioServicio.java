@@ -8,6 +8,7 @@ import com.sport.proyecto.repositorios.SocioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.sport.proyecto.servicios.DireccionServicio;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -29,6 +30,13 @@ public class SocioServicio {
     private DireccionServicio direccionServicio;
 
     // Busqueda
+
+    @Transactional
+    public Socio nuevSocio(Usuario usuario) {
+        Socio socio = new Socio();
+        socio.setUsuario(usuario);
+        return socio;
+    }
 
     @Transactional
     public List<Socio> listarSocio() throws ErrorServicio {
@@ -57,9 +65,9 @@ public class SocioServicio {
     }
 
     @Transactional
-    public Socio buscarSocio(Long id) throws ErrorServicio {
+    public Socio buscarSocio(Long nroSocio) throws ErrorServicio {
         try{
-            Optional<Socio> opt = repositorioSocio.findById(id);
+            Optional<Socio> opt = repositorioSocio.findByNumeroSocio(nroSocio);
             if (opt.isPresent()) {
                 return opt.get();
             } else {
@@ -163,9 +171,9 @@ public class SocioServicio {
     }
 
     @Transactional
-    public void asociarSocioUsuario(Long idSocio, Long idUsuario) throws ErrorServicio {
+    public void asociarSocioUsuario(Long nroSocio, String idUsuario) throws ErrorServicio {
         try{
-            Socio socio = buscarSocio(idSocio);
+            Socio socio = buscarSocio(nroSocio);
             if (socio == null) {
                 throw new ErrorServicio("No se encontro el socio solicitado");
             }
@@ -214,11 +222,11 @@ public class SocioServicio {
         }
     }
     @Transactional
-    public  Socio findByNumeroSocio(Long numeroSocio) {
+    public Optional<Socio> findByNumeroSocio(Long numeroSocio) {
         return this.repositorioSocio.findByNumeroSocio(numeroSocio);
     }
     @Transactional
-    public Socio buscarSocioPorIdUsuario(String idUsuario) {
+    public Optional<Socio> buscarSocioPorIdUsuario(String idUsuario) {
         Long nroSocio = this.repositorioSocio.findNroSocioByIdUsuario(idUsuario);
         return this.repositorioSocio.findByNumeroSocio(nroSocio);
     }

@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Collection;
 import java.util.List;
+import java.time.LocalDate;
 @Service
 public class RutinaServicio {
     @Autowired
@@ -30,26 +31,30 @@ public class RutinaServicio {
     @Autowired
     private EmpleadoRepositorio empleadoRepositorio;
     @Autowired
-    private RutinaRepositorio rutinaRepository;
+    private RutinaRepositorio rutinaRepositorio;
 
     @Transactional
-    public Rutina crearRutina(String id_socio, String id_empleado, Collection<DetalleRutina> detalle, Date fechaInicio, Date fechaFin) throws ErrorServicio {
+    public Rutina crearRutina(String id_socio, String id_empleado, Collection<DetalleRutina> detalle, LocalDate fechaInicio, LocalDate fechaFin) throws ErrorServicio {
         // Lógica para crear una nueva rutina
         validar(id_empleado, id_socio, fechaInicio, fechaFin, detalle);
         Rutina rutina = new Rutina();
         rutina.setFechaInicio(fechaInicio);
         rutina.setFechaFin(null);
-        detalle.add(crearDetalleRutina(fechaInicio,"Inicio de rutina"));
         rutina.setDetalleRutina(detalle);
         rutina.setEstado(EstadoRutina.EN_PROCESO);
-        rutina.setSocio(socioRepositorio.findByNumeroSocio(Long.parseLong(id_socio)));
+        if(socioRepositorio.findByNumeroSocio(Long.parseLong(id_socio)).isPresent()){
+            rutina.setSocio(socioRepositorio.findByNumeroSocio(Long.parseLong(id_socio)).get());
+        }
+        else{
+            throw new ErrorServicio("No existe un socio con ese ID.");
+        }
         rutina.setProfesor(empleadoRepositorio.findProfesor(id_empleado));
-        return rutinaRepository.save(rutina);
+        return rutinaRepositorio.save(rutina);
     }
     @Transactional
     public Rutina buscarRutina(String id) throws ErrorServicio {
         // Lógica para buscar una rutina por su ID
-        Rutina rutina = rutinaRepository.findById(id).orElse(null);
+        Rutina rutina = rutinaRepositorio.findById(id).orElse(null);
         if (rutina == null || rutina.isEliminado()) {
             throw new ErrorServicio("Rutina no encontrada o eliminada");
         }
@@ -61,15 +66,15 @@ public class RutinaServicio {
         Rutina rutinaExistente = buscarRutina(id);
         if (rutinaExistente != null) {
             rutinaExistente.setEstado(EstadoRutina.FINALIZADA);
-            rutinaExistente.setFechaFin(new Date());
-            rutinaRepository.save(rutinaExistente);
+            rutinaExistente.setFechaFin(LocalDate.now());
+            rutinaRepositorio.save(rutinaExistente);
         } else {
             throw new ErrorServicio("Rutina no encontrada");
         }
     }
     @Transactional
     public void modificarRutina(String id, String idProfesor, String idSocio, 
-    Date fechaInicio, Date fechaFin, EstadoRutina estado, Collection<DetalleRutina> detalle) throws ErrorServicio {
+    LocalDate fechaInicio, LocalDate fechaFin, EstadoRutina estado, Collection<DetalleRutina> detalle) throws ErrorServicio {
         
         // Lógica para modificar una rutina existente
         
@@ -78,11 +83,13 @@ public class RutinaServicio {
             validar(idProfesor, idSocio, fechaInicio, fechaFin, detalle);
             rutinaExistente.setFechaFin(fechaFin);
             rutinaExistente.setProfesor(empleadoRepositorio.findProfesor(idProfesor));
-            rutinaExistente.setSocio(socioRepositorio.findByNumeroSocio(Long.parseLong(idSocio)));
+            if(socioRepositorio.findByNumeroSocio(Long.parseLong(idSocio)).isPresent()){
+                rutinaExistente.setSocio(socioRepositorio.findByNumeroSocio(Long.parseLong(idSocio)).get());
+            }
             rutinaExistente.setFechaInicio(fechaInicio);
             rutinaExistente.setDetalleRutina(detalle);
             rutinaExistente.setEstado(estado);
-            rutinaRepository.save(rutinaExistente);
+            rutinaRepositorio.save(rutinaExistente);
         } else {
             throw new ErrorServicio("Rutina no encontrada");
         }
@@ -90,20 +97,74 @@ public class RutinaServicio {
 
     @Transactional
     public void eliminarRutina(String id) throws ErrorServicio {
-        Optional<Rutina> opt = rutinaRepository.findById(id);
+        Optional<Rutina> opt = rutinaRepositorio.findById(id);
         if(opt.isPresent()){
 
             Rutina rutina = opt.get();
             // Eliminación lógica de la rutina
             rutina.setEliminado(true);
-            rutinaRepository.save(rutina);
+            rutinaRepositorio.save(rutina);
         }
         else{
             throw new ErrorServicio("No se encontró la rutina.");
         }
     }
+
     @Transactional
-    public DetalleRutina crearDetalleRutina(Date fecha, String actividad) throws ErrorServicio {
+    public Rutina guardarRutina(Rutina rutina) throws ErrorServicio {
+
+        if (rutina.getSocio() == null)
+            throw new ErrorServicio("Debe seleccionar un socio.");
+        if (rutina.getProfesor() == null)
+            throw new ErrorServicio("Debe estar asociado a un profesor.");
+        if (rutina.getFechaInicio() == null || rutina.getFechaFin() == null)
+            throw new ErrorServicio("Debe indicar fecha de inicio y fin.");
+
+        Socio socio = socioRepositorio.findByNumeroSocio(rutina.getSocio().getNumeroSocio())
+                .orElseThrow(() -> new ErrorServicio("Socio no encontrado"));
+        Empleado profesor = empleadoRepositorio.findById(rutina.getProfesor().getId())
+                .orElseThrow(() -> new ErrorServicio("Profesor no encontrado"));
+
+        rutina.setSocio(socio);
+        rutina.setProfesor(profesor);
+
+        // Ya que los detalles están asociados con rutina, se guardan en cascada
+        return rutinaRepositorio.save(rutina);
+    }
+    /** 
+    @Transactional
+    public Rutina guardar(Rutina rutina) throws ErrorServicio {
+
+        if (rutina.getSocio() == null || rutina.getSocio().getId() == null) {
+            throw new ErrorServicio("Debe seleccionar un socio.");
+        }
+
+        if (rutina.getProfesor() == null || rutina.getProfesor().getId() == null) {
+            throw new ErrorServicio("Debe estar asociado a un profesor.");
+        }
+
+        if (rutina.getFechaInicio() == null || rutina.getFechaFin() == null) {
+            throw new ErrorServicio("Debe indicar fecha de inicio y fin.");
+        }
+
+        if (rutina.getFechaFin().isBefore(rutina.getFechaInicio())) {
+            throw new ErrorServicio("La fecha de fin no puede ser anterior a la fecha de inicio.");
+        }
+
+        // 🚨 Importante: asegurarse que los objetos sean entidades manejadas
+        Socio socio = socioRepositorio.findByNumeroSocio(rutina.getSocio().getNumeroSocio())
+                        .orElseThrow(() -> new ErrorServicio("Socio no encontrado"));
+        Empleado profesor = empleadoRepositorio.findById(rutina.getProfesor().getId())
+                        .orElseThrow(() -> new ErrorServicio("Profesor no encontrado"));
+
+        rutina.setSocio(socio);
+        rutina.setProfesor(profesor);
+
+        return rutinaRepositorio.save(rutina);
+    }
+        **/
+    @Transactional
+    public DetalleRutina crearDetalleRutina(LocalDate fecha, String actividad) throws ErrorServicio {
         DetalleRutina detalle = new DetalleRutina();
         detalle.setFecha(fecha);
         detalle.setActividad(actividad);
@@ -111,30 +172,30 @@ public class RutinaServicio {
         return detalle;
     }
     @Transactional
-    public List<Rutina> listarRutinasPorSocio(String nro_socio) throws ErrorServicio {
+    public List<Rutina> listarRutinasPorSocio(Long nro_socio) throws ErrorServicio {
         // Lógica para listar todas las rutinas de un socio específico
-        Socio socio = socioRepositorio.findByNumeroSocio(Long.parseLong(nro_socio));
+        Socio socio = socioRepositorio.findByNumeroSocio(nro_socio).orElse(null);
         if (socio == null) {
             throw new ErrorServicio("Socio no encontrado");
         }
-        return rutinaRepository.findBySocio(socio);
+        return rutinaRepositorio.findBySocio(socio);
     }
     @Transactional
     public List<Rutina> listarTodasLasRutinas() {
         // Lógica para listar todas las rutinas
-        return rutinaRepository.findAll();
+        return rutinaRepositorio.findAll();
     }
     public List<Rutina> listarRutinasPorProfesor(String idProfesor) throws ErrorServicio {
         Empleado profesor = empleadoRepositorio.findProfesor(idProfesor);
         if (profesor == null) {
             throw new ErrorServicio("Profesor no encontrado");
         }
-        return rutinaRepository.findAll().stream()
+        return rutinaRepositorio.findAll().stream()
                 .filter(rutina -> rutina.getProfesor() != null && rutina.getProfesor().getId().equals(idProfesor))
                 .toList();
     }
     @Transactional
-    public void validar(String idProfesor, String idSocio, Date fechaInicio, Date fechaFin, Collection<DetalleRutina> detalle) throws ErrorServicio {
+    public void validar(String idProfesor, String idSocio, LocalDate fechaInicio, LocalDate fechaFin, Collection<DetalleRutina> detalle) throws ErrorServicio {
         if (idProfesor == null || idProfesor.isEmpty()) {
             throw new ErrorServicio("El ID del profesor no puede ser nulo o vacío.");
         }
@@ -153,10 +214,10 @@ public class RutinaServicio {
         if (fechaFin == null) {
             throw new ErrorServicio("La fecha de fin no puede ser nula.");
         }
-        if (fechaFin.before(fechaInicio)) {
+        if (fechaFin.isBefore(fechaInicio)) {
             throw new ErrorServicio("La fecha de fin no puede ser anterior a la fecha de inicio.");
         }
-        if (fechaInicio.after(new Date())) {
+        if (fechaInicio.isAfter(LocalDate.now())) {
             throw new ErrorServicio("La fecha de inicio no puede ser futura.");
         }
         if (detalle == null || detalle.isEmpty()) {

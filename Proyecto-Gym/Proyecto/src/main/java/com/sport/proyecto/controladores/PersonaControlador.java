@@ -21,7 +21,7 @@ public class PersonaControlador {
             Persona p = personaServicio.registro(nombre,apellido,email,clave1,clave2,esEmpleado,null);
             modelo.put("titulo", "Bienvenido a Gimnasio Sport ");
             modelo.put("descripcion", "Tu usuario fue registrado de manera satisfactoria. ");
-            return "login";
+            return "views/login";
         } catch (ErrorServicio e) {
             modelo.put("error", e.getMessage());
             modelo.put("nombre", nombre);

@@ -49,7 +49,7 @@ public class UsuarioServicio {
   }
 
   @Transactional
-  public Usuario buscarUsuario(Long id) throws ErrorServicio {
+  public Usuario buscarUsuario(String id) throws ErrorServicio {
     try {
       Optional<Usuario> opt = usuarioRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -94,7 +94,7 @@ public class UsuarioServicio {
   }
 
   @Transactional
-  public void modificarUsuario(Long id, String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
+  public void modificarUsuario(String id, String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
     validar(nombreUsuario, clave, rol);
     try{
       if (id == null) {
@@ -117,7 +117,7 @@ public class UsuarioServicio {
   // Eliminacion
 
   @Transactional
-  public void eliminarUsuario(Long id) throws ErrorServicio {
+  public void eliminarUsuario(String id) throws ErrorServicio {
     try{
       if (id == null) {
         throw new ErrorServicio("El id no puede ser nulo");
@@ -175,11 +175,11 @@ public class UsuarioServicio {
     }
   }
 
-  public boolean esAdmin(Long id){
+  public boolean esAdmin(String id){
     Optional<Usuario> opt = usuarioRepositorio.findById(id);
     if(opt.isPresent()){
       Usuario u = opt.get();
-      if(u.getId() == 1L){
+      if(u.getId().equals("1")){
         return true;
       }else {
         return false;

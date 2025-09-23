@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepositorio extends JpaRepository<Usuario, String> {
 
   @Query(value = "SELECT * FROM usuario WHERE usuario.eliminado = false", nativeQuery = true)
   List<Usuario> findAllActives();

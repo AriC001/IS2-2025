@@ -33,19 +33,18 @@
                             <th>Fecha inicio</th>
                             <th>Fecha fin</th>
                             <th>Estado</th>
-                            <th>Nro Socio</th>
+                            <th>Socio</th>
                             <th>Profesor</th>
                             <th>Detalles</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Cambié la variable a "rutinas" para que sea iterable -->
                         <tr th:each="rutina : ${rutinas}">
-                            <td th:text="${#dates.format(rutina.fechaInicio, 'dd/MM/yyyy')}"></td>
-                            <td th:text="${#dates.format(rutina.fechaFin, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${rutina.fechaInicio} ?: '?'"></td>
+                            <td th:text="${rutina.fechaFin} ?: '?'"></td>
                             <td th:text="${rutina.estado}"></td>
-                            <td th:text="${rutina.socio}"></td>
-                            <td th:text="${rutina.profesor}"></td>
+                            <td th:text="${rutina.socio.nombre + ' ' + rutina.socio.apellido}"></td>
+                            <td th:text="${rutina.profesor.nombre + ' ' + rutina.profesor.apellido}"></td>
                             <td>
                                 <a th:href="@{/rutina/detalle/{id}(id=${rutina.id})}" class="btn btn-info">
                                     Ver actividades
