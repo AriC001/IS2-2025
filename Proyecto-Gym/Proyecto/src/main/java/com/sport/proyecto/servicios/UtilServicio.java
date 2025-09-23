@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 
 import com.sport.proyecto.errores.ErrorServicio;
 import org.springframework.stereotype.Service;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 @Service
 public class UtilServicio {
@@ -46,4 +49,16 @@ public class UtilServicio {
   }
 
 
+  public static String generateHmacSHA256(String key, String data) throws Exception {
+    Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+    SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+    sha256_HMAC.init(secretKey);
+
+    byte[] hash = sha256_HMAC.doFinal(data.getBytes());
+    StringBuilder result = new StringBuilder();
+    for (byte b : hash) {
+      result.append(String.format("%02x", b));
+    }
+    return result.toString();
+  }
 }
