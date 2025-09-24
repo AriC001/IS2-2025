@@ -44,7 +44,7 @@ public class PaisServicio {
   }
 
   @Transactional
-  public Pais buscarPais(Long id) throws ErrorServicio {
+  public Pais buscarPais(String id) throws ErrorServicio {
     try {
       Optional<Pais> opt = repositorioPais.findById(id);
       if (opt.isPresent()) {
@@ -91,7 +91,7 @@ public class PaisServicio {
   }
 
   @Transactional
-  public Pais modificarPais(String nombre, Long id) throws ErrorServicio {
+  public Pais modificarPais(String nombre, String id) throws ErrorServicio {
     validar(nombre);
     try{
       if (id == null) {
@@ -111,7 +111,7 @@ public class PaisServicio {
   // Eliminacion
 
   @Transactional
-  public void eliminarPais(Long id) throws ErrorServicio {
+  public void eliminarPais(String id) throws ErrorServicio {
     try{
       if (id == null) {
         throw new ErrorServicio("El id del país no puede ser nulo");

@@ -34,13 +34,15 @@ public class Factura {
     @Column
     private Long totalPagado;
 
-    @OneToMany (cascade=CascadeType.ALL)
+    @OneToMany (mappedBy = "factura", cascade=CascadeType.ALL)
     private Collection<DetalleFactura> detalles;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private estadoFactura estadoFactura;
 
     @Column
     private boolean eliminado;
+
 
 }

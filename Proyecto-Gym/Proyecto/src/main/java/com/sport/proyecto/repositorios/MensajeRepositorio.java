@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MensajeRepositorio extends JpaRepository<Mensaje, Long>  {
+public interface MensajeRepositorio extends JpaRepository<Mensaje, String>  {
     @Query(value = "SELECT * FROM mensaje m WHERE m.eliminado = false", nativeQuery = true)
     List<Mensaje> buscarTodosActivos();
 }

@@ -33,7 +33,7 @@ public class PersonaServicio {
     }
 
     @Transactional
-    public Persona buscarPersona(Long id) throws Exception {
+    public Persona buscarPersona(String id) throws Exception {
 
         return null;
     }
@@ -44,12 +44,12 @@ public class PersonaServicio {
     }
 
     @Transactional
-    public Persona actualizar(Persona entity, Long id) throws Exception {
+    public Persona actualizar(Persona entity, String id) throws Exception {
         return null;
     }
 
     @Transactional
-    public void eliminarPorId(Long id) throws Exception {
+    public void eliminarPorId(String id) throws Exception {
         Optional<Persona> opt = personaRepositorio.findById(id);
         if(opt.isPresent()){
 

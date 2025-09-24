@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PaisRepositorio extends JpaRepository<Pais, Long> {
+public interface PaisRepositorio extends JpaRepository<Pais, String> {
 
   @Query(value = "SELECT * FROM pais WHERE pais.eliminado = false", nativeQuery = true)
   List<Pais> findAllActives();

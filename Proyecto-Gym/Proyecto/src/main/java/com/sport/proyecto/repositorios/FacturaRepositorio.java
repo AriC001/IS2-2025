@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FacturaRepositorio extends JpaRepository<Factura,Long> {
+public interface FacturaRepositorio extends JpaRepository<Factura,String> {
     @Query("SELECT COALESCE(MAX(f.numeroFactura), 0) FROM Factura f")
     Long obtenerUltimoNumeroFactura();
 }

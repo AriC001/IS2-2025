@@ -50,7 +50,7 @@ public class DireccionServicio {
     }
   }
   @Transactional
-  public Direccion buscarDireccion(Long id) throws ErrorServicio {
+  public Direccion buscarDireccion(String id) throws ErrorServicio {
     try {
       Optional<Direccion> opt = direccionRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -82,7 +82,7 @@ public class DireccionServicio {
   // Escritura
 
   @Transactional
-  public void crearDireccion(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, Long idLocalidad) throws ErrorServicio {
+  public void crearDireccion(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
     validar(calle, numeracion, barrio, manzanaPiso, casaDepartamento, referencia, idLocalidad);
     try {
       Localidad localidad = localidadServicio.buscarLocalidad(idLocalidad);
@@ -107,7 +107,7 @@ public class DireccionServicio {
   }
 
   @Transactional
-  public void modificarDireccion(Long id, String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, Long idLocalidad) throws ErrorServicio {
+  public void modificarDireccion(String id, String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
     validar(calle, numeracion, barrio, manzanaPiso, casaDepartamento, referencia, idLocalidad);
     try {
       Direccion direccion = buscarDireccion(id);
@@ -134,7 +134,7 @@ public class DireccionServicio {
   }
 
   @Transactional
-  public void eliminarDireccion(Long id) throws ErrorServicio {
+  public void eliminarDireccion(String id) throws ErrorServicio {
     try {
       Direccion direccion = buscarDireccion(id);
       if (direccion == null) {
@@ -150,7 +150,7 @@ public class DireccionServicio {
 
   // Validacion
 
-  private void validar(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, Long idLocalidad) throws ErrorServicio {
+  private void validar(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
     if (calle == null || calle.isEmpty()) {
       throw new ErrorServicio("La calle no puede ser nula o estar vacia");
     }

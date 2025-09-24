@@ -16,4 +16,7 @@ public class DetalleFactura implements Serializable {
 
     private boolean eliminado;
 
+    @ManyToOne
+    private Factura factura;
+
 }

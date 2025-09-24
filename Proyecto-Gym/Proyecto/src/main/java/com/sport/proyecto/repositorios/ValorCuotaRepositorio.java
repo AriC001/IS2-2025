@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ValorCuotaRepositorio extends JpaRepository<ValorCuota,Long> {
+public interface ValorCuotaRepositorio extends JpaRepository<ValorCuota,String> {
     @Query(value = "SELECT v FROM ValorCuota v WHERE v.id = '1'")
     Optional<ValorCuota> obtenerPrimerValorCuota();
 }

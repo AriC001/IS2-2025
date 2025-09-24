@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SocioRepositorio extends JpaRepository<Socio,Long> {
+public interface SocioRepositorio extends JpaRepository<Socio,String> {
     @Query("SELECT COALESCE(MAX(s.numeroSocio), 0) FROM Socio s")
     Long obtenerUltimoNumeroSocio();
     @Query("SELECT s FROM Socio s WHERE s.numeroSocio = :numeroSocio and s.eliminado = false")

@@ -35,6 +35,10 @@ public class CuotaMensual {
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate fechaVencimiento;
 
+    //@ManyToOne
+    //@JoinColumn(name = "numeroSocio")
+    //private Socio socio;
+
     @Column
     private boolean eliminado;
 }

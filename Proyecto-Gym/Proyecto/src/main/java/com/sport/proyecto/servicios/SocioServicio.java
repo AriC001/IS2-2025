@@ -82,7 +82,7 @@ public class SocioServicio {
 
     @Transactional
     public void crearSocio(String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
-        , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
+        , String telefono, String correoElectronico, String idSucursal, String idDireccion, Usuario usuario) throws ErrorServicio {
         validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
         try{
             if (repositorioSocio.findByNumeroDocumentoYTipo(numeroDocumento, tipoDocumento.toString()) != null) {
@@ -115,7 +115,7 @@ public class SocioServicio {
 
     @Transactional
     public void modificarSocio(Long id, String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento
-        , String telefono, String correoElectronico, Long idSucursal, Long idDireccion, Usuario usuario) throws ErrorServicio {
+        , String telefono, String correoElectronico, String idSucursal, String idDireccion, Usuario usuario) throws ErrorServicio {
         validar(nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, telefono, correoElectronico, idSucursal, usuario, idDireccion);
         try{
             Socio socio = buscarSocio(id);
@@ -186,7 +186,7 @@ public class SocioServicio {
 
     // Validacion
 
-    private void validar(String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, Long idSucursal, Usuario usuario, Long idDireccion) throws ErrorServicio {
+    private void validar(String nombre, String apellido, LocalDate fechaNacimiento, tipoDocumento tipoDocumento, String numeroDocumento, String telefono, String correoElectronico, String idSucursal, Usuario usuario, String idDireccion) throws ErrorServicio {
         if (nombre == null || nombre.isEmpty()) {
             throw new ErrorServicio("El nombre no puede ser nulo o estar vacio");
         }
@@ -236,6 +236,6 @@ public class SocioServicio {
     }
     @Transactional
     public Socio buscarPorId(String id) {
-        return this.repositorioSocio.findById(Long.valueOf(id)).orElse(null);
+        return this.repositorioSocio.findById(id).orElse(null);
     }
 }

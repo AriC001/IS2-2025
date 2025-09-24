@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ValorCuotaServicio {
-    public ValorCuota obtenerPrimerValorCuota(){
+    //public ValorCuota obtenerPrimerValorCuota(){
 
-    }
+    //}
 }

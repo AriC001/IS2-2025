@@ -51,7 +51,7 @@ public class ProvinciaServicio {
   }
 
   @Transactional
-  public Provincia buscarProvincia(Long id) throws ErrorServicio {
+  public Provincia buscarProvincia(String id) throws ErrorServicio {
     try {
       Optional<Provincia> provincia = repositorioProvincia.findById(id);
       if (provincia.isPresent()) {
@@ -79,7 +79,7 @@ public class ProvinciaServicio {
   }
 
   @Transactional
-  public List<Provincia> buscarProvinciaPorPais(Long id) throws ErrorServicio {
+  public List<Provincia> buscarProvinciaPorPais(String id) throws ErrorServicio {
     try {
       List<Provincia> provincias = repositorioProvincia.findByPais(id);
       if (provincias != null && !provincias.isEmpty()) {
@@ -95,7 +95,7 @@ public class ProvinciaServicio {
   // Escritura
 
   @Transactional
-  public void crearProvincia(String nombre, Long idPais) throws ErrorServicio {
+  public void crearProvincia(String nombre, String idPais) throws ErrorServicio {
     validar(nombre, idPais);
     try{
       Pais pais = paisServicio.buscarPais(idPais);
@@ -113,7 +113,7 @@ public class ProvinciaServicio {
   }
 
   @Transactional
-  public void modificarProvincia(Long id, String nombre, Long idPais) throws ErrorServicio {
+  public void modificarProvincia(String id, String nombre, String idPais) throws ErrorServicio {
     validar(nombre, idPais);
     try{
       if (id == null) {
@@ -138,7 +138,7 @@ public class ProvinciaServicio {
   // Eliminacion
 
   @Transactional
-  public void eliminarProvincia(Long id) throws ErrorServicio {
+  public void eliminarProvincia(String id) throws ErrorServicio {
     try{
       if (id == null) {
         throw new ErrorServicio("El id de la provincia no puede ser nulo");
@@ -158,11 +158,11 @@ public class ProvinciaServicio {
 
   // Validacion
 
-  private void validar(String nombre, Long idPais) throws ErrorServicio {
+  private void validar(String nombre, String idPais) throws ErrorServicio {
     if (nombre == null || nombre.isEmpty()) {
       throw new ErrorServicio("El nombre de la provincia no puede ser nulo o estar vacio");
     }
-    if (idPais == null || idPais.toString().isEmpty()) {
+    if (idPais == null || idPais.isEmpty()) {
       throw new ErrorServicio("El id del pais no puede ser nulo o estar vacio");
     }
 

@@ -47,7 +47,7 @@ public class EmpresaServicio {
   }
 
   @Transactional
-  public Empresa buscarEmpresa(Long id) throws ErrorServicio {
+  public Empresa buscarEmpresa(String id) throws ErrorServicio {
     try{
       Optional<Empresa> opt = empresaRepositorio.findById(id);
       if (opt.isPresent()) {
@@ -94,7 +94,7 @@ public class EmpresaServicio {
   }
 
   @Transactional
-  public void modificarEmpresa(Long id, String nombre, String telefono, String correoElectronico) throws ErrorServicio {
+  public void modificarEmpresa(String id, String nombre, String telefono, String correoElectronico) throws ErrorServicio {
     validar(nombre, telefono, correoElectronico);
     try {
       Empresa empresa = buscarEmpresa(id);
@@ -112,7 +112,7 @@ public class EmpresaServicio {
   }
 
   @Transactional
-  public void eliminarEmpresa(Long id) throws ErrorServicio {
+  public void eliminarEmpresa(String id) throws ErrorServicio {
     try {
       Empresa empresa = buscarEmpresa(id);
       if (empresa == null) {

@@ -1,5 +1,6 @@
 package com.sport.proyecto.servicios;
 
+import com.sport.proyecto.entidades.Factura;
 import com.sport.proyecto.repositorios.FacturaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,4 +16,9 @@ public class FacturaServicio {
         Long ultimo = repositorioFactura.obtenerUltimoNumeroFactura();
         return ultimo + 1;
     }
+
+    //public Factura generarFacturas() {
+
+    //}
+
 }

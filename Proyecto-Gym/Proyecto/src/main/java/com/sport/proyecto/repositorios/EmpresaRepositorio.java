@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EmpresaRepositorio extends JpaRepository<Empresa, Long> {
+public interface EmpresaRepositorio extends JpaRepository<Empresa, String> {
   @Query(value = "SELECT * FROM empresa WHERE empresa.eliminado = false", nativeQuery = true)
   List<Empresa> findAllActives();
 
