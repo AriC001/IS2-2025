@@ -16,6 +16,10 @@ public enum mes {
 
     private static final mes[] vals = values();
 
+    public static mes actual(int index){
+        return vals[index];
+    }
+
     public mes siguiente(){
         return vals[(this.ordinal() + 1) % vals.length];
     }
