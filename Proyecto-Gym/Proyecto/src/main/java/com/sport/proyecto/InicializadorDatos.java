@@ -3,19 +3,16 @@ package com.sport.proyecto;
 import com.sport.proyecto.entidades.*;
 import com.sport.proyecto.enums.tipoEmpleado;
 import com.sport.proyecto.enums.Rol;
-import com.sport.proyecto.repositorios.PersonaRepositorio;
-import com.sport.proyecto.repositorios.UsuarioRepositorio;
-import com.sport.proyecto.repositorios.PaisRepositorio;
-import com.sport.proyecto.repositorios.ProvinciaRepositorio;
-import com.sport.proyecto.repositorios.DepartamentoRepositorio;
-import com.sport.proyecto.repositorios.LocalidadRepositorio;
+import com.sport.proyecto.repositorios.*;
 import com.sport.proyecto.servicios.PaisServicio;
 import com.sport.proyecto.servicios.UsuarioServicio;
+import com.sport.proyecto.servicios.ValorCuotaServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
@@ -39,6 +36,8 @@ public class InicializadorDatos implements CommandLineRunner {
     private LocalidadRepositorio localidadRepositorio;
     @Autowired
     private PaisServicio paisServicio;
+    @Autowired
+    private ValorCuotaRepositorio valorCuotaRepositorio;
 
     @Override
     @Transactional
@@ -117,5 +116,12 @@ public class InicializadorDatos implements CommandLineRunner {
             localidadRepositorio.save(lasHigueras);
             localidadRepositorio.save(holmberg);
         }
+
+        //Creamos El primero Valor de CUOTA
+        if(!valorCuotaRepositorio.obtenerPrimerValorCuota().isPresent()){
+            ValorCuota v = ValorCuota.builder().fechaDesde(LocalDate.now()).fechaHasta(LocalDate.now().plusMonths(3)).eliminado(false).build();
+            valorCuotaRepositorio.save(v);
+        }
+
     }
 }

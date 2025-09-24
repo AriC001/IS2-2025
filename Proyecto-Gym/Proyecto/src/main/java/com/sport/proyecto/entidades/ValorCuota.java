@@ -1,28 +1,38 @@
 package com.sport.proyecto.entidades;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name="valorCuota")
+public class ValorCuota {
 
-@Entity
-@Table(name = "mensaje")
-public class Mensaje {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    private String titulo;
+    @Column
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaDesde;
 
-    private String texto;
+    @Column
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate fechaHasta;
 
-    //private tipoMensaje tipoMensaje;
+    @Column
+    private Long valorCuota;
 
+    @Column
     private boolean eliminado;
 }
