@@ -256,7 +256,7 @@ public class SocioServicio {
         }
         List<CuotaMensual> cuotasPendientes = new ArrayList();
         for(int i = 0; i <cuotasActuales.size();i++){
-            if(cuotasActuales.get(i).getEstado() == estadoCuota.ADEUDA || cuotasActuales.get(i).getEstado() == estadoCuota.VENCIDA){
+            if(cuotasActuales.get(i).getEstado() == estadoCuota.ADEUDA || cuotasActuales.get(i).getEstado() == estadoCuota.VENCIDA || cuotasActuales.get(i).getEstado() == estadoCuota.PENDIENTE){
                 cuotasPendientes.add(cuotasActuales.get(i));
             }
         }

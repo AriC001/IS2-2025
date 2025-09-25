@@ -1,13 +1,11 @@
 package com.sport.proyecto.entidades;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -20,6 +18,8 @@ import java.io.Serializable;
 public class DetalleFactura implements Serializable {
 
     @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
     @ManyToOne

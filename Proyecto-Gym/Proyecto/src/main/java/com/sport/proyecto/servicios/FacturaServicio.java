@@ -30,6 +30,8 @@ public class FacturaServicio {
     private CuotaMensualServicio cuotaMensualServicio;
     @Autowired
     private CuotaMensualRepositorio cuotaMensualRepositorio;
+    @Autowired
+    private UsuarioServicio usuarioServicio;
 
     @Transactional
     public Long generarNumeroFactura() {
@@ -64,6 +66,24 @@ public class FacturaServicio {
     }
 
     @Transactional
+    public void marcarComoPendiente(String facturaId) {
+        Factura factura = facturaRepositorio.findById(facturaId)
+                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
+
+        factura.setEstadoFactura(estadoFactura.PENDIENTE);
+
+        for (DetalleFactura detalle : factura.getDetalles()) {
+            CuotaMensual cuota = detalle.getCuotaMensual();
+            cuota.setEstado(estadoCuota.PENDIENTE);
+            cuotaMensualServicio.actualizarCuota(cuota);
+        }
+
+        facturaRepositorio.save(factura);
+    }
+
+
+
+    @Transactional
     public Factura generarFactura(String usuarioId, List<String> cuotasIds) {
         Socio socio = new Socio();
         Optional<Socio> opt = socioServicio.buscarSocioPorIdUsuario(usuarioId);
@@ -77,6 +97,8 @@ public class FacturaServicio {
         factura.setEstadoFactura(estadoFactura.SIN_DEFINIR);
         factura.setEliminado(false);
         factura.setTotalPagado(0L);
+        factura.setNumeroFactura(this.generarNumeroFactura());
+        facturaRepositorio.save(factura);
 
         Long total = 0L;
 
@@ -118,5 +140,7 @@ public class FacturaServicio {
             facturaRepositorio.save(factura);
         }
     }
+
+
 
 }

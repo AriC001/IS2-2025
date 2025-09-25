@@ -3,6 +3,7 @@ package com.sport.proyecto.controladores;
 import com.sport.proyecto.entidades.CuotaMensual;
 import com.sport.proyecto.entidades.Factura;
 import com.sport.proyecto.entidades.Socio;
+import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.servicios.CuotaMensualServicio;
 import com.sport.proyecto.servicios.FacturaServicio;
 import com.sport.proyecto.servicios.PagoServicio;
@@ -36,22 +37,23 @@ public class CuotasControlador {
 
     @GetMapping
     public String mostrarCuotas(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("usuario");
-        Socio socio = socioServicio.buscarSocioPorIdUsuario(username)
+        System.out.println(session);
+        Usuario user = (Usuario) session.getAttribute("usuariosession");
+        Socio socio = socioServicio.buscarSocioPorIdUsuario(user.getId())
                 .orElseThrow(() -> new RuntimeException("Socio no encontrado"));
 
         List<CuotaMensual> cuotasNoPagadas = cuotaMensualServicio.obtenerCuotasNoPagadas(socio.getNumeroSocio());
         model.addAttribute("cuotas", cuotasNoPagadas);
 
-        return "cuotas-no-pagadas"; // Thymeleaf HTML
+        return "views/cuotas-no-pagadas"; // Thymeleaf HTML
     }
 
     @PostMapping("/generar-factura")
     public String generarFactura(@RequestParam List<String> cuotasSeleccionadas,
                                  HttpSession session) {
-        String username = (String) session.getAttribute("usuario");
+        Usuario user = (Usuario) session.getAttribute("usuariosession");
         // Genera factura + detalles
-        Factura factura = facturaServicio.generarFactura(username, cuotasSeleccionadas);
+        Factura factura = facturaServicio.generarFactura(user.getId(), cuotasSeleccionadas);
 
         // Redirige al endpoint de creación de pago con el facturaId
         return "redirect:/payment/create?facturaId=" + factura.getId();

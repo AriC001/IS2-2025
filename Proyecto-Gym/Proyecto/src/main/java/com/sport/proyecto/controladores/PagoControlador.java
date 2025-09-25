@@ -29,7 +29,7 @@ public class PagoControlador {
     }
 
 
-    @PostMapping("/create")
+    @GetMapping("/create")
     public String createPayment(@RequestParam String facturaId) throws Exception {
         String initPoint = pagoServicio.createPreference(facturaId);
         return "redirect:" + initPoint; // Redirige al checkout de Mercado Pago

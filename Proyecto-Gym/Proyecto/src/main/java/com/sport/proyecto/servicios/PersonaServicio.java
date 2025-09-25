@@ -26,6 +26,8 @@ public class PersonaServicio {
     private PersonaRepositorio personaRepositorio;
     @Autowired
     private EmpleadoRepositorio empleadoRepositorio;
+    @Autowired
+    private CuotaMensualServicio cuotaMensualServicio;
 
     @Transactional
     public List<Persona> buscarTodos() throws Exception {
@@ -124,6 +126,9 @@ public class PersonaServicio {
             }
         }
         personaRepositorio.save(p);
+        if(p instanceof Socio s){
+            cuotaMensualServicio.crearCuota(s.getUsuario().getId());
+        }
 
 
         //notificacionServicio.enviarMail("Bienvenido a Tinder Mascota " + nombre, "Tinder de Mascota", p.getMail());

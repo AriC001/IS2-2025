@@ -54,10 +54,12 @@ public class PagoServicio {
                         .build();
 
         PreferenceRequest request = PreferenceRequest.builder()
-                .items((List<PreferenceItemRequest>) items)
+                .items(items)
                 .metadata(Collections.singletonMap("facturaId", factura.getId()))
                 .backUrls(backUrls)
                 .autoReturn("approved")
+                .externalReference(factura.getId())
+                .notificationUrl("https://subarboreous-unprovokingly-elmira.ngrok-free.dev/webhook")
                 .build();
 
         PreferenceClient client = new PreferenceClient();

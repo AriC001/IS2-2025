@@ -38,6 +38,7 @@ public class CuotaMensual {
     private ValorCuota valorCuota;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private estadoCuota estado;
 
     @Column

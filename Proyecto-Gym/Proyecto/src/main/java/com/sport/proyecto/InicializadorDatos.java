@@ -1,12 +1,11 @@
 package com.sport.proyecto;
 
 import com.sport.proyecto.entidades.*;
+import com.sport.proyecto.enums.tipoDocumento;
 import com.sport.proyecto.enums.tipoEmpleado;
 import com.sport.proyecto.enums.Rol;
 import com.sport.proyecto.repositorios.*;
-import com.sport.proyecto.servicios.PaisServicio;
-import com.sport.proyecto.servicios.UsuarioServicio;
-import com.sport.proyecto.servicios.ValorCuotaServicio;
+import com.sport.proyecto.servicios.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -38,6 +37,12 @@ public class InicializadorDatos implements CommandLineRunner {
     private PaisServicio paisServicio;
     @Autowired
     private ValorCuotaRepositorio valorCuotaRepositorio;
+    @Autowired
+    private SocioRepositorio socioRepositorio;
+    @Autowired
+    private PersonaServicio personaServicio;
+    @Autowired
+    private CuotaMensualServicio cuotaMensualServicio;
 
     @Override
     @Transactional
@@ -119,8 +124,13 @@ public class InicializadorDatos implements CommandLineRunner {
 
         //Creamos El primero Valor de CUOTA
         if(!valorCuotaRepositorio.obtenerPrimerValorCuota().isPresent()){
-            ValorCuota v = ValorCuota.builder().fechaDesde(LocalDate.now()).fechaHasta(LocalDate.now().plusMonths(3)).eliminado(false).build();
+            ValorCuota v = ValorCuota.builder().fechaDesde(LocalDate.now()).fechaHasta(LocalDate.now().plusMonths(3)).valor(100L).eliminado(false).build();
             valorCuotaRepositorio.save(v);
+        }
+        //creamos un socio
+        if(socioRepositorio.findAllActiveSocios().size() == 0){
+            Persona p = personaServicio.registro("A","C","ac@gmail.com","123456","123456",false,null);
+            cuotaMensualServicio.generarCuotasMensuales();
         }
 
     }

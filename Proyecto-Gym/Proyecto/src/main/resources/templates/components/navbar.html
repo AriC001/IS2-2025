@@ -19,6 +19,9 @@
             <a class="nav-link" th:href="@{/admin/panel}">Panel Admin</a>
           </li>
           <li class="nav-item"><a class="nav-link" th:href="@{/rutina/mis_rutinas}" th:if="${usuariosession != null}">Mis Rutinas</a></li>
+          <li class="nav-item" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).SOCIO}">
+            <a class="nav-link" th:href="@{/cuotas}">Gestion Cuotas</a>
+          </li>
         </ul>
 
         <!-- Buscador -->
