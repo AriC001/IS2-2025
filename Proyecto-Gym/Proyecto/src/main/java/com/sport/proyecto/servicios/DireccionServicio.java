@@ -25,11 +25,7 @@ public class DireccionServicio {
   @Transactional
   public List<Direccion> listarDireccion() throws ErrorServicio{
     try {
-      List<Direccion> direcciones = direccionRepositorio.findAll();
-      if (direcciones.isEmpty()) {
-        throw new ErrorServicio("No hay direcciones cargadas");
-      }
-      return direcciones;
+      return direccionRepositorio.findAll();
     } catch (Exception e) {
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
@@ -39,11 +35,7 @@ public class DireccionServicio {
   @Transactional
   public List<Direccion> listarDireccionActiva() throws ErrorServicio {
     try {
-      List<Direccion> direcciones = direccionRepositorio.findAllActives();
-      if (direcciones.isEmpty()) {
-        throw new ErrorServicio("No hay direcciones cargadas");
-      }
-      return direcciones;
+      return direccionRepositorio.findAllActives();
     } catch (Exception e) {
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());

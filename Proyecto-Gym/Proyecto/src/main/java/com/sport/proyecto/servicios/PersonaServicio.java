@@ -26,6 +26,8 @@ public class PersonaServicio {
     private PersonaRepositorio personaRepositorio;
     @Autowired
     private EmpleadoRepositorio empleadoRepositorio;
+    @Autowired
+    private UsuarioServicio usuarioServicio;
 
     @Transactional
     public List<Persona> buscarTodos() throws Exception {
@@ -36,6 +38,27 @@ public class PersonaServicio {
     public Persona buscarPersona(String id) throws Exception {
 
         return null;
+    }
+
+    @Transactional
+    public Persona buscarPorUsuario(String idUsuario) throws ErrorServicio {
+        try {
+            Usuario usuario = usuarioServicio.buscarUsuario(idUsuario);
+            return personaRepositorio.findByUser(usuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio("Error al buscar la persona por usuario");
+        }
+    }
+
+    @Transactional
+    public  List<Persona> buscarPorDiaYMes(int dia, int mes) throws ErrorServicio {
+        try {
+            return personaRepositorio.findByDiaYMes(dia, mes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio("Error al buscar las personas por día y mes");
+        }
     }
 
     @Transactional

@@ -25,11 +25,7 @@ public class UsuarioServicio {
   @Transactional
   public List<Usuario> listarUsuario() throws ErrorServicio {
     try {
-      List<Usuario> usuarios = usuarioRepositorio.findAll();
-      if (usuarios.isEmpty()) {
-        throw new ErrorServicio("No existen usuarios registrados");
-      }
-      return usuarios;
+      return usuarioRepositorio.findAll();
     }catch (Exception e) {
       throw new ErrorServicio("Error del sistema");
     }
@@ -38,11 +34,7 @@ public class UsuarioServicio {
   @Transactional
   public List<Usuario> listarUsuarioActivo() throws ErrorServicio {
     try {
-      List<Usuario> usuarios = usuarioRepositorio.findAllActives();
-      if (usuarios.isEmpty()) {
-        throw new ErrorServicio("No existen usuarios registrados");
-      }
-      return usuarios;
+      return usuarioRepositorio.findAllActives();
     }catch (Exception e) {
       throw new ErrorServicio("Error del sistema");
     }

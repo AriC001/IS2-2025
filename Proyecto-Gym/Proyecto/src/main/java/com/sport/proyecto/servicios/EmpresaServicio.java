@@ -21,11 +21,7 @@ public class EmpresaServicio {
   @Transactional
   public List<Empresa> listarEmpresa() throws ErrorServicio {
     try {
-      List<Empresa> empresas = empresaRepositorio.findAll();
-      if (empresas.isEmpty()) {
-        throw new ErrorServicio("No hay empresas cargadas");
-      }
-      return empresas;
+      return empresaRepositorio.findAll();
     } catch (Exception e) {
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
@@ -35,11 +31,7 @@ public class EmpresaServicio {
   @Transactional
   public List<Empresa> listarEmpresaActiva() throws ErrorServicio {
     try {
-      List<Empresa> empresas = empresaRepositorio.findAllActives();
-      if (empresas.isEmpty()) {
-        throw new ErrorServicio("No hay empresas cargadas");
-      }
-      return empresas;
+      return empresaRepositorio.findAllActives();
     } catch (Exception e) {
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
