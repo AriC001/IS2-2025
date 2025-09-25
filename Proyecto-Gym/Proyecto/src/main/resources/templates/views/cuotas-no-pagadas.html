@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cuotas Pendientes</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 60%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<h2>Cuotas Pendientes</h2>
+<form th:action="@{/cuotas/generar-factura}" method="post">
+  <table>
+    <tr>
+      <th>Seleccionar</th>
+      <th>Mes</th>
+      <th>Año</th>
+      <th>Valor</th>
+      <th>Vencimiento</th>
+    </tr>
+    <tr th:each="cuota : ${cuotas}">
+      <td><input type="checkbox" name="cuotasSeleccionadas"
+                 th:value="${cuota.id}"/></td>
+      <td th:text="${cuota.mes}">Mes</td>
+      <td th:text="${cuota.anio}">Año</td>
+      <td th:text="${cuota.valorCuota.valor}">Valor</td>
+      <td th:text="${cuota.fechaVencimiento}">Vencimiento</td>
+    </tr>
+  </table>
+  <button type="submit">Pagar Seleccionadas</button>
+</form>
+</body>
+</html>

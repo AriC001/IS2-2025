@@ -247,25 +247,12 @@ public class SocioServicio {
         return this.repositorioSocio.findById(id).orElse(null);
     }
 
-    public List<CuotaMensual> buscarCuotasPendientes(Optional<Long> numeroSocio, Optional<String>idUsuario){
+    public List<CuotaMensual> buscarCuotasPendientes(Long numeroSocio){
         List<CuotaMensual> cuotasActuales = new ArrayList<>();
-        if(numeroSocio.isPresent()){
-            Optional<Socio> s = socioRepositorio.findByNumeroSocio(numeroSocio.get());
-            if(s.isPresent()){
-                Socio s1 = s.get();
-                cuotasActuales = s1.getCuotas();
-            }
-        }else{
-            Optional<Usuario> u = usuarioRepositorio.findById(idUsuario.get());
-            if(u.isPresent()){
-                Usuario us = u.get();
-                Optional<Socio> s = buscarSocioPorIdUsuario(us.getId());
-                if(s.isPresent()){
-                    Socio s1 = s.get();
-                    cuotasActuales = s1.getCuotas();
-                }
-            }
-
+        Optional<Socio> s = socioRepositorio.findByNumeroSocio(numeroSocio);
+        if(s.isPresent()){
+            Socio s1 = s.get();
+            cuotasActuales = s1.getCuotas();
         }
         List<CuotaMensual> cuotasPendientes = new ArrayList();
         for(int i = 0; i <cuotasActuales.size();i++){

@@ -57,5 +57,16 @@ public class CuotaMensualServicio {
         return null;
      }
 
+    @Transactional
+    public void actualizarCuota(CuotaMensual cuota) {
+        cuotaRepositorio.save(cuota);
+    }
+
+    //List<CuotaMensual> cuotasNoPagadas = cuotaMensualServicio.obtenerCuotasNoPagadas(socio.getId());
+    @Transactional
+    public List<CuotaMensual> obtenerCuotasNoPagadas(Long numeroSocio){
+        List<CuotaMensual> cuotas = socioServicio.buscarCuotasPendientes(numeroSocio);
+        return cuotas;
+    }
 
 }

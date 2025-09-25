@@ -4,6 +4,7 @@ import com.sport.proyecto.entidades.CuotaMensual;
 import com.sport.proyecto.entidades.DetalleFactura;
 import com.sport.proyecto.entidades.Factura;
 import com.sport.proyecto.entidades.Socio;
+import com.sport.proyecto.enums.estadoCuota;
 import com.sport.proyecto.repositorios.CuotaMensualRepositorio;
 import com.sport.proyecto.repositorios.FacturaRepositorio;
 import com.sport.proyecto.repositorios.SocioRepositorio;
@@ -26,12 +27,40 @@ public class FacturaServicio {
     @Autowired
     private SocioServicio socioServicio;
     @Autowired
+    private CuotaMensualServicio cuotaMensualServicio;
+    @Autowired
     private CuotaMensualRepositorio cuotaMensualRepositorio;
 
     @Transactional
     public Long generarNumeroFactura() {
         Long ultimo = facturaRepositorio.obtenerUltimoNumeroFactura();
         return ultimo + 1;
+    }
+
+    @Transactional
+    public Factura buscarFactura(String id){
+        Factura factura = new Factura();
+        Optional<Factura> opt = facturaRepositorio.findById(id);
+        if(opt.isPresent()){
+            factura = opt.get();
+        }
+        return factura;
+    }
+
+    @Transactional
+    public void marcarComoPagada(String facturaId) {
+        Factura factura = facturaRepositorio.findById(facturaId)
+                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
+
+        factura.setEstadoFactura(estadoFactura.PAGADO);
+
+        for (DetalleFactura detalle : factura.getDetalles()) {
+            CuotaMensual cuota = detalle.getCuotaMensual();
+            cuota.setEstado(estadoCuota.PAGADA);
+            cuotaMensualServicio.actualizarCuota(cuota);
+        }
+
+        facturaRepositorio.save(factura);
     }
 
     @Transactional
@@ -89,4 +118,5 @@ public class FacturaServicio {
             facturaRepositorio.save(factura);
         }
     }
+
 }
