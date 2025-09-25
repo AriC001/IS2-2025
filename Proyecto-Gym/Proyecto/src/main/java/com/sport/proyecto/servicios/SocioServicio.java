@@ -1,16 +1,20 @@
 package com.sport.proyecto.servicios;
 
+import com.sport.proyecto.entidades.CuotaMensual;
 import com.sport.proyecto.entidades.Socio;
 import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.enums.estadoCuota;
 import com.sport.proyecto.enums.tipoDocumento;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.SocioRepositorio;
+import com.sport.proyecto.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.sport.proyecto.servicios.DireccionServicio;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +32,10 @@ public class SocioServicio {
 
     @Autowired
     private DireccionServicio direccionServicio;
+    @Autowired
+    private SocioRepositorio socioRepositorio;
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     // Busqueda
 
@@ -237,5 +245,21 @@ public class SocioServicio {
     @Transactional
     public Socio buscarPorId(String id) {
         return this.repositorioSocio.findById(id).orElse(null);
+    }
+
+    public List<CuotaMensual> buscarCuotasPendientes(Long numeroSocio){
+        List<CuotaMensual> cuotasActuales = new ArrayList<>();
+        Optional<Socio> s = socioRepositorio.findByNumeroSocio(numeroSocio);
+        if(s.isPresent()){
+            Socio s1 = s.get();
+            cuotasActuales = s1.getCuotas();
+        }
+        List<CuotaMensual> cuotasPendientes = new ArrayList();
+        for(int i = 0; i <cuotasActuales.size();i++){
+            if(cuotasActuales.get(i).getEstado() == estadoCuota.ADEUDA || cuotasActuales.get(i).getEstado() == estadoCuota.VENCIDA || cuotasActuales.get(i).getEstado() == estadoCuota.PENDIENTE){
+                cuotasPendientes.add(cuotasActuales.get(i));
+            }
+        }
+        return cuotasPendientes;
     }
 }

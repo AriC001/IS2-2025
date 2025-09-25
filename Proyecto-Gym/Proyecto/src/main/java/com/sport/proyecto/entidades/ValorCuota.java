@@ -31,7 +31,7 @@ public class ValorCuota {
     private LocalDate fechaHasta;
 
     @Column
-    private Long valorCuota;
+    private Long valor;
 
     @Column
     private boolean eliminado;

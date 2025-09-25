@@ -219,3 +219,4 @@
 /TP1/mascota/mascota/src/main/java/com/mascota/business/persistence/repository/ZonaRepository.java
 /TP1/mascota/mascota/src/main/java/com/mascota/business/logic/service/ZonaService.java
 *.properties
+*.class

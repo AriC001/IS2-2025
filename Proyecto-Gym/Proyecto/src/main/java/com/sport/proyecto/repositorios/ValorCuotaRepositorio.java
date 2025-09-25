@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,9 @@ import java.util.Optional;
 public interface ValorCuotaRepositorio extends JpaRepository<ValorCuota,String> {
     @Query(value = "SELECT v FROM ValorCuota v WHERE v.id = '1'")
     Optional<ValorCuota> obtenerPrimerValorCuota();
+    @Query("SELECT v FROM ValorCuota v WHERE v.fechaHasta >= :fechaActual OR v.fechaHasta = (SELECT MAX(v2.fechaHasta) FROM ValorCuota v2)ORDER BY v.fechaDesde DESC")
+    List<ValorCuota> obtenerValorActualoUltimo(@Param("fechaActual")LocalDate fechaActual);
+
 }
 
 
