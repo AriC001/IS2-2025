@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface MensajeRepositorio extends JpaRepository<Mensaje, String>  {
-    @Query(value = "SELECT * FROM mensaje m WHERE m.eliminado = false", nativeQuery = true)
-    List<Mensaje> buscarTodosActivos();
+    @Query("SELECT m FROM Mensaje m WHERE m.eliminado = false")
+    List<Mensaje> findAllActives();
+
 }

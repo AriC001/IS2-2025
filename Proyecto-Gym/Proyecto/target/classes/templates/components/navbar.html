@@ -15,9 +15,10 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" th:href="@{/empleados}" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">Gestionar Empleados</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/socios}" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">Gestionar Socios</a></li>
-          <li class="nav-item" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">
+          <!--<li class="nav-item" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">
             <a class="nav-link" th:href="@{/admin/panel}">Panel Admin</a>
-          </li>
+          </li>-->
+          <li class="nav-item"><a class="nav-link" th:href="@{/mensaje}" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}">Enviar Mensajes</a></li>
           <li class="nav-item"><a class="nav-link" th:href="@{/rutina/mis_rutinas}" th:if="${usuariosession != null}">Mis Rutinas</a></li>
         </ul>
 

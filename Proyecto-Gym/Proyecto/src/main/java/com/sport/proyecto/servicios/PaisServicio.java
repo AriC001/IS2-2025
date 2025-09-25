@@ -20,11 +20,7 @@ public class PaisServicio {
   @Transactional
   public List<Pais> listarPais() throws ErrorServicio {
     try {
-      List<Pais> paises = repositorioPais.findAll();
-      if (paises.isEmpty()) {
-        throw new ErrorServicio("No hay paises cargados");
-      }
-      return paises;
+      return repositorioPais.findAll();
     } catch (Exception e) {
       throw new ErrorServicio("Error del sistema");
     }
@@ -33,11 +29,7 @@ public class PaisServicio {
   @Transactional
   public List<Pais> listarPaisActivo() throws ErrorServicio {
     try {
-      List<Pais> paises = repositorioPais.findAllActives();
-      if (paises.isEmpty()) {
-        throw new ErrorServicio("No hay paises cargados");
-      }
-      return paises;
+      return repositorioPais.findAllActives();
     } catch (Exception e) {
       throw new ErrorServicio("Error del sistema");
     }

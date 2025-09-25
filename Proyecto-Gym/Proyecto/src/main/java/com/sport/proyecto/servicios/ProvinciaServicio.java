@@ -26,10 +26,6 @@ public class ProvinciaServicio {
   @Transactional
   public List<Provincia> listarProvincia() throws ErrorServicio {
     try{
-      List<Provincia> provincias = repositorioProvincia.findAll();
-      if (provincias.isEmpty()) {
-        throw new ErrorServicio("No hay provincias cargadas");
-      }
       return repositorioProvincia.findAll();
     }catch (Exception e){
       throw new ErrorServicio("Error del sistema");
@@ -40,10 +36,6 @@ public class ProvinciaServicio {
   @Transactional
   public List<Provincia> listarProvinciaActiva() throws ErrorServicio {
     try {
-      List<Provincia> provincias = repositorioProvincia.findAllActives();
-      if (provincias.isEmpty()) {
-        throw new ErrorServicio("No hay provincias cargadas");
-      }
       return repositorioProvincia.findAllActives();
     } catch (Exception e) {
       throw new ErrorServicio("Error del sistema");

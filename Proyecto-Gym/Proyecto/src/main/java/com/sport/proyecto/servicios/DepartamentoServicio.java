@@ -24,11 +24,7 @@ public class DepartamentoServicio {
   @Transactional
   public List<Departamento> listarDepartamento() throws ErrorServicio {
     try {
-      List<Departamento> departamentos = repositorioDepartamento.findAll();
-      if (departamentos.isEmpty()) {
-        throw new ErrorServicio("No hay departamentos cargados");
-      }
-      return departamentos;
+      return repositorioDepartamento.findAll();
     }catch (Exception e){
       throw new ErrorServicio("Error del sistema");
     }
@@ -37,11 +33,7 @@ public class DepartamentoServicio {
   @Transactional
   public List<Departamento> listarDepartamentoActivo() throws ErrorServicio {
     try{
-      List<Departamento> departamentos = repositorioDepartamento.findAllActives();
-      if (departamentos.isEmpty()) {
-        throw new ErrorServicio("No hay departamentos cargados");
-      }
-      return departamentos;
+      return repositorioDepartamento.findAllActives();
     }catch (Exception e){
       throw new ErrorServicio("Error del sistema");
     }

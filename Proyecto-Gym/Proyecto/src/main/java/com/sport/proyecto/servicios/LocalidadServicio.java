@@ -25,11 +25,7 @@ public class LocalidadServicio {
   @Transactional
   public List<Localidad> listarLocalidad() throws ErrorServicio {
     try {
-      List<Localidad> localidades = localidadRepositorio.findAll();
-      if (localidades.isEmpty()) {
-        throw new ErrorServicio("No hay localidades cargadas");
-      }
-      return localidades;
+      return localidadRepositorio.findAll();
     } catch (Exception e) {
       throw new ErrorServicio("Error del sistema");
     }
@@ -38,11 +34,7 @@ public class LocalidadServicio {
   @Transactional
   public List<Localidad> listarLocalidadActiva() throws ErrorServicio {
     try {
-      List<Localidad> localidades = localidadRepositorio.findAllActives();
-      if (localidades.isEmpty()) {
-        throw new ErrorServicio("No hay localidades cargadas");
-      }
-      return localidades;
+      return localidadRepositorio.findAllActives();
     } catch (Exception e) {
       throw new ErrorServicio("Error del sistema");
     }

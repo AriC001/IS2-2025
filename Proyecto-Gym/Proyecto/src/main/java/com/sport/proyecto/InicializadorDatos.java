@@ -120,6 +120,8 @@ public class InicializadorDatos implements CommandLineRunner {
             localidadRepositorio.save(rioCuartoLoc);
             localidadRepositorio.save(lasHigueras);
             localidadRepositorio.save(holmberg);
+
+
         }
 
         //Creamos El primero Valor de CUOTA
@@ -133,5 +135,46 @@ public class InicializadorDatos implements CommandLineRunner {
             cuotaMensualServicio.generarCuotasMensuales();
         }
 
+        // ------------------- USUARIOS DE PRUEBA ---------------------
+        Optional<Usuario> usuarioSocio1Existe = usuarioRepositorio.findByUsername("Juan Massacesi");
+        if (!usuarioSocio1Existe.isPresent()) {
+            Usuario usuarioSocio1 = usuarioServicio.crearUsuario("Juan Massacesi", "socio123", Rol.SOCIO);
+            Persona socio1 = Socio.builder()
+                    .nombre("Juan")
+                    .apellido("Massacesi")
+                    .email("juanimassacesi17@gmail.com")
+                    .clave("socio123")
+                    .usuario(usuarioSocio1)
+                    .eliminado(false)
+                    .build();
+            personaRepositorio.save(socio1);
+        }
+        Optional<Usuario> usuarioSocio2Existe = usuarioRepositorio.findByUsername("Ana García");
+        if (!usuarioSocio2Existe.isPresent()) {
+            Usuario usuarioSocio2 = usuarioServicio.crearUsuario("Ana García", "socio456", Rol.SOCIO);
+            Persona socio2 = Socio.builder()
+                    .nombre("Ana")
+                    .apellido("García")
+                    .email("ana.garcia@mail.com")
+                    .clave("socio456")
+                    .usuario(usuarioSocio2)
+                    .eliminado(false)
+                    .build();
+            personaRepositorio.save(socio2);
+        }
+        Optional<Usuario> usuarioEmpleadoExiste = usuarioRepositorio.findByUsername("Carlos López");
+        if (!usuarioEmpleadoExiste.isPresent()) {
+            Usuario usuarioEmpleado = usuarioServicio.crearUsuario("Carlos López", "empleado123", Rol.EMPLEADO);
+            Persona empleado1 = Empleado.builder()
+                    .nombre("Carlos")
+                    .apellido("López")
+                    .email("carlos.lopez@mail.com")
+                    .clave("empleado123")
+                    .usuario(usuarioEmpleado)
+                    .eliminado(false)
+                    .tipoEmpleado(tipoEmpleado.PROFESOR)
+                    .build();
+            personaRepositorio.save(empleado1);
+        }
     }
 }

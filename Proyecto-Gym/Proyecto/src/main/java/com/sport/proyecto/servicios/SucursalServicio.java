@@ -30,11 +30,7 @@ public class SucursalServicio {
   @Transactional
   public List<Sucursal> listarSucursal() throws ErrorServicio {
     try{
-      List<Sucursal> sucursales = sucursalRepositorio.findAll();
-      if (sucursales.isEmpty()) {
-        throw new ErrorServicio("No existen sucursales registradas");
-      }
-      return sucursales;
+      return sucursalRepositorio.findAll();
     }catch (Exception e){
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
@@ -44,11 +40,7 @@ public class SucursalServicio {
   @Transactional
   public List<Sucursal> listarSucursalActivas() throws ErrorServicio {
     try{
-      List<Sucursal> sucursales = sucursalRepositorio.findAllActives();
-      if (sucursales.isEmpty()) {
-        throw new ErrorServicio("No existen sucursales registradas");
-      }
-      return sucursales;
+      return sucursalRepositorio.findAllActives();
     }catch (Exception e){
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
