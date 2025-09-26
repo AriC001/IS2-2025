@@ -30,13 +30,19 @@ public class ValorCuotaServicio {
         List<ValorCuota> valores = valorCuotaRepositorio.obtenerValorActualoUltimo(LocalDate.now());
         if(!valores.isEmpty()){
             ValorCuota v_old = valores.get(0);
-            v_old.setFechaHasta(LocalDate.now());
+            v_old.setFechaHasta(LocalDate.now().minusDays(1));
         }
         ValorCuota v = ValorCuota.builder().
                 fechaDesde(LocalDate.now()).
                 fechaHasta(fechaHasta).
                 valor(valor).
                 eliminado(false).build();
+        valorCuotaRepositorio.save(v);
         return v;
+    }
+
+    public List<ValorCuota> obtenerValorNoActual() {
+        List<ValorCuota> valores = valorCuotaRepositorio.obtenerValoresAnteriores(LocalDate.now());
+        return valores;
     }
 }

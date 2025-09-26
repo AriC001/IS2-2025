@@ -13,4 +13,6 @@ public interface DetalleFacturaRepositorio extends JpaRepository<DetalleFactura,
     public List<DetalleFactura> findByFacturaId(@Param("facturaId") String facturaId);
     @Query("SELECT df FROM DetalleFactura df WHERE df.cuotaMensual.id = :cuotaId")
     public Optional<DetalleFactura> findByCuotaId(@Param("cuotaId") String cuotaId);
+
+    boolean existsByFacturaIdAndCuotaMensualId(String facturaId, String cuotaId);
 }

@@ -54,6 +54,9 @@ public class FacturaServicio {
         Factura factura = facturaRepositorio.findById(facturaId)
                 .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
 
+        if (factura.getEstadoFactura() == estadoFactura.PAGADO) {
+            return; // ya estaba paga, no hago nada
+        }
         factura.setEstadoFactura(estadoFactura.PAGADO);
 
         for (DetalleFactura detalle : factura.getDetalles()) {
@@ -70,6 +73,9 @@ public class FacturaServicio {
         Factura factura = facturaRepositorio.findById(facturaId)
                 .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
 
+        if (factura.getEstadoFactura() == estadoFactura.PENDIENTE) {
+            return; // ya estaba paga, no hago nada
+        }
         factura.setEstadoFactura(estadoFactura.PENDIENTE);
 
         for (DetalleFactura detalle : factura.getDetalles()) {
@@ -85,6 +91,8 @@ public class FacturaServicio {
 
     @Transactional
     public Factura generarFactura(String usuarioId, List<String> cuotasIds) {
+
+
         Socio socio = new Socio();
         Optional<Socio> opt = socioServicio.buscarSocioPorIdUsuario(usuarioId);
         if (opt.isPresent()){

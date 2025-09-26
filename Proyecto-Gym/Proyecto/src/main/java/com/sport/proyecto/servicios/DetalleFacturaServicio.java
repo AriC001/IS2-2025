@@ -24,6 +24,9 @@ public class DetalleFacturaServicio {
     // Crear un detalle y asociarlo a una factura
     @Transactional
     public DetalleFactura agregarDetalle(String facturaId, String cuotaId) {
+        if (detalleFacturaRepositorio.existsByFacturaIdAndCuotaMensualId(facturaId, cuotaId)) {
+            throw new IllegalStateException("El detalle ya existe para esta cuota en la factura");
+        }
         Factura factura = new Factura();
         Optional<Factura> opt = facturaRepositorio.findById(facturaId);
         if(opt.isPresent()){
@@ -37,6 +40,10 @@ public class DetalleFacturaServicio {
 
         // persistimos
         return detalleFacturaRepositorio.save(detalle);
+    }
+
+    public boolean existeDetalle(String facturaId, String cuotaId) {
+        return detalleFacturaRepositorio.existsByFacturaIdAndCuotaMensualId(facturaId, cuotaId);
     }
 
     // Obtener todos los detalles de una factura

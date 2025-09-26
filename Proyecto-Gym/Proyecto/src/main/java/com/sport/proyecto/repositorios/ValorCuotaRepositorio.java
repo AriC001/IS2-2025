@@ -16,7 +16,8 @@ public interface ValorCuotaRepositorio extends JpaRepository<ValorCuota,String> 
     Optional<ValorCuota> obtenerPrimerValorCuota();
     @Query("SELECT v FROM ValorCuota v WHERE v.fechaHasta >= :fechaActual OR v.fechaHasta = (SELECT MAX(v2.fechaHasta) FROM ValorCuota v2)ORDER BY v.fechaDesde DESC")
     List<ValorCuota> obtenerValorActualoUltimo(@Param("fechaActual")LocalDate fechaActual);
-
+    @Query("SELECT v FROM ValorCuota v WHERE v.fechaHasta < :fechaActual")
+    List<ValorCuota> obtenerValoresAnteriores(@Param("fechaActual")LocalDate fechaActual);
 }
 
 

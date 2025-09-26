@@ -125,7 +125,7 @@ public class InicializadorDatos implements CommandLineRunner {
         }
 
         //Creamos El primero Valor de CUOTA
-        if(!valorCuotaRepositorio.obtenerPrimerValorCuota().isPresent()){
+        if(valorCuotaRepositorio.obtenerValorActualoUltimo(LocalDate.now()).size() == 0){
             ValorCuota v = ValorCuota.builder().fechaDesde(LocalDate.now()).fechaHasta(LocalDate.now().plusMonths(3)).valor(100L).eliminado(false).build();
             valorCuotaRepositorio.save(v);
         }

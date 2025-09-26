@@ -27,6 +27,8 @@ public class CuotasControlador {
     private PagoServicio pagoServicio;
     @Autowired
     private DetalleFacturaServicio detalleFacturaServicio;
+    @Autowired
+    private ValorCuotaServicio valorCuotaServicio;
 
     @GetMapping
     public String mostrarCuotas(Model model, HttpSession session) {
@@ -34,7 +36,6 @@ public class CuotasControlador {
         Usuario user = (Usuario) session.getAttribute("usuariosession");
         Socio socio = socioServicio.buscarSocioPorIdUsuario(user.getId())
                 .orElseThrow(() -> new RuntimeException("Socio no encontrado"));
-        // 👇 esto es lo que te faltaba
         model.addAttribute("usuariosession", user);
         List<CuotaMensual> cuotasNoPagadas = cuotaMensualServicio.obtenerCuotasNoPagadas(socio.getNumeroSocio());
         List<CuotaMensual> cuotasPagadas = cuotaMensualServicio.obtenerCuotasPagadas(socio.getNumeroSocio());
@@ -54,6 +55,17 @@ public class CuotasControlador {
         // Redirige al endpoint de creación de pago con el facturaId
         return "redirect:/payment/create?facturaId=" + factura.getId();
     }
+    /*
+    @GetMapping("/valor-cuota")
+    public String generarValorCuota(HttpSession session,Model model) {
+        Usuario user = (Usuario) session.getAttribute("usuariosession");
+        ValorCuota valorCuotaActual = valorCuotaServicio.obtenerValorActual();
+        List<ValorCuota> valoresCuotaAnterioires = valorCuotaServicio.obtenerValorNoActual();
+        model.addAttribute("valorCuotaActual",valorCuotaActual);
+        model.addAttribute("valoresAnteriores",valoresCuotaAnterioires);
+        return "views/valores-cuota";
+    }
+    */
 
 
 
