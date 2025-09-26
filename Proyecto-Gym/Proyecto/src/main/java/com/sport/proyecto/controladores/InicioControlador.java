@@ -1,6 +1,5 @@
 package com.sport.proyecto.controladores;
 
-import com.sport.proyecto.entidades.Persona;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.servicios.PersonaServicio;
 import com.sport.proyecto.servicios.UsuarioServicio;
@@ -24,6 +23,11 @@ public class InicioControlador {
     public String index(Model model) {
         return "views/index";
     }
+
+    /*@GetMapping("/error")
+    public String error(Model model){
+        return "views/error";
+    }*/
 
     @GetMapping("/login")
     public String loginForm(Model model) {

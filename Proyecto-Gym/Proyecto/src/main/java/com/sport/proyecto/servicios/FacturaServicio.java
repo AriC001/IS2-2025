@@ -142,5 +142,7 @@ public class FacturaServicio {
     }
 
 
-
+    public Factura buscarFacturaPorDetalle(String id) {
+        return null;
+    }
 }

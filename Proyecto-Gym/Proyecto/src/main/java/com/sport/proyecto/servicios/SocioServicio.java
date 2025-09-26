@@ -262,4 +262,20 @@ public class SocioServicio {
         }
         return cuotasPendientes;
     }
+
+    public List<CuotaMensual> buscarCuotasPagadas(Long numeroSocio) {
+        List<CuotaMensual> cuotasActuales = new ArrayList<>();
+        Optional<Socio> s = socioRepositorio.findByNumeroSocio(numeroSocio);
+        if(s.isPresent()){
+            Socio s1 = s.get();
+            cuotasActuales = s1.getCuotas();
+        }
+        List<CuotaMensual> cuotasPagadas = new ArrayList();
+        for(int i = 0; i <cuotasActuales.size();i++){
+            if(cuotasActuales.get(i).getEstado() == estadoCuota.PAGADA){
+                cuotasPagadas.add(cuotasActuales.get(i));
+            }
+        }
+        return cuotasPagadas;
+    }
 }

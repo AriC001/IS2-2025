@@ -57,6 +57,15 @@ public class DetalleFacturaServicio {
         }
     }
 
+    @Transactional
+    public DetalleFactura buscarDetallePorCuota(String cuotaId){
+        DetalleFactura detalle = new DetalleFactura();
+        Optional<DetalleFactura> opt = detalleFacturaRepositorio.findByCuotaId(cuotaId);
+        if(opt.isPresent()) {
+            detalle = opt.get();
+        }
+        return detalle;
+    }
 
 }
 

@@ -1,21 +1,12 @@
 package com.sport.proyecto.controladores;
 
-import com.sport.proyecto.entidades.CuotaMensual;
-import com.sport.proyecto.entidades.Factura;
-import com.sport.proyecto.entidades.Socio;
-import com.sport.proyecto.entidades.Usuario;
-import com.sport.proyecto.servicios.CuotaMensualServicio;
-import com.sport.proyecto.servicios.FacturaServicio;
-import com.sport.proyecto.servicios.PagoServicio;
-import com.sport.proyecto.servicios.SocioServicio;
+import com.sport.proyecto.entidades.*;
+import com.sport.proyecto.servicios.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +25,8 @@ public class CuotasControlador {
 
     @Autowired
     private PagoServicio pagoServicio;
+    @Autowired
+    private DetalleFacturaServicio detalleFacturaServicio;
 
     @GetMapping
     public String mostrarCuotas(Model model, HttpSession session) {
@@ -41,10 +34,13 @@ public class CuotasControlador {
         Usuario user = (Usuario) session.getAttribute("usuariosession");
         Socio socio = socioServicio.buscarSocioPorIdUsuario(user.getId())
                 .orElseThrow(() -> new RuntimeException("Socio no encontrado"));
-
+        // 👇 esto es lo que te faltaba
+        model.addAttribute("usuariosession", user);
         List<CuotaMensual> cuotasNoPagadas = cuotaMensualServicio.obtenerCuotasNoPagadas(socio.getNumeroSocio());
+        List<CuotaMensual> cuotasPagadas = cuotaMensualServicio.obtenerCuotasPagadas(socio.getNumeroSocio());
         model.addAttribute("cuotas", cuotasNoPagadas);
-
+        model.addAttribute("cuotasPagadas", cuotasPagadas);
+        System.out.println(cuotasPagadas);
         return "views/cuotas-no-pagadas"; // Thymeleaf HTML
     }
 
@@ -58,4 +54,9 @@ public class CuotasControlador {
         // Redirige al endpoint de creación de pago con el facturaId
         return "redirect:/payment/create?facturaId=" + factura.getId();
     }
+
+
+
+
+
 }

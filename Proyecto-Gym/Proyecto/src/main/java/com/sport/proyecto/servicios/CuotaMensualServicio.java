@@ -79,4 +79,9 @@ public class CuotaMensualServicio {
         }
     }
 
+    @Transactional
+    public List<CuotaMensual> obtenerCuotasPagadas(Long numeroSocio) {
+        List<CuotaMensual> cuotas = socioServicio.buscarCuotasPagadas(numeroSocio);
+        return cuotas;
+    }
 }

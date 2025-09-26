@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface DetalleFacturaRepositorio extends JpaRepository<DetalleFactura,String> {
     @Query("SELECT df FROM DetalleFactura df WHERE df.factura.id = :facturaId")
     public List<DetalleFactura> findByFacturaId(@Param("facturaId") String facturaId);
+    @Query("SELECT df FROM DetalleFactura df WHERE df.cuotaMensual.id = :cuotaId")
+    public Optional<DetalleFactura> findByCuotaId(@Param("cuotaId") String cuotaId);
 }

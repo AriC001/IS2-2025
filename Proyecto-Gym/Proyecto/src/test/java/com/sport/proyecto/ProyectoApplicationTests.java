@@ -7,6 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ProyectoApplicationTests {
 	@Test
 	void contextLoads() {
-		assert(true);
+		//ssert(true);
 	}
 }
