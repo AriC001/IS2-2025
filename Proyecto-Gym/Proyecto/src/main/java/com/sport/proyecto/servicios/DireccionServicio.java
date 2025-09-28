@@ -162,5 +162,36 @@ public class DireccionServicio {
       throw new ErrorServicio("La localidad no puede ser nula o estar vacia");
     }
   }
+  @Transactional 
+  public Direccion guardarDireccion(Direccion nuevaDireccion){
+        validar(nuevaDireccion.getCalle(),nuevaDireccion.getNumeracion(),nuevaDireccion.getBarrio()
+                ,nuevaDireccion.getManzanaPiso(),nuevaDireccion.getCasaDepartamento(),nuevaDireccion.getReferencia(),
+                nuevaDireccion.getLocalidad().getId());
+    try {
+      System.out.println("busca localidad");
+      Localidad localidad = localidadServicio.buscarLocalidad(nuevaDireccion.getLocalidad().getId());
+      if (localidad == null) {
+        System.out.println("no encuentra localidad");
+        throw new ErrorServicio("No se encontro la localidad solicitada");
+      }
+      Direccion direccion = new Direccion();
+      System.out.println("id creado: "+direccion.getId());
+      direccion.setCalle(nuevaDireccion.getCalle());
+      direccion.setNumeracion(nuevaDireccion.getNumeracion());
+      direccion.setBarrio(nuevaDireccion.getBarrio());
+      direccion.setManzanaPiso(nuevaDireccion.getManzanaPiso());
+      direccion.setCasaDepartamento(nuevaDireccion.getCasaDepartamento());
+      direccion.setReferencia(nuevaDireccion.getReferencia());
+      direccion.setEliminado(false);
+      direccion.setLocalidad(localidad);
+      System.out.println("guardando");
+      direccionRepositorio.save(direccion);
+      return direccion;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
 
 }
