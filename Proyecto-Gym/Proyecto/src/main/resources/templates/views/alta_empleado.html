@@ -20,7 +20,8 @@
   <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
   <div th:if="${msg}" class="alert alert-success" th:text="${msg}"></div>
 
-  <form th:action="@{/empleados/crear}" method="post" th:object="${empleado}">
+  <form th:action="${empleado != null and empleado.id != null} ? @{/empleados/actualizar/{id}(id=${empleado.id})} : @{/empleados/crear}"
+            method="post" th:object="${empleado}">
     <div class="mb-3">
       <label for="nombre" class="form-label">Nombre</label>
       <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Ingrese el nombre" required>
@@ -64,6 +65,14 @@
              th:value="${empleado.fechaNacimiento != null} ? ${#temporals.format(empleado.fechaNacimiento, 'dd-MM-yyyy')} : ''"
              required>
     </div>
+    <div class="mb-3">
+      <label for="sucursal" class="form-label">Sucursal</label>
+      <select class="form-control" name="sucursal">
+        <option th:each="sucursal : ${sucursales}"
+                th:value="${sucursal.id}"
+                th:text="${sucursal.nombre}">
+        </option>
+      </select>
     <div class="mb-3">
       <label for="telefono" class="form-label">Teléfono</label>
       <input type="text" id="telefono" th:field="*{telefono}" class="form-control" placeholder="Ingrese el teléfono" required>
