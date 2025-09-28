@@ -8,7 +8,10 @@ import java.util.Date;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.enums.tipoDocumento;
 import com.sport.proyecto.enums.tipoEmpleado;
+import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.servicios.EmpleadoServicio;
+import com.sport.proyecto.servicios.SucursalServicio;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +28,9 @@ public class EmpleadoControlador {
   @Autowired
   private EmpleadoServicio empleadoServicio;
 
+  @Autowired 
+  private SucursalServicio sucursalServicio;
+
   @GetMapping("")
   public String empleados(Model model) {
     try{
@@ -37,6 +43,7 @@ public class EmpleadoControlador {
       return "views/empleados";
     }
   }
+  
 
 
   @GetMapping("/nuevo")
@@ -44,6 +51,7 @@ public class EmpleadoControlador {
     model.addAttribute("empleado", new Empleado());
     model.addAttribute("tiposEmpleado", tipoEmpleado.values());
     model.addAttribute("tiposDocumento", tipoDocumento.values());
+    model.addAttribute("sucursales", sucursalServicio.listarSucursalActivas());
     return "views/alta_empleado";
   }
 
@@ -59,12 +67,13 @@ public class EmpleadoControlador {
       );
 
       model.addAttribute("msg", "Empleado creado exitosamente");
-      return "redirect:/empleados/lista"; // redirige a la lista de empleados
+      return "redirect:/empleados"; // redirige a la lista de empleados
     } catch (Exception e) {
       model.put("error", e.getMessage());
       model.addAttribute("empleado", empleado);
       model.addAttribute("tiposEmpleado", tipoEmpleado.values());
       model.addAttribute("tiposDocumento", tipoDocumento.values());
+      model.addAttribute("sucursales",sucursalServicio.listarSucursalActivas());
       return "views/alta_empleado"; // vuelve al formulario con error
     }
   }
@@ -73,7 +82,7 @@ public class EmpleadoControlador {
   public String empleadoForm(Model model) {
     model.addAttribute("empleado", new Empleado());
     model.addAttribute("tiposDni", tipoDocumento.values());
-    return "views/empleado-formulario";
+    return "views/alta_empleado";
   }
 
 
@@ -107,8 +116,37 @@ public class EmpleadoControlador {
     return "views/empleado-formulario";
   }
 */
+  @GetMapping("/editar/{id}")
+  public String editar(@PathVariable String id, Model model) {
+    try {
+        Empleado empleado =empleadoServicio.buscarEmpleado(id).get();
+        model.addAttribute("empleado", empleado);
+        model.addAttribute("tiposDocumento", tipoDocumento.values());
+        model.addAttribute("tiposEmpleado", tipoEmpleado.values());
+        model.addAttribute("sucursales", sucursalServicio.listarSucursalActivas());
+        return "views/alta_empleado";
 
+    } catch (ErrorServicio e) {
+      model.addAttribute("error", e.getMessage());
+      return "redirect:/empleados";
+    }
+  }
+  @PostMapping("/actualizar/{id}")
+  public String actualizar(@PathVariable String id, @ModelAttribute("empleado") Empleado empleado, Model model) {
+      try {
+          System.out.println("CONTROLADOR");
+          empleadoServicio.modificar(id, empleado.getNombre(), empleado.getApellido(), empleado.getFechaNacimiento(),
+              empleado.getTipoDocumento(), empleado.getNumeroDocumento(), empleado.getEmail(), empleado.getTelefono(),
+              empleado.getTipoEmpleado(), empleado.getUsuario(), empleado.getSucursal());
+          return "redirect:/empleados";
+      } catch (Exception e) {
+         System.err.println(e.getMessage());
+          return "redirect:/empleados/editar/" + id;}
+  }
 
+  
+
+  
   @ModelAttribute("usuariosession")
   public Usuario usuarioSession(HttpSession session) {
     return (Usuario) session.getAttribute("usuariosession");
@@ -116,3 +154,4 @@ public class EmpleadoControlador {
 
 
 }
+
