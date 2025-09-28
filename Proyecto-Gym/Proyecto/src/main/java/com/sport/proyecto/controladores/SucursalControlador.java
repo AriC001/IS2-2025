@@ -1,10 +1,17 @@
 package com.sport.proyecto.controladores;
 
+import com.sport.proyecto.entidades.Direccion;
+import com.sport.proyecto.entidades.Empresa;
 import com.sport.proyecto.entidades.Sucursal;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.servicios.SucursalServicio;
+import com.sport.proyecto.servicios.DepartamentoServicio;
 import com.sport.proyecto.servicios.DireccionServicio;
 import com.sport.proyecto.servicios.EmpresaServicio;
+import com.sport.proyecto.servicios.LocalidadServicio;
+import com.sport.proyecto.servicios.PaisServicio;
+import com.sport.proyecto.servicios.ProvinciaServicio;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +30,19 @@ public class SucursalControlador {
   private DireccionServicio direccionServicio;
   @Autowired
   private EmpresaServicio empresaServicio;
+  @Autowired
+  private PaisServicio paisServicio;
+  @Autowired
+  private ProvinciaServicio provinciaServicio;
+  @Autowired
+  private LocalidadServicio localidadServicio;
+  @Autowired
+  private DepartamentoServicio departamentoServicio;
 
   @GetMapping("")
   public String listar(Model model) {
     try {
+      System.out.println("controlador");
       model.addAttribute("sucursales", sucursalServicio.listarSucursalActivas());
     } catch (Exception e) {
       model.addAttribute("error", e.getMessage());
@@ -39,6 +55,12 @@ public class SucursalControlador {
     try {
       model.addAttribute("sucursal", new Sucursal());
       model.addAttribute("direcciones", direccionServicio.listarDireccionActiva());
+       // Para el subformulario de Dirección
+      model.addAttribute("nuevaDireccion", new Direccion());
+      model.addAttribute("paises", paisServicio.listarPaisActivo() );
+      model.addAttribute("provincias", provinciaServicio.listarProvinciaActiva());
+      model.addAttribute("departamentos",departamentoServicio.listarDepartamentoActivo());
+      model.addAttribute("localidades", localidadServicio.listarLocalidadActiva());
       model.addAttribute("empresas", empresaServicio.listarEmpresaActiva());
       return "views/sucursal-form";
     } catch (Exception e) {
@@ -46,7 +68,7 @@ public class SucursalControlador {
       return "redirect:/sucursal";
     }
   }
-
+  /** 
   @PostMapping("/crear")
   public String crear(@ModelAttribute("sucursal") Sucursal sucursal,
                       RedirectAttributes redirectAttributes) {
@@ -64,7 +86,63 @@ public class SucursalControlador {
       redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
     return "redirect:/sucursal";
+  } */
+  @PostMapping("/crear")
+  public String crear(@ModelAttribute("sucursal") Sucursal sucursal,
+                      @ModelAttribute("nuevaDireccion") Direccion nuevaDireccion,
+                      @RequestParam(name = "crearNuevaDireccion", required = false) String crearNuevaDireccionFlag,
+                      RedirectAttributes ra,
+                      Model model) {
+
+      System.out.println("==== DEBUG POST /sucursal/crear ====");
+      System.out.println("Sucursal.nombre: " + sucursal.getNombre());
+      System.out.println("Sucursal.empresa.id: " +
+              (sucursal.getEmpresa() != null ? sucursal.getEmpresa().getId() : "null"));
+      System.out.println("Sucursal.direccion.id (seleccionada): " +
+              (sucursal.getDireccion() != null ? sucursal.getDireccion().getId() : "null"));
+      System.out.println("Flag crearNuevaDireccion: " + crearNuevaDireccionFlag);
+      System.out.println("NuevaDireccion.calle: " + nuevaDireccion.getCalle());
+      System.out.println("NuevaDireccion.numeracion: " + nuevaDireccion.getNumeracion());
+
+      try {
+          Direccion direccionFinal = null;
+
+          // 1. Si el usuario quiere CREAR NUEVA dirección
+          if ("true".equalsIgnoreCase(crearNuevaDireccionFlag)) {
+              if (nuevaDireccion.getCalle() == null || nuevaDireccion.getCalle().isBlank()) {
+                  throw new Exception("Debe ingresar al menos calle y numeración para la nueva dirección.");
+              }
+              System.out.println(">>> Creando NUEVA dirección");
+              direccionFinal = direccionServicio.guardarDireccion(nuevaDireccion);
+
+          // 2. Si seleccionó una dirección existente
+          } else if (sucursal.getDireccion() != null && sucursal.getDireccion().getId() != null) {
+              System.out.println(">>> Usando dirección EXISTENTE ID=" + sucursal.getDireccion().getId());
+              direccionFinal = direccionServicio.buscarDireccion(sucursal.getDireccion().getId());
+
+          // 3. Si no eligió nada
+          } else {
+              throw new Exception("Debe seleccionar una dirección existente o crear una nueva.");
+          }
+
+          // Crear la sucursal
+          sucursalServicio.crearSucursal(
+                  sucursal.getNombre(),
+                  sucursal.getEmpresa().getId(),
+                  direccionFinal.getId()
+          );
+
+          ra.addFlashAttribute("msg", "Sucursal creada exitosamente");
+          return "redirect:/sucursal";
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          ra.addFlashAttribute("error", e.getMessage());
+          return "redirect:/sucursal/crear";
+      }
   }
+
+
 
   @GetMapping("/editar/{id}")
   public String editar(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
