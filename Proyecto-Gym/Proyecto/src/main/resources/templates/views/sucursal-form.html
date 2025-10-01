@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -12,17 +13,21 @@
       <h3>Nueva Sucursal</h3>
     </div>
     <div class="card-body">
-
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        const direccionExistente = /*[[${nuevaDireccion != null ? nuevaDireccion : 'null'}]]*/ null;
+        /*]]>*/
+      </script>
       <form th:action="@{/sucursal/crear}" method="post"
             th:object="${sucursal}" enctype="application/x-www-form-urlencoded">
 
-        <!-- Nombre -->
+
         <div class="mb-3">
           <label class="form-label">Nombre Sucursal</label>
           <input type="text" th:field="*{nombre}" class="form-control" required>
         </div>
 
-        <!-- Empresa -->
+
         <div class="mb-3">
           <label class="form-label">Empresa</label>
           <select th:field="*{empresa.id}" class="form-select" required>
@@ -30,7 +35,7 @@
             <option th:each="emp : ${empresas}" th:value="${emp.id}" th:text="${emp.nombre}"></option>
           </select>
         </div>
-        <!-- Dirección existente -->
+
         <div class="mb-3">
           <label for="direccion" class="form-label">Dirección existente</label>
           <select th:field="*{direccion.id}" class="form-select">
@@ -40,54 +45,75 @@
           </select>
         </div>
 
-        <!-- Flag para indicar nueva dirección -->
+
         <input type="hidden" id="crearNuevaDireccion" name="crearNuevaDireccion" value="false">
 
-        <!-- Botón para nueva dirección -->
-        <button type="button" class="btn btn-outline-primary mb-3" id="toggleNuevaDir">
-          + Nueva Dirección
+
+        <button type="button"
+                class="btn btn-outline-primary mb-3"
+                id="toggleNuevaDir"
+                th:text="${modoEdicion} ? 'Editar Dirección' : '+ Nueva Dirección'">
         </button>
 
-        <!-- 🟢 Formulario de nueva dirección -->
-        <div id="nuevaDireccionForm" class="border rounded p-3" style="display:none;"
-             th:object="${nuevaDireccion}">
-          <h5>Nueva Dirección</h5>
 
-          <!-- País -->
+        <div id="nuevaDireccionForm"
+             class="border rounded p-3"
+             th:object="${nuevaDireccion}"
+             th:style="${modoEdicion} ? 'display:block;' : 'display:none;'">
+          <h5 th:text="${modoEdicion} ? 'Editar Dirección' : 'Nueva Dirección'"></h5>
+
+
           <div class="mb-3">
             <label class="form-label">País *</label>
-            <select th:field="*{localidad.departamento.provincia.pais.id}" class="form-select" required>
+            <select id="paisSelect" th:field="*{localidad.departamento.provincia.pais.id}" class="form-select" required>
               <option value="">-- Seleccione País --</option>
-              <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"></option>
+              <option th:each="p : ${paises}"
+                      th:value="${p.id}"
+                      th:text="${p.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.departamento.provincia.pais.id} == ${p.id} : false">
+              </option>
             </select>
           </div>
 
-          <!-- Provincia -->
+
           <div class="mb-3">
             <label class="form-label">Provincia *</label>
-            <select th:field="*{localidad.departamento.provincia.id}" class="form-select" required>
+            <select id="provinciaSelect" th:field="*{localidad.departamento.provincia.id}" class="form-select" required>
               <option value="">-- Seleccione Provincia --</option>
-              <option th:each="prov : ${provincias}" th:value="${prov.id}" th:text="${prov.nombre}"></option>
+              <option th:each="prov : ${provincias}"
+                      th:value="${prov.id}"
+                      th:text="${prov.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.departamento.provincia.id} == ${prov.id} : false">
+              </option>
             </select>
           </div>
 
-          <!-- Departamento -->
+
           <div class="mb-3">
             <label class="form-label">Departamento *</label>
-            <select th:field="*{localidad.departamento.id}" class="form-select" required>
+            <select id="departamentoSelect" th:field="*{localidad.departamento.id}" class="form-select" required>
               <option value="">-- Seleccione Departamento --</option>
-              <option th:each="dep : ${departamentos}" th:value="${dep.id}" th:text="${dep.nombre}"></option>
+              <option th:each="dep : ${departamentos}"
+                      th:value="${dep.id}"
+                      th:text="${dep.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.departamento.id} == ${dep.id} : false">
+              </option>
             </select>
           </div>
 
-          <!-- Localidad -->
+
           <div class="mb-3">
             <label class="form-label">Localidad *</label>
-            <select th:field="*{localidad.id}" class="form-select" required>
+            <select id="localidadSelect" th:field="*{localidad.id}" class="form-select" required>
               <option value="">-- Seleccione Localidad --</option>
-              <option th:each="loc : ${localidades}" th:value="${loc.id}" th:text="${loc.nombre}"></option>
+              <option th:each="loc : ${localidades}"
+                      th:value="${loc.id}"
+                      th:text="${loc.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.id} == ${loc.id} : false">
+              </option>
             </select>
           </div>
+
 
           <div class="row">
             <div class="col-md-6 mb-3">
@@ -113,6 +139,13 @@
           </div>
 
           <div class="mb-3">
+            <label>Latitud</label>
+            <input type="text" th:field="*{latitud}" class="form-control">
+            <label>Longitud</label>
+            <input type="text" th:field="*{longitud}" class="form-control">
+          </div>
+
+          <div class="mb-3">
             <label>Referencia</label>
             <input type="text" th:field="*{referencia}" class="form-control">
           </div>
@@ -128,39 +161,315 @@
   </div>
 </div>
 
-<script>
-  const toggleBtn = document.getElementById('toggleNuevaDir');
-  const formNueva = document.getElementById('nuevaDireccionForm');
-  const flag = document.getElementById('crearNuevaDireccion');
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", async function () {
+    const paisSelect = document.getElementById("paisSelect");
+    const provinciaSelect = document.getElementById("provinciaSelect");
+    const departamentoSelect = document.getElementById("departamentoSelect");
+    const localidadSelect = document.getElementById("localidadSelect");
+    const toggleBtn = document.getElementById('toggleNuevaDir');
+    const formNueva = document.getElementById('nuevaDireccionForm');
+    const flag = document.getElementById('crearNuevaDireccion');
+    const camposNuevaDireccion = formNueva.querySelectorAll('[required]');
 
-  // Tomamos todos los campos que tienen "required" en el bloque de nueva dirección
-  const camposNuevaDireccion = formNueva.querySelectorAll('[required]');
+    // Funciones para activar/desactivar required
+    function desactivarCampos() { camposNuevaDireccion.forEach(c => c.removeAttribute('required')); }
+    function activarCampos() { camposNuevaDireccion.forEach(c => c.setAttribute('required','required')); }
 
-  // Desactiva validación de los campos ocultos
-  function desactivarCampos() {
-    camposNuevaDireccion.forEach(campo => campo.removeAttribute('required'));
-  }
-
-  // Activa validación de los campos cuando el bloque se muestra
-  function activarCampos() {
-    camposNuevaDireccion.forEach(campo => campo.setAttribute('required', 'required'));
-  }
-
-  // Al cargar la página, el bloque está oculto → desactivamos sus required
-  desactivarCampos();
-
-  toggleBtn.addEventListener('click', () => {
-    if (formNueva.style.display === 'none') {
-      // Mostrar bloque de nueva dirección
+    // Inicializamos bloque de nueva dirección según el display
+    if (!formNueva.style.display || formNueva.style.display === 'none') desactivarCampos();
+    if (/*[[${modoEdicion}]]*/ false) {
       formNueva.style.display = 'block';
       flag.value = 'true';
-      activarCampos();  // activamos required
-    } else {
-      // Ocultar bloque de nueva dirección
-      formNueva.style.display = 'none';
-      flag.value = 'false';
-      desactivarCampos(); // desactivamos required
+      activarCampos();
     }
+
+    // Toggle del bloque de nueva dirección
+    toggleBtn?.addEventListener('click', () => {
+      const visible = formNueva.style.display === 'block';
+      formNueva.style.display = visible ? 'none' : 'block';
+      flag.value = visible ? 'false' : 'true';
+      visible ? desactivarCampos() : activarCampos();
+    });
+
+    // Si hay dirección existente (modo edición)
+    if (direccionExistente) {
+      try {
+        // 1️⃣ Seleccionar país
+        paisSelect.value = direccionExistente.localidad.departamento.provincia.pais.id;
+
+        // 2️⃣ Cargar provincias
+        const provincias = await fetch(`/ubicacion/provincias/${paisSelect.value}`).then(r => r.json());
+        provinciaSelect.innerHTML = '<option value="">-- Seleccione Provincia --</option>';
+        provincias.forEach(p => provinciaSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`);
+        provinciaSelect.value = direccionExistente.localidad.departamento.provincia.id;
+
+        // 3️⃣ Cargar departamentos
+        const departamentos = await fetch(`/ubicacion/departamentos/${provinciaSelect.value}`).then(r => r.json());
+        departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+        departamentos.forEach(d => departamentoSelect.innerHTML += `<option value="${d.id}">${d.nombre}</option>`);
+        departamentoSelect.value = direccionExistente.localidad.departamento.id;
+
+        // 4️⃣ Cargar localidades
+        const localidades = await fetch(`/ubicacion/localidades/${departamentoSelect.value}`).then(r => r.json());
+        localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+        localidades.forEach(l => localidadSelect.innerHTML += `<option value="${l.id}">${l.nombre}</option>`);
+        localidadSelect.value = direccionExistente.localidad.id;
+      } catch (error) {
+        console.error("Error cargando datos de dirección existente:", error);
+      }
+    }
+
+    // Listeners de cambio encadenados
+    paisSelect.addEventListener("change", async () => {
+      provinciaSelect.innerHTML = '<option value="">-- Seleccione Provincia --</option>';
+      departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+      localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+      if (!paisSelect.value) return;
+      const data = await fetch(`/ubicacion/provincias/${paisSelect.value}`).then(r => r.json());
+      data.forEach(p => provinciaSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`);
+    });
+
+    provinciaSelect.addEventListener("change", async () => {
+      departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+      localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+      if (!provinciaSelect.value) return;
+      const data = await fetch(`/ubicacion/departamentos/${provinciaSelect.value}`).then(r => r.json());
+      data.forEach(d => departamentoSelect.innerHTML += `<option value="${d.id}">${d.nombre}</option>`);
+    });
+
+    departamentoSelect.addEventListener("change", async () => {
+      localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+      if (!departamentoSelect.value) return;
+      const data = await fetch(`/ubicacion/localidades/${departamentoSelect.value}`).then(r => r.json());
+      data.forEach(l => localidadSelect.innerHTML += `<option value="${l.id}">${l.nombre}</option>`);
+    });
+  });
+</script>
+
+
+</body>
+</html>
+ -->
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Nueva Sucursal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <div class="card mx-auto" style="max-width: 700px;">
+    <div class="card-header text-center">
+      <h3>Nueva Sucursal</h3>
+    </div>
+    <div class="card-body">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        const direccionExistente = /*[[${nuevaDireccion != null ? nuevaDireccion : 'null'}]]*/ null;
+        /*]]>*/
+      </script>
+
+      <form th:action="@{/sucursal/crear}" method="post" th:object="${sucursal}" enctype="application/x-www-form-urlencoded">
+
+        <!-- Nombre -->
+        <div class="mb-3">
+          <label class="form-label">Nombre Sucursal</label>
+          <input type="text" th:field="*{nombre}" class="form-control" required>
+        </div>
+
+        <!-- Empresa -->
+        <div class="mb-3">
+          <label class="form-label">Empresa</label>
+          <select th:field="*{empresa.id}" class="form-select" required>
+            <option value="">-- Seleccione empresa --</option>
+            <option th:each="emp : ${empresas}" th:value="${emp.id}" th:text="${emp.nombre}"></option>
+          </select>
+        </div>
+
+        <!-- Dirección existente -->
+        <div class="mb-3">
+          <label for="direccion" class="form-label">Dirección existente</label>
+          <select th:field="*{direccion.id}" class="form-select">
+            <option value="">-- Seleccione dirección existente --</option>
+            <option th:each="d : ${direcciones}" th:value="${d.id}" th:text="${d.calle + ' ' + d.numeracion}"></option>
+          </select>
+        </div>
+
+        <!-- Flag para indicar nueva dirección -->
+        <input type="hidden" id="crearNuevaDireccion" name="crearNuevaDireccion" value="false">
+
+        <!-- Botón toggle -->
+        <button type="button" class="btn btn-outline-primary mb-3" id="toggleNuevaDir"
+                th:text="${modoEdicion} ? 'Editar Dirección' : '+ Nueva Dirección'">
+        </button>
+
+        <!-- Formulario nueva dirección -->
+        <div id="nuevaDireccionForm" class="border rounded p-3" th:object="${nuevaDireccion}"
+             th:style="${modoEdicion} ? 'display:block;' : 'display:none;'">
+
+          <h5 th:text="${modoEdicion} ? 'Editar Dirección' : 'Nueva Dirección'"></h5>
+
+          <!-- País -->
+          <div class="mb-3">
+            <label class="form-label">País *</label>
+            <select id="paisSelect" th:field="*{localidad.departamento.provincia.pais.id}" class="form-select" required>
+              <option value="">-- Seleccione País --</option>
+              <option th:each="p : ${paises}"
+                      th:value="${p.id}"
+                      th:text="${p.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.departamento.provincia.pais.id} == ${p.id} : false">
+              </option>
+            </select>
+          </div>
+
+          <!-- Provincia -->
+          <div class="mb-3">
+            <label class="form-label">Provincia *</label>
+            <select id="provinciaSelect" th:field="*{localidad.departamento.provincia.id}" class="form-select" required>
+              <option value="">-- Seleccione Provincia --</option>
+              <option th:each="prov : ${provincias}"
+                      th:value="${prov.id}"
+                      th:text="${prov.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.departamento.provincia.id} == ${prov.id} : false">
+              </option>
+            </select>
+          </div>
+
+          <!-- Departamento -->
+          <div class="mb-3">
+            <label class="form-label">Departamento *</label>
+            <select id="departamentoSelect" th:field="*{localidad.departamento.id}" class="form-select" required>
+              <option value="">-- Seleccione Departamento --</option>
+              <option th:each="dep : ${departamentos}"
+                      th:value="${dep.id}"
+                      th:text="${dep.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.departamento.id} == ${dep.id} : false">
+              </option>
+            </select>
+          </div>
+
+          <!-- Localidad -->
+          <div class="mb-3">
+            <label class="form-label">Localidad *</label>
+            <select id="localidadSelect" th:field="*{localidad.id}" class="form-select" required>
+              <option value="">-- Seleccione Localidad --</option>
+              <option th:each="loc : ${localidades}"
+                      th:value="${loc.id}"
+                      th:text="${loc.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.id} == ${loc.id} : false">
+              </option>
+            </select>
+          </div>
+
+          <!-- Calle/Número/Barrio -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Calle *</label>
+              <input type="text" th:field="*{calle}" class="form-control" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>Número</label>
+              <input type="text" th:field="*{numeracion}" class="form-control">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>Barrio</label>
+              <input type="text" th:field="*{barrio}" class="form-control">
+            </div>
+          </div>
+
+          <!-- Casa/Depto y Manzana/Piso -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Casa/Depto</label>
+            <input type="text" class="form-control" name="casaDepartamento" th:field="*{casaDepartamento}" placeholder="Ej: 4B">
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Manzana/Piso</label>
+            <input type="text" class="form-control" name="manzanaPiso" th:field="*{manzanaPiso}" placeholder="Ej: Mz 5 / 2°">
+          </div>
+
+          <!-- Latitud/Longitud -->
+          <div class="mb-3">
+            <label>Latitud</label>
+            <input type="text" th:field="*{latitud}" class="form-control">
+            <label>Longitud</label>
+            <input type="text" th:field="*{longitud}" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label>Referencia</label>
+            <input type="text" th:field="*{referencia}" class="form-control">
+          </div>
+
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <a th:href="@{/sucursal}" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    const paisSelect = document.getElementById("paisSelect");
+    const provinciaSelect = document.getElementById("provinciaSelect");
+    const departamentoSelect = document.getElementById("departamentoSelect");
+    const localidadSelect = document.getElementById("localidadSelect");
+    const toggleBtn = document.getElementById('toggleNuevaDir');
+    const formNueva = document.getElementById('nuevaDireccionForm');
+    const flag = document.getElementById('crearNuevaDireccion');
+    const camposNuevaDireccion = formNueva.querySelectorAll('[required]');
+
+    function desactivarCampos() { camposNuevaDireccion.forEach(c => c.removeAttribute('required')); }
+    function activarCampos() { camposNuevaDireccion.forEach(c => c.setAttribute('required','required')); }
+
+    // Inicializamos bloque según display
+    if (!formNueva.style.display || formNueva.style.display === 'none') desactivarCampos();
+    if (/*[[${modoEdicion}]]*/ false) {
+      formNueva.style.display = 'block';
+      flag.value = 'true';
+      activarCampos();
+    }
+
+    // Toggle
+    toggleBtn?.addEventListener('click', () => {
+      const visible = formNueva.style.display === 'block';
+      formNueva.style.display = visible ? 'none' : 'block';
+      flag.value = visible ? 'false' : 'true';
+      visible ? desactivarCampos() : activarCampos();
+    });
+
+    // Solo hacer fetch de niveles inferiores si hay selección
+    paisSelect.addEventListener("change", async () => {
+      provinciaSelect.innerHTML = '<option value="">-- Seleccione Provincia --</option>';
+      departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+      localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+      if (!paisSelect.value) return;
+      const provincias = await fetch(`/ubicacion/provincias/${paisSelect.value}`).then(r => r.json());
+      provincias.forEach(p => provinciaSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`);
+    });
+
+    provinciaSelect.addEventListener("change", async () => {
+      departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+      localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+      if (!provinciaSelect.value) return;
+      const data = await fetch(`/ubicacion/departamentos/${provinciaSelect.value}`).then(r => r.json());
+      data.forEach(d => departamentoSelect.innerHTML += `<option value="${d.id}">${d.nombre}</option>`);
+    });
+
+    departamentoSelect.addEventListener("change", async () => {
+      localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+      if (!departamentoSelect.value) return;
+      const data = await fetch(`/ubicacion/localidades/${departamentoSelect.value}`).then(r => r.json());
+      data.forEach(l => localidadSelect.innerHTML += `<option value="${l.id}">${l.nombre}</option>`);
+    });
   });
 </script>
 

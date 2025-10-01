@@ -37,9 +37,22 @@ public class Direccion implements Serializable {
 
   private boolean eliminado;
 
+  @Column
+  private String latitud;
+
+  @Column
+  private String longitud;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "localidad_id")
   private Localidad localidad;
+
+  public String getGoogleMapsLink() {
+    if (latitud != null && longitud != null && !latitud.isEmpty() && !longitud.isEmpty()) {
+      return "https://www.google.com/maps?q=" + latitud + "," + longitud;
+    }
+    return null;
+  }
 
   public String getDescripcion() {
     StringBuilder sb = new StringBuilder();

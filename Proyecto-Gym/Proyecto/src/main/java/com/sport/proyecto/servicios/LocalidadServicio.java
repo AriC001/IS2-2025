@@ -93,6 +93,7 @@ public class LocalidadServicio {
       if (localidades.isEmpty()) {
         throw new ErrorServicio("No hay localidades cargadas para el departamento seleccionado");
       }
+      localidades.forEach(p -> p.getDepartamento().getNombre());
       return localidades;
     }catch (Exception e){
       throw new ErrorServicio("Error del sistema");

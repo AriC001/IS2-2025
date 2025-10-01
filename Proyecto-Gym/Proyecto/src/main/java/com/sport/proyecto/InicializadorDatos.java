@@ -43,6 +43,8 @@ public class InicializadorDatos implements CommandLineRunner {
     private PersonaServicio personaServicio;
     @Autowired
     private CuotaMensualServicio cuotaMensualServicio;
+    @Autowired
+    private EmpresaRepositorio empresaRepositorio;
 
     @Override
     @Transactional
@@ -175,6 +177,11 @@ public class InicializadorDatos implements CommandLineRunner {
                     .tipoEmpleado(tipoEmpleado.PROFESOR)
                     .build();
             personaRepositorio.save(empleado1);
+        }
+
+        if(empresaRepositorio.findAllActives().size() == 0){
+            Empresa e = Empresa.builder().correoElectronico("admin@admin.com").nombre("Sports").telefono("2614444444").eliminado(false).build();
+            empresaRepositorio.save(e);
         }
     }
 }
