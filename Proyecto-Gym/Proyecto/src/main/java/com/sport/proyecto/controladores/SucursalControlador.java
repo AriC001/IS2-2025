@@ -1,9 +1,6 @@
 package com.sport.proyecto.controladores;
 
-import com.sport.proyecto.entidades.Direccion;
-import com.sport.proyecto.entidades.Empresa;
-import com.sport.proyecto.entidades.Sucursal;
-import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.entidades.*;
 import com.sport.proyecto.servicios.SucursalServicio;
 import com.sport.proyecto.servicios.DepartamentoServicio;
 import com.sport.proyecto.servicios.DireccionServicio;
@@ -53,6 +50,8 @@ public class SucursalControlador {
   @GetMapping("/nueva")
   public String nueva(Model model, RedirectAttributes redirectAttributes) {
     try {
+      List<Empresa> empresas = empresaServicio.listarEmpresaActiva();
+      model.addAttribute("empresas",empresas);
       model.addAttribute("sucursal", new Sucursal());
       model.addAttribute("direcciones", direccionServicio.listarDireccionActiva());
        // Para el subformulario de Dirección
@@ -62,6 +61,7 @@ public class SucursalControlador {
       model.addAttribute("departamentos",departamentoServicio.listarDepartamentoActivo());
       model.addAttribute("localidades", localidadServicio.listarLocalidadActiva());
       model.addAttribute("empresas", empresaServicio.listarEmpresaActiva());
+      model.addAttribute("modoEdicion", false);
       return "views/sucursal-form";
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -103,6 +103,7 @@ public class SucursalControlador {
       System.out.println("Flag crearNuevaDireccion: " + crearNuevaDireccionFlag);
       System.out.println("NuevaDireccion.calle: " + nuevaDireccion.getCalle());
       System.out.println("NuevaDireccion.numeracion: " + nuevaDireccion.getNumeracion());
+      System.out.println("Coorde: " + nuevaDireccion.getLatitud() + " " + nuevaDireccion.getLongitud());
 
       try {
           Direccion direccionFinal = null;
@@ -138,45 +139,91 @@ public class SucursalControlador {
       } catch (Exception e) {
           e.printStackTrace();
           ra.addFlashAttribute("error", e.getMessage());
-          return "redirect:/sucursal/crear";
+          return "redirect:/sucursal";
       }
   }
 
 
 
-  @GetMapping("/editar/{id}")
-  public String editar(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
-    try {
-      Sucursal sucursal = sucursalServicio.buscarSucursal(id);
-      model.addAttribute("sucursal", sucursal);
-      model.addAttribute("direcciones", direccionServicio.listarDireccionActiva());
-      model.addAttribute("empresas", empresaServicio.listarEmpresaActiva());
-      return "views/sucursal-form";
-    } catch (Exception e) {
-      redirectAttributes.addFlashAttribute("error", e.getMessage());
-      return "redirect:/sucursal";
-    }
-  }
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Sucursal sucursal = sucursalServicio.buscarSucursal(id);
 
-  @PostMapping("/actualizar/{id}")
-  public String actualizar(@PathVariable String id,
-                           @ModelAttribute("sucursal") Sucursal sucursal,
-                           RedirectAttributes redirectAttributes) {
-    try {
-      sucursalServicio.modificarSucursal(
-        id,
-        sucursal.getNombre(),
-        sucursal.getEmpresa().getId(),
-        sucursal.getDireccion().getId()
-      );
-      redirectAttributes.addFlashAttribute("msg", "Sucursal actualizada exitosamente");
-    } catch (Exception e) {
-      redirectAttributes.addFlashAttribute("error", e.getMessage());
-    }
-    return "redirect:/sucursal";
-  }
+            // Crear DTO para el formulario
+            SucursalEdicionDTO dto = new SucursalEdicionDTO();
+            dto.setId(sucursal.getId());
+            dto.setNombre(sucursal.getNombre());
+            dto.setEmpresaId(sucursal.getEmpresa().getId());
 
-  @GetMapping("/eliminar/{id}")
+            List<Provincia> provincias = List.of();
+            List<Departamento> departamentos = List.of();
+            List<Localidad> localidades = List.of();
+
+            if (sucursal.getDireccion() != null) {
+                Direccion dir = sucursal.getDireccion();
+                dto.setDireccionId(dir.getId());
+                dto.setPaisId(dir.getLocalidad().getDepartamento().getProvincia().getPais().getId());
+                dto.setProvinciaId(dir.getLocalidad().getDepartamento().getProvincia().getId());
+                dto.setDepartamentoId(dir.getLocalidad().getDepartamento().getId());
+                dto.setLocalidadId(dir.getLocalidad().getId());
+
+                dto.setCalle(dir.getCalle());
+                dto.setNumeracion(dir.getNumeracion());
+                dto.setBarrio(dir.getBarrio());
+                dto.setCasaDepartamento(dir.getCasaDepartamento());
+                dto.setManzanaPiso(dir.getManzanaPiso());
+                dto.setLatitud(dir.getLatitud());
+                dto.setLongitud(dir.getLongitud());
+                dto.setReferencia(dir.getReferencia());
+
+                // Precargar listas de ubicación
+                provincias = provinciaServicio.buscarProvinciaPorPais(dto.getPaisId());
+                departamentos = departamentoServicio.buscarDepartamentoPorProvincia(dto.getProvinciaId());
+                localidades = localidadServicio.buscarLocalidadPorDepartamento(dto.getDepartamentoId());
+            }
+
+            model.addAttribute("sucursalDTO", dto);
+            model.addAttribute("modoEdicion", true);
+            model.addAttribute("empresas", empresaServicio.listarEmpresaActiva());
+            model.addAttribute("paises", paisServicio.listarPaisActivo());
+            model.addAttribute("provincias", provincias);
+            model.addAttribute("departamentos", departamentos);
+            model.addAttribute("localidades", localidades);
+
+            return "views/sucursal-form-edit";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/sucursal";
+        }
+    }
+
+
+    @PostMapping("/actualizar/{id}")
+    public String actualizar(@PathVariable String id,
+                             @ModelAttribute("sucursalDTO") SucursalEdicionDTO dto,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            // Reconstruir dirección desde DTO
+            direccionServicio.actualizarDireccionDesdeDTO(dto);
+
+            // Actualizar sucursal
+            sucursalServicio.modificarSucursal(
+                    dto.getId(),
+                    dto.getNombre(),
+                    dto.getEmpresaId(),
+                    dto.getDireccionId()
+            );
+
+            redirectAttributes.addFlashAttribute("msg", "Sucursal actualizada exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/sucursal";
+    }
+
+
+    @GetMapping("/eliminar/{id}")
   public String eliminar(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
     try {
       sucursalServicio.eliminarSucursal(id);
@@ -184,7 +231,7 @@ public class SucursalControlador {
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("error", e.getMessage());
     }
-    return "redirect:/sucursal";
+    return "redirect:/sucursal/nueva";
   }
 
   @ModelAttribute("usuariosession")

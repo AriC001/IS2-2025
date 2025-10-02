@@ -75,6 +75,7 @@ public class ProvinciaServicio {
     try {
       List<Provincia> provincias = repositorioProvincia.findByPais(id);
       if (provincias != null && !provincias.isEmpty()) {
+        provincias.forEach(p -> p.getPais().getNombre());
         return provincias;
       } else {
         throw new ErrorServicio("No se encontraron provincias para el pais solicitado");
@@ -159,4 +160,5 @@ public class ProvinciaServicio {
     }
 
   }
+
 }

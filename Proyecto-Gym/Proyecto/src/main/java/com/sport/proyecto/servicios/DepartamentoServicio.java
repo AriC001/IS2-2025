@@ -78,6 +78,7 @@ public class DepartamentoServicio {
       if (departamentos.isEmpty()) {
         throw new ErrorServicio("No hay departamentos cargados para la provincia solicitada");
       }
+      departamentos.forEach(p -> p.getProvincia().getNombre());
       return departamentos;
     }catch (Exception e){
       throw new ErrorServicio("Error del sistema");

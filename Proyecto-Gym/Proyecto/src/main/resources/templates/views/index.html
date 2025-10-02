@@ -17,7 +17,7 @@
         <p>Utiliza la barra de navegación para gestionar empleados y socios.</p>
     </div>
     <!-- Gestión Sucursales -->
-        <div class="col-md-4" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}" ></div>
+        <div class="col-md-4" th:if="${usuariosession != null and usuariosession.rol == T(com.sport.proyecto.enums.Rol).ADMIN}" >
             <div class="card shadow text-center p-3">
                 <div class="card-icon">🏢</div>
                 <h5 class="card-title">Gestión de Sucursales</h5>

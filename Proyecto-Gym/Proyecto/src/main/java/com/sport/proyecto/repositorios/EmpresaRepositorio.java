@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface EmpresaRepositorio extends JpaRepository<Empresa, String> {
-  @Query(value = "SELECT * FROM empresa WHERE empresa.eliminado = false", nativeQuery = true)
+  @Query(value = "SELECT * FROM empresa e WHERE e.eliminado = false", nativeQuery = true)
   List<Empresa> findAllActives();
 
   @Query(value = "SELECT * FROM empresa WHERE empresa.nombre = :nombre and empresa.eliminado = false", nativeQuery = true)

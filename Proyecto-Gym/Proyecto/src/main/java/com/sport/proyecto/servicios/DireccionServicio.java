@@ -1,5 +1,6 @@
 package com.sport.proyecto.servicios;
 
+import com.sport.proyecto.controladores.SucursalEdicionDTO;
 import com.sport.proyecto.entidades.Direccion;
 import com.sport.proyecto.entidades.Localidad;
 import com.sport.proyecto.errores.ErrorServicio;
@@ -184,6 +185,10 @@ public class DireccionServicio {
       direccion.setReferencia(nuevaDireccion.getReferencia());
       direccion.setEliminado(false);
       direccion.setLocalidad(localidad);
+      if (nuevaDireccion.getLongitud() != null && nuevaDireccion.getLongitud() != null){
+        direccion.setLatitud(nuevaDireccion.getLatitud());
+        direccion.setLongitud(nuevaDireccion.getLongitud());
+      }
       System.out.println("guardando");
       direccionRepositorio.save(direccion);
       return direccion;
@@ -192,6 +197,49 @@ public class DireccionServicio {
       e.printStackTrace();
       throw new ErrorServicio("Error del sistema: " + e.getMessage());
     }
+  }
+
+  @Transactional
+  public void actualizarDireccion(Direccion direccion) throws ErrorServicio {
+    if (direccion == null || direccion.getId() == null || direccion.getId().isEmpty()) {
+      throw new ErrorServicio("La dirección no puede ser nula y debe tener un ID");
+    }
+
+    Direccion existente = buscarDireccion(direccion.getId());
+
+    existente.setCalle(direccion.getCalle());
+    existente.setNumeracion(direccion.getNumeracion());
+    existente.setBarrio(direccion.getBarrio());
+    existente.setCasaDepartamento(direccion.getCasaDepartamento());
+    existente.setManzanaPiso(direccion.getManzanaPiso());
+    existente.setLatitud(direccion.getLatitud());
+    existente.setLongitud(direccion.getLongitud());
+    existente.setReferencia(direccion.getReferencia());
+
+    if (direccion.getLocalidad() != null && direccion.getLocalidad().getId() != null) {
+      existente.setLocalidad(localidadServicio.buscarLocalidad(direccion.getLocalidad().getId()));
+    }
+
+    direccionRepositorio.save(existente);
+  }
+
+
+  @Transactional
+  public Direccion actualizarDireccionDesdeDTO(SucursalEdicionDTO dto) throws ErrorServicio {
+    Direccion direccion = buscarDireccion(dto.getDireccionId());
+    Localidad localidad = localidadServicio.buscarLocalidad(dto.getLocalidadId());
+
+    direccion.setLocalidad(localidad);
+    direccion.setCalle(dto.getCalle());
+    direccion.setNumeracion(dto.getNumeracion());
+    direccion.setBarrio(dto.getBarrio());
+    direccion.setCasaDepartamento(dto.getCasaDepartamento());
+    direccion.setManzanaPiso(dto.getManzanaPiso());
+    direccion.setLatitud(dto.getLatitud());
+    direccion.setLongitud(dto.getLongitud());
+    direccion.setReferencia(dto.getReferencia());
+
+    return direccionRepositorio.save(direccion);
   }
 
 }
