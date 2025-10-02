@@ -15,7 +15,7 @@ public interface EmpleadoRepositorio  extends JpaRepository<Empleado,String>  {
     Empleado findProfesor(@Param("id") String id);
     @Query("SELECT e FROM Empleado e WHERE e.usuario.id = :idUsuario and e.eliminado = false")
     Empleado findEmpleadoByIdUsuario(String idUsuario);
-    @Query("SELECT e FROM Empleado e WHERE e.tipoEmpleado = 'PROFESOR' and e.eliminado = false")
+    @Query("SELECT e FROM Empleado e WHERE e.eliminado = false")
     public List<Empleado> buscarEmpleadosActivos();
     @Query("SELECT e FROM Empleado e WHERE e.tipoEmpleado = 'PROFESOR' and e.eliminado = false")
     public List<Empleado> findAllProfesores();

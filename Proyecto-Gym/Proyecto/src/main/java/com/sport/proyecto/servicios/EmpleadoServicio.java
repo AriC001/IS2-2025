@@ -1,20 +1,21 @@
 package com.sport.proyecto.servicios;
 import com.sport.proyecto.entidades.Empleado;
-import com.sport.proyecto.enums.tipoEmpleado;
 import com.sport.proyecto.enums.*;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.errores.ErrorServicio;
+import com.sport.proyecto.repositorios.DireccionRepositorio;
 import com.sport.proyecto.repositorios.EmpleadoRepositorio;
 import com.sport.proyecto.repositorios.SucursalRepositorio;
+import com.sport.proyecto.repositorios.UsuarioRepositorio;
 import com.sport.proyecto.entidades.Sucursal;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.sport.proyecto.entidades.Direccion;
 import java.time.LocalDate;
 import com.sport.proyecto.servicios.UsuarioServicio;
-import com.sport.proyecto.enums.Rol;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,12 @@ public class EmpleadoServicio {
 
   @Autowired
   private UsuarioServicio usuarioServicio;
+
+  @Autowired
+  private DireccionServicio direccionServicio;
+
+  @Autowired
+  private UsuarioRepositorio usuarioRepositorio;
 
     @Transactional
     public Empleado buscarEmpleadoPorIdUsuario(String idUsuario) {
@@ -54,7 +61,7 @@ public class EmpleadoServicio {
   @Transactional
   public void modificar(String id, String nombre, String apellido, LocalDate fechaNacimiento,
                         tipoDocumento tipoDocumento, String numeroDocumento, String email,
-                        String telefono, tipoEmpleado tipoEmpleado, Usuario usuario,Sucursal sucursal) throws ErrorServicio {
+                        String telefono, tipoEmpleado tipoEmpleado, Usuario usuario,Sucursal sucursal,String direccionID) throws ErrorServicio {
         //validar(nombreMascota, sexo);
         System.out.println("servicio");
         Empleado empleado = empleadoRepositorio.findById(id).get();
@@ -68,7 +75,7 @@ public class EmpleadoServicio {
         empleado.setTipoEmpleado(tipoEmpleado);
         empleado.setUsuario(usuario);
         empleado.setSucursal(sucursal);
-        
+        empleado.setDireccion(direccionServicio.buscarDireccion(direccionID));
         empleadoRepositorio.save(empleado);
     }
   
@@ -85,6 +92,21 @@ public class EmpleadoServicio {
     Usuario usuario= usuarioServicio.crearUsuario(empleado.getEmail(),empleado.getNumeroDocumento(), Rol.EMPLEADO);
     empleado.setUsuario(usuario);
     empleadoRepositorio.save(empleado);
+  }
+
+  public void eliminarEmpleado(String id) throws ErrorServicio{
+    if (id==null){
+      throw new ErrorServicio("Debe indicar un empleado");
+    }
+    Empleado empleado = empleadoRepositorio.findById(id).get();
+    if(empleado==null){
+      throw new ErrorServicio("No se encontró el empleado");
+    }
+    empleado.setEliminado(true);
+    Usuario usuario = empleado.getUsuario();
+    usuario.setEliminado(true);
+    empleadoRepositorio.save(empleado);
+    usuarioRepositorio.save(usuario);
   }
 
 

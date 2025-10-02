@@ -59,96 +59,9 @@ public class RutinaControlador {
         model.addAttribute("socios", socioServicio.obtenerSociosActivos());
         return "views/rutina/form_rutina";
     }
+    
 
 
-
-   /**  @PostMapping("/alta")
-    public String crearRutina(ModelMap modelo, HttpSession session, @RequestParam Date fechaInicio,
-                               @RequestParam String id_socio, @RequestParam String id_profesor,
-                               @RequestParam Collection<DetalleRutina> detalle, @RequestParam Date fechaFin) throws ErrorServicio {
-        try {
-            Usuario login = (Usuario) session.getAttribute("usuariosession");
-            java.util.Date fecha = fechaInicio;
-            Rutina rutina=rutinaServicio.crearRutina(id_socio, id_profesor, detalle, fechaInicio, fechaFin);
-            return "redirect:/rutina/mis_rutinas"; // Redirigir a la lista de rutinas después de crear
-        } catch (ErrorServicio e) {
-            modelo.put("error", e.getMessage());
-            return "error"; // Redirigir a una página de error en caso de excepción
-        }
-    }
-        
-    @PostMapping("/alta")
-    public String crearRutina(ModelMap modelo, HttpSession session,
-                            @RequestParam LocalDate fechaInicio,
-                            @RequestParam String nroSocio,
-                            @RequestParam Collection<DetalleRutina> detalle,
-                            @RequestParam LocalDate fechaFin) throws ErrorServicio {
-        try {
-            Usuario login = (Usuario) session.getAttribute("usuariosession");
-
-            // ✅ Buscar empleado (profesor) por idUsuario
-            Empleado profesor = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId());
-
-            if (profesor == null) {
-                throw new ErrorServicio("El usuario logueado no está asociado a un profesor.");
-            }
-
-            Rutina rutina = rutinaServicio.crearRutina(
-                    nroSocio,
-                    profesor.getId(),   // 👉 este es el id del profesor
-                    detalle,
-                    fechaInicio,
-                    fechaFin
-            );
-
-            return "redirect:/rutina/mis_rutinas"; 
-        } catch (ErrorServicio e) {
-            modelo.put("error", e.getMessage());
-            return "error"; 
-        }
-    }
-        
-    @PostMapping("/alta")
-    public String crearRutina(@RequestParam Long numeroSocio, // recibimos el ID del socio
-                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
-                            @RequestParam Collection<DetalleRutina> detalle,
-                            HttpSession session,
-                            ModelMap modelo) {
-
-        try {
-            // Usuario logeado
-            Usuario login = (Usuario) session.getAttribute("usuariosession");
-            Empleado profesor = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId());
-
-            // Buscar socio por ID
-            Optional<Socio> socio = socioServicio.findByNumeroSocio(numeroSocio);
-            if (socio.isEmpty()) {
-                throw new ErrorServicio("No se encontró el socio con número: " + numeroSocio);
-            }
-            // Crear rutina
-            Rutina rutina = new Rutina();
-            rutina.setSocio(socio.get());
-            rutina.setProfesor(profesor);
-            rutina.setFechaInicio(fechaInicio);
-            rutina.setFechaFin(fechaFin);
-            for (DetalleRutina det : detalle) {
-                rutina.crearDetalleRutina(det.getActividad(), det.getFecha());
-            }
-            rutina.setEstado(EstadoRutina.EN_PROCESO);
-
-            // Guardar rutina
-            rutinaServicio.guardar(rutina);
-
-            return "redirect:/rutina/mis_rutinas";
-
-        } catch (ErrorServicio e) {
-            modelo.put("error", e.getMessage());
-            modelo.addAttribute("socios", socioServicio.obtenerSociosActivos()); // recargar lista para el form
-            return "views/rutina/form_rutina";
-        }
-    } Este es el que funciona
-    **/
     @PostMapping("/alta")
     public String crearRutina(
             @RequestParam Long numeroSocio,
@@ -214,8 +127,8 @@ public class RutinaControlador {
             return "views/rutina/form_rutina";
         }
     }
-
-   @GetMapping("/detalle/{idRutina}")
+    //Métodos detalle rutina
+    @GetMapping("/detalle/{idRutina}")
     public String verDetallesRutina(@PathVariable String idRutina, ModelMap modelo) {
         Rutina rutina = rutinaServicio.buscarRutina(idRutina);
         if (rutina == null) {
@@ -223,12 +136,33 @@ public class RutinaControlador {
             return "error";
         }
 
-        modelo.put("rutina", rutina);
-        modelo.put("detalles", rutina.getDetalleRutina());
-        modelo.put("socio", rutina.getSocio());
+        Collection<DetalleRutina> detalles = rutina.getDetalleRutina();
 
-        return "views/rutina/detalle_rutina"; // 👈 ojo acá
+        // 🔹 Calcular el porcentaje completado
+        int total = detalles.size();
+        long completadas = rutina.getDetalleRutina()
+        .stream()
+        .filter(d -> d.getEstado().equals(EstadoDetalleRutina.REALIZADA))
+        .count();
+        int porcentajeCompletado = (int) (total > 0 ? (completadas * 100 / total) : 0);
+
+        modelo.put("rutina", rutina);
+        modelo.put("detalles", detalles);
+        modelo.put("socio", rutina.getSocio());
+        modelo.put("porcentajeCompletado", porcentajeCompletado);
+        modelo.put("idRutina", idRutina); //para redirigir tras completar
+
+        return "views/rutina/detalle_rutina";
     }
+    @PostMapping("/detalle/{id}/completar")
+    public String completarActividad(@PathVariable String id,
+                                     @RequestParam(required = false) String rutinaId) {
+        rutinaServicio.completarActividad(id, rutinaId);
+
+        // redirigir de nuevo a la vista de rutina
+        return "redirect:/rutina/detalle/" + rutinaId; 
+    }
+
     @PostMapping("/finalizar")
     public String finalizarRutina(ModelMap modelo, @RequestParam String id) throws ErrorServicio {
         try {

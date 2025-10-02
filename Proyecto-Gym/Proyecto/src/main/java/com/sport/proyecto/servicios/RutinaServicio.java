@@ -4,6 +4,8 @@ import org.hibernate.annotations.MapKeyCompositeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sport.proyecto.entidades.DetalleRutina;
 import com.sport.proyecto.entidades.Empleado;
@@ -11,6 +13,7 @@ import com.sport.proyecto.entidades.Persona;
 import com.sport.proyecto.entidades.Rutina;
 import com.sport.proyecto.entidades.Socio;
 import com.sport.proyecto.errores.ErrorServicio;
+import com.sport.proyecto.repositorios.DetalleRutinaRepositorio;
 import com.sport.proyecto.repositorios.EmpleadoRepositorio;
 import com.sport.proyecto.repositorios.PersonaRepositorio;
 import com.sport.proyecto.repositorios.RutinaRepositorio;
@@ -32,6 +35,8 @@ public class RutinaServicio {
     private EmpleadoRepositorio empleadoRepositorio;
     @Autowired
     private RutinaRepositorio rutinaRepositorio;
+    @Autowired
+    private DetalleRutinaRepositorio detalleRutinaRepositorio;
 
     @Transactional
     public Rutina crearRutina(String id_socio, String id_empleado, Collection<DetalleRutina> detalle, LocalDate fechaInicio, LocalDate fechaFin) throws ErrorServicio {
@@ -130,6 +135,19 @@ public class RutinaServicio {
 
         // Ya que los detalles están asociados con rutina, se guardan en cascada
         return rutinaRepositorio.save(rutina);
+    }
+    @Transactional
+    public String completarActividad(@PathVariable String idDetalle,
+                                     @RequestParam(required = false) String rutinaId) {
+         DetalleRutina detalle = detalleRutinaRepositorio.findById(idDetalle)
+                .orElseThrow(() -> new RuntimeException("Detalle no encontrado con id: " + idDetalle));
+
+        detalle.setEstado(EstadoDetalleRutina.REALIZADA); // O EstadoActividad.COMPLETADA si usás enum
+        detalleRutinaRepositorio.save(detalle);
+
+        // redirigir de nuevo a la vista de rutina
+        return "redirect:/rutina/ver/" + rutinaId; 
+        // Ajustá según el path de tu página de detalles de la rutina
     }
     /** 
     @Transactional
