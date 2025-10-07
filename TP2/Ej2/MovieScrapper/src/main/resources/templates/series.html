@@ -20,7 +20,7 @@
     </div>
     <div id="sub-navigation">
       <ul>
-          <li><a href="movies/">SHOW ALL MOVIES</a></li>
+        <li><a href="movies/">SHOW ALL MOVIES</a></li>
           <li><a href="series/">SHOW ALL SERIES</a></li>
       </ul>
       <div id="search">
@@ -39,20 +39,20 @@
           <h2>LATEST TRAILERS</h2>
           <p class="text-right"><a href="#">See all</a></p>
         </div>
-        <div th:each="movie : ${movies}" class="movie">
+        <div th:each="serie : ${series}" class="movie">
           <div class="movie-image">
-            <span class="play"><span class="name" th:text="${movie.title}">TITLE</span></span>
-            <a th:href="${movie.url}">
-              <img th:src="${movie.img}" alt="" />
+            <span class="play"><span class="name" th:text="${serie.title}">TITLE</span></span>
+            <a th:href="${serie.url}">
+              <img th:src="${serie.img}" alt="" />
             </a>
           </div>
         <div class="cl">&nbsp;</div>
       <div class="rating">
         <p>RATING</p>
         <div class="stars">
-          <div class="stars-in" th:style="'width:' + (${movie.rating} * 10) + '%'"></div>
+          <div class="stars-in" th:style="'width:' + (${serie.rating} * 10) + '%'"></div>
         </div>
-        <span class="comments" th:text="${movie.rating}">9.0</span>
+        <span class="comments" th:text="${serie.rating}">9.0</span>
       </div>
       </div>
     </div>
@@ -64,12 +64,12 @@
   <!-- 🔽 Paginación -->
   <div class="pagination" style="text-align:center; margin-top: 20px;">
     <a th:if="${currentPage > 1}"
-       th:href="@{'/movies?page=' + (${currentPage}-1)}">&laquo; Prev</a>
+       th:href="@{'/series?page=' + (${currentPage}-1)}">&laquo; Prev</a>
 
     <span th:text="'Page ' + ${currentPage} + ' of ' + ${totalPages}"></span>
 
     <a th:if="${currentPage < totalPages}"
-       th:href="@{'/movies?page=' + (${currentPage}+1)}">Next &raquo;</a>
+       th:href="@{'/series?page=' + (${currentPage}+1)}">Next &raquo;</a>
   </div>
 
 

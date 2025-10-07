@@ -1,7 +1,7 @@
 package com.example.moviescrapper.controllers;
 
-import com.example.moviescrapper.entities.Movie;
-import com.example.moviescrapper.services.MoviesService;
+import com.example.moviescrapper.entities.Series;
+import com.example.moviescrapper.services.SeriesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,37 +13,33 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/movies")
-public class MovieController {
+@RequestMapping("/series")
+public class SeriesController {
 
     @Autowired
-    private MoviesService moviesService;
-
-    public MovieController(MoviesService moviesService) {
-        this.moviesService = moviesService;
-    }
+    private SeriesService seriesService;
 
     @GetMapping("")
-    public String listarPeliculas(
+    public String listarseries(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "25") int size,
             Model model) throws IOException {
 
-        List<Movie> todas = moviesService.getMovies();
+        List<Series> todas = seriesService.getSeries();
         int total = todas.size();
 
         int fromIndex = (page - 1) * size;
         int toIndex = Math.min(fromIndex + size, total);
 
-        List<Movie> paginadas = todas.subList(fromIndex, toIndex);
+        List<Series> paginadas = todas.subList(fromIndex, toIndex);
 
         int totalPages = (int) Math.ceil((double) total / size);
 
-        model.addAttribute("movies", paginadas);
+        model.addAttribute("series", paginadas);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
 
-        return "movies"; // → nombre del template (movies.html)
+        return "series"; // → nombre del template (series.html)
     }
 }
 
