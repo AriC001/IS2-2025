@@ -6,6 +6,7 @@ import java.util.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.sport.proyecto.enums.EstadoDetalleRutina;
+import com.sport.proyecto.enums.EstadoRutina;
 
 import java.time.LocalDate;
 @Entity
@@ -19,7 +20,7 @@ public class DetalleRutina {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private EstadoDetalleRutina estado;
     @Column
     private String actividad;

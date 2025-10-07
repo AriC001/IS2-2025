@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body style="font-family: Arial, sans-serif;">
+    <h1 style="color: darkblue;">Monthly Reminder</h1>
+    <p>
+      This is your scheduled email for the <b>5th at 15:00</b>.
+    </p>
+
+    <a th:href="${https://ingenieria.uncuyo.edu.ar}"
+       style="display:inline-block;
+              padding:12px 20px;
+              margin-top:15px;
+              font-size:16px;
+              color:#ffffff;
+              background-color:#007BFF;
+              text-decoration:none;
+              border-radius:6px;">
+       <span th:text="${buttonText}">Vaya a la Facultad</span>
+    </a>
+
+    <p style="margin-top:25px;">
+      Best regards,<br>Your Spring Boot App
+    </p>
+  </body>
+</html>

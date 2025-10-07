@@ -77,13 +77,100 @@
       <label for="telefono" class="form-label">Teléfono</label>
       <input type="text" id="telefono" th:field="*{telefono}" class="form-control" placeholder="Ingrese el teléfono" required>
     </div>
+    <!-- Dirección existente -->
+        <div class="mb-3">
+          <label for="direccion" class="form-label">Dirección existente</label>
+          <select th:field="*{direccion.id}" class="form-select">
+            <option value="">-- Seleccione dirección existente --</option>
+            <option th:each="d : ${direcciones}" th:value="${d.id}"
+                    th:text="${d.calle + ' ' + d.numeracion}"></option>
+          </select>
+        </div>
+
+        <!-- Flag para indicar nueva dirección -->
+        <input type="hidden" id="crearNuevaDireccion" name="crearNuevaDireccion" value="false">
+
+        <!-- Botón para nueva dirección -->
+        <button type="button" class="btn btn-outline-primary mb-3" id="toggleNuevaDir">
+          + Nueva Dirección
+        </button>
+
+        <!-- 🟢 Formulario de nueva dirección -->
+        <div id="nuevaDireccionForm" class="border rounded p-3" style="display:none;"
+             th:object="${nuevaDireccion}">
+          <h5>Nueva Dirección</h5>
+
+          <!-- País -->
+          <div class="mb-3">
+            <label class="form-label">País *</label>
+            <select th:field="*{localidad.departamento.provincia.pais.id}" class="form-select" required>
+              <option value="">-- Seleccione País --</option>
+              <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Provincia -->
+          <div class="mb-3">
+            <label class="form-label">Provincia *</label>
+            <select th:field="*{localidad.departamento.provincia.id}" class="form-select" required>
+              <option value="">-- Seleccione Provincia --</option>
+              <option th:each="prov : ${provincias}" th:value="${prov.id}" th:text="${prov.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Departamento -->
+          <div class="mb-3">
+            <label class="form-label">Departamento *</label>
+            <select th:field="*{localidad.departamento.id}" class="form-select" required>
+              <option value="">-- Seleccione Departamento --</option>
+              <option th:each="dep : ${departamentos}" th:value="${dep.id}" th:text="${dep.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Localidad -->
+          <div class="mb-3">
+            <label class="form-label">Localidad *</label>
+            <select th:field="*{localidad.id}" class="form-select" required>
+              <option value="">-- Seleccione Localidad --</option>
+              <option th:each="loc : ${localidades}" th:value="${loc.id}" th:text="${loc.nombre}"></option>
+            </select>
+          </div>
+            
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Calle *</label>
+              <input type="text" th:field="*{calle}" class="form-control" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>Número</label>
+              <input type="text" th:field="*{numeracion}" class="form-control">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>Barrio</label>
+              <input type="text" th:field="*{barrio}" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Casa/Depto</label>
+            <input type="text" class="form-control" name="casaDepartamento" th:field="*{casaDepartamento}" placeholder="Ej: 4B">
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Manzana/Piso</label>
+            <input type="text" class="form-control" name="manzanaPiso" th:field="*{manzanaPiso}" placeholder="Ej: Mz 5 / 2°">
+          </div>
+
+          <div class="mb-3">
+            <label>Referencia</label>
+            <input type="text" th:field="*{referencia}" class="form-control">
+          </div>
+        </div>
 
     <div class="d-flex justify-content-end">
       <button type="submit" class="btn btn-primary">
         Aceptar
       </button>
     </div>
-
+    </form>
 
 </div>
 
@@ -114,6 +201,48 @@
       documentoGroup.style.display = "block";
     }
   }
+</script>
+<script>
+  const toggleBtn = document.getElementById('toggleNuevaDir');
+  const formNueva = document.getElementById('nuevaDireccionForm');
+  const flag = document.getElementById('crearNuevaDireccion');
+
+  // Tomamos todos los campos que tienen "required" en el bloque de nueva dirección
+  const camposNuevaDireccion = formNueva.querySelectorAll('[required]');
+
+  // Desactiva validación de los campos ocultos
+  function desactivarCampos() {
+    camposNuevaDireccion.forEach(campo => campo.removeAttribute('required'));
+  }
+
+  // Activa validación de los campos cuando el bloque se muestra
+  function activarCampos() {
+    camposNuevaDireccion.forEach(campo => campo.setAttribute('required', 'required'));
+  }
+
+  // Al cargar la página, el bloque está oculto → desactivamos sus required
+  desactivarCampos();
+
+  toggleBtn.addEventListener('click', () => {
+    if (formNueva.style.display === 'none') {
+      // Mostrar bloque de nueva dirección
+      formNueva.style.display = 'block';
+      flag.value = 'true';
+      activarCampos();  // activamos required
+    } else {
+      // Ocultar bloque de nueva dirección
+      formNueva.style.display = 'none';
+      flag.value = 'false';
+      desactivarCampos(); // desactivamos required
+    }
+  });
+</script>
+
+<script th:inline="javascript">
+    const isEdit = /*[[${empleado.id != null}]]*/ false;
+    if (isEdit) {
+        document.getElementById('toggleNuevaDir').style.display = 'none';
+    }
 </script>
 </body>
 </html>

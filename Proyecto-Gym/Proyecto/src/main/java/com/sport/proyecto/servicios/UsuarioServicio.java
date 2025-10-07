@@ -67,6 +67,7 @@ public class UsuarioServicio {
 
   @Transactional
   public Usuario crearUsuario(String nombreUsuario, String clave, Rol rol) throws ErrorServicio {
+    System.out.println("creando usuario");
     validar(nombreUsuario, clave, rol);
     try{
       if (buscarUsuarioPorNombre(nombreUsuario) != null) {
@@ -78,6 +79,7 @@ public class UsuarioServicio {
       usuario.setRol(rol);
       usuario.setEliminado(false);
       usuarioRepositorio.save(usuario);
+      System.out.println("creo usuario: " + usuario.getNombreUsuario());
       return usuario;
     }catch (Exception e) {
       e.printStackTrace(); // o usar logger.error("Error creando usuario", e);

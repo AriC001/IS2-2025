@@ -16,25 +16,43 @@
         <div class="row align-items-center">
         </div>
         <h2>Rutina de <span th:text="${socio.nombre}"></span></h2>
+        <div class="progress my-3">
+            <div class="progress-bar" role="progressbar"
+                th:style="'width:' + ${porcentajeCompletado} + '%'"
+                th:text="${porcentajeCompletado + '%'}"
+                aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
 
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Actividad</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="detalle : ${detalles}">
-                <td th:text="${detalle.fecha}"></td>
-                <td th:text="${detalle.actividad}"></td>
-                <td th:text="${detalle.estado}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <thead>
+    <tr>
+        <th>Fecha</th>
+        <th>Actividad</th>
+        <th>Estado</th>
+        <th>Acción</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="detalle : ${detalles}">
+        <td th:text="${detalle.fecha}"></td>
+        <td th:text="${detalle.actividad}"></td>
+        <td th:text="${detalle.estado}"></td>
+        <td>
+            <form th:action="@{/rutina/detalle/{id}/completar(id=${detalle.id})}" method="post">
+                <input type="hidden" th:name="rutinaId" th:value="${idRutina}">
+                <button class="btn btn-sm btn-outline-success"
+                        th:disabled="${detalle.estado == 'REALIZADA'}">
+                    Marcar completada
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
-<a th:href="@{/rutina/listar}" class="btn btn-secondary">Volver</a>
+
+<a th:href="@{/rutina/mis_rutinas}" class="btn btn-secondary">Volver</a>
 
   </section>
 
