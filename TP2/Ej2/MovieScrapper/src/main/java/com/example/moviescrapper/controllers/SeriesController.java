@@ -1,11 +1,16 @@
 package com.example.moviescrapper.controllers;
 
+import com.example.moviescrapper.entities.Country;
+import com.example.moviescrapper.entities.Movie;
 import com.example.moviescrapper.entities.Series;
+import com.example.moviescrapper.services.CountriesService;
 import com.example.moviescrapper.services.SeriesService;
+import com.example.moviescrapper.services.StreamingOptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,6 +23,12 @@ public class SeriesController {
 
     @Autowired
     private SeriesService seriesService;
+
+    @Autowired
+    private CountriesService countriesService;
+
+    @Autowired
+    private StreamingOptionService streamingOptionService;
 
     @GetMapping("")
     public String listarseries(
@@ -40,6 +51,15 @@ public class SeriesController {
         model.addAttribute("totalPages", totalPages);
 
         return "series"; // → nombre del template (series.html)
+    }
+
+    @GetMapping("/{id}")
+    public String series(@PathVariable String id, Model model){
+        Series s = seriesService.findById(id);
+        model.addAttribute("file",s);
+        List<Country> countries = countriesService.getCountries();
+        model.addAttribute("countries",countries);
+        return "file2";
     }
 }
 

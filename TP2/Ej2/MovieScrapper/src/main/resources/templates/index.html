@@ -12,23 +12,23 @@
 <!-- START PAGE SOURCE -->
 <div id="shell">
   <div id="header">
-    <h1 id="logo"><a href="#">MovieHunter</a></h1>
+    <h1 id="logo"><a href="/">MovieHunter</a></h1>
     <div id="navigation">
       <ul>
-        <li><a class="active" href="#">HOME</a></li>
+        <li><a class="active" href="/">HOME</a></li>
       </ul>
     </div>
     <div id="sub-navigation">
         <ul>
-            <li><a href="movies/">SHOW ALL MOVIES</a></li>
-            <li><a href="series/">SHOW ALL SERIES</a></li>
+            <li><a href="/movies">SHOW ALL MOVIES</a></li>
+            <li><a href="/series">SHOW ALL SERIES</a></li>
         </ul>
       <div id="search">
-        <form action="#" method="get" accept-charset="utf-8">
-          <label for="search-field">SEARCH</label>
-          <input type="text" name="search field" value="Enter search here" id="search-field" class="blink search-field"  />
-          <input type="submit" value="GO!" class="search-button" />
-        </form>
+          <form action="/search" method="get" accept-charset="utf-8">
+              <label for="search-field">SEARCH</label>
+              <input type="text" name="q" placeholder="Enter search here" th:value="${query}" id="search-field" class="blink search-field"  />
+              <input type="submit" value="GO!" class="search-button" />
+          </form>
       </div>
     </div>
   </div>
@@ -37,8 +37,8 @@
       <div class="box">
           <div th:each="movie : ${movies}" class="movie">
               <div class="movie-image">
+                  <a th:href="@{/movies/{id}(id=${movie.id})}">
                   <span class="play"><span class="name" th:text="${movie.title}">TITLE</span></span>
-                  <a th:href="${movie.url}">
                       <img th:src="${movie.img}" alt="" />
                   </a>
               </div>
@@ -53,8 +53,8 @@
           </div>
           <div th:each="serie : ${series}" class="movie">
               <div class="movie-image">
-                  <span class="play"><span class="name" th:text="${serie.title}">TITLE</span></span>
-                  <a th:href="${serie.url}">
+                  <a th:href="@{/series/{id}(id=${serie.id})}">
+                      <span class="play"><span class="name" th:text="${serie.title}">TITLE</span></span>
                       <img th:src="${serie.img}" alt="" />
                   </a>
               </div>
@@ -70,12 +70,12 @@
 
     <div class="cl">&nbsp;</div>
   </div>
-  <div id="footer">
-    <p class="lf">Copyright &copy; 2010 <a href="#">SiteName</a> - All Rights Reserved</p>
-    <p class="rf">Design by <a href="http://chocotemplates.com/">ChocoTemplates.com</a></p>
-    <div style="clear:both;"></div>
-  </div>
-</div>
+        <div id="footer">
+            <p class="lf">Copyright &copy; 2025 <a href="/"></a></p>
+            <p class="rf">Design by <a href="/"></a></p>
+            <div style="clear:both;"></div>
+        </div>
+
 <!-- END PAGE SOURCE -->
 </body>
 </html>

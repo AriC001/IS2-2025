@@ -30,10 +30,26 @@ public class MoviesService {
 
         movies = mapper.readValue(archivo, new TypeReference<List<Movie>>() {});
 
-        System.out.println("📽 Total de películas cargadas: " + movies.size());
+        /*System.out.println("📽 Total de películas cargadas: " + movies.size());
         movies.stream().limit(5).forEach(m ->
                 System.out.println(m.getDescription() + " (" + m.getYear() + ") ⭐ " + m.getRating())
-        );
+        );*/
     }
 
+    public List<Movie> searchMovies(String query) {
+        return movies.stream()
+                .filter(movie -> movie.getTitle().toLowerCase().contains(query.toLowerCase()))
+                .toList();
+    }
+
+    public Movie findById(String id) {
+        Movie m = new Movie();
+        for(int i = 0;i< movies.size();i++){
+            if(movies.get(i).getId().equals(id)){
+                m = movies.get(i);
+            }
+        }
+        return m;
+        //return movies.stream().filter(movie -> movie.getId().equals(id)).toList().getFirst();
+    }
 }

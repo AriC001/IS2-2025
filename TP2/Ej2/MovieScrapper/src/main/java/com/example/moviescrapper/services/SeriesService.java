@@ -1,5 +1,6 @@
 package com.example.moviescrapper.services;
 
+import com.example.moviescrapper.entities.Movie;
 import com.example.moviescrapper.entities.Series;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,5 +36,24 @@ public class SeriesService {
             }
         }
         return series;
+    }
+
+    public List<Series> searchSeries(String query) {
+        return series.stream()
+                .filter(series -> series.getTitle().toLowerCase().contains(query.toLowerCase()))
+                .toList();
+    }
+
+    public Series findById(String id) {
+        Series s = new Series();
+        for(int i = 0;i< series.size();i++){
+            if(series.get(i).getId().equals(id)){
+                s = series.get(i);
+            }
+        }
+        return s;
+
+
+        //return (Series) series.stream().filter(serie-> serie.getId().equals(id));
     }
 }

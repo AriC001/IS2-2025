@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>MovieHunter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css" media="all" />
+    <script th:src="@{/js/jquery-1.4.2.min.js}"></script>
+    <script th:src="@{/js/jquery-func.js}"></script>
+<!--[if IE 6]><link rel="stylesheet" href=".css/ie6.css" type="text/css" media="all" /><![endif]-->
+    <style>
+        /* Contenedor principal centrado */
+        .featured-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        /* Caja principal de la película */
+        .featured-box {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            gap: 30px;
+            color: white;
+        }
+
+        /* Imagen de la película */
+        .poster {
+            width: 300px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Información al lado derecho */
+        .featured-info {
+            flex: 1;
+        }
+
+        .title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        /*.rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }*/
+        .rating {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .rating p {
+            font-size: 2rem;
+        }
+
+        .score-text {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .imdb-link {
+            display: inline-block;
+            margin-top: 4rem;
+            background: #f5c518;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 5rem;
+        }
+
+        .imdb-link:hover {
+            background: #ffda45;
+        }
+
+        /* Sección streaming */
+        .streaming-section {
+            margin-top: 20px;
+            margin-bottom: 1rem;
+        }
+
+        /* Grid horizontal */
+        .streaming-grid {
+            display: flex;
+            gap: 20px;
+            justify-items: center; /* Centra las tarjetas horizontalmente */
+        }
+
+        /* Tarjeta */
+        .streaming-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.2s;
+            background-color: #f9f9f9;
+            display: flex;           /* Cambiar de grid a flex */
+            flex-direction: column;  /* Apila imagen y nombre verticalmente */
+            align-items: center;
+        }
+
+        .streaming-card:hover {
+            transform: scale(1.05);
+        }
+
+        .streaming-card img {
+            width: 70%; /* Más grande que antes */
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .service-name {
+            text-align: center;
+            font-size: 1.2rem; /* Nombre más grande */
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Estilos para el select */
+        .streaming-section select.form-select {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            appearance: none; /* Elimina flecha por defecto en algunos browsers */
+            width: 50%;
+            max-width: 300px;
+            margin-top: 0.5rem;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<!-- START PAGE SOURCE -->
+<div id="shell">
+  <div id="header">
+    <h1 id="logo"><a href="/">MovieHunter</a></h1>
+    <div id="navigation">
+      <ul>
+        <li><a class="active" href="/">HOME</a></li>
+      </ul>
+    </div>
+    <div id="sub-navigation">
+        <ul>
+            <li><a href="/movies">SHOW ALL MOVIES</a></li>
+            <li><a href="/series">SHOW ALL SERIES</a></li>
+        </ul>
+      <div id="search">
+          <form action="/search" method="get" accept-charset="utf-8">
+              <label for="search-field">SEARCH</label>
+              <input type="text" name="q" placeholder="Enter search here" th:value="${query}" id="search-field" class="blink search-field"  />
+              <input type="submit" value="GO!" class="search-button" />
+          </form>
+      </div>
+    </div>
+  </div>
+    <div id="main">
+        <div id="content" class="featured-container">
+
+            <!-- FICHA DESTACADA -->
+            <div class="featured-box">
+                <div class="featured-image">
+                    <img th:src="${file.img}" alt="Poster" class="poster"/>
+                </div>
+
+                <div class="featured-info">
+                    <p th:value="${file.id}" id="fileId" style="display: none"></p>
+                    <h1 th:text="${file.title}" class="title">Título de la Película</h1>
+                    <p th:text="${file.description}" class="description">
+                        Description
+                    </p>
+
+                    <div class="rating">
+                        <p class="score-text">Puntuación IMDb:  <span class="score" th:text="${file.rating}">9.0</span> </p>
+                        <div class="stars">
+                            <div class="stars-in"></div>
+                        </div>
+                    </div>
+
+                    <a th:href="${file.url}" target="_blank" class="imdb-link">
+                        Ver en IMDb →
+                    </a>
+                </div>
+            </div>
+
+            <!--
+            <select id="localidadSelect" th:field="*{localidad.id}" class="form-select" required>
+              <option value="">-- Seleccione Localidad --</option>
+              <option th:each="loc : ${localidades}"
+                      th:value="${loc.id}"
+                      th:text="${loc.nombre}"
+                      th:selected="${nuevaDireccion != null} ? ${nuevaDireccion.localidad.id} == ${loc.id} : false">
+              </option>
+            </select>
+            -->
+
+
+            <!-- SECCIÓN DE STREAMING -->
+            <div class="streaming-section">
+                <h2 style="font-size:1rem ">Disponibilidad por país</h2>
+                <label style="font-size: 1rem" for="country">Seleccioná tu país:</label>
+                <select id="country" class="form-select" required>
+                    <option value="">Seleccione País</option>
+                    <option th:each="country : ${countries}"
+                            th:value="${country.countryCode}"
+                            th:text="${country.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div id="resultsDiv" class="streaming-grid">
+
+            </div>
+
+        </div>
+    </div>
+    <div id="footer">
+    <p class="lf">Copyright &copy; 2025 <a href="/"></a></p>
+    <p class="rf">Design by <a href="/"></a></p>
+    <div style="clear:both;"></div>
+    </div>
+  </div>
+
+<!-- END PAGE SOURCE -->
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const select = document.getElementById("country");
+        const movie = document.getElementById("fileId")
+        const resultsDiv = document.getElementById("resultsDiv");
+        console.log(movie.getAttribute("value"))
+
+        select.addEventListener("change", async () => {
+            const country = select.value;
+            const movieId = movie.getAttribute("value");/* acá obtenés el id de la película actual */;
+
+            if (!country) {
+                resultsDiv.innerHTML = "";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/streaming/${movieId}?country=${country}`);
+                if (!response.ok) throw new Error("Error en la solicitud");
+                const options = await response.json();
+                console.log(options)
+
+                if (options.length === 0) {
+                    resultsDiv.innerHTML = "<p>No disponible en este país.</p>";
+                    return;
+                }
+                const uniqueOptions = options.filter((opt, index, self) =>
+                    index === self.findIndex(o => o.serviceName === opt.serviceName)
+                );
+
+
+                // Mostrar resultados
+                resultsDiv.innerHTML = uniqueOptions.map(({ serviceName, serviceLink, img }) => `
+                    <div class="streaming-card">
+                        <a href="${serviceLink}" target="_blank">
+                            <img src="${img}" alt="${serviceName} logo" />
+                            <div class="service-name">${serviceName}</div>
+                        </a>
+                    </div>
+                `).join("");
+
+            } catch (err) {
+                console.error(err);
+                resultsDiv.innerHTML = "<p>Error al obtener los servicios.</p>";
+            }
+        });
+    });
+</script>
+</html>

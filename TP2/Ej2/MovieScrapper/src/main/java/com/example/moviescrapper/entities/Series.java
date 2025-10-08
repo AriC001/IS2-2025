@@ -83,4 +83,6 @@ public class Series {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getId(){return id;}
 }

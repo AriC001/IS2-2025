@@ -12,21 +12,21 @@
 <!-- START PAGE SOURCE -->
 <div id="shell">
   <div id="header">
-    <h1 id="logo"><a href="#">MovieHunter</a></h1>
+    <h1 id="logo"><a href="/">MovieHunter</a></h1>
     <div id="navigation">
       <ul>
-        <li><a class="active" href="#">HOME</a></li>
+        <li><a class="active" href="/">HOME</a></li>
       </ul>
     </div>
     <div id="sub-navigation">
       <ul>
-        <li><a href="movies/">SHOW ALL MOVIES</a></li>
-          <li><a href="series/">SHOW ALL SERIES</a></li>
+        <li><a href="/movies">SHOW ALL MOVIES</a></li>
+          <li><a href="/series">SHOW ALL SERIES</a></li>
       </ul>
       <div id="search">
-        <form action="#" method="get" accept-charset="utf-8">
+        <form action="/search" method="get" accept-charset="utf-8">
           <label for="search-field">SEARCH</label>
-          <input type="text" name="search field" value="Enter search here" id="search-field" class="blink search-field"  />
+          <input type="text" name="q" placeholder="Enter search here" id="search-field" class="blink search-field"  />
           <input type="submit" value="GO!" class="search-button" />
         </form>
       </div>
@@ -36,13 +36,12 @@
     <div id="content">
       <div class="box">
         <div class="head">
-          <h2>LATEST TRAILERS</h2>
           <p class="text-right"><a href="#">See all</a></p>
         </div>
         <div th:each="serie : ${series}" class="movie">
           <div class="movie-image">
-            <span class="play"><span class="name" th:text="${serie.title}">TITLE</span></span>
-            <a th:href="${serie.url}">
+            <a th:href="@{/series/{id}(id=${serie.id})}">
+              <span class="play"><span class="name" th:text="${serie.title}">TITLE</span></span>
               <img th:src="${serie.img}" alt="" />
             </a>
           </div>
@@ -64,23 +63,23 @@
   <!-- 🔽 Paginación -->
   <div class="pagination" style="text-align:center; margin-top: 20px;">
     <a th:if="${currentPage > 1}"
-       th:href="@{'/series?page=' + (${currentPage}-1)}">&laquo; Prev</a>
+       th:href="@{|/series?page=${currentPage - 1}|}">&laquo; Prev</a>
 
     <span th:text="'Page ' + ${currentPage} + ' of ' + ${totalPages}"></span>
 
     <a th:if="${currentPage < totalPages}"
-       th:href="@{'/series?page=' + (${currentPage}+1)}">Next &raquo;</a>
+       th:href="@{|/series?page=${currentPage + 1}|}">Next &raquo;</a>
   </div>
 
 
 
   <div class="cl">&nbsp;</div>
   </div>
-  <div id="footer">
-    <p class="lf">Copyright &copy; 2010 <a href="#">SiteName</a> - All Rights Reserved</p>
-    <p class="rf">Design by <a href="http://chocotemplates.com/">ChocoTemplates.com</a></p>
-    <div style="clear:both;"></div>
-  </div>
+<div id="footer">
+  <p class="lf">Copyright &copy; 2025 <a href="/"></a></p>
+  <p class="rf">Design by <a href="/"></a></p>
+  <div style="clear:both;"></div>
+</div>
 </div>
 <!-- END PAGE SOURCE -->
 </body>

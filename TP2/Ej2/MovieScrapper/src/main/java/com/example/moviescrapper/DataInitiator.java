@@ -1,4 +1,6 @@
 package com.example.moviescrapper;
+import com.example.moviescrapper.entities.Country;
+import com.example.moviescrapper.services.CountriesService;
 import com.example.moviescrapper.services.MoviesService;
 import com.example.moviescrapper.services.SeriesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ public class DataInitiator {
     private static MoviesService moviesService = new MoviesService();
 
     private static SeriesService seriesService = new SeriesService();
+
+    private static CountriesService countryService = new CountriesService();
 
     public static void main() throws IOException, InterruptedException {
 
@@ -33,5 +37,13 @@ public class DataInitiator {
         }
         moviesService.loadMovies();
         seriesService.loadSeries();
+        File archivo3 = new File("countries.json");
+        if(archivo3.isFile()){
+            System.out.println("✅ El archivo ya existe");
+        } else{
+            System.out.println("❌ El archivo no existe");
+            StreamingAvailability.getCountries();
+        }
+        countryService.loadCountries();
     }
 }
