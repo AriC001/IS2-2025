@@ -3,6 +3,7 @@ package com.example.moviescrapper;
 import com.example.moviescrapper.entities.StreamingOption;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +16,13 @@ import java.util.List;
 
 public class StreamingAvailability {
 
+    @Value("${api.token}")
+    private static String apiToken;
+
     public static void getCountries() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://streaming-availability.p.rapidapi.com/countries?output_language=es"))
-                .header("x-rapidapi-key", "354af3f7bcmsh819ceb454633f0cp10933ejsn2e2a37efe735")
+                .header("x-rapidapi-key", apiToken)
                 .header("x-rapidapi-host", "streaming-availability.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
@@ -46,7 +50,7 @@ public class StreamingAvailability {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://streaming-availability.p.rapidapi.com/shows/" + id +
                             "?series_granularity=show&output_language=es&country=" + country))
-                    .header("x-rapidapi-key", "354af3f7bcmsh819ceb454633f0cp10933ejsn2e2a37efe735")
+                    .header("x-rapidapi-key", apiToken)
                     .header("x-rapidapi-host", "streaming-availability.p.rapidapi.com")
                     .GET()
                     .build();

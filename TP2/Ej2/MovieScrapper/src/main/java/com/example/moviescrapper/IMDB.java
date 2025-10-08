@@ -5,14 +5,19 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.File;
 
 public class IMDB {
 
+    @Value("${api.token}")
+    private static String apiToken;
+
         public static void getMovies() throws IOException, InterruptedException {
             HttpRequest topMovies = HttpRequest.newBuilder()
                     .uri(URI.create("https://imdb236.p.rapidapi.com/api/imdb/top250-movies"))
-                    .header("x-rapidapi-key", "354af3f7bcmsh819ceb454633f0cp10933ejsn2e2a37efe735")
+                    .header("x-rapidapi-key", apiToken)
                     .header("x-rapidapi-host", "imdb236.p.rapidapi.com")
                     .method("GET", HttpRequest.BodyPublishers.noBody())
                     .build();
@@ -41,7 +46,7 @@ public class IMDB {
         public static void getSeries() throws IOException, InterruptedException {
             HttpRequest topSeries = HttpRequest.newBuilder()
                     .uri(URI.create("https://imdb236.p.rapidapi.com/api/imdb/top250-tv"))
-                    .header("x-rapidapi-key", "354af3f7bcmsh819ceb454633f0cp10933ejsn2e2a37efe735")
+                    .header("x-rapidapi-key", apiToken)
                     .header("x-rapidapi-host", "imdb236.p.rapidapi.com")
                     .method("GET", HttpRequest.BodyPublishers.noBody())
                     .build();

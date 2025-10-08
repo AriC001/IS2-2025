@@ -65,7 +65,6 @@ public class IndexController {
 
     @GetMapping("/{id}")
     public String movie(@PathVariable String id, Model model){
-        System.out.println("AAAAAAAAAAAAAAAAAAAAA");
         Movie m = moviesService.findById(id);
         Series s = seriesService.findById(id);
         if(m.getId() == null){
@@ -75,7 +74,6 @@ public class IndexController {
 
         }
         List<Country> countries = countriesService.getCountries();
-        System.out.println(countries);
         model.addAttribute("countries",countries);
         return "file2";
     }
