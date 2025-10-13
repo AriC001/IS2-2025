@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Inicio - Sistema de Gestión</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-4">
+                    <i class="bi bi-house-door text-primary"></i>
+                    Bienvenido al Sistema de Gestión
+                </h1>
+                <p class="lead text-muted">Gestiona personas, libros, autores y más desde un solo lugar.</p>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-people display-4 text-primary mb-3"></i>
+                        <h5 class="card-title fw-bold">Personas</h5>
+                        <p class="card-text text-muted small">Gestionar información personal</p>
+                        <a href="/personas" class="btn btn-primary btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i> Acceder
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-book display-4 text-success mb-3"></i>
+                        <h5 class="card-title fw-bold">Libros</h5>
+                        <p class="card-text text-muted small">Catálogo de libros</p>
+                        <a href="/libros" class="btn btn-success btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i> Acceder
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-pen display-4 text-warning mb-3"></i>
+                        <h5 class="card-title fw-bold">Autores</h5>
+                        <p class="card-text text-muted small">Gestión de autores</p>
+                        <a href="/autores" class="btn btn-warning btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i> Acceder
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card dashboard-card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-geo-alt display-4 text-info mb-3"></i>
+                        <h5 class="card-title fw-bold">Ubicaciones</h5>
+                        <p class="card-text text-muted small">Domicilios y localidades</p>
+                        <div class="d-grid gap-1">
+                            <a href="/domicilios" class="btn btn-info btn-sm">
+                                <i class="bi bi-house me-1"></i> Domicilios
+                            </a>
+                            <a href="/localidades" class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-pin-map me-1"></i> Localidades
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="bi bi-lightning me-2"></i> Acciones Rápidas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3 col-sm-6">
+                                <a href="/personas/nuevo" class="btn btn-primary w-100 py-3">
+                                    <i class="bi bi-person-plus d-block mb-1" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Nueva Persona</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <a href="/libros/nuevo" class="btn btn-success w-100 py-3">
+                                    <i class="bi bi-book d-block mb-1" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Nuevo Libro</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <a href="/autores/nuevo" class="btn btn-warning w-100 py-3">
+                                    <i class="bi bi-pen d-block mb-1" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Nuevo Autor</span>
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <a href="/domicilios/nuevo" class="btn btn-info w-100 py-3">
+                                    <i class="bi bi-house-add d-block mb-1" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">Nuevo Domicilio</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

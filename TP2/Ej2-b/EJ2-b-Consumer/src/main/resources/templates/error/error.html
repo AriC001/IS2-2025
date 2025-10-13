@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" layout:decorate="~{layout/base}">
+<head>
+    <title>Error General</title>
+</head>
+<div layout:fragment="content">
+    <div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-secondary">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Ha ocurrido un error
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-bug fa-5x text-secondary mb-3"></i>
+                    </div>
+                    
+                    <h5 class="text-center mb-3">¡Ups! Algo no funcionó como esperábamos</h5>
+                    
+                    <p class="text-muted text-center">
+                        Ha ocurrido un error inesperado. Por favor, intenta nuevamente o contacta al soporte técnico si el problema persiste.
+                    </p>
+                    
+                    <div th:if="${error}" class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading">Detalles del error:</h6>
+                        <p th:text="${error}" class="mb-0"></p>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading">¿Qué puedes hacer?</h6>
+                        <ul class="mb-0">
+                            <li>Intenta recargar la página</li>
+                            <li>Verifica tu conexión a internet</li>
+                            <li>Regresa a la <a th:href="@{/}" class="alert-link">página principal</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a th:href="@{/}" class="btn btn-primary me-2">
+                            <i class="fas fa-home me-1"></i>
+                            Ir al Inicio
+                        </a>
+                        <button onclick="window.location.reload()" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-redo me-1"></i>
+                            Recargar
+                        </button>
+                        <button onclick="window.history.back()" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Volver Atrás
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>Hora: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm:ss')}"></span></small>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lista de Localidades - Sistema de Gestión</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row mb-4 align-items-center">
+            <div class="col-lg-8">
+                <h1 class="mb-1">
+                    <i class="bi bi-geo text-danger"></i>
+                    Lista de Localidades
+                </h1>
+                <p class="text-muted">Administra las localidades disponibles para domicilios y personas</p>
+            </div>
+            
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="search-container">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control border-start-0"
+                               placeholder="Buscar por nombre de localidad...">
+                        <button class="btn btn-outline-secondary rounded-end" type="button" onclick="clearSearch()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-3 mt-lg-0">
+                <div class="d-grid">
+                    <a href="/localidades/nuevo" class="btn btn-danger btn-lg shadow-sm">
+                        <i class="bi bi-plus-circle me-2"></i> Registrar localidad
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-card-list"></i> Localidades registradas
+                    <small class="fw-normal ms-2">
+                        (Total: <span th:text="${#lists.size(entities)}" class="badge bg-light text-danger">0</span>)
+                    </small>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(entities)}" class="text-center py-5">
+                    <i class="bi bi-geo-alt display-1 text-muted"></i>
+                    <p class="text-muted mt-3">No hay localidades registradas aún</p>
+                    <a href="/localidades/nuevo" class="btn btn-danger">
+                        <i class="bi bi-plus-circle"></i> Crear localidad
+                    </a>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(entities)}" class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="localidad : ${entities}">
+                                <td class="fw-bold" th:text="${localidad.id}">1</td>
+                                <td th:text="${localidad.nombre}">Nombre</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/localidades/{id}(id=${localidad.id})}" class="btn btn-outline-info" title="Ver detalle">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/localidades/{id}/editar(id=${localidad.id})}" class="btn btn-outline-danger" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/localidades/{id}/eliminar(id=${localidad.id})}"
+                                              method="post"
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        });
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+        }
+    </script>
+</div>
+</html>

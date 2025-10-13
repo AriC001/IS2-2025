@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lista de Domicilios - Sistema de Gestión</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row mb-4 align-items-center">
+            <div class="col-lg-8">
+                <h1 class="mb-1">
+                    <i class="bi bi-house text-info"></i>
+                    Lista de Domicilios
+                </h1>
+                <p class="text-muted">Gestiona las direcciones disponibles para personas y entidades</p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="search-container">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control border-start-0"
+                               placeholder="Buscar por calle, número o localidad...">
+                        <button class="btn btn-outline-secondary rounded-end" type="button" onclick="clearSearch()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-3 mt-lg-0">
+                <div class="d-grid">
+                    <a href="/domicilios/nuevo" class="btn btn-info btn-lg text-white shadow-sm">
+                        <i class="bi bi-plus-circle me-2"></i> Registrar domicilio
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-map"></i> Domicilios registrados
+                    <small class="fw-normal ms-2">
+                        (Total: <span th:text="${#lists.size(entities)}" class="badge bg-light text-info">0</span>)
+                    </small>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(entities)}" class="text-center py-5">
+                    <i class="bi bi-geo-alt display-1 text-muted"></i>
+                    <p class="text-muted mt-3">Aún no hay domicilios cargados</p>
+                    <a href="/domicilios/nuevo" class="btn btn-info text-white">
+                        <i class="bi bi-plus-circle"></i> Crear domicilio
+                    </a>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(entities)}" class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Calle</th>
+                                <th>Número</th>
+                                <th>Localidad</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="domicilio : ${entities}">
+                                <td class="fw-bold" th:text="${domicilio.id}">1</td>
+                                <td th:text="${domicilio.calle}">Calle</td>
+                                <td th:text="${domicilio.numero}">123</td>
+                                <td>
+                                    <span th:if="${domicilio.localidad != null}" th:text="${domicilio.localidad.nombre}">Localidad</span>
+                                    <span class="text-muted" th:unless="${domicilio.localidad != null}">Sin localidad</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/domicilios/{id}(id=${domicilio.id})}" class="btn btn-outline-info" title="Ver detalle">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/domicilios/{id}/editar(id=${domicilio.id})}" class="btn btn-outline-info" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/domicilios/{id}/eliminar(id=${domicilio.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        });
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+        }
+    </script>
+</div>
+</html>

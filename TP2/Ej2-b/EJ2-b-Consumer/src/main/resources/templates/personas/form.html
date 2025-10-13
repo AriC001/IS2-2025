@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${entity.id != null ? 'Editar Persona' : 'Nueva Persona'}">Persona</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/personas">Personas</a></li>
+                <li class="breadcrumb-item active" 
+                    th:text="${entity.id != null ? 'Editar' : 'Nueva Persona'}">Formulario</li>
+            </ol>
+        </nav>
+        
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>
+                    <i th:class="${entity.id != null ? 'bi bi-pencil-square text-warning' : 'bi bi-person-plus text-primary'}"></i>
+                    <span th:text="${entity.id != null ? 'Editar Persona' : 'Nueva Persona'}">Formulario de Persona</span>
+                </h1>
+                <p class="text-muted" 
+                   th:text="${entity.id != null ? 'Modifica los datos de la persona' : 'Completa los datos de la nueva persona'}">
+                   Información de la persona
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/personas" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
+        
+        <!-- Messages -->
+        <div th:replace="~{fragments/messages :: messages}"></div>
+        
+        <!-- Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header" 
+                         th:classappend="${entity.id != null ? 'bg-warning text-dark' : 'bg-primary text-white'}">
+                        <h5 class="mb-0">
+                            <i th:class="${entity.id != null ? 'bi bi-pencil' : 'bi bi-person-plus'}"></i>
+                            <span th:text="${entity.id != null ? 'Editar Datos' : 'Datos de la Persona'}">Formulario</span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                <form th:attr="action=${entity.id != null} ? '/personas/' + entity.id : '/personas'"
+                    method="post" 
+                    th:object="${entity}" 
+                    novalidate>
+                            
+                            <!-- Hidden ID field for editing -->
+                            <input type="hidden" th:field="*{id}" th:if="${entity.id != null}">
+                            
+                            <div class="row">
+                                <!-- DNI -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="dni" class="form-label">
+                                        <i class="bi bi-credit-card-2-front text-primary"></i>
+                                        DNI <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           th:field="*{dni}"
+                                           th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid' : ''"
+                                           id="dni" 
+                                           placeholder="Ingrese el DNI"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}">
+                                        Error en DNI
+                                    </div>
+                                </div>
+                                
+                                <!-- Nombre -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">
+                                        <i class="bi bi-person text-primary"></i>
+                                        Nombre <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           th:field="*{nombre}"
+                                           th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
+                                           id="nombre" 
+                                           placeholder="Ingrese el nombre"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
+                                        Error en nombre
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Apellido -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido" class="form-label">
+                                        <i class="bi bi-person text-primary"></i>
+                                        Apellido <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           th:field="*{apellido}"
+                                           th:classappend="${#fields.hasErrors('apellido')} ? 'is-invalid' : ''"
+                                           id="apellido" 
+                                           placeholder="Ingrese el apellido"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}">
+                                        Error en apellido
+                                    </div>
+                                </div>
+                                
+                                <!-- Domicilio -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="domicilio" class="form-label">
+                                        <i class="bi bi-geo-alt text-success"></i>
+                                        Domicilio
+                                    </label>
+                                    <select class="form-select" 
+                                            th:field="*{domicilio}"
+                                            th:classappend="${#fields.hasErrors('domicilio')} ? 'is-invalid' : ''"
+                                            id="domicilio">
+                                        <option value="">Seleccione un domicilio (opcional)</option>
+                                        <option th:each="domicilio : ${domicilios}" 
+                                                th:value="${domicilio.id}" 
+                                                th:text="${domicilio.calle + ' ' + domicilio.numero + 
+                                                         (domicilio.localidad != null ? ' - ' + domicilio.localidad.nombre : '')}">
+                                            Dirección
+                                        </option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i>
+                                        Si no encuentra el domicilio, puede 
+                                        <a href="/domicilios/nuevo" target="_blank" class="text-decoration-none">
+                                            crear uno nuevo aquí
+                                        </a>
+                                    </div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('domicilio')}" th:errors="*{domicilio}">
+                                        Error en domicilio
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Form Actions -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button type="submit" 
+                                                    class="btn btn-primary me-2"
+                                                    th:classappend="${entity.id != null ? 'btn-warning' : 'btn-primary'}">
+                                                <i th:class="${entity.id != null ? 'bi bi-check-circle' : 'bi bi-plus-circle'}"></i>
+                                                <span th:text="${entity.id != null ? 'Actualizar Persona' : 'Crear Persona'}">Guardar</span>
+                                            </button>
+                                            
+                                            <a href="/personas" class="btn btn-secondary">
+                                                <i class="bi bi-x-circle"></i> Cancelar
+                                            </a>
+                                        </div>
+                                        
+                                        <div th:if="${entity.id != null}">
+                                            <a th:href="@{/personas/{id}(id=${entity.id})}" 
+                                               class="btn btn-info me-2">
+                                                <i class="bi bi-eye"></i> Ver Detalle
+                                            </a>
+                                            
+                                            <form th:action="@{/personas/{id}/eliminar(id=${entity.id})}" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Help Card -->
+                <div class="card mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-question-circle text-info"></i> Ayuda
+                        </h6>
+                    </div>
+                    <div class="card-body small">
+                        <ul class="mb-0">
+                            <li><strong>DNI:</strong> Debe ser único en el sistema</li>
+                            <li><strong>Nombre y Apellido:</strong> Campos obligatorios</li>
+                            <li><strong>Domicilio:</strong> Campo opcional, puede asignarse posteriormente</li>
+                            <li><strong>Campos marcados con *:</strong> Son obligatorios</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        // Form validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+        
+        // DNI validation
+        document.getElementById('dni').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, ''); // Solo números
+            if (this.value.length > 8) {
+                this.value = this.value.slice(0, 8); // Máximo 8 dígitos
+            }
+        });
+        
+        // Name capitalization
+        function capitalizeInput(inputId) {
+            const input = document.getElementById(inputId);
+            input.addEventListener('blur', function() {
+                this.value = this.value.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+            });
+        }
+        
+        capitalizeInput('nombre');
+        capitalizeInput('apellido');
+    </script>
+</div>
+</html>
