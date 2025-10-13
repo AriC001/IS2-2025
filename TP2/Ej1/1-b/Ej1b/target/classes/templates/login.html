@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar sesión</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap (si ya lo cargas global, podés quitarlo) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- Font Awesome (ya lo tenías) -->
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+  <!-- Custom styles: colorido, responsive y accesible -->
+  <style>
+      :root{
+          --accent-1: #6C5CE7;   /* purple */
+          --accent-2: #00C2FF;   /* cyan */
+          --card-bg: rgba(255,255,255,0.95);
+          --muted: #6c757d;
+      }
+      html,body{
+          height:100%;
+          font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+          background: radial-gradient(1200px 600px at 10% 10%, rgba(108,92,231,0.12), transparent 10%),
+          radial-gradient(1000px 500px at 90% 90%, rgba(0,194,255,0.08), transparent 10%),
+          linear-gradient(180deg, #0f172a 0%, #071034 100%);
+          color:#0b1220;
+      }
+
+      /* Center layout */
+      #layoutAuthentication { min-height:100vh; display:flex; flex-direction:column; }
+      main { flex:1 0 auto; display:flex; align-items:center; justify-content:center; padding:2rem 1rem; }
+
+      /* Card */
+      .auth-card {
+          border: 0;
+          border-radius: 16px;
+          background: linear-gradient(180deg, rgba(255,255,255,0.98), var(--card-bg));
+          box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+          overflow:hidden;
+      }
+
+      .auth-left {
+          background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+          color:white;
+          padding:2rem;
+          display:flex;
+          flex-direction:column;
+          justify-content:center;
+          gap:1rem;
+          min-height: 100%;
+          position:relative;
+      }
+      .auth-left h2{ font-weight:700; letter-spacing: -0.02em; margin-bottom:.2rem; }
+      .auth-left p{ color: rgba(255,255,255,0.92); margin-bottom:0.6rem; }
+
+      /* decorative blobs */
+      .blob {
+          position:absolute;
+          border-radius: 50%;
+          filter: blur(40px);
+          opacity: .18;
+          transform: translateZ(0);
+      }
+      .blob.a { width:200px; height:200px; background: rgba(255,255,255,0.12); right: -60px; top:-40px; }
+      .blob.b { width:140px; height:140px; background: rgba(255,255,255,0.08); left:-40px; bottom:-30px; }
+
+      .auth-right { padding:2rem; }
+
+      .brand {
+          display:flex; align-items:center; gap:.6rem; margin-bottom:1rem;
+      }
+      .brand .logo {
+          width:48px; height:48px; border-radius:10px; display:inline-grid; place-items:center;
+          background:linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+          color:white; font-weight:700;
+      }
+
+      /* buttons and inputs */
+      .btn-primary {
+          background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+          border:0;
+          box-shadow: 0 6px 18px rgba(108,92,231,0.18);
+      }
+      .btn-outline-secondary {
+          border-radius: 999px;
+      }
+      .form-control:focus {
+          box-shadow: 0 6px 18px rgba(0,194,255,0.08);
+          border-color: var(--accent-2);
+      }
+
+      .social-btn {
+          border-radius: 10px;
+          background: rgba(11,18,32,0.04);
+          border:1px solid rgba(11,18,32,0.06);
+      }
+
+      /* responsive */
+      @media(min-width:992px){
+          .auth-grid { display:grid; grid-template-columns: 1fr 1fr; min-height:420px; }
+          .auth-right { display:flex; align-items:center; }
+      }
+      @media(max-width:991px){
+          .auth-left{ display:flex; align-items:flex-start; padding:1.4rem; min-height:auto; }
+          .brand .logo { width:40px; height:40px;}
+      }
+
+      .muted { color:var(--muted); font-size:.95rem; }
+
+      footer.auth-footer {
+          padding:1rem 0; text-align:center; color:rgba(255,255,255,0.6); font-size:.9rem;
+      }
+
+      /* small niceties */
+      .input-icon { position:relative; }
+      .input-icon .fa { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); }
+      .input-icon .form-control { padding-left:42px; }
+  </style>
+</head>
+<body>
+<div id="layoutAuthentication">
+  <main>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+          <div class="card auth-card">
+            <div class="auth-grid">
+              <!-- LEFT: marketing / brand -->
+              <div class="auth-left d-none d-lg-flex">
+                <div class="blob a"></div>
+                <div class="blob b"></div>
+
+                <div>
+                  <h2>Bienvenido de nuevo</h2>
+                  <p>Ingresa con tu cuenta para administrar proveedores, empresas y más. Si todavía no tenés cuenta, contactá al administrador.</p>
+
+                  <div style="margin-top:auto; font-size:.85rem; opacity:.9;">
+                    <small>Acceso seguro • Política de privacidad</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT: form -->
+              <div class="auth-right">
+                <div style="width:100%;">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <h4 class="mb-0">Iniciar sesión</h4>
+                      <small class="text-muted">Ingresa tus credenciales</small>
+                    </div>
+                  </div>
+
+                  <!-- Card body similar -->
+                  <div>
+                    <form th:action="@{/login}" method="post" novalidate>
+                      <!-- error -->
+                      <div th:if="${error}" class="alert alert-danger" role="alert" aria-live="polite">
+                        <i class="fa fa-exclamation-triangle me-2"></i><span th:text="${error}"></span>
+                      </div>
+
+                      <div class="mb-3 input-icon">
+                        <i class="fa fa-user"></i>
+                        <input class="form-control" id="username" name="username" type="text" placeholder="Usuario" required aria-required="true" aria-label="Usuario" />
+                      </div>
+
+                      <div class="mb-3 input-icon">
+                        <i class="fa fa-lock"></i>
+                        <div class="input-group">
+                          <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" required aria-required="true" aria-label="Contraseña" />
+                          <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                            <i class="fa fa-eye"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                          <input class="form-check-input" id="inputRememberPassword" type="checkbox" name="remember-me" />
+                          <label class="form-check-label" for="inputRememberPassword">Recordar sesión</label>
+                        </div>
+                      </div>
+
+                      <div class="d-grid mb-2">
+                        <button class="btn btn-primary btn-lg" type="submit"><i class="fa fa-sign-in-alt me-2"></i> Ingresar</button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <!-- footer small -->
+                  <div class="mt-4 text-center muted" style="font-size:.85rem;">
+                    <small>© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Nexora</small>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- auth-grid -->
+          </div> <!-- card -->
+        </div>
+      </div>
+    </div>
+</div>
+<footer class="auth-footer">
+  Aplicación de administración • Diseño responsivo
+</footer>
+</div>
+
+<!-- Bootstrap bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- small script: toggle password visibility -->
+<script>
+    (function(){
+        const toggle = document.getElementById('togglePassword');
+        const pwd = document.getElementById('password');
+        if(toggle && pwd){
+            toggle.addEventListener('click', function(){
+                const type = pwd.getAttribute('type') === 'password' ? 'text' : 'password';
+                pwd.setAttribute('type', type);
+                this.querySelector('i')?.classList.toggle('fa-eye');
+                this.querySelector('i')?.classList.toggle('fa-eye-slash');
+                this.setAttribute('title', type === 'text' ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            });
+        }
+    })();
+</script>
+</body>
+</html>

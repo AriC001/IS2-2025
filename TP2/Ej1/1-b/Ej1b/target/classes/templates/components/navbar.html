@@ -1,0 +1,35 @@
+<!-- navbar.html -->
+<!-- navbar.html -->
+<nav th:fragment="navbar" class="navbar navbar-expand navbar-dark shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/index}">
+      <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:white;font-weight:700;">N</div>
+      <div class="d-none d-md-block">
+        <div style="font-weight:600">Nexora</div>
+        <small style="font-size:.8rem;color:rgba(255,255,255,0.9)">Admin panel</small>
+      </div>
+    </a>
+
+    <button class="btn btn-link text-white d-lg-none" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+
+    <form class="d-none d-md-flex ms-auto me-2" role="search">
+      <div class="input-group">
+        <input class="form-control form-control-sm" type="search" placeholder="Buscar..." aria-label="Buscar..." />
+        <button class="btn btn-light btn-sm" type="button"><i class="fas fa-search"></i></button>
+      </div>
+    </form>
+
+    <ul class="navbar-nav ms-auto align-items-center">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-circle fa-lg"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" th:href="@{/perfil}">Perfil</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${localidadDTO.id != null} ? 'Editar Localidad' : 'Agregar Localidad'">Formulario Localidad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="/css/styles.css" rel="stylesheet" />
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <style>
+    body{ background: linear-gradient(180deg,#071034 0%, #05102a 100%); font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial; }
+    .form-panel{ background: rgba(255,255,255,0.96); border-radius:1rem; box-shadow:0 8px 30px rgba(2,6,23,0.15); padding:2rem 2.5rem; max-width:700px; margin:3rem auto; }
+    .form-title{ color: var(--accent-1,#6C5CE7); font-weight:700; margin-bottom:1rem; text-align:center; }
+    .btn-accent{ background: linear-gradient(90deg,#6C5CE7,#00C2FF); color:white; font-weight:600; }
+    .msg{ margin-bottom:1rem; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="form-panel">
+    <h2 class="form-title"><i class="fa-solid fa-thumbtack"></i> <span th:text="${localidadDTO.id != null} ? 'Editar Localidad' : 'Agregar Localidad'"></span></h2>
+    <form th:action="${localidadDTO != null and localidadDTO.id != null} ? @{/localidad/actualizar/{id}(id=${localidadDTO.id})} : @{/localidad/crear}"
+          th:object="${localidadDTO}" method="post">
+
+      <div th:if="${error}" class="alert alert-danger msg" th:text="${error}"></div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label"><i class="fa-solid fa-flag"></i> País</label>
+          <select id="pais" th:field="*{paisId}" class="form-select" required>
+            <option value="">-- Seleccionar país --</option>
+            <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"></option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label"><i class="fa-solid fa-map"></i> Provincia</label>
+          <select id="provincia" th:field="*{provinciaId}" class="form-select" required></select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label"><i class="fa-solid fa-building"></i> Departamento</label>
+          <select id="departamento" th:field="*{departamentoId}" class="form-select" required></select>
+        </div>
+        <input type="hidden" id="initialPaisId" th:value="${localidadDTO.paisId}" />
+        <input type="hidden" id="initialProvinciaId" th:value="${localidadDTO.provinciaId}" />
+        <input type="hidden" id="initialDepartamentoId" th:value="${localidadDTO.departamentoId}" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-location-dot"></i> Nombre</label>
+        <input type="text" th:field="*{nombre}" class="form-control" required />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-mail-bulk"></i> Código Postal</label>
+        <input type="text" th:field="*{codigoPostal}" class="form-control" />
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <a class="btn btn-secondary" th:href="@{/localidad/listar}"><i class="fa-solid fa-arrow-left"></i> Cancelar</a>
+        <button type="submit" class="btn btn-accent"><i class="fa-solid fa-check"></i> Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    async function load(url, params = {}) {
+      const qs = new URLSearchParams(params).toString();
+      const res = await fetch(url + (qs ? `?${qs}` : ''));
+      if (!res.ok) throw new Error('Fetch error');
+      return res.json();
+    }
+    function fillSelect(sel, items, placeholder='-- Seleccionar --') {
+      sel.innerHTML = `<option value="">${placeholder}</option>`;
+      items.forEach(i => sel.insertAdjacentHTML('beforeend', `<option value="${i.id}">${i.nombre}</option>`));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const $pais = document.getElementById('pais');
+      const $prov = document.getElementById('provincia');
+      const $dep = document.getElementById('departamento');
+
+      $pais.addEventListener('change', async () => {
+        fillSelect($prov, []); fillSelect($dep, []);
+        if ($pais.value) {
+          const provincias = await load('/api/ubicacion/provincias', { paisId: $pais.value });
+          fillSelect($prov, provincias, '-- Seleccionar provincia --');
+        }
+      });
+
+      $prov.addEventListener('change', async () => {
+        fillSelect($dep, []);
+        if ($prov.value) {
+          const deps = await load('/api/ubicacion/departamentos', { provinciaId: $prov.value });
+          fillSelect($dep, deps, '-- Seleccionar departamento --');
+        }
+      });
+
+      (async function preCarga(){
+        const initialPais = document.getElementById('initialPaisId')?.value;
+        const initialProv = document.getElementById('initialProvinciaId')?.value;
+        const initialDep  = document.getElementById('initialDepartamentoId')?.value;
+        if (!initialPais) return;
+        try {
+          $pais.value = initialPais;
+          const provincias = await load('/api/ubicacion/provincias', { paisId: initialPais });
+          fillSelect($prov, provincias, '-- Seleccionar provincia --');
+          if (initialProv) {
+            $prov.value = initialProv;
+            const deps = await load('/api/ubicacion/departamentos', { provinciaId: initialProv });
+            fillSelect($dep, deps, '-- Seleccionar departamento --');
+            if (initialDep) $dep.value = initialDep;
+          }
+        } catch(e){ console.error('Precarga Localidad error', e); }
+      })();
+    });
+  </script>
+</body>
+</html>
