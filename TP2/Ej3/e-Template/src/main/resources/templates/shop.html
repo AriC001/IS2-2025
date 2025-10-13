@@ -166,6 +166,31 @@ https://templatemo.com/tm-559-zay-shop
 
             <div class="col-lg-9">
                 <div class="row">
+                    <!-- Recorremos los artículos -->
+                    <div class="col-md-4 mb-4" th:each="articulo : ${articulos}">
+                        <div class="card h-100">
+                            <!-- Imagen del producto -->
+                            <img class="card-img-top"
+                                 th:if="${articulo.imagenes != null and #lists.size(articulo.imagenes) > 0}"
+                                 th:src="@{'/imagenes/' + ${articulo.imagenes[0].id}}"
+                                 alt="Imagen del producto"/>
+
+                            <div class="card-body text-center">
+                                <h5 class="card-title" th:text="${articulo.name}"></h5>
+                                <p class="card-text">$ <span th:text="${articulo.price}"></span></p>
+
+                                <form th:action="@{/carrito/anadir}" method="post">
+                                    <input type="hidden" th:name="articuloId" th:value="${articulo.id}" />
+                                    <button type="submit" class="btn btn-success">Añadir al carrito</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--
+            <div class="col-lg-9">
+                <div class="row">
                     <div class="col-md-6">
                         <ul class="list-inline shop-top-menu pb-3 pt-1">
                             <li class="list-inline-item">
@@ -524,6 +549,7 @@ https://templatemo.com/tm-559-zay-shop
                         </div>
                     </div>
                 </div>
+                -->
                 <div div="row">
                     <ul class="pagination pagination-lg justify-content-end">
                         <li class="page-item disabled">

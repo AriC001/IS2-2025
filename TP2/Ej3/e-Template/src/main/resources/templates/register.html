@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Zay Shop - Register</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="img/apple-icon.png">
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/templatemo.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="css/fontawesome.min.css">
+</head>
+
+<body>
+<!-- Header -->
+<nav class="navbar navbar-expand-lg navbar-light shadow">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">Zay</a>
+    <div class="collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between">
+      <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+        <li class="nav-item"><a class="nav-link active" href="register.html">Register</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Register Form -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-5">
+          <h2 class="text-center text-success mb-4">Create Your Account</h2>
+          <form method="post" th:object="${user}" th:action="@{/usuarios/register}" onsubmit="return validarPasswords()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" th:field="*{name}" class="form-control" id="firstName" name="firstName" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" th:field="*{email}" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" th:field="*{password}" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div id="passwordError" style="color: red; display: none;">Las contraseñas no coinciden</div>
+            <button type="submit" class="btn btn-success w-100">Register</button>
+          </form>
+          <div class="text-center mt-4">
+            <p>Already have an account? <a href="/login" class="text-success">Login here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light text-center py-3">
+  <p>© 2025 Zay Shop | Designed by <a href="https://templatemo.com" class="text-success">TemplateMo</a></p>
+</footer>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+  function validarPasswords() {
+    const pass1 = document.getElementById("password").value;
+    const pass2 = document.getElementById("confirmPassword").value;
+    const errorDiv = document.getElementById("passwordError");
+    if (pass1 != pass2) {
+      errorDiv.style.display = "block";
+      return false; // cancela el envío del formulario
+    } else {
+      errorDiv.style.display = "none";
+      return true;
+    }
+  }
+</script>
+</body>
+
+</html>

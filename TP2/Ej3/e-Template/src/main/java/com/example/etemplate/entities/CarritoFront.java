@@ -9,6 +9,13 @@ import java.util.List;
 @DiscriminatorValue("FRONT")
 public class CarritoFront extends CarritoTemplate{
 
+    public CarritoFront(String id, double total, boolean deleted, List<Detalle> detalles, Usuario usuarios) {
+        super(id, total, deleted, detalles, usuarios);
+    }
+
+    public CarritoFront() {
+    }
+
     @Override
     protected void seleccionarProductos() {
 
@@ -16,7 +23,9 @@ public class CarritoFront extends CarritoTemplate{
 
     @Override
     protected void calcularTotal() {
-
+        this.total = detalles.stream()
+                .mapToDouble(Detalle::getSubtotal)
+                .sum();
     }
 
     @Override
@@ -28,4 +37,10 @@ public class CarritoFront extends CarritoTemplate{
     protected void confirmarCompra() {
 
     }
+    @Override
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    @Override
+    public boolean isDeleted() { return deleted; }
+
+
 }

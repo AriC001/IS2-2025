@@ -1,9 +1,6 @@
 package com.example.etemplate.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -13,13 +10,30 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Detalle {
+public class Detalle implements SoftDeletable  {
     @Id
-    @Generated
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    private int cantidad;
     private boolean deleted;
 
-    @OneToMany
-    @JoinColumn(name = "detalle_id")
-    private List<Articulo> articulos;
+    @ManyToOne
+    @JoinColumn(name = "articulo_id")
+    private Articulo articulo;
+
+    public Detalle(Articulo articulo, int cantidad) {
+        this.articulo = articulo;
+        this.cantidad = cantidad;
+        this.deleted = false;
+    }
+
+
+    @Override
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    @Override
+    public boolean isDeleted() { return deleted; }
+
+    public double getSubtotal() {
+        return articulo.getPrice() * cantidad;
+    }
 }

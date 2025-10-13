@@ -12,9 +12,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class CarritoTemplate {
+public abstract class CarritoTemplate implements SoftDeletable {
     @Id
-    @Generated
+    @GeneratedValue(strategy = GenerationType.UUID)
     protected String id;
     protected double total;
     protected boolean deleted;
@@ -26,6 +26,47 @@ public abstract class CarritoTemplate {
     @OneToOne
     protected Usuario usuarios;
 
+    public CarritoTemplate() {}
+
+    public CarritoTemplate(String id, double total, boolean deleted, List<Detalle> detalles, Usuario usuarios) {
+        this.id = id;
+        this.total = total;
+        this.deleted = deleted;
+        this.detalles = detalles;
+        this.usuarios = usuarios;
+    }
+
+    public void setUsuario(Usuario usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public List<Detalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<Detalle> detalles) {
+        this.detalles = detalles;
+    }
+
+    public Usuario getUsuarios() {
+        return usuarios;
+    }
 
     // Método plantilla (template method)
     public final void procesarCompra() {
