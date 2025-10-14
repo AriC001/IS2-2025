@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Zay Shop - Perfil</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="img/apple-icon.png">
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/templatemo.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  <link rel="stylesheet" href="/css/fontawesome.min.css">
+</head>
+
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light shadow">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="navbar-brand text-success logo h1 align-self-center" href="/index">Zay</a>
+    <div class="collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between">
+      <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+        <li class="nav-item"><a class="nav-link" href="/index">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/usuarios/perfil">Perfil</a></li>
+      </ul>
+      <a class="nav-icon position-relative text-decoration-none" href="/usuarios">
+        <i class="fa fa-fw fa-user text-dark mr-3"></i>
+        <span th:text="${loggedUser}"
+              class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Perfil Container -->
+<div class="container py-5">
+  <div class="row">
+    <!-- Información del usuario -->
+    <div class="col-md-4">
+      <div class="card shadow-lg border-0 rounded-4 mb-4">
+        <div class="card-body p-4">
+          <h3 class="text-success mb-3">Mi Perfil</h3>
+          <p><strong>Nombre:</strong> <span th:text="${usuario.name}">Nombre Usuario</span></p>
+          <p><strong>Email:</strong> <span th:text="${usuario.email}">email@usuario.com</span></p>
+          <a href="/usuarios/editar" class="btn btn-success w-100">Editar Perfil</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de pedidos/carritos -->
+    <div class="col-md-8">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+          <h3 class="text-success mb-4">Historial de Pedidos</h3>
+
+          <div th:if="${#lists.isEmpty(carritos)}" class="text-center">
+            <p>No hay pedidos realizados aún.</p>
+            <a href="/shop" class="btn btn-primary">Comprar ahora</a>
+          </div>
+
+          <div th:if="${!#lists.isEmpty(carritos)}">
+            <div th:each="carrito : ${carritos}" class="mb-4">
+              <h5 class="text-dark mb-2">Pedido #<span th:text="${carrito.getShortId()}">1</span> -
+
+              <table class="table table-hover align-middle">
+                <thead class="table-success">
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio unitario</th>
+                  <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detalle : ${carrito.detalles}">
+                  <td th:text="${detalle.articulo.name}">Producto</td>
+                  <td th:text="${detalle.cantidad}">1</td>
+                  <td th:text="${detalle.articulo.price} + ' $'">100 $</td>
+                  <td th:text="${detalle.cantidad * detalle.articulo.price} + ' $'">100 $</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr class="fw-bold">
+                  <td colspan="3" class="text-end">Total:</td>
+                  <td th:text="${carrito.getTotal()} + ' $'">300 $</td>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light text-center py-3">
+  <p>© 2025 Zay Shop | Designed by <a href="https://templatemo.com" class="text-success">TemplateMo</a></p>
+</footer>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
