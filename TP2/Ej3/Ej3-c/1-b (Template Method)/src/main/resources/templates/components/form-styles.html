@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:fragment="form-styles">
+    <style>
+      /* Beige Pastel Form Styles */
+      body {
+        background: linear-gradient(180deg, #FAF7F2 0%, #F0E9E0 100%);
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        min-height: 100vh;
+      }
+      
+      .form-panel {
+        background: rgba(255, 252, 247, 0.96);
+        border-radius: 1rem;
+        box-shadow: 0 8px 30px rgba(92, 75, 55, 0.12);
+        padding: 2rem 2.5rem;
+        max-width: 520px; /* Se puede sobreescribir en cada formulario */
+        margin: 3rem auto;
+        border: 1px solid var(--border-color, #E0D5C7);
+      }
+      
+      .form-title {
+        color: var(--text-primary, #3D3026);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-size: 1.75rem;
+      }
+      
+      .form-title i {
+        color: var(--btn-primary, #6C63FF);
+      }
+      
+      .form-label {
+        color: var(--text-primary, #3D3026);
+        font-weight: 600;
+      }
+      
+      .form-label i {
+        color: var(--btn-primary, #6C63FF);
+      }
+      
+      .form-control:focus {
+        border-color: var(--btn-primary, #6C63FF);
+        box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+      }
+      
+      .form-select:focus {
+        border-color: var(--btn-primary, #6C63FF);
+        box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+      }
+      
+      .btn-accent {
+        background: var(--btn-success, #00D4AA);
+        color: white;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+      }
+      
+      .btn-accent:hover {
+        background: var(--btn-success-hover, #00B892);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 212, 170, 0.4);
+      }
+      
+      .btn-secondary {
+        background-color: #95A3B3;
+        color: white;
+        border: none;
+        font-weight: 600;
+      }
+      
+      .btn-secondary:hover {
+        background-color: #7D8B9A;
+        color: white;
+        transform: translateY(-2px);
+      }
+      
+      .msg {
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      
+      .alert-danger {
+        background-color: rgba(255, 82, 82, 0.15);
+        border-color: var(--btn-danger, #FF5252);
+        border-left: 4px solid var(--btn-danger, #FF5252);
+        color: #C62828;
+        font-weight: 500;
+      }
+      
+      .alert-success {
+        background-color: rgba(0, 212, 170, 0.15);
+        border-color: var(--btn-success, #00D4AA);
+        border-left: 4px solid var(--btn-success, #00D4AA);
+        color: #00755F;
+        font-weight: 500;
+      }
+    </style>
+  </th:block>
+</head>
+</html>

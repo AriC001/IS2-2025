@@ -1,0 +1,3 @@
+Lionel;Escaloneta;2613654785;l.scalo@gmail.com;202934256791;Perú;345;Villa Hipodromo;Godoy Cruz;Mendoza;Argentina;
+Pablo;Perez;26145622314;l.perez@gmail.com;20324326781;San Martín;1050;Capital;Mendoza;Mendoza;Argentina;
+Esteban;Peralta;2615673491;l.estaban_p@gmail.com;20349874571;Benavente;121;Villa Nueva;Guaymallen;Mendoza;Argentina;
