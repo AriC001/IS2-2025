@@ -2,26 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="${articulo.id != null ? 'Editar Artículo' : 'Nuevo Artículo'}"></title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
-<body>
-<h1 th:text="${articulo.id != null ? 'Editar Artículo' : 'Nuevo Artículo'}"></h1>
+<body class="p-4">
 
-<form th:action="@{${articulo.id != null} ? '/articulos/actualizar/' + ${articulo.id} : '/articulos/crear'} " enctype="multipart/form-data"
-      th:object="${articulo}" method="post">
+<h1 th:text="${articulo.id != null ? 'Editar Artículo' : 'Nuevo Artículo'}" class="mb-4"></h1>
+
+<form th:action="@{${articulo.id != null} ? '/articulos/actualizar/' + ${articulo.id} : '/articulos/crear'}"
+      th:object="${articulo}" method="post" enctype="multipart/form-data" class="mb-3">
   <input type="hidden" th:field="*{id}" />
 
-  <label>Nombre:</label>
-  <input type="text" th:field="*{name}" required><br><br>
+  <div class="mb-3">
+    <label class="form-label">Nombre:</label>
+    <input type="text" th:field="*{name}" class="form-control" required>
+  </div>
 
-  <label>Precio:</label>
-  <input type="number" th:field="*{price}" step="0.01" required><br><br>
+  <div class="mb-3">
+    <label class="form-label">Precio:</label>
+    <input type="number" th:field="*{price}" step="0.01" class="form-control" required>
+  </div>
 
-  <label>Imagen:</label>
-  <input type="file" name="imagenArchivo"><br><br>
+  <div class="mb-3">
+    <label class="form-label">Imagen:</label>
+    <input type="file" name="imagenArchivo" class="form-control">
+  </div>
 
-  <button type="submit">Guardar</button>
+  <button type="submit" class="btn btn-success">Guardar</button>
+  <a href="/articulos" class="btn btn-secondary">Volver</a>
 </form>
 
-<a href="/articulos">Volver</a>
 </body>
 </html>

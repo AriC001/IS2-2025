@@ -45,6 +45,10 @@ public class Usuario implements SoftDeletable  {
         return this.password;
     }
 
+    public String getId(){
+        return this.id;
+    }
+
     @Override
     public void setDeleted(boolean deleted) { this.deleted = deleted; }
     @Override

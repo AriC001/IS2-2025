@@ -38,39 +38,52 @@
   <h2 class="text-center mb-4">🛒 Mi Carrito</h2>
 
   <!-- Si el carrito está vacío -->
-  <div th:if="${#lists.isEmpty(carrito.detalles)}" class="text-center">
+  <div id="carritoEmpty" th:style="${#lists.isEmpty(carrito.detallesFront)} ? 'display: block;' : 'display: none;'" class="text-center">
     <p>Tu carrito está vacío.</p>
-    <a href="/productos" class="btn btn-primary">Ver productos</a>
+    <a href="/shop" class="btn btn-primary">Ver productos</a>
   </div>
 
   <!-- Si el carrito tiene artículos -->
-  <div th:if="${!#lists.isEmpty(carrito.detalles)}">
-    <div th:each="detalle : ${carrito.detalles}" class="cart-item row align-items-center">
+  <div th:if="${!#lists.isEmpty(carrito.detallesFront)}">
+    <div th:each="detalle : ${carrito.detallesFront}" class="cart-item row align-items-center">
       <div class="col-md-2">
-        <img th:src="@{${detalle.articulo.imagenUrl}}" alt="Producto" class="img-fluid rounded">
+        <img
+             th:src="@{'/imagenes/' + ${detalle.imagenId}}"
+             alt="Producto"
+             class="img-fluid rounded">
       </div>
       <div class="col-md-4">
-        <h5 th:text="${detalle.articulo.nombre}">Nombre del artículo</h5>
-        <p class="text-muted" th:text="${detalle.articulo.descripcion}">Descripción</p>
+        <h5 th:text="${detalle.nombre}">Nombre del artículo</h5>
       </div>
       <div class="col-md-2 text-center">
         <span th:text="${detalle.cantidad}">1</span>
       </div>
       <div class="col-md-2 text-end">
-        <span th:text="${detalle.articulo.precio} + ' $'">100 $</span>
+        <span th:text="${detalle.precio} + ' $'">100 $</span>
       </div>
       <div class="col-md-2 text-end">
+        <!--
         <form method="post" th:action="@{/carrito/eliminar}">
           <input type="hidden" name="idDetalle" th:value="${detalle.id}">
           <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
         </form>
+        -->
+        <button type="button"
+                class="btn btn-success"
+                th:attr="data-id=${detalle.articuloId}"
+                onclick="eliminarDelCarrito(this)">
+          Eliminar
+        </button>
       </div>
     </div>
 
-    <div class="d-flex justify-content-between mt-4">
-      <span class="total">Total: <span th:text="${carrito.total} + ' $'">0 $</span></span>
+    <div id="total-checkout" class="d-flex justify-content-between mt-4">
+      <span class="total">Total: <span th:text="${carrito.getTotal()} + ' $'">0 $</span></span>
+      <form th:action="@{/shop}" method="get">
+        <button type="submit" class="btn btn-success">Volver</button>
+      </form>
       <form method="post" th:action="@{/carrito/checkout}">
-        <button type="submit" class="btn btn-success">Finalizar compra</button>
+        <button id="btn-checkout" type="submit" class="btn btn-success">Finalizar compra</button>
       </form>
     </div>
   </div>
@@ -83,6 +96,48 @@
       if (!confirm('¿Seguro que querés eliminar este producto?')) e.preventDefault();
     });
   });
+
+  async function eliminarDelCarrito(btn) {
+    const articuloId = btn.getAttribute('data-id');
+    const btnCheckout = document.getElementById("btn-checkout")
+    const carritoEmpty = document.getElementById("carritoEmpty")
+
+    const response = await fetch('/carrito/eliminar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        articuloId: articuloId
+      })
+    });
+    const result = await response.json();
+
+    if (result.status === 'ok') {
+      const item = btn.closest('.cart-item');
+      item.remove();
+      //recalcular total
+        // 🔹 Recalcular total dinámicamente
+        let total = 0;
+        document.querySelectorAll('.cart-item').forEach(el => {
+          const precioTexto = el.querySelector('.col-md-2.text-end span').textContent.trim();
+          const precio = parseFloat(precioTexto.replace('$', '').trim());
+          total += isNaN(precio) ? 0 : precio;
+        });
+
+        // 🔹 Actualizar el texto del total
+        const totalElemento = document.querySelector('.total span');
+        if (totalElemento) totalElemento.textContent = `${total.toFixed(2)} $`;
+
+      // si el carrito quedó vacío, mostrar mensaje
+      if (document.querySelectorAll('.cart-item').length === 0) {
+        btnCheckout.style.display = "none";
+        carritoEmpty.style.display = "block";
+      }
+    }
+
+  }
+
 </script>
 </body>
 </html>

@@ -27,6 +27,7 @@ public class Detalle implements SoftDeletable  {
         this.deleted = false;
     }
 
+    public Detalle(){}
 
     @Override
     public void setDeleted(boolean deleted) { this.deleted = deleted; }
@@ -35,5 +36,29 @@ public class Detalle implements SoftDeletable  {
 
     public double getSubtotal() {
         return articulo.getPrice() * cantidad;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public Articulo getArticulo() {
+        return articulo;
+    }
+
+    public void setArticulo(Articulo articulo) {
+        this.articulo = articulo;
     }
 }

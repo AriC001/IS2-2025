@@ -3,29 +3,39 @@ package com.example.etemplate.entities;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@DiscriminatorValue("FRONT")
+
 public class CarritoFront extends CarritoTemplate{
 
-    public CarritoFront(String id, double total, boolean deleted, List<Detalle> detalles, Usuario usuarios) {
-        super(id, total, deleted, detalles, usuarios);
-    }
+    private List<DetalleFront> detallesFront = new ArrayList<>();
+    private Usuario usuario;
 
-    public CarritoFront() {
-    }
 
     @Override
     protected void seleccionarProductos() {
 
     }
 
+
+
+    public double getTotal(){
+        calcularTotal();
+        return this.total;
+    }
+
     @Override
     protected void calcularTotal() {
-        this.total = detalles.stream()
-                .mapToDouble(Detalle::getSubtotal)
+        this.total = detallesFront.stream()
+                .mapToDouble(d -> d.getPrecio() * d.getCantidad())
                 .sum();
+    }
+
+
+
+    public List<DetalleFront> getDetallesFront(){
+        return this.detallesFront;
     }
 
     @Override
@@ -43,4 +53,7 @@ public class CarritoFront extends CarritoTemplate{
     public boolean isDeleted() { return deleted; }
 
 
+    public void setDetallesFront(ArrayList<DetalleFront> detallesFront) {
+        this.detallesFront = detallesFront;
+    }
 }

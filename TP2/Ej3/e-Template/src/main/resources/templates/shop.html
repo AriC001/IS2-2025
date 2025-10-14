@@ -61,22 +61,22 @@ https://templatemo.com/tm-559-zay-shop
             </button>
 
             <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between" id="templatemo_main_nav">
-                <div class="flex-fill">
-                    <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="about.html">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="shop.html">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contact.html">Contact</a>
-                        </li>
-                    </ul>
-                </div>
+                <<div class="flex-fill">
+                <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
                 <div class="navbar align-self-center d-flex">
                     <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
                         <div class="input-group">
@@ -89,13 +89,13 @@ https://templatemo.com/tm-559-zay-shop
                     <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
                         <i class="fa fa-fw fa-search text-dark mr-2"></i>
                     </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
+                    <a class="nav-icon position-relative text-decoration-none" href="/carrito">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">7</span>
+                        <span id="carrito-count" class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
-                    <a class="nav-icon position-relative text-decoration-none" href="#">
+                    <a class="nav-icon position-relative text-decoration-none"  href="/usuarios/perfil">
                         <i class="fa fa-fw fa-user text-dark mr-3"></i>
-                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">+99</span>
+                        <span th:text="${loggedUser}" class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"></span>
                     </a>
                 </div>
             </div>
@@ -179,10 +179,18 @@ https://templatemo.com/tm-559-zay-shop
                                 <h5 class="card-title" th:text="${articulo.name}"></h5>
                                 <p class="card-text">$ <span th:text="${articulo.price}"></span></p>
 
-                                <form th:action="@{/carrito/anadir}" method="post">
+                                <!--
+                                <form th:action="@{/carrito/agregar}" method="post">
                                     <input type="hidden" th:name="articuloId" th:value="${articulo.id}" />
                                     <button type="submit" class="btn btn-success">Añadir al carrito</button>
                                 </form>
+                                -->
+                                <button type="button"
+                                        class="btn btn-success"
+                                        th:attr="data-id=${articulo.id}"
+                                        onclick="agregarAlCarrito(this)">
+                                    Añadir al carrito
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -713,8 +721,8 @@ https://templatemo.com/tm-559-zay-shop
                 <div class="col-md-4 pt-5">
                     <h2 class="h2 text-light border-bottom pb-3 border-light">Further Info</h2>
                     <ul class="list-unstyled text-light footer-link-list">
-                        <li><a class="text-decoration-none" href="#">Home</a></li>
-                        <li><a class="text-decoration-none" href="#">About Us</a></li>
+                        <li><a class="text-decoration-none" href="/">Home</a></li>
+                        <li><a class="text-decoration-none" href="/about">About Us</a></li>
                         <li><a class="text-decoration-none" href="#">Shop Locations</a></li>
                         <li><a class="text-decoration-none" href="#">FAQs</a></li>
                         <li><a class="text-decoration-none" href="#">Contact</a></li>
@@ -775,6 +783,40 @@ https://templatemo.com/tm-559-zay-shop
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/templatemo.js"></script>
     <script src="js/custom.js"></script>
+    <script>
+        async function agregarAlCarrito(btn) {
+            const articuloId = btn.getAttribute('data-id');
+
+            const response = await fetch('/carrito/agregar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    articuloId: articuloId,
+                    cantidad: 1
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'ok') {
+                const contador = document.getElementById('carrito-count');
+                contador.textContent = result.cantidad; // 🔥 actualiza número
+                contador.classList.add('bg-success');
+                setTimeout(() => contador.classList.remove('bg-success'), 500);
+                // opcional: actualizar contador carrito, etc.
+            } else {
+                alert('❌ Error al agregar al carrito');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const resp = await fetch('/carrito/cantidad');
+            const cant = await resp.text();
+            document.getElementById('carrito-count').textContent = cant;
+        });
+    </script>
     <!-- End Script -->
 </body>
 
