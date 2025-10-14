@@ -50,11 +50,11 @@ public class Articulo implements SoftDeletable  {
         this.price = price;
     }
 
-    public Proveedor getProvedores() {
+    public Proveedor getProvedor() {
         return proveedor;
     }
 
-    public void setProvedores(Proveedor proveedor) {
+    public void setProvedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
 
@@ -79,5 +79,13 @@ public class Articulo implements SoftDeletable  {
 
     public void setImage(List<Imagen> imagenes) {
         this.imagenes = imagenes;
+    }
+
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 }

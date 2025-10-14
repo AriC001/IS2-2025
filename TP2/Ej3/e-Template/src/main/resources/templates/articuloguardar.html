@@ -27,6 +27,18 @@
     <input type="file" name="imagenArchivo" class="form-control">
   </div>
 
+  <div class="mb-3">
+    <label class="form-label">Proveedor</label>
+    <select th:field="*{proveedor}" class="form-select" required>
+      <option value="" disabled selected>Seleccionar proveedor</option>
+      <option th:each="prov : ${proveedores}"
+              th:value="${prov.id}"
+              th:text="${prov.name}">
+      </option>
+    </select>
+  </div>
+
+
   <button type="submit" class="btn btn-success">Guardar</button>
   <a href="/articulos" class="btn btn-secondary">Volver</a>
 </form>

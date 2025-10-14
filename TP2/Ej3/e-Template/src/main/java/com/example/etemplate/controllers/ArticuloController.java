@@ -43,8 +43,10 @@ public class ArticuloController {
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         Articulo articulo = new Articulo();
-        articulo.setProvedores(new Proveedor()); // Inicializamos la lista
+        articulo.setProvedor(new Proveedor()); // Inicializamos la lista
+        List<Proveedor> proveedores = proveedorService.findAll();
         model.addAttribute("articulo", articulo);
+        model.addAttribute("proveedores",proveedores);
         return "articuloguardar";
     }
 
@@ -54,13 +56,13 @@ public class ArticuloController {
         if (articulo.getId() == null || articulo.getId().isBlank()) {
             articulo.setId(null);
         }
-
+        /*
         List<Proveedor> proveedores = proveedorService.listar();
         if (!proveedores.isEmpty()) {
             articulo.setProvedores(proveedorService.listar().get(0));
         } else {
             articulo.setProvedores(new Proveedor());
-        }
+        }*/
         articulo.setDeleted(false);
 
         // Guardar imagen si existe
@@ -86,7 +88,9 @@ public class ArticuloController {
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable String id, Model model) {
         Articulo articulo = articuloService.findById(id).orElseThrow(() -> new IllegalArgumentException("Artículo no encontrado"));
+        List<Proveedor> proveedores = proveedorService.findAll();
         model.addAttribute("articulo", articulo);
+        model.addAttribute("proveedores",proveedores);
         return "articuloguardar";
     }
 
@@ -98,8 +102,8 @@ public class ArticuloController {
         // Copiamos los campos editables
         existente.setName(articulo.getName());
         existente.setPrice(articulo.getPrice());
-        if (articulo.getProvedores() != null) {
-            existente.setProvedores(articulo.getProvedores());
+        if (articulo.getProvedor() != null) {
+            existente.setProvedor(articulo.getProvedor());
         }
         existente.setDeleted(articulo.isDeleted());
         existente.setImage(articulo.getImagenes());

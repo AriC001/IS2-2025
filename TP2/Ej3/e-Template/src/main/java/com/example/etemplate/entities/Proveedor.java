@@ -1,9 +1,6 @@
 package com.example.etemplate.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +16,11 @@ public class Proveedor implements SoftDeletable {
     private String id;
     private String name;
     private boolean deleted;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id")
+    private Direccion direccion;
+
     @Override
     public void setDeleted(boolean deleted) { this.deleted = deleted; }
     @Override
@@ -38,5 +40,13 @@ public class Proveedor implements SoftDeletable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
     }
 }

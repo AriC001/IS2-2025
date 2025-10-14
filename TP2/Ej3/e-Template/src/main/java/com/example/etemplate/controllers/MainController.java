@@ -1,16 +1,24 @@
 package com.example.etemplate.controllers;
 
+import com.example.etemplate.entities.Proveedor;
 import com.example.etemplate.entities.Usuario;
+import com.example.etemplate.servicios.ProveedorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Optional;
 
 
 @Controller
 public class MainController {
+
+
     @GetMapping({(""),("/"),("index")})
     public String index(@AuthenticationPrincipal User user, Model model){
         if(user.getUsername() != null){
@@ -36,4 +44,5 @@ public class MainController {
         model.addAttribute("user",u);
         return "register";
     }
+
 }

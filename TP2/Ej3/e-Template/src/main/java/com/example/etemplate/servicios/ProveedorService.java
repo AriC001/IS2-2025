@@ -3,6 +3,7 @@ package com.example.etemplate.servicios;
 
 import com.example.etemplate.entities.Proveedor;
 import com.example.etemplate.repositories.ProveedorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,11 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProveedorService {
+public class ProveedorService extends GenericServiceImpl<Proveedor,String> {
 
     private final ProveedorRepository repo;
 
+    @Autowired
     public ProveedorService(ProveedorRepository repo) {
+        super(repo);
         this.repo = repo;
     }
 
@@ -34,4 +37,6 @@ public class ProveedorService {
     public void eliminar(String id) {
         repo.deleteById(id);
     }
+
+
 }
