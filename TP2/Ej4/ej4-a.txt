@@ -1,0 +1,137 @@
+HU1 – Ver cartelera de películas
+Como cliente
+quiero visualizar la lista de películas disponibles con sus horarios
+para poder elegir qué película ver.
+
+Criterios de aceptación:
+Se muestran título, duración, clasificación y horario.
+Al seleccionar una película se accede a sus funciones.
+La información proviene de objetos Pelicula y Funcion.
+
+Prioridad: Alta
+Estimación: 3 puntos
+-------------------------------------------------------------------------
+HU2 – Seleccionar asiento y función
+Como cliente
+quiero seleccionar una función y un asiento disponible
+para reservar mi lugar en la sala.
+
+Criterios de aceptación:
+Solo se muestran asientos con estado AsientoDisponible.
+Al confirmar, el estado cambia mediante el patrón State (AsientoOcupado).
+El asiento se asocia a una Entrada.
+
+Prioridad: Alta
+Estimación: 5 puntos
+-------------------------------------------------------------------------
+HU3 – Calcular precio de entrada
+Como sistema
+quiero aplicar la estrategia de precio correspondiente
+para determinar el costo de cada entrada correctamente.
+
+Criterios de aceptación:
+Se usa el patrón Strategy (EstrategiaPrecio con clases PrecioNormal, PrecioDescuentoEstudiante, PrecioPromocional).
+El precio base se obtiene de PrecioEntrada.getInstance().
+El cálculo se realiza mediante Entrada.calcularPrecio().
+
+Prioridad: Alta
+Estimación: 5 puntos
+-------------------------------------------------------------------------
+HU4 – Comprar una o más entradas
+Como cliente
+quiero confirmar la compra de mis entradas
+para obtener mi comprobante y asiento asignado.
+
+Criterios de aceptación:
+Se genera una instancia de Compra que agrupa una o más Entrada.
+El método Compra.calcularTotal() suma los precios individuales.
+La compra se registra en el historial del Cliente.
+
+Prioridad: Alta
+Estimación: 5 puntos
+-------------------------------------------------------------------------
+HU5 – Crear entrada según tipo
+Como sistema
+quiero generar entradas mediante una fábrica
+para mantener consistencia y flexibilidad en los distintos tipos de entradas.
+
+Criterios de aceptación:
+Se usa el patrón Factory Method con CreadorEntradaNormal o CreadorEntradaVIP.
+La fábrica devuelve un objeto Entrada configurado con su tipo y precio.
+Permite agregar nuevos tipos de entradas sin modificar código existente.
+
+Prioridad: Media
+Estimación: 3 puntos
+-------------------------------------------------------------------------
+HU6 – Actualizar precio general
+Como administrador
+quiero modificar el valor base de la entrada
+para reflejar los nuevos precios del cine universitario.
+
+Criterios de aceptación:
+PrecioEntrada sigue el patrón Singleton (una única instancia).
+Solo un administrador puede modificarlo mediante actualizarPrecio().
+Todas las nuevas entradas utilizan el valor actualizado.
+
+Prioridad: Media
+Estimación: 3 puntos
+-------------------------------------------------------------------------
+HU7 – Consultar historial de compras
+Como cliente
+quiero ver mis compras anteriores
+para revisar mis entradas adquiridas y fechas.
+
+Criterios de aceptación:
+Se muestra la lista de Compra asociada al Cliente.
+Cada compra incluye fecha, total y las películas vistas.
+Se obtiene mediante Cliente.obtenerHistorial().
+
+Prioridad: Baja
+Estimación: 2 puntos
+-------------------------------------------------------------------------
+Product Backlog:
+Ordenadas por prioridad:
+1. HU2 – Selección de función y asiento
+2. HU3 – Cálculo de precio con estrategia
+3. HU4 – Comprar / confirmar operación
+4. HU1 – Ver cartelera
+5. HU5 – Actualizar precio base (administrador)
+6. HU6 – Creación de entradas por fábrica
+7. HU7 – Ver historial de compras
+-------------------------------------------------------------------------
+Sprint Backlog:
+Suponiendo que cada punto toma 4 horas, y se tienen 40 horas por sprint (8 hrs x 5 dias) entonces:
+
+Sprint 1:
+Objetivo: Base funcional de selección de funciones y asiento + cálculo de precio básico
+Historias seleccionadas:
+HU2 – Selección de asiento + función (5 pts)
+HU3 – Cálculo de precio con estrategia (5 pts)
+
+Tareas por HU:
+HU2: diseño de UI de selección asiento; backend para obtener asientos disponibles; lógica de estado (AsientoDisponible → AsientoOcupado)
+HU3: implementación de interfaz EstrategiaPrecio, clases concretas (normal, descuento), integración con Entrada.calcularPrecio
+
+Sprint 2:
+Objetivo: Finalizar compra y mostrar cartelera
+Historias seleccionadas:
+HU4 – Comprar / confirmar operación (5 pts)
+HU1 – Ver cartelera (3 pts)
+HU7 – Ver historial (2 pts)
+
+Tareas:
+HU4: UI de confirmación de compra / pago; backend para crear Compra, asociar Entrada, persistencia
+HU1: UI de cartelera + backend para listar películas y funciones
+HU7: UI historial + backend para recuperar compras del cliente
+
+Sprint 3:
+Objetivo: Funcionalidades de administración y fábrica
+Historias Seleccionadas:
+HU5 – Actualizar precio base (3 pts)
+HU6 – Creación de entradas por fábrica (3 pts)
+Resto de tiempo para refinamiento, pruebas, integración, corrección de bugs (~4 pts)
+
+Tareas:
+HU5: UI administración de precio; lógica del Singleton PrecioEntrada
+HU6: diseño de fábrica CreadorEntradaNormal / CreadorEntradaVIP, integración con sistema
+Pruebas unitarias, integración, correcciones.
