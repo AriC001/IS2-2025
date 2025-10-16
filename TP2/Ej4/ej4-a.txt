@@ -134,4 +134,8 @@ Resto de tiempo para refinamiento, pruebas, integración, corrección de bugs (~
 Tareas:
 HU5: UI administración de precio; lógica del Singleton PrecioEntrada
 HU6: diseño de fábrica CreadorEntradaNormal / CreadorEntradaVIP, integración con sistema
+
 Pruebas unitarias, integración, correcciones.
+-------------------------------------------------------------------------
+Link al prototipo:
+https://ninjamock.com/Designer/Workplace/207063966/Inicio
