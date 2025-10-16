@@ -76,19 +76,6 @@ Todas las nuevas entradas utilizan el valor actualizado.
 Prioridad: Media
 Estimación: 3 puntos
 -------------------------------------------------------------------------
-HU7 – Consultar historial de compras
-Como cliente
-quiero ver mis compras anteriores
-para revisar mis entradas adquiridas y fechas.
-
-Criterios de aceptación:
-Se muestra la lista de Compra asociada al Cliente.
-Cada compra incluye fecha, total y las películas vistas.
-Se obtiene mediante Cliente.obtenerHistorial().
-
-Prioridad: Baja
-Estimación: 2 puntos
--------------------------------------------------------------------------
 Product Backlog:
 Ordenadas por prioridad:
 1. HU2 – Selección de función y asiento
@@ -97,7 +84,6 @@ Ordenadas por prioridad:
 4. HU1 – Ver cartelera
 5. HU5 – Actualizar precio base (administrador)
 6. HU6 – Creación de entradas por fábrica
-7. HU7 – Ver historial de compras
 -------------------------------------------------------------------------
 Sprint Backlog:
 Suponiendo que cada punto toma 4 horas, y se tienen 40 horas por sprint (8 hrs x 5 dias) entonces:
@@ -117,12 +103,10 @@ Objetivo: Finalizar compra y mostrar cartelera
 Historias seleccionadas:
 HU4 – Comprar / confirmar operación (5 pts)
 HU1 – Ver cartelera (3 pts)
-HU7 – Ver historial (2 pts)
 
 Tareas:
 HU4: UI de confirmación de compra / pago; backend para crear Compra, asociar Entrada, persistencia
 HU1: UI de cartelera + backend para listar películas y funciones
-HU7: UI historial + backend para recuperar compras del cliente
 
 Sprint 3:
 Objetivo: Funcionalidades de administración y fábrica
@@ -148,3 +132,4 @@ El Proyecto duraria 3 Sprints.
 Entonces 38.501,09 pesos x 8 horas x 5 dias x 3 sprints = 4.620.130,8 pesos por desarrollador.
 Si consideramos el equipo 4 Desarrolladores de Aplicaciones Junior, entonces 4.620.130,8 pesos x 4 miembros = 18.480.523,2 pesos
 Redondeamos a 20 millones por costos imprevistos.
+
