@@ -138,4 +138,5 @@ HU6: diseño de fábrica CreadorEntradaNormal / CreadorEntradaVIP, integración 
 Pruebas unitarias, integración, correcciones.
 -------------------------------------------------------------------------
 Link al prototipo:
-https://ninjamock.com/Designer/Workplace/207063966/Inicio
+https://ninjamock.com/s/MDB6QZx
+
