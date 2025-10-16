@@ -1,0 +1,37 @@
+<!-- Messages Fragment -->
+<div th:fragment="messages" class="container-fluid">
+    <!-- Success Messages -->
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-check-circle"></i>
+        <strong>¡Éxito!</strong> 
+        <span th:switch="${param.success[0]}">
+            <span th:case="create">El registro se creó correctamente.</span>
+            <span th:case="update">El registro se actualizó correctamente.</span>
+            <span th:case="delete">El registro se eliminó correctamente.</span>
+            <span th:case="*">Operación realizada exitosamente.</span>
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    
+    <!-- Error Messages -->
+    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle"></i>
+        <strong>Error:</strong> 
+        <span th:switch="${param.error[0]}">
+            <span th:case="create">No se pudo crear el registro.</span>
+            <span th:case="update">No se pudo actualizar el registro.</span>
+            <span th:case="delete">No se pudo eliminar el registro.</span>
+            <span th:case="notfound">No se encontró el registro solicitado.</span>
+            <span th:case="*">Ocurrió un error inesperado.</span>
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    
+    <!-- Form Validation Errors -->
+    <div th:if="${error}" class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-exclamation-circle"></i>
+        <strong>Atención:</strong> 
+        <span th:text="${error}">Error específico del formulario</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
