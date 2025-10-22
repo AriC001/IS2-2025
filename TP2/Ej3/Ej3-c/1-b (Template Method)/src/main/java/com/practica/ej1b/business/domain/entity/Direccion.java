@@ -1,0 +1,78 @@
+package com.practica.ej1b.business.domain.entity;
+
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Entity
+@Table(name = "direccion")
+public class Direccion extends BaseEntity<String> {
+
+  @Column(nullable = false, length = 100)
+  private String calle;
+
+  @Column(nullable = false, length = 10)
+  private String numeracion;
+
+  @Column(nullable = false, length = 100)
+  private String barrio;
+
+  @Column(nullable = false, length = 100)
+  private String manzanaPiso;
+
+  @Column(nullable = false, length = 10)
+  private String casaDepartamento;
+
+  @Column(length = 100)
+  @Nullable
+  private String referencia;
+
+  @Column
+  private String latitud;
+
+  @Column
+  private String longitud;
+
+  public String getGoogleMapsLink(String latitud, String longitud) {
+    if (latitud != null && longitud != null && !latitud.isEmpty() && !longitud.isEmpty()) {
+      return "https://www.google.com/maps?q=" + latitud + "," + longitud;
+    }
+    return null;
+  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Localidad localidad;
+
+  // en com.practica.ej1b.business.domain.entity.Direccion
+  public String getFormatted() {
+    StringBuilder sb = new StringBuilder();
+    if (calle != null) sb.append(calle);
+    if (numeracion != null) sb.append(" ").append(numeracion);
+    if (barrio != null) sb.append(", ").append(barrio);
+    if (manzanaPiso != null) sb.append(", ").append(manzanaPiso);
+    if (casaDepartamento != null) sb.append(", ").append(casaDepartamento);
+    if (referencia == null || referencia.isBlank()) {
+      sb.append(", -");
+    } else {
+      sb.append(", ").append(referencia);
+    }
+    if (localidad != null && localidad.getNombre() != null) sb.append(", ").append(localidad.getNombre());
+    return sb.toString();
+  }
+
+
+}

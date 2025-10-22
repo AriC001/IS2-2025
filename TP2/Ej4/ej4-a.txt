@@ -1,0 +1,135 @@
+HU1 – Ver cartelera de películas
+Como cliente
+quiero visualizar la lista de películas disponibles con sus horarios
+para poder elegir qué película ver.
+
+Criterios de aceptación:
+Se muestran título, duración, clasificación y horario.
+Al seleccionar una película se accede a sus funciones.
+La información proviene de objetos Pelicula y Funcion.
+
+Prioridad: Alta
+Estimación: 3 puntos
+-------------------------------------------------------------------------
+HU2 – Seleccionar asiento y función
+Como cliente
+quiero seleccionar una función y un asiento disponible
+para reservar mi lugar en la sala.
+
+Criterios de aceptación:
+Solo se muestran asientos con estado AsientoDisponible.
+Al confirmar, el estado cambia mediante el patrón State (AsientoOcupado).
+El asiento se asocia a una Entrada.
+
+Prioridad: Alta
+Estimación: 5 puntos
+-------------------------------------------------------------------------
+HU3 – Calcular precio de entrada
+Como sistema
+quiero aplicar la estrategia de precio correspondiente
+para determinar el costo de cada entrada correctamente.
+
+Criterios de aceptación:
+Se usa el patrón Strategy (EstrategiaPrecio con clases PrecioNormal, PrecioDescuentoEstudiante, PrecioPromocional).
+El precio base se obtiene de PrecioEntrada.getInstance().
+El cálculo se realiza mediante Entrada.calcularPrecio().
+
+Prioridad: Alta
+Estimación: 5 puntos
+-------------------------------------------------------------------------
+HU4 – Comprar una o más entradas
+Como cliente
+quiero confirmar la compra de mis entradas
+para obtener mi comprobante y asiento asignado.
+
+Criterios de aceptación:
+Se genera una instancia de Compra que agrupa una o más Entrada.
+El método Compra.calcularTotal() suma los precios individuales.
+La compra se registra en el historial del Cliente.
+
+Prioridad: Alta
+Estimación: 5 puntos
+-------------------------------------------------------------------------
+HU5 – Crear entrada según tipo
+Como sistema
+quiero generar entradas mediante una fábrica
+para mantener consistencia y flexibilidad en los distintos tipos de entradas.
+
+Criterios de aceptación:
+Se usa el patrón Factory Method con CreadorEntradaNormal o CreadorEntradaVIP.
+La fábrica devuelve un objeto Entrada configurado con su tipo y precio.
+Permite agregar nuevos tipos de entradas sin modificar código existente.
+
+Prioridad: Media
+Estimación: 3 puntos
+-------------------------------------------------------------------------
+HU6 – Actualizar precio general
+Como administrador
+quiero modificar el valor base de la entrada
+para reflejar los nuevos precios del cine universitario.
+
+Criterios de aceptación:
+PrecioEntrada sigue el patrón Singleton (una única instancia).
+Solo un administrador puede modificarlo mediante actualizarPrecio().
+Todas las nuevas entradas utilizan el valor actualizado.
+
+Prioridad: Media
+Estimación: 3 puntos
+-------------------------------------------------------------------------
+Product Backlog:
+Ordenadas por prioridad:
+1. HU2 – Selección de función y asiento
+2. HU3 – Cálculo de precio con estrategia
+3. HU4 – Comprar / confirmar operación
+4. HU1 – Ver cartelera
+5. HU5 – Actualizar precio base (administrador)
+6. HU6 – Creación de entradas por fábrica
+-------------------------------------------------------------------------
+Sprint Backlog:
+Suponiendo que cada punto toma 4 horas, y se tienen 40 horas por sprint (8 hrs x 5 dias) entonces:
+
+Sprint 1:
+Objetivo: Base funcional de selección de funciones y asiento + cálculo de precio básico
+Historias seleccionadas:
+HU2 – Selección de asiento + función (5 pts)
+HU3 – Cálculo de precio con estrategia (5 pts)
+
+Tareas por HU:
+HU2: diseño de UI de selección asiento; backend para obtener asientos disponibles; lógica de estado (AsientoDisponible → AsientoOcupado)
+HU3: implementación de interfaz EstrategiaPrecio, clases concretas (normal, descuento), integración con Entrada.calcularPrecio
+
+Sprint 2:
+Objetivo: Finalizar compra y mostrar cartelera
+Historias seleccionadas:
+HU4 – Comprar / confirmar operación (5 pts)
+HU1 – Ver cartelera (3 pts)
+
+Tareas:
+HU4: UI de confirmación de compra / pago; backend para crear Compra, asociar Entrada, persistencia
+HU1: UI de cartelera + backend para listar películas y funciones
+
+Sprint 3:
+Objetivo: Funcionalidades de administración y fábrica
+Historias Seleccionadas:
+HU5 – Actualizar precio base (3 pts)
+HU6 – Creación de entradas por fábrica (3 pts)
+Resto de tiempo para refinamiento, pruebas, integración, corrección de bugs (~4 pts)
+
+Tareas:
+HU5: UI administración de precio; lógica del Singleton PrecioEntrada
+HU6: diseño de fábrica CreadorEntradaNormal / CreadorEntradaVIP, integración con sistema
+
+Pruebas unitarias, integración, correcciones.
+-------------------------------------------------------------------------
+Link al prototipo:
+https://ninjamock.com/s/MDB6QZx
+-------------------------------------------------------------------------
+Presupuesto:
+Segun el Consejo Profesional de Ciencias Informaticas: https://cpcipc.org.ar/honorarios-recomendados/
+Un Desarrollador de Aplicaciones Junior deberia pedir 38.501,09 pesos por hora.
+Un Sprint consiste de 5 dias habiles durante dos semanas, con 8 horas laborales.
+El Proyecto duraria 3 Sprints.
+Entonces 38.501,09 pesos x 8 horas x 5 dias x 3 sprints = 4.620.130,8 pesos por desarrollador.
+Si consideramos el equipo 4 Desarrolladores de Aplicaciones Junior, entonces 4.620.130,8 pesos x 4 miembros = 18.480.523,2 pesos
+Redondeamos a 20 millones por costos imprevistos.
+

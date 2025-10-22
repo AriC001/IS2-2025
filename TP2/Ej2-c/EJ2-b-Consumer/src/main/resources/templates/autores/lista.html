@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lista de Autores - Sistema de Gestión</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>
+                    <i class="bi bi-people text-success"></i>
+                    Lista de Autores
+                </h1>
+                <p class="text-muted">Gestiona los autores registrados y su información biográfica</p>
+            </div>
+        </div>
+
+        <!-- Search and Actions -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="search-container">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text"
+                               class="form-control border-start-0"
+                               id="searchInput"
+                               placeholder="Buscar por nombre, apellido o biografía...">
+                        <button class="btn btn-outline-secondary rounded-end" type="button" onclick="clearSearch()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="d-grid">
+                    <a href="/autores/nuevo" class="btn btn-success btn-lg shadow-sm">
+                        <i class="bi bi-person-plus me-2"></i> Registrar Autor
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authors Table -->
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-journal-richtext me-2"></i> Lista de Autores
+                    <small class="text-muted fw-normal ms-2">
+                        (Total: <span th:text="${#lists.size(entities)}" class="badge bg-success">0</span>)
+                    </small>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(entities)}" class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="text-muted mt-3">No hay autores registrados</p>
+                    <a href="/autores/nuevo" class="btn btn-success">
+                        <i class="bi bi-person-plus"></i> Crear el primer autor
+                    </a>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(entities)}" class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Biografía</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="autor : ${entities}">
+                                <td th:text="${autor.id}" class="fw-bold">#1</td>
+                                <td>
+                                    <strong th:text="${autor.nombre + ' ' + autor.apellido}">Nombre Apellido</strong>
+                                </td>
+                                <td>
+                                    <span th:text="${autor.biografia}"
+                                          class="text-muted d-inline-block text-truncate"
+                                          style="max-width: 320px;">
+                                        Biografía del autor
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span th:class="${autor.eliminado ? 'badge bg-danger' : 'badge bg-success'}"
+                                          th:text="${autor.eliminado ? 'Inactivo' : 'Activo'}">Activo</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/autores/{id}(id=${autor.id})}"
+                                           class="btn btn-outline-info"
+                                           title="Ver detalle">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/autores/{id}/editar(id=${autor.id})}"
+                                           class="btn btn-outline-warning"
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/autores/{id}/eliminar(id=${autor.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            filtrarTabla('');
+        }
+
+        function filtrarTabla(valor) {
+            const searchTerm = valor.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            filtrarTabla(e.target.value);
+        });
+    </script>
+</div>
+</html>
