@@ -19,6 +19,11 @@ public class HomeController {
     }
 
     @GetMapping({"/", ""})
+    public String index2(){
+        return "index";
+    }
+
+    @GetMapping("index2")
     public String home(@RequestParam(defaultValue = "1") int page,
                        @RequestParam(defaultValue = "12") int size,
                        Model model) {
@@ -37,7 +42,7 @@ public class HomeController {
             model.addAttribute("totalPages", totalPages);
             model.addAttribute("pageSize", size);
             model.addAttribute("entityName", "videogames");
-            return "index";
+            return "indexNoRest";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "error";

@@ -26,65 +26,15 @@
         <div class="head">
           <p class="text-right"><a href="#">See all</a></p>
         </div>
-        <div class="row games-grid">
-            <div class="col-12 col-md-6 mb-5 px-3" th:each="entity : ${entities}">
-                <div class="vg-card">
-                    <a th:href="@{/{entityName}/{id}(entityName=${entityName},id=${entity.id})}" class="vg-link">
-                        <div class="vg-img-wrap">
-                            <img th:src="${entity.img}" alt="Portada" th:if="${entity.img} != null" class="vg-img"/>
-                            <img src="/images/no-image.png" alt="Sin imagen" th:if="${entity.img} == null" class="vg-img"/>
-                        </div>
-                    </a>
-                    <div class="vg-body">
-                        <h5 class="vg-title">
-                            <a th:href="@{/{entityName}/{id}(entityName=${entityName},id=${entity.id})}" th:text="${entity.title}">Título</a>
-                        </h5>
-                        <div class="vg-meta">
-                            <span class="vg-price" th:text="${'$' + entity.price}">Precio</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="row games-grid" id="games-grid">
+            <!-- Cards will be injected here by JS -->
         </div>
 
         <!-- 🔽 Paginación -->
-        <div class="d-flex justify-content-center mt-4" th:if="${totalPages != null and totalPages > 0}">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item" th:classappend="${currentPage <= 1} ? ' disabled'">
-                        <a class="page-link" th:href="@{|/?page=${currentPage - 1}&size=${pageSize}|}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo; Prev</span>
-                        </a>
-                    </li>
-
-                    <li class="page-item disabled">
-                        <span class="page-link" th:text="'Página ' + ${currentPage} + ' de ' + ${totalPages}">Página</span>
-                    </li>
-
-                    <li class="page-item" th:classappend="${currentPage >= totalPages} ? ' disabled'">
-                        <a class="page-link" th:href="@{|/?page=${currentPage + 1}&size=${pageSize}|}" aria-label="Next">
-                            <span aria-hidden="true">Next &raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+        <div class="d-flex justify-content-center mt-4" id="pagination-container">
+            <!-- Pagination controls injected by JS -->
         </div>
 
-        <!-- Paginación (placeholder para implementar después) 
-        <div class="row mt-3" th:if="${false}">
-            <div class="col-12 d-flex justify-content-center">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-        -->
       </div>
     </div>
     </div>
@@ -95,5 +45,135 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+async function fetchPage(page = 0, size = 12) {
+  const res = await fetch(`/api/v1/videogames?page=${page}&size=${size}`, {
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  // Spring PageImpl => { content: [...], totalElements, totalPages, number, size, ... }
+  const items = data.content;
+  return { items, meta: { total: data.totalElements, pages: data.totalPages, page: data.number, size: data.size } };
+}
+
+function formatPrice(p) {
+    try { return p == null ? '$0' : '$' + Number(p).toFixed(2); } catch { return '$0'; }
+}
+
+function createCard(item) {
+    const col = document.createElement('div');
+    col.className = 'col-12 col-md-6 col-lg-4 mb-4 px-3';
+
+    const card = document.createElement('div');
+    card.className = 'vg-card';
+
+    const link = document.createElement('a');
+    link.className = 'vg-link';
+    link.href = `/api/v1/videogames/${item.id}`;
+
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'vg-img-wrap';
+    const img = document.createElement('img');
+    img.className = 'vg-img';
+    img.alt = item.title || 'Portada';
+    img.src = item.img || '/images/no-image.png';
+    imgWrap.appendChild(img);
+    link.appendChild(imgWrap);
+
+    const body = document.createElement('div');
+    body.className = 'vg-body';
+
+    const h5 = document.createElement('h5');
+    h5.className = 'vg-title';
+    const aTitle = document.createElement('a');
+    aTitle.href = `/videogames/${item.id}`;
+    aTitle.textContent = item.title || 'Untitled';
+    h5.appendChild(aTitle);
+
+    const meta = document.createElement('div');
+    meta.className = 'vg-meta';
+    const spanPrice = document.createElement('span');
+    spanPrice.className = 'vg-price';
+    spanPrice.textContent = formatPrice(item.price);
+    meta.appendChild(spanPrice);
+
+    body.appendChild(h5);
+    body.appendChild(meta);
+
+    card.appendChild(link);
+    card.appendChild(body);
+    col.appendChild(card);
+    return col;
+}
+
+function renderCards(items) {
+    const grid = document.getElementById('games-grid');
+    grid.innerHTML = '';
+    if (!items || items.length === 0) {
+        grid.innerHTML = '<div class="col-12"><p class="text-center">No se encontraron videojuegos.</p></div>';
+        return;
+    }
+    items.forEach(it => grid.appendChild(createCard(it)));
+}
+
+function renderPagination(meta) {
+    const container = document.getElementById('pagination-container');
+    container.innerHTML = '';
+    if (!meta || meta.pages <= 1) return;
+
+    const nav = document.createElement('nav');
+    nav.setAttribute('aria-label', 'Page navigation');
+    const ul = document.createElement('ul');
+    ul.className = 'pagination';
+
+    const prevLi = document.createElement('li');
+    prevLi.className = 'page-item' + (meta.page <= 0 ? ' disabled' : '');
+    const prevA = document.createElement('a');
+    prevA.className = 'page-link';
+    prevA.href = '#';
+    prevA.innerHTML = '&laquo; Prev';
+    prevA.onclick = (e) => { e.preventDefault(); if (meta.page > 0) loadPage(meta.page - 1, meta.size); };
+    prevLi.appendChild(prevA);
+
+    const infoLi = document.createElement('li');
+    infoLi.className = 'page-item disabled';
+    const infoSpan = document.createElement('span');
+    infoSpan.className = 'page-link';
+    infoSpan.textContent = `Página ${meta.page + 1} de ${meta.pages}`;
+    infoLi.appendChild(infoSpan);
+
+    const nextLi = document.createElement('li');
+    nextLi.className = 'page-item' + (meta.page >= meta.pages - 1 ? ' disabled' : '');
+    const nextA = document.createElement('a');
+    nextA.className = 'page-link';
+    nextA.href = '#';
+    nextA.innerHTML = 'Next &raquo;';
+    nextA.onclick = (e) => { e.preventDefault(); if (meta.page < meta.pages - 1) loadPage(meta.page + 1, meta.size); };
+    nextLi.appendChild(nextA);
+
+    ul.appendChild(prevLi);
+    ul.appendChild(infoLi);
+    ul.appendChild(nextLi);
+    nav.appendChild(ul);
+    container.appendChild(nav);
+}
+
+async function loadPage(page = 0, size = 12) {
+    try {
+        const { items, meta } = await fetchPage(page, size);
+        renderCards(items);
+        renderPagination(meta);
+    } catch (err) {
+        console.error(err);
+        const grid = document.getElementById('games-grid');
+        grid.innerHTML = `<div class="col-12"><p class="text-danger text-center">Error cargando datos: ${err.message}</p></div>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPage(0, 12);
+});
+</script>
 </body>
 </html>
