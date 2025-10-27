@@ -1,6 +1,7 @@
 package com.is.biblioteca.controller.view;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -39,16 +40,13 @@ public class EditorialController {
         	
         	ediotrialService.crearEditorial(nombre);
             modelo.put("exito", "La accion fue realizada correctamente");
-            
-            return "redirect:/regresoPage";
+
+            return "redirect:/editorial/lista";
 
         } catch (ErrorServiceException e) {
             modelo.put("error", e.getMessage());
             return "editorial_form";  
-        } catch (Exception e) {
-            modelo.put("error", "Error de Sistemas");
-            return "editorial_form";
-        }    
+        }   
     }
     
     //////////////////////////////////////////
@@ -108,9 +106,9 @@ public class EditorialController {
             Editorial editorial = ediotrialService.modificarEditorial(id, nombre);
             modelo.put("editorial", editorial);
             modelo.put("exito", "La accion fue realizada correctamente");
-            
-            return "redirect:/regresoPage";
-            
+
+            return "redirect:/editorial/lista";
+
         } catch (ErrorServiceException e) {
             modelo.put("error", e.getMessage());
             return "editorial_modificar";  
@@ -133,7 +131,7 @@ public class EditorialController {
         	
         	ediotrialService.eliminarEditorial(id);
         	
-        	return "redirect:/regresoPage";
+        	return "redirect:/editorial/lista";
             
         } catch (ErrorServiceException e) {
             modelo.put("error", e.getMessage());

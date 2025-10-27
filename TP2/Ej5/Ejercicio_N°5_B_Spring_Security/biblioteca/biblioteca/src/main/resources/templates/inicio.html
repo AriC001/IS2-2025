@@ -13,11 +13,6 @@
                 <div class="container contenedorLibros">
                     <p class="tituloLibros" th:if="${session.usuariosession != null}" th:text=" 'Hola '+ ${session.usuariosession.nombre} + ' Rol ' + ${session.usuariosession.rol}"></p>
                 </div>
-                <div class="container">
-                    <a th:if="${session.usuariosession.imagen != null}" class="d-flex align-items-center">
-                        <img class="logo"  th:src="@{/imagen/perfil/__${session.usuariosession.id}__}" >
-                    </a>
-                </div>
                 <div class="bg-circle-1 bg-circle"></div>
                 <div class="bg-circle-2 bg-circle"></div>
                 <div class="bg-circle-3 bg-circle"></div>

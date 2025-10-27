@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +48,35 @@ public class PrestamoController {
       modelo.addAttribute("prestamos", prestamos);
     } catch (Exception e) {
       modelo.addAttribute("error", "Error al cargar la lista de préstamos: " + e.getMessage());
+    }
+    return "prestamo_list.html";
+  }
+
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  ///////// VIEW: MIS PRÉSTAMOS (USER) /////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
+  @GetMapping("/mis-prestamos")
+  public String misPrestamos(ModelMap modelo) {
+    try {
+      // Obtener el usuario autenticado
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      String email = auth.getName(); // El username es el email
+      
+      // Buscar el usuario por email
+      Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
+      
+      if (usuario != null) {
+        List<Prestamo> prestamos = prestamoService.listarPrestamosPorUsuario(usuario.getId());
+        modelo.addAttribute("prestamos", prestamos);
+        modelo.addAttribute("esUsuario", true); // Para ocultar columnas de admin
+      } else {
+        modelo.addAttribute("error", "Usuario no encontrado");
+      }
+    } catch (Exception e) {
+      modelo.addAttribute("error", "Error al cargar sus préstamos: " + e.getMessage());
     }
     return "prestamo_list.html";
   }
@@ -111,7 +142,7 @@ public class PrestamoController {
       }
     }
 
-    return "prestamo_form.html";
+    return "prestamo_list.html";
   }
 
   //////////////////////////////////////////
@@ -184,7 +215,7 @@ public class PrestamoController {
       }
     }
 
-    return "prestamo_modificar.html";
+    return "prestamo_list.html";
   }
 
   //////////////////////////////////////////

@@ -7,30 +7,46 @@
       
         <div class="container m-5" >
 
+            <h2 class="mb-4">
+                <span th:if="${esUsuario}">
+                    <i class="fas fa-book-reader"></i> Mis Préstamos
+                </span>
+                <span th:unless="${esUsuario}">
+                    <i class="fas fa-list"></i> Lista de Préstamos
+                </span>
+            </h2>
+
             <table class="table table-dark">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Usuario</th>
+                        <th scope="col" th:unless="${esUsuario}">Usuario</th>
                         <th scope="col">Libro</th>
                         <th scope="col">Fecha Préstamo</th>
                         <th scope="col">Fecha Devolución</th>
+                        <th scope="col">Estado</th>
                         <th scope="col" sec:authorize="hasRole('ADMIN')">Acciones</th>
                     </tr>
                 </thead>
                 <tbody th:each="prestamo : ${prestamos}"> 
                     <tr>
-                        <th scope="row" th:text="${prestamo.id}"></th>
-                        <td th:text="${prestamo.usuario.nombre}"></td>
+                        <td th:unless="${esUsuario}" th:text="${prestamo.usuario.nombre}"></td>
                         <td th:text="${prestamo.libro.titulo}"></td>
                         <td th:text="${#dates.format(prestamo.fechaPrestamo, 'dd/MM/yyyy')}"></td>
                         <td th:text="${#dates.format(prestamo.fechaDevolucion, 'dd/MM/yyyy')}"></td>
                         <td>
-                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/prestamo/modificar/__${prestamo.id}__}">
-                                <i class="fas fa-feather-alt"></i> Modificar
+                            <span th:if="${#dates.createToday().before(prestamo.fechaDevolucion)}" class="badge bg-success">
+                                <i class="fas fa-check-circle"></i> Vigente
+                            </span>
+                            <span th:if="${#dates.createToday().after(prestamo.fechaDevolucion)}" class="badge bg-danger">
+                                <i class="fas fa-exclamation-circle"></i> Vencido
+                            </span>
+                        </td>
+                        <td sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/prestamo/modificar/__${prestamo.id}__}" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-edit"></i> Modificar
                             </a>
-                            <span> | </span>
-                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/prestamo/eliminar/__${prestamo.id}__}" 
+                            <a th:href="@{/prestamo/eliminar/__${prestamo.id}__}" 
+                               class="btn btn-sm btn-danger"
                                onclick="return confirm('¿Está seguro de eliminar este préstamo?')">
                                 <i class="fas fa-trash-alt"></i> Eliminar
                             </a>
@@ -38,6 +54,10 @@
                     </tr>
                 </tbody>
             </table>
+            
+            <div th:if="${prestamos.isEmpty()}" class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> No hay préstamos registrados.
+            </div>
             
             <div th:if="${exito}!=null" class="card text-white bg-success mb-3 mt-3 mensajeExito" >
                 <div class="card-body">

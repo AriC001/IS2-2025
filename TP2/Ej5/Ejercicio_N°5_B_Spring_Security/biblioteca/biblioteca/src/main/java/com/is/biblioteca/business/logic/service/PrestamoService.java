@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.is.biblioteca.business.domain.entity.Libro;
 import com.is.biblioteca.business.domain.entity.Prestamo;
 import com.is.biblioteca.business.domain.entity.Usuario;
+import com.is.biblioteca.business.logic.error.ErrorServiceException;
 import com.is.biblioteca.business.persistence.repository.PrestamoRepository;
 
 import jakarta.transaction.Transactional;
@@ -19,15 +20,21 @@ public class PrestamoService {
   @Autowired
   private PrestamoRepository prestamoRepository;
 
+  @Autowired
+  private LibroService libroService;
+
 
   @Transactional
-  public void crearPrestamo(Usuario usuario, Libro libro, Date fechaPrestamo, Date fechaDevolucion) {
+  public void crearPrestamo(Usuario usuario, Libro libro, Date fechaPrestamo, Date fechaDevolucion) throws ErrorServiceException {
     validar(usuario, libro, fechaPrestamo, fechaDevolucion);
 
     Prestamo prestamo = new Prestamo();
     prestamo.setId(java.util.UUID.randomUUID().toString());
     prestamo.setUsuario(usuario);
+
+    libroService.actualizarStockLibro(libro.getId(), -1);
     prestamo.setLibro(libro);
+
     prestamo.setFechaPrestamo(fechaPrestamo);
     prestamo.setFechaDevolucion(fechaDevolucion);
     prestamoRepository.save(prestamo);
@@ -36,6 +43,11 @@ public class PrestamoService {
   @Transactional
   public List<Prestamo> listarPrestamos() {
     return prestamoRepository.findAllByEliminadoFalse();
+  }
+
+  @Transactional
+  public List<Prestamo> listarPrestamosPorUsuario(String idUsuario) {
+    return prestamoRepository.findByUsuarioIdAndEliminadoFalse(idUsuario);
   }
 
   @Transactional
@@ -61,10 +73,11 @@ public class PrestamoService {
   }
 
   @Transactional
-  public void eliminarPrestamo(String id) {
+  public void eliminarPrestamo(String id) throws ErrorServiceException {
     Prestamo prestamo = buscarPrestamoPorId(id);
     if (prestamo != null) {
       prestamo.setEliminado(true);
+      libroService.actualizarStockLibro(prestamo.getLibro().getId(), +1);
       prestamoRepository.save(prestamo);
     }
   }

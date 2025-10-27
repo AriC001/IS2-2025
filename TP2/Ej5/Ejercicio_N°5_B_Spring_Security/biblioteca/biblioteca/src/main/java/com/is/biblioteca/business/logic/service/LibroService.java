@@ -33,7 +33,7 @@ public class LibroService {
 	@Autowired
 	private ImagenService imagenService;
 
-	public void validar(Long isbn, String titulo, Integer ejemplares) throws ErrorServiceException {
+	public void validar(Long isbn, String titulo, Integer ejemplares, Integer anio) throws ErrorServiceException {
 
 		try {
 
@@ -50,6 +50,11 @@ public class LibroService {
 						"Debe indicar la cantidad de ejemplares. La cantidad no puede ser menor que cero");
 			}
 
+			if (anio == null || anio < 0) {
+				throw new ErrorServiceException(
+						"Debe indicar el año de publicación. El año no puede ser menor que cero");
+			}
+
 		} catch (ErrorServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -60,11 +65,11 @@ public class LibroService {
 
 	@Transactional
 	public void crearLibro(MultipartFile archivo, Long isbn, String titulo, Integer ejemplares, String idAutor,
-			               String idEditorial) throws ErrorServiceException {
+			               String idEditorial, Integer anio) throws ErrorServiceException {
 
 		try {
 
-			validar(isbn, titulo, ejemplares);
+			validar(isbn, titulo, ejemplares, anio);
 
 			Autor autor = autorService.buscarAutor(idAutor);
 
@@ -88,6 +93,7 @@ public class LibroService {
 			libro.setId(UUID.randomUUID().toString());
 			libro.setIsbn(isbn);
 			libro.setTitulo(titulo);
+			libro.setAnio(anio);
 			libro.setEjemplares(ejemplares);
 			libro.setAutor(autor);
 			libro.setEditorial(editorial);
@@ -108,10 +114,10 @@ public class LibroService {
 
 	@Transactional
 	public Libro modificarLibro(MultipartFile archivo, String idLibro, Long isbn, String titulo, Integer ejemplares,
-								String idAutor, String idEditorial) throws ErrorServiceException {
+								String idAutor, String idEditorial, Integer anio) throws ErrorServiceException {
 
 		try {
-			validar(isbn, titulo, ejemplares);
+			validar(isbn, titulo, ejemplares, anio);
 
 			Autor autor = autorService.buscarAutor(idAutor);
 
@@ -139,6 +145,7 @@ public class LibroService {
 			libro.setTitulo(titulo);
 			libro.setEjemplares(ejemplares);
 			libro.setAutor(autor);
+			libro.setAnio(anio);
 			libro.setEditorial(editorial);
 			libro.setEliminado(false);
 
@@ -288,4 +295,21 @@ public class LibroService {
 			throw new ErrorServiceException("Error de sistema");
 		}
 	}
+
+	@Transactional
+	public void actualizarStockLibro(String idLibro, int cantidad) throws ErrorServiceException {
+		try {
+			Libro libro = buscarLibro(idLibro);
+			int nuevoStock = libro.getEjemplares() + cantidad;
+			if (nuevoStock < 0) {
+				throw new ErrorServiceException("No hay suficientes ejemplares disponibles para realizar esta operación");
+			}
+			libro.setEjemplares(nuevoStock);
+			repository.save(libro);
+		} catch (ErrorServiceException ex) {
+			ex.printStackTrace();
+			throw new ErrorServiceException("Error de sistema");
+		}
+	}
+
 }

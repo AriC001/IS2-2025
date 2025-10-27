@@ -2,6 +2,7 @@ package com.is.biblioteca.controller.view;
 
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -42,8 +43,8 @@ public class AutorController {
         	
         	autorServicio.crearAutor(nombre);
             modelo.put("exito", "La acción fue realizada correctamente");
-            
-            return "redirect:/regresoPage";
+
+            return "redirect:/autor/lista";
 
         } catch (ErrorServiceException e) {
             modelo.put("error", e.getMessage());
@@ -113,9 +114,9 @@ public class AutorController {
             autor = autorServicio.modificarAutor(autor.getId(), nombre);
             modelo.put("autor", autor);
             modelo.put("exito", "La acción fue realizada correctamente");
-            
-            return "redirect:/regresoPage";
-            
+
+            return "redirect:/autor/lista";
+
         } catch (ErrorServiceException e) {
             modelo.put("error", e.getMessage());
             return "autor_modificar";  
@@ -138,7 +139,7 @@ public class AutorController {
     	try {
     		
     		autorServicio.eliminarAutor(id);
-        	return "redirect:/regresoPage";
+        	return "redirect:/autor/lista";
         
     	} catch (ErrorServiceException e) {
     		modelo.put("error", "Error de sistemas");

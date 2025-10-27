@@ -10,7 +10,6 @@
             <table class="table table-dark">
                 <thead class="align-items-center">
                     <tr >
-                        <th scope="col">Id del Usuario</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">Email</th>
                         <th scope="col">Rol</th>
@@ -21,7 +20,6 @@
                 </thead>
                 <tbody th:each="usuario : ${usuarios}"> 
                     <tr>
-                        <th scope="row" th:text="${usuario.id}"></th>
                         <td th:text="${usuario.nombre}"></td>
                         <td th:text="${usuario.email}"></td>
 

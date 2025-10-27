@@ -6,12 +6,54 @@
       <nav th:replace="~{fragments/navbar :: navbar}"></nav>
       
         <div class="container m-5" >
+        
+            <!-- Formulario de búsqueda usando el Patrón Strategy -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-search"></i> Búsqueda de Libros
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" th:action="@{/libro/buscar}" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="tipoBusqueda" class="form-label">Buscar por:</label>
+                            <select class="form-select" id="tipoBusqueda" name="tipoBusqueda" required>
+                                <option value="">Seleccione...</option>
+                                <option value="anio" th:selected="${tipoBusqueda == 'anio'}">Año de Publicación</option>
+                                <option value="autor" th:selected="${tipoBusqueda == 'autor'}">Nombre del Autor</option>
+                                <option value="editorial" th:selected="${tipoBusqueda == 'editorial'}">Nombre de Editorial</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="criterio" class="form-label">Criterio de búsqueda:</label>
+                            <input type="text" class="form-control" id="criterio" name="criterio" 
+                                   th:value="${criterio}" placeholder="Ingrese el criterio de búsqueda" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-2">
+                        <a th:href="@{/libro/lista}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-list"></i> Ver todos los libros
+                        </a>
+                    </div>
+                    <!-- Mensaje de resultado de búsqueda -->
+                    <div th:if="${mensaje}" class="alert alert-info mt-3 mb-0" role="alert">
+                        <i class="fas fa-info-circle"></i> <span th:text="${mensaje}"></span>
+                    </div>
+                </div>
+            </div>
 
             <table class="table table-dark">
                 <thead>
                     <tr>
-                        <th scope="col">id</th>
+                        <th scope="col">ISBN</th>
                         <th scope="col">Titulo</th>
+                        <th scope="col">Año de Publicación</th>
                         <th scope="col">Portada</th>
                         <th scope="col">Ejemplares</th>
                         <th scope="col">Autor</th>
@@ -24,19 +66,27 @@
                     <tr>
                         <th scope="row" th:text="${libro.isbn}"></th>
                         <td th:text="${libro.titulo}"></td>
-						<td class="text-center">
-						  <img th:if="${libro.imagen != null}" 
-						       th:src="${'/imagen/perfil/' + libro.id}" 
-						       alt="Portada del libro" 
-						       class="libro-portada"
-						       style="max-height: 80px; max-width: 60px; object-fit: cover; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-						  <span th:if="${libro.imagen == null}" class="text-muted">📚 Sin imagen</span>
+                        <td th:text="${libro.anio}"></td>
+                        <td class="text-center">
+                            <img th:if="${libro.imagen != null}"
+                                 th:src="${'/imagen/perfil/' + libro.id}"
+                                 alt="Portada del libro"
+                                 class="libro-portada"
+                                 style="max-height: 80px; max-width: 60px; object-fit: cover; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            <span th:if="${libro.imagen == null}" class="text-muted">📚 Sin imagen</span>
                         </td>
                         <td th:text="${libro.ejemplares}"></td>
                         <td th:text="${libro.autor.nombre}"></td>
                         <td th:text="${libro.editorial.nombre}"></td>
-                         <td>
-                            <a sec:authorize="hasRole('ADMIN')" th:href= "@{/libro/modificar/__${libro.isbn}__}"><i class="fas fa-feather-alt"></i> Modificar </a>
+                         <td sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/libro/modificar/__${libro.isbn}__}" class="btn btn-sm btn-warning me-2">
+                                <i class="fas fa-edit"></i> Modificar
+                            </a>
+                            <a th:href="@{/libro/eliminar/__${libro.id}__}" 
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('¿Está seguro de eliminar este libro?');">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
                         </td>
                     </tr>
 

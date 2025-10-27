@@ -12,6 +12,7 @@ public class Libro {
     @Id
     private String id;
     private Long isbn;
+    private int anio;
     private String titulo;
     private Integer ejemplares;
     private Integer ejemplaresPrestados;
@@ -111,6 +112,14 @@ public class Libro {
 
     public void setEjemplaresRestantes(Integer ejemplaresRestantes) {
         this.ejemplaresRestantes = ejemplaresRestantes;
+    }
+
+    public int getAnio() {
+        return anio;
+    }
+
+    public void setAnio(int anio) {
+        this.anio = anio;
     }
 
 }

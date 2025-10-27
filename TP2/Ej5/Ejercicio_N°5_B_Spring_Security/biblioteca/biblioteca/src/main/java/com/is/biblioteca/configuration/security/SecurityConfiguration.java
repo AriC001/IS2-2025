@@ -23,7 +23,8 @@ public class SecurityConfiguration {
     http
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/admin/**").hasRole("ADMIN")
-        .requestMatchers("/prestamo/**").hasRole("ADMIN")
+        .requestMatchers("/prestamo/listar", "/prestamo/registrar", "/prestamo/modificar/**", "/prestamo/eliminar/**").hasRole("ADMIN")
+        .requestMatchers("/prestamo/mis-prestamos").hasAnyRole("USER", "ADMIN")
         .requestMatchers("/css/**", "/js/**", "/img/**", "/usuario/registro", "/usuario/registrar").permitAll()
         .anyRequest().authenticated()
       )
