@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${entity.id != null ? 'Editar Autor' : 'Nuevo Autor'}">Autor</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/autores">Autores</a></li>
+                <li class="breadcrumb-item active"
+                    th:text="${entity.id != null ? 'Editar' : 'Nuevo Autor'}">Formulario</li>
+            </ol>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>
+                    <i th:class="${entity.id != null ? 'bi bi-pencil-square text-warning' : 'bi bi-person-plus text-success'}"></i>
+                    <span th:text="${entity.id != null ? 'Editar Autor' : 'Nuevo Autor'}">Formulario de Autor</span>
+                </h1>
+                <p class="text-muted"
+                   th:text="${entity.id != null ? 'Modifica los datos del autor seleccionado' : 'Completa los datos para registrar un nuevo autor'}">
+                    Información del autor
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/autores" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div th:replace="~{fragments/messages :: messages}"></div>
+
+        <!-- Formulario -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header"
+                         th:classappend="${entity.id != null ? 'bg-warning text-dark' : 'bg-success text-white'}">
+                        <h5 class="mb-0">
+                            <i th:class="${entity.id != null ? 'bi bi-pencil' : 'bi bi-person-plus'}"></i>
+                            <span th:text="${entity.id != null ? 'Editar Datos del Autor' : 'Datos del Autor'}">Datos</span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="${entity.id != null ? '/autores/' + entity.id : '/autores'}"
+                              method="post"
+                              th:object="${entity}"
+                              autocomplete="off">
+
+                            <input type="hidden" th:field="*{id}" th:if="${entity.id != null}">
+                            <input type="hidden" th:field="*{eliminado}">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">
+                                        <i class="bi bi-person text-success"></i> Nombre <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           id="nombre"
+                                           class="form-control"
+                                           th:field="*{nombre}"
+                                           th:classappend="${#fields.hasErrors('nombre')} ? ' is-invalid' : ''"
+                                           placeholder="Ingrese el nombre"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
+                                        Error en el nombre
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido" class="form-label">
+                                        <i class="bi bi-person text-success"></i> Apellido <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           id="apellido"
+                                           class="form-control"
+                                           th:field="*{apellido}"
+                                           th:classappend="${#fields.hasErrors('apellido')} ? ' is-invalid' : ''"
+                                           placeholder="Ingrese el apellido"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}">
+                                        Error en el apellido
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="biografia" class="form-label">
+                                    <i class="bi bi-journal-text text-info"></i> Biografía <span class="text-danger">*</span>
+                                </label>
+                                <textarea id="biografia"
+                                          class="form-control"
+                                          rows="6"
+                                          th:field="*{biografia}"
+                                          th:classappend="${#fields.hasErrors('biografia')} ? ' is-invalid' : ''"
+                                          placeholder="Escribe una breve reseña del autor"
+                                          required></textarea>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <small class="text-muted">Comparte información relevante de la trayectoria del autor.</small>
+                                    <small class="text-muted" id="biografiaCounter">0 caracteres</small>
+                                </div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('biografia')}" th:errors="*{biografia}">
+                                    Error en la biografía
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <button type="submit" class="btn"
+                                            th:classappend="${entity.id != null ? ' btn-warning' : ' btn-success'}">
+                                        <i th:class="${entity.id != null ? 'bi bi-check-circle' : 'bi bi-plus-circle'}"></i>
+                                        <span th:text="${entity.id != null ? 'Actualizar Autor' : 'Crear Autor'}">Guardar</span>
+                                    </button>
+                                    <a href="/autores" class="btn btn-secondary ms-2">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </a>
+                                </div>
+                                <div th:if="${entity.id != null}">
+                                    <form th:action="@{/autores/{id}/eliminar(id=${entity.id})}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Help Card -->
+                <div class="card mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-question-circle text-info"></i> Ayuda
+                        </h6>
+                    </div>
+                    <div class="card-body small">
+                        <ul class="mb-0">
+                            <li><strong>Nombre y Apellido:</strong> Campos obligatorios.</li>
+                            <li><strong>Biografía:</strong> Debe describir la trayectoria o principales obras.</li>
+                            <li><strong>Edición:</strong> Puedes eliminar al autor desde este formulario.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        const biografiaInput = document.getElementById('biografia');
+        const counter = document.getElementById('biografiaCounter');
+        if (biografiaInput && counter) {
+            const updateCounter = () => {
+                counter.textContent = biografiaInput.value.length + ' caracteres';
+            };
+            biografiaInput.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+
+        function capitalizeInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.addEventListener('blur', function() {
+                this.value = this.value.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            });
+        }
+
+        capitalizeInput('nombre');
+        capitalizeInput('apellido');
+    </script>
+</div>
+</html>
