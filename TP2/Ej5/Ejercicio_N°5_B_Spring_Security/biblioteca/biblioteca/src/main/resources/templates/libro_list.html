@@ -24,8 +24,13 @@
                     <tr>
                         <th scope="row" th:text="${libro.isbn}"></th>
                         <td th:text="${libro.titulo}"></td>
-						<td>
-						  <img th:if="${libro.imagen != null}" th:src="${'/imagen/perfil/' + libro.id}" alt="" style="max-height: 60px; border-radius: 100%">
+						<td class="text-center">
+						  <img th:if="${libro.imagen != null}" 
+						       th:src="${'/imagen/perfil/' + libro.id}" 
+						       alt="Portada del libro" 
+						       class="libro-portada"
+						       style="max-height: 80px; max-width: 60px; object-fit: cover; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+						  <span th:if="${libro.imagen == null}" class="text-muted">📚 Sin imagen</span>
                         </td>
                         <td th:text="${libro.ejemplares}"></td>
                         <td th:text="${libro.autor.nombre}"></td>

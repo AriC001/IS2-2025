@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.is.biblioteca.business.domain.entity.Usuario;
 import com.is.biblioteca.business.logic.error.ErrorServiceException;
@@ -92,8 +91,7 @@ public class UsuarioController {
 								   @RequestParam(required = false) String email,
 								   @RequestParam(required = false) String password, 
 								   @RequestParam(required = false) String password2, 
-								   ModelMap modelo, 
-								   @RequestParam(required = false) MultipartFile archivo) {
+								   ModelMap modelo) {
 
 		try {
 			
@@ -102,9 +100,7 @@ public class UsuarioController {
 			System.out.println("Email recibido: [" + email + "]");
 			System.out.println("Password recibido: [" + (password != null ? "***" : "null") + "]");
 			System.out.println("Password2 recibido: [" + (password2 != null ? "***" : "null") + "]");
-			System.out.println("Archivo recibido: " + (archivo != null && !archivo.isEmpty() ? archivo.getOriginalFilename() : "ninguno"));
-
-			usuarioService.crearUsuario(nombre, email, password, password2, archivo);
+			usuarioService.crearUsuario(nombre, email, password, password2);
 
 			modelo.put("exito", "Usuario registrado correctamente!");
 
@@ -156,13 +152,13 @@ public class UsuarioController {
 	}
 
 	@PostMapping("/perfil/{id}")
-	public String irEditModificar(@RequestParam(required = false) MultipartFile archivo, @PathVariable String id, @RequestParam String nombre,
+	public String irEditModificar(@PathVariable String id, @RequestParam String nombre,
 			@RequestParam String email, @RequestParam String password, @RequestParam String password2,
 			ModelMap modelo) throws ErrorServiceException {
 
 		try {
 
-			usuarioService.modificarUsuario(id, nombre, email, password, password2, archivo);
+			usuarioService.modificarUsuario(id, nombre, email, password, password2);
 
 			return "redirect:/regresoPage";
 

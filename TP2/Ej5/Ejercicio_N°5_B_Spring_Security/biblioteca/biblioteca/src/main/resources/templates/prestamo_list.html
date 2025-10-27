@@ -1,54 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" >
     <head th:replace="~{fragments/head :: head}"></head>
 
     <body>
-        <nav th:replace="~{fragments/navbar :: navbar}"></nav>
-
+      <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+      
         <div class="container m-5" >
 
             <table class="table table-dark">
-                <thead class="align-items-center">
-                    <tr >
-                        <th scope="col">Id del Usuario</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Rol</th>
-                        <th scope="col">Cambiar Rol</th>
-                        <th scope="col" sec:authorize="hasRole('ADMIN')">Modificar</th>
-
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Libro</th>
+                        <th scope="col">Fecha Préstamo</th>
+                        <th scope="col">Fecha Devolución</th>
+                        <th scope="col" sec:authorize="hasRole('ADMIN')">Acciones</th>
                     </tr>
                 </thead>
-                <tbody th:each="usuario : ${usuarios}"> 
+                <tbody th:each="prestamo : ${prestamos}"> 
                     <tr>
-                        <th scope="row" th:text="${usuario.id}"></th>
-                        <td th:text="${usuario.nombre}"></td>
-                        <td th:text="${usuario.email}"></td>
-
-                        <td th:text="${usuario.rol}"></td>
-
+                        <th scope="row" th:text="${prestamo.id}"></th>
+                        <td th:text="${prestamo.usuario.nombre}"></td>
+                        <td th:text="${prestamo.libro.titulo}"></td>
+                        <td th:text="${#dates.format(prestamo.fechaPrestamo, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${#dates.format(prestamo.fechaDevolucion, 'dd/MM/yyyy')}"></td>
                         <td>
-                            <a sec:authorize="hasRole('ADMIN')" th:href= "@{/admin/modificarRol/__${usuario.id}__}"><i class="fas fa-feather-alt"></i>Cambiar</a>
+                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/prestamo/modificar/__${prestamo.id}__}">
+                                <i class="fas fa-feather-alt"></i> Modificar
+                            </a>
+                            <span> | </span>
+                            <a sec:authorize="hasRole('ADMIN')" th:href="@{/prestamo/eliminar/__${prestamo.id}__}" 
+                               onclick="return confirm('¿Está seguro de eliminar este préstamo?')">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
                         </td>
-
-                        <td>
-                            <a sec:authorize="hasRole('ADMIN')" th:href= "@{/usuario/modificar/__${usuario.id}__}"><i class="fas fa-feather-alt"></i> Modificar</a>
-                        </td>
-
                     </tr>
-
                 </tbody>
             </table>
-
+            
             <div th:if="${exito}!=null" class="card text-white bg-success mb-3 mt-3 mensajeExito" >
                 <div class="card-body">
-                    <h5 class="card-title">Exito ð</h5>
+                    <h5 class="card-title">Éxito 👍</h5>
                     <p class="card-text" th:text="${exito}"></p>
                 </div>
             </div>
             <div th:if="${error}!=null" class="card text-white bg-danger mb-3 mensajeError" >
                 <div class="card-body">
-                    <h5 class="card-title">Error ð</h5>
+                    <h5 class="card-title">Error 👎</h5>
                     <p class="card-text" th:text="${error}"></p>
                 </div>
             </div>
@@ -57,7 +56,6 @@
                 <div class="row py-lg-5">
                     <div class="col-lg-6 col-md-8 mx-auto">
                         <a th:href="@{/regresoPage}" class="btn btn-primary my-2">Volver</a>
-                        </p>
                     </div>
                 </div>
             </section>
@@ -73,8 +71,6 @@
                 </p>
             </div>
         </footer>
-
-
 
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>

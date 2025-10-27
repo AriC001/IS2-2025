@@ -18,7 +18,7 @@ public class InicioAplicacionService {
 			//try {
 				//usuarioService.buscarUsuarioPorNombre("Administrador");
 			//} catch (ErrorServiceException e) {
-				usuarioService.crearUsuario("Administrador", "administrador@administrador", "1234567", "1234567", null);
+				usuarioService.crearUsuario("Administrador", "administrador@administrador", "1234567", "1234567");
 			//}
 			
         } catch (Exception ex){

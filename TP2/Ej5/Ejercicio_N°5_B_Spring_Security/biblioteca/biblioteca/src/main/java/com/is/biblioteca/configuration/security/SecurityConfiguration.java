@@ -23,7 +23,8 @@ public class SecurityConfiguration {
     http
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/admin/**").hasRole("ADMIN")
-        .requestMatchers("/css/**", "/js/**", "/img/**", "/").permitAll()
+        .requestMatchers("/prestamo/**").hasRole("ADMIN")
+        .requestMatchers("/css/**", "/js/**", "/img/**", "/usuario/registro", "/usuario/registrar").permitAll()
         .anyRequest().authenticated()
       )
       .formLogin(form -> form

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head}"></head>
+
+<body>
+
+	<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+	<div class="container-fluid m-5 contenedor">
+
+		<form class="formulario" th:action="@{/prestamo/registro}" method="POST">
+
+			<div th:if="${error != null}" class="card text-white bg-danger mb-3 mensajeError">
+				<div class="card-body">
+					<h5 class="card-title">Error 👎</h5>
+					<p class="card-text" th:text="${error}"></p>
+				</div>
+			</div>
+			<div th:if="${exito != null}" class="card text-white bg-success mb-3 mt-3 mensajeExito">
+				<div class="card-body">
+					<h5 class="card-title">Éxito! 👍</h5>
+					<p class="card-text" th:text="${exito}"></p>
+				</div>
+			</div>
+
+			<div class="form-group my-3">
+				<label class="mb-2">Usuario</label>
+				<select class="form-control" name="idUsuario" required>
+					<option value="">Seleccionar usuario...</option>
+					<option th:each="usuario : ${usuarios}" th:value="${usuario.id}" 
+					        th:text="${usuario.nombre + ' (' + usuario.email + ')'}"></option>
+				</select>
+			</div>
+
+			<div class="form-group my-3">
+				<label class="mb-2">Libro</label>
+				<select class="form-control" name="idLibro" required>
+					<option value="">Seleccionar libro...</option>
+					<option th:each="libro : ${libros}" th:value="${libro.id}" 
+					        th:text="${libro.titulo + ' - ' + libro.autor.nombre}"></option>
+				</select>
+			</div>
+			
+			<div class="form-group my-3">
+				<label class="mb-2">📅 Fecha de Préstamo</label>
+				<input type="date" class="form-control date-input" name="fechaPrestamo" 
+				       id="fechaPrestamo" required 
+				       style="font-size: 1.1em; padding: 10px 15px; cursor: pointer; max-width: 400px;">
+				<small class="form-text text-muted">Haz clic en el ícono del calendario para seleccionar la fecha</small>
+			</div>
+
+			<div class="form-group my-3">
+				<label class="mb-2">📅 Fecha de Devolución</label>
+				<input type="date" class="form-control date-input" name="fechaDevolucion" 
+				       id="fechaDevolucion" required 
+				       style="font-size: 1.1em; padding: 10px 15px; cursor: pointer; max-width: 400px;">
+				<small class="form-text text-muted">Haz clic en el ícono del calendario para seleccionar la fecha</small>
+			</div>
+
+			<button type="submit" class="btn btn-primary mt-3 botones">Registrar Préstamo</button>
+		</form>
+
+		<section class="text-center container">
+			<div class="row mt-3">
+				<div class="divVolver">
+					<a th:href="@{/prestamo/listar}" class="btn btn-secondary my-2 botonVolver botones">Ver Préstamos</a>
+					<a th:href="@{/regresoPage}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<footer class="text-muted py-5">
+		<div class="containerFooter">
+			<p class="mb-1">Album example is &copy; Bootstrap,<br>but please download and customize it for yourself!</p>
+			<p class="mb-0">New to Bootstrap? <a href="/"><br>Visit the homepage</a> or read our <a
+					href="../getting-started/introduction/">getting started guide</a>.</p>
+			<p class="float-end mb-1">
+				<a href="#" style="text-decoration:none"><span>⬆️</span> Back to top</a>
+			</p>
+		</div>
+	</footer>
+
+	<style>
+		/* Estilos para mejorar el calendario de fecha */
+		.date-input::-webkit-calendar-picker-indicator {
+			cursor: pointer;
+			font-size: 1.5em;
+			padding: 5px;
+			margin-left: 10px;
+		}
+		
+		.date-input {
+			position: relative;
+			width: 100%;
+		}
+		
+		.date-input:hover {
+			border-color: #0d6efd;
+			box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+		}
+		
+		/* Asegurar espacio adecuado para el ícono */
+		.date-input::-webkit-datetime-edit {
+			padding-right: 10px;
+		}
+	</style>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+		crossorigin="anonymous"></script>
+	
+	<script>
+		// Establecer fecha mínima como hoy para la fecha de préstamo
+		document.addEventListener('DOMContentLoaded', function() {
+			const today = new Date().toISOString().split('T')[0];
+			const fechaPrestamo = document.getElementById('fechaPrestamo');
+			const fechaDevolucion = document.getElementById('fechaDevolucion');
+			
+			// Establecer fecha mínima
+			fechaPrestamo.setAttribute('min', today);
+			fechaDevolucion.setAttribute('min', today);
+			
+			// Cuando se selecciona fecha de préstamo, actualizar mínimo de devolución
+			fechaPrestamo.addEventListener('change', function() {
+				fechaDevolucion.setAttribute('min', this.value);
+				if (fechaDevolucion.value && fechaDevolucion.value < this.value) {
+					fechaDevolucion.value = '';
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>

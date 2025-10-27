@@ -62,7 +62,7 @@ public class LibroController {
                                   @RequestParam String idEditorial, ModelMap modelo, @RequestParam(required = false) MultipartFile archivo) {
         try {
 
-        	libroService.crearLibro(archivo,isbn, titulo, ejemplares, idAutor, idEditorial);
+        	libroService.crearLibro(archivo, isbn, titulo, ejemplares, idAutor, idEditorial);
             modelo.put("exito", "El Libro fue cargado correctamente!");
 
             return "redirect:/regresoPage";

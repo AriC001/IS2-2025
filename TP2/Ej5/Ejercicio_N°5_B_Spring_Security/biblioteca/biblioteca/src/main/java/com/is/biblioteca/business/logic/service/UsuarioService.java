@@ -16,9 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.is.biblioteca.business.domain.entity.Imagen;
 import com.is.biblioteca.business.domain.entity.Usuario;
 import com.is.biblioteca.business.domain.enumeration.Rol;
 import com.is.biblioteca.business.logic.error.ErrorServiceException;
@@ -32,8 +30,6 @@ public class UsuarioService implements UserDetailsService {
 	@Autowired
     private UsuarioRepository repository;
 
-	@Autowired
-    private ImagenService imagenService;
 
 	@Autowired
     private PasswordEncoder passwordEncoder;
@@ -79,7 +75,7 @@ public class UsuarioService implements UserDetailsService {
     }
     
     @Transactional
-    public Usuario crearUsuario(String nombre, String email, String clave, String confirmacion, MultipartFile archivo) throws ErrorServiceException {
+    public Usuario crearUsuario(String nombre, String email, String clave, String confirmacion) throws ErrorServiceException {
 
       try {	
     	  
@@ -92,11 +88,6 @@ public class UsuarioService implements UserDetailsService {
         usuario.setRol(Rol.USER);
         usuario.setPassword(passwordEncoder.encode(clave));
         usuario.setEliminado(false);
- 
-        if (archivo != null && !archivo.isEmpty()) {        
-         Imagen imagen = imagenService.crearImagen(archivo);
-         usuario.setImagen(imagen);
-        } 
         
         return repository.save(usuario);
         
@@ -109,7 +100,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional
-    public Usuario modificarUsuario(String idUsuario, String nombre, String email, String clave, String confirmacion, MultipartFile archivo) throws ErrorServiceException {
+    public Usuario modificarUsuario(String idUsuario, String nombre, String email, String clave, String confirmacion) throws ErrorServiceException {
 
     	try {
     		
@@ -120,14 +111,6 @@ public class UsuarioService implements UserDetailsService {
             usuario.setEmail(email);
             //usuario.setRol(Rol.USER);
             usuario.setPassword(passwordEncoder.encode(clave));
-
-            String idImagen = null;
-            if (usuario.getImagen() != null) {
-            	idImagen = usuario.getImagen().getId();
-            }
-            
-            Imagen imagen = imagenService.modificarImagen(idImagen, archivo);
-            usuario.setImagen(imagen);
             
             return repository.save(usuario);
             
