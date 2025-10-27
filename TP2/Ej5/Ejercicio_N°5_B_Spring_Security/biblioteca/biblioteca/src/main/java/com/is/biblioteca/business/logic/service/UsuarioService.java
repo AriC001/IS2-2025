@@ -59,6 +59,10 @@ public class UsuarioService implements UserDetailsService {
         if (email == null || email.trim().isEmpty()) {
             throw new ErrorServiceException("Debe indicar el Email");
         }
+        Usuario u = buscarUsuarioPorEmail(email);
+        if (u.getEmail() == email){
+            throw new ErrorServiceException("Email ya registrado");
+        }
         
         if (clave == null || clave.trim().isEmpty()) {
             throw new ErrorServiceException("Debe indicar la clave");

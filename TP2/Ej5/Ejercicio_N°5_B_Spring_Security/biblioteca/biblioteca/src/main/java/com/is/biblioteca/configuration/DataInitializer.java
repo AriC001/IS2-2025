@@ -39,13 +39,13 @@ public class DataInitializer implements CommandLineRunner {
             
             System.out.println("========================================");
             System.out.println("Usuario ADMIN creado exitosamente!");
-            System.out.println("Email: admin@biblioteca.com");
+            System.out.println("Email: admin@gmail.com");
             System.out.println("Password: admin123");
             System.out.println("========================================");
         } else {
             System.out.println("========================================");
             System.out.println("Usuario ADMIN ya existe en la base de datos");
-            System.out.println("Email: admin@biblioteca.com");
+            System.out.println("Email: admin@gmail.com");
             System.out.println("========================================");
         }
     }
