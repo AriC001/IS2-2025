@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Ver historia clínica</title>
+  <!-- css -->
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css" />
+	<link th:href="@{/plugins/cubeportfolio/css/cubeportfolio.min.css}" rel="stylesheet" type="text/css" />
+	<link th:href="@{/css/nivo-lightbox.css}" rel="stylesheet" />
+	<link th:href="@{/css/nivo-lightbox-theme/default/default.css}" rel="stylesheet" type="text/css" />
+	<link th:href="@{/css/owl.carousel.css}" rel="stylesheet" media="screen" />
+	<link th:href="@{/css/owl.theme.css}" rel="stylesheet" media="screen" />
+	<link th:href="@{/css/animate.css}" rel="stylesheet" />
+	<link th:href="@{/css/style.css}" rel="stylesheet">
+
+	<!-- boxed bg -->
+	<link id="bodybg" th:href="@{/bodybg/bg1.css}" rel="stylesheet" type="text/css" />
+	<!-- template skin -->
+	<link id="t-colors" th:href="@{/color/default.css}" rel="stylesheet">
+
+
+  <style>
+    html, body {
+    height: auto !important;
+    overflow-y: auto !important;
+    }
+
+    #wrapper {
+    min-height: 100vh;
+    padding-top: 120px; /* para no tapar el navbar fijo */
+    }
+
+    .navbar-fixed-top {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    }
+    body {
+      background-color: #f7fafc;
+      padding: 2rem;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background-color: white;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #00897b;
+      margin-bottom: 1.5rem;
+    }
+    .info {
+      margin-bottom: 1.5rem;
+    }
+    .info strong {
+      width: 150px;
+      display: inline-block;
+      color: #555;
+    }
+    table {
+      width: 100%;
+      background-color: white;
+      border-collapse: collapse;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    th {
+      background-color: #00897b;
+      color: white;
+      padding: 10px;
+      text-align: left;
+    }
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    .btn-volver {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background-color: #007bff;
+      color: white;
+      border-radius: 0.4rem;
+      text-decoration: none;
+    }
+    .btn-volver:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+    <div id="wrapper">
+    <!-- NAVBAR -->
+  <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <div class="top-area">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p class="bold text-left">Servicio web de Medicio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container navigation">
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+          <i class="fa fa-bars"></i>
+        </button>
+        <a class="navbar-brand" th:href="@{/home}">
+          <img th:src="@{/img/logo.png}" alt="Medicio" width="150" height="40"/>
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+        <ul class="nav navbar-nav">
+          <li><a th:href="@{/usuarios/home}">Home</a></li>
+          <li><a th:href="@{/medicos}">Médicos</a></li>
+          <li class="active"><a th:href="@{/pacientes}">Pacientes</a></li>
+          <li><a th:href="@{/historiasClinicas}">Historias clínicas</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <div class="card">
+    <h2>🩺 Historia Clínica</h2>
+
+    <div class="info">
+      <p><strong>Paciente:</strong> <span th:text="${historiaClinica.paciente.nombre + ' ' + historiaClinica.paciente.apellido}"></span></p>
+      <p><strong>DNI:</strong> <span th:text="${historiaClinica.paciente.documento}"></span></p>
+      <p><strong>Último médico:</strong> 
+         <span th:text="${historiaClinica.detallesHistoriaClinica[historiaClinica.detallesHistoriaClinica.size() - 1].medico.nombre + ' ' + 
+                         historiaClinica.detallesHistoriaClinica[historiaClinica.detallesHistoriaClinica.size() - 1].medico.apellido}"></span>
+      </p>
+      <p><strong>Última fecha:</strong> 
+         <span th:text="${#temporals.format(historiaClinica.detallesHistoriaClinica[historiaClinica.detallesHistoriaClinica.size() - 1].fechaHistoria, 'dd/MM/yyyy')}"></span>
+      </p>
+    </div>
+
+    <h4>Detalles de la historia</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Descripción</th>
+          <th>Médico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="detalle : ${historiaClinica.detallesHistoriaClinica}">
+          <td th:text="${#temporals.format(detalle.fechaHistoria, 'dd/MM/yyyy')}"></td>
+          <td th:text="${detalle.detalleHistoria}"></td>
+          <td th:text="${detalle.medico.nombre + ' ' + detalle.medico.apellido}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a th:href="@{/historiasClinicas}" class="btn-volver">← Volver</a>
+  </div>
+</div>
+</body>
+</html>
