@@ -36,18 +36,18 @@ public class UsuarioService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario = repository.buscarUsuarioPorEmail(email);
-
-        if (usuario == null) {
-            throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);
-        }
+        Optional<Usuario> opt = repository.buscarUsuarioPorEmail(email);
+        if(!opt.isPresent()){
+                throw new UsernameNotFoundException("Usuario no encontrado con email: " + email);
+        }else{
+            Usuario usuario = opt.get();
+            List<GrantedAuthority> permisos = new ArrayList<>();
+            GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
+            permisos.add(p);
         
-        List<GrantedAuthority> permisos = new ArrayList<>();
-        GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
-        permisos.add(p);
-    
-        // La sesión se maneja ahora en CustomAuthenticationSuccessHandler
-        return new User(usuario.getEmail(), usuario.getPassword(), permisos);
+            // La sesión se maneja ahora en CustomAuthenticationSuccessHandler
+            return new User(usuario.getEmail(), usuario.getPassword(), permisos);
+        }
     }
 	
     public void validar(String nombre, String email, String clave, String confirmacion) throws ErrorServiceException {
@@ -59,8 +59,8 @@ public class UsuarioService implements UserDetailsService {
         if (email == null || email.trim().isEmpty()) {
             throw new ErrorServiceException("Debe indicar el Email");
         }
-        Usuario u = buscarUsuarioPorEmail(email);
-        if (u.getEmail() == email){
+        Optional<Usuario> opt = repository.buscarUsuarioPorEmail(email);
+        if (opt.isPresent()) {
             throw new ErrorServiceException("Email ya registrado");
         }
         
@@ -205,7 +205,13 @@ public class UsuarioService implements UserDetailsService {
                 throw new ErrorServiceException("Debe indicar el email");
             }
     		
-    		return repository.buscarUsuarioPorEmail(email);
+    		Optional<Usuario> opt = repository.buscarUsuarioPorEmail(email);
+            if(opt.isPresent()){
+                Usuario u = opt.get();
+                return u;
+            }else{
+                 throw new ErrorServiceException("Error de sistema");
+            }
         
     	 } catch (ErrorServiceException ex) {  
              throw ex;
@@ -260,7 +266,7 @@ public class UsuarioService implements UserDetailsService {
             }
             
             Usuario usuario = null; 
-            try {		
+            try {
              usuario = repository.buscarUsuarioPorEmailYClave(email, clave);
             } catch (NoResultException ex) {
             	throw new ErrorServiceException("No existe usuario para el correo y clave indicado");

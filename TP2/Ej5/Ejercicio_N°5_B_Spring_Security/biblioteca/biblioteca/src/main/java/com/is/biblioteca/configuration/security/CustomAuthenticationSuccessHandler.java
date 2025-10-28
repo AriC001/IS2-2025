@@ -35,14 +35,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
       try {
         // Buscar el usuario completo en la base de datos
         Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
-          
-        // Guardar el usuario en la sesión HTTP
-        HttpSession session = request.getSession();
-        session.setAttribute("usuariosession", usuario);
-          
-        // Redirigir a /regresoPage que maneja la lógica según el rol
-        response.sendRedirect("/regresoPage");
-          
+            
+          // Guardar el usuario en la sesión HTTP
+          HttpSession session = request.getSession();
+          session.setAttribute("usuariosession", usuario);
+            
+          // Redirigir a /regresoPage que maneja la lógica según el rol
+          response.sendRedirect("/regresoPage");
+        
       } catch (ErrorServiceException e) {
         e.printStackTrace();
         response.sendRedirect("/usuario/login?error");

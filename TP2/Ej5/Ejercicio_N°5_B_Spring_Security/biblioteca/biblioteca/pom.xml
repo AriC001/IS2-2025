@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.is</groupId>
 	<artifactId>biblioteca</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>biblioteca</name>
-	<description>Proyecto Ingeniaria de Software2</description>
+	<description>Proyecto Ingenieria de Software 2</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
-			<scope>runtime</scope>
+			<version>8.0.33</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -33,4 +33,7 @@ public interface LibroRepository extends JpaRepository<Libro, String>{
 
     @Query("SELECT l From Libro l WHERE (l.titulo LIKE %:filtro% OR l.autor.nombre LIKE %:filtro% OR l.editorial.nombre LIKE %:filtro%) AND l.eliminado = FALSE")
     public List<Libro> listarLibroPorFiltro(@Param("filtro") String filtro);
+
+    @Query("SELECT l FROM Libro l WHERE l.eliminado = false ")
+    public List<Libro> findAllActive();
 }

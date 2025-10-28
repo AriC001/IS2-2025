@@ -216,7 +216,7 @@ public class LibroService {
 
 		try {
 
-			return repository.findAll();
+			return repository.findAllActive();
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

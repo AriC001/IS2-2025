@@ -3,6 +3,7 @@ package com.is.biblioteca.controller.view;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.is.biblioteca.business.domain.entity.Libro;
 import com.is.biblioteca.business.domain.entity.Prestamo;
 import com.is.biblioteca.business.domain.entity.Usuario;
+import com.is.biblioteca.business.logic.error.ErrorServiceException;
 import com.is.biblioteca.business.logic.service.LibroService;
 import com.is.biblioteca.business.logic.service.PrestamoService;
 import com.is.biblioteca.business.logic.service.UsuarioService;
@@ -59,7 +61,7 @@ public class PrestamoController {
   //////////////////////////////////////////
 
   @GetMapping("/mis-prestamos")
-  public String misPrestamos(ModelMap modelo) {
+  public String misPrestamos(ModelMap modelo) throws ErrorServiceException{
     try {
       // Obtener el usuario autenticado
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -67,13 +69,12 @@ public class PrestamoController {
       
       // Buscar el usuario por email
       Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
-      
       if (usuario != null) {
-        List<Prestamo> prestamos = prestamoService.listarPrestamosPorUsuario(usuario.getId());
-        modelo.addAttribute("prestamos", prestamos);
-        modelo.addAttribute("esUsuario", true); // Para ocultar columnas de admin
+          List<Prestamo> prestamos = prestamoService.listarPrestamosPorUsuario(usuario.getId());
+          modelo.addAttribute("prestamos", prestamos);
+          modelo.addAttribute("esUsuario", true); // Para ocultar columnas de admin
       } else {
-        modelo.addAttribute("error", "Usuario no encontrado");
+          modelo.addAttribute("error", "Usuario no encontrado");
       }
     } catch (Exception e) {
       modelo.addAttribute("error", "Error al cargar sus préstamos: " + e.getMessage());

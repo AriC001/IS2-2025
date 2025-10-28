@@ -2,6 +2,7 @@ package com.is.biblioteca.configuration;
 
 import java.util.UUID;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,8 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Verificar si ya existe un usuario admin
-        Usuario adminExistente = usuarioRepository.buscarUsuarioPorEmail("admin@gmail.com");
+        Optional<Usuario> opt = usuarioRepository.buscarUsuarioPorEmail("admin@gmail.com");
+        Usuario adminExistente = opt.orElse(null);
 
         if (adminExistente == null) {
             // Crear usuario ADMIN
