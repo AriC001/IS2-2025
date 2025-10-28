@@ -1,13 +1,13 @@
-package com.practica.ej2consumer;
+package nexora.proyectointegrador2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Ej2consumerApplication {
+public class ProyectoIntegrador2Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Ej2consumerApplication.class, args);
+		SpringApplication.run(ProyectoIntegrador2Application.class, args);
 	}
 
 }
