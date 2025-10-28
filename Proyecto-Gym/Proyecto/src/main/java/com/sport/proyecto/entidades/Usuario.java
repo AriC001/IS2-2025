@@ -30,4 +30,12 @@ public class Usuario implements Serializable {
   private Rol rol;
 
   private boolean eliminado;
+
+  public String getEmail(){
+        return this.nombreUsuario;
+    }
+
+    public String getPassword(){
+        return this.clave;
+    }
 }
