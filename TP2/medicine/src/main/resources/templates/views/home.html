@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Medicio - Médicos</title>
+
+  <!-- CSS -->
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+  <link th:href="@{/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css" />
+  <link th:href="@{/plugins/cubeportfolio/css/cubeportfolio.min.css}" rel="stylesheet" type="text/css" />
+  <link th:href="@{/css/nivo-lightbox.css}" rel="stylesheet" />
+  <link th:href="@{/css/nivo-lightbox-theme/default/default.css}" rel="stylesheet" type="text/css" />
+  <link th:href="@{/css/owl.carousel.css}" rel="stylesheet" media="screen" />
+  <link th:href="@{/css/owl.theme.css}" rel="stylesheet" media="screen" />
+  <link th:href="@{/css/animate.css}" rel="stylesheet" />
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+
+  <!-- Fondo y color -->
+  <link id="bodybg" th:href="@{/bodybg/bg1.css}" rel="stylesheet" type="text/css" />
+  <link id="t-colors" th:href="@{/color/default.css}" rel="stylesheet">
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+
+<div id="wrapper">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <div class="top-area">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p class="bold text-left">Servicio web de Medicio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container navigation">
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+          <i class="fa fa-bars"></i>
+        </button>
+        <a class="navbar-brand" th:href="@{/home}">
+          <img th:src="@{/img/logo.png}" alt="Medicio" width="150" height="40"/>
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a th:href="@{/home}">Home</a></li>
+          <li><a th:href="@{/medicos}">Médicos</a></li>
+          <li><a th:href="@{/pacientes}">Pacientes</a></li>
+          <li><a th:href="@{/historiasClinicas}">Historias clínicas</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section id="doctor" class="home-section bg-gray paddingbot-60">
+  <div class="container marginbot-50">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2">
+        <div class="wow fadeInDown" data-wow-delay="0.1s">
+          <div class="section-heading text-center">
+            <h2 class="h-bold">Panel general</h2>
+            <p>Panel administrativo de Medicio</p>
+          </div>
+        </div>
+        <div class="divider-short"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-md-3 col-sm-6">
+        <div class="team-member">
+          <img th:src="@{/img/team/1.jpg}" alt="Médico" class="img-responsive img-circle center-block team-img">
+          <h4><a th:href="@{/medicos}">Planilla de médicos</a></h4>
+          <p>Psiquiatra</p>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="team-member">
+          <img th:src="@{/img/team/2.jpg}" alt="Pacientes" class="img-responsive img-circle center-block team-img">
+          <h4><a th:href="@{/pacientes}">Planilla de pacientes</a></h4>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="team-member">
+          <img th:src="@{/img/team/3.jpg}" alt="Historias" class="img-responsive img-circle center-block team-img">
+          <h4><a th:href="@{/historiasClinicas}">Planilla de historias clínicas</a></h4>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="sub-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 text-left">
+            <p>&copy;Copyright 2015 - Medicio. All rights reserved.</p>
+          </div>
+          <div class="col-sm-6 text-right">
+            <p><a href="http://bootstraptaste.com/">Bootstrap Themes</a> by BootstrapTaste</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
+
+<!-- JS -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.easing.min.js}"></script>
+<script th:src="@{/js/wow.min.js}"></script>
+<script th:src="@{/js/jquery.scrollTo.js}"></script>
+<script th:src="@{/js/jquery.appear.js}"></script>
+<script th:src="@{/js/stellar.js}"></script>
+<script th:src="@{/plugins/cubeportfolio/js/jquery.cubeportfolio.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/nivo-lightbox.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+
+</body>
+</html>
