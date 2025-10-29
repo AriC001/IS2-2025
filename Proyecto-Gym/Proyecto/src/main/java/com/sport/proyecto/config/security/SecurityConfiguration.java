@@ -32,13 +32,22 @@ public class SecurityConfiguration {
                         .defaultSuccessUrl("/index", true)
                         .permitAll()
                 )
-                .userDetailsService(userDetailsService)
+                // register authentication provider explicitly so the PasswordEncoder bean is used
+                .authenticationProvider(authenticationProvider())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                 );
         http.csrf(csrf -> csrf.disable());
         return http.build();
+    }
+
+    @Bean
+    public org.springframework.security.authentication.dao.DaoAuthenticationProvider authenticationProvider() {
+        org.springframework.security.authentication.dao.DaoAuthenticationProvider provider = new org.springframework.security.authentication.dao.DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
     @Bean

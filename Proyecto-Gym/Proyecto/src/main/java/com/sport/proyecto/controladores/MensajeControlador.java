@@ -6,7 +6,6 @@ import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.enums.tipoMensaje;
 import com.sport.proyecto.servicios.MensajeServicio;
 import com.sport.proyecto.servicios.UsuarioServicio;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -106,9 +105,6 @@ public class MensajeControlador {
     return "redirect:/mensaje";
   }
 
-  @ModelAttribute("usuariosession")
-  public Usuario usuarioSession(HttpSession session) {
-    return (Usuario) session.getAttribute("usuariosession");
-  }
+  // usuariosession is provided by GlobalControllerAdvice; no local session handling required
 
 }

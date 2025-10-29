@@ -69,10 +69,9 @@ public class RutinaControlador {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
             @RequestParam List<String> actividades,
             @RequestParam List<LocalDate> fechas,
-            HttpSession session,
+            @org.springframework.web.bind.annotation.ModelAttribute("usuariosession") Usuario login,
             ModelMap modelo) throws ErrorServicio {
 
-        Usuario login = (Usuario) session.getAttribute("usuariosession");
         Empleado profesor = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId());
 
         Rutina rutina = new Rutina();
@@ -94,14 +93,13 @@ public class RutinaControlador {
 
 
     @PostMapping("/guardar")
-    public String guardarRutina(@RequestParam Long numeroSocio,  // recibís solo el id
+    public String guardarRutina(@RequestParam Long numeroSocio,
                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
-                                HttpSession session,
+                                @org.springframework.web.bind.annotation.ModelAttribute("usuariosession") Usuario login,
                                 ModelMap modelo) {
         try {
             // Usuario logeado
-            Usuario login = (Usuario) session.getAttribute("usuariosession");
             Empleado profesor = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId());
 
             // Buscar socio por id
@@ -199,9 +197,7 @@ public class RutinaControlador {
         }
     }
    @GetMapping("/mis_rutinas")
-    public String mostrarRutinas(ModelMap modelo, HttpSession session) {
-        //System.out.println("Entré a mostrarRutinas");
-        Usuario login = (Usuario) session.getAttribute("usuariosession");
+    public String mostrarRutinas(ModelMap modelo, @org.springframework.web.bind.annotation.ModelAttribute("usuariosession") Usuario login) {
         List<Rutina> rutinas;
 
         switch (login.getRol()) {

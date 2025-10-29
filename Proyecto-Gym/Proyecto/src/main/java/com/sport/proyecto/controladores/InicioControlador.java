@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+ 
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -34,22 +34,8 @@ public class InicioControlador {
         return "views/login"; // devuelve el HTML de login
     }
 
-    @PostMapping("/login")
-    public String loginUsuario(@RequestParam String nombreUsuario, @RequestParam String clave, ModelMap model, HttpSession session) {
-        try {
-            Usuario usuarioLogueado = usuarioServicio.login(nombreUsuario, clave);
-            if (usuarioLogueado == null) {
-                model.put("error", "Nombre de usuario o clave incorrecto");
-                return "views/login"; // se queda en la misma página
-            }
-            session.setAttribute("usuariosession", usuarioLogueado);
-            return "redirect:/index"; // login exitoso
-
-        } catch (Exception e) {
-            model.put("error", "Error inesperado");
-            return "views/login";
-        }
-    }
+    // NOTE: authentication is handled by Spring Security. The old manual login POST
+    // has been removed to avoid conflicts with the security filter chain.
 
 
 /*    @PostMapping("/login")
@@ -80,15 +66,10 @@ public class InicioControlador {
     }
 
     @GetMapping("/registro")
-    public String registro(HttpSession session,Model model) {
-        Usuario login = null;
-        if(session != null) {
-            login = (Usuario) session.getAttribute("usuariosession");
-        }
-
+    public String registro(@org.springframework.web.bind.annotation.ModelAttribute("usuariosession") Usuario login, Model model) {
         boolean esEmpleado = false; // por defecto false
-        if(login != null && login.getId() != null){
-            if(usuarioServicio.esAdmin(login.getId())){
+        if (login != null && login.getId() != null) {
+            if (usuarioServicio.esAdmin(login.getId())) {
                 esEmpleado = true;
             }
         }
@@ -102,10 +83,6 @@ public class InicioControlador {
         //model.addAttribute("localidades", localidades);
         return "views/registro";
     }
-
-    @ModelAttribute("usuariosession")
-    public Usuario usuarioSession(HttpSession session) {
-        return (Usuario) session.getAttribute("usuariosession");
-    }
+    
 
 }

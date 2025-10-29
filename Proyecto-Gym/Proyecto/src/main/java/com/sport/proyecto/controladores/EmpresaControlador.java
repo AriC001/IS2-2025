@@ -3,7 +3,6 @@ package com.sport.proyecto.controladores;
 import com.sport.proyecto.entidades.Empresa;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.servicios.EmpresaServicio;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,9 +86,6 @@ public class EmpresaControlador {
     return "redirect:/empresa";
   }
 
-  @ModelAttribute("usuariosession")
-  public Usuario usuarioSession(HttpSession session) {
-    return (Usuario) session.getAttribute("usuariosession");
-  }
+  // usuariosession provided by GlobalControllerAdvice
 
 }
