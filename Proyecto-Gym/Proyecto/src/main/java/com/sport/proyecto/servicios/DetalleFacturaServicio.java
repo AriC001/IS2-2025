@@ -59,7 +59,7 @@ public class DetalleFacturaServicio {
         Optional<DetalleFactura> opt = detalleFacturaRepositorio.findById(detalleId);
         if(opt.isPresent()){
             detalle = opt.get();
-            detalle.setEliminado(true);
+            detalle.setEliminado(false);
             detalleFacturaRepositorio.save(detalle);
         }
     }

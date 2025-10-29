@@ -25,6 +25,7 @@
             <tr>
               <th>Nombre</th>
               <th>Dirección</th>
+              <th>Mapa</th>
               <th>Empresa</th>
               <th>Acciones</th>
             </tr>
@@ -33,6 +34,14 @@
             <tr th:each="sucursal : ${sucursales}">
               <td th:text="${sucursal.nombre}"></td>
               <td th:text="${sucursal.direccion.getDescripcion()}"></td>
+              <td class="text-center">
+                <a th:if="${sucursal.direccion.googleMapsLink != null}"
+                   th:href="${sucursal.direccion.googleMapsLink}"
+                   target="_blank">
+                  Ver en Google Maps
+                </a>
+                <span th:unless="${sucursal.direccion.googleMapsLink != null}">—</span>
+              </td>
               <td th:text="${sucursal.empresa.getNombre()}"></td>
               <td>
                 <a th:href="@{'/sucursal/editar/' + ${sucursal.id}}" class="btn btn-primary btn-sm me-2">Editar</a>

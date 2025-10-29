@@ -6,15 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 
-@Entity
-@Getter
-@Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
+
+@Entity
 public class DetalleFactura implements Serializable {
 
     @Id
@@ -31,5 +30,37 @@ public class DetalleFactura implements Serializable {
     private Factura factura;
 
     private boolean eliminado;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public CuotaMensual getCuotaMensual() {
+        return cuotaMensual;
+    }
+
+    public void setCuotaMensual(CuotaMensual cuotaMensual) {
+        this.cuotaMensual = cuotaMensual;
+    }
+
+    public Factura getFactura() {
+        return factura;
+    }
+
+    public void setFactura(Factura factura) {
+        this.factura = factura;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
 
 }

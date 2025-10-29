@@ -6,8 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -33,4 +32,47 @@ public class Sucursal implements Serializable {
   private Empresa empresa;
 
   private boolean eliminado;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getNombre() {
+    return nombre;
+  }
+
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
+
+  public Direccion getDireccion() {
+    return direccion;
+  }
+
+  public void setDireccion(Direccion direccion) {
+    this.direccion = direccion;
+  }
+
+  public Empresa getEmpresa() {
+    return empresa;
+  }
+
+  public void setEmpresa(Empresa empresa) {
+    this.empresa = empresa;
+  }
+
+  public boolean isEliminado() {
+    return eliminado;
+  }
+
+  public void setEliminado(boolean eliminado) {
+    this.eliminado = eliminado;
+  }
+
+  
+
 }

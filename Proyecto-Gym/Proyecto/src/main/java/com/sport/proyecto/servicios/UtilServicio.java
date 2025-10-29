@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import com.sport.proyecto.errores.ErrorServicio;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -17,29 +18,25 @@ public class UtilServicio {
   private static final String EMAIL_REGEX ="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
   private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-  //Arreglo para encriptar
-  private static final char[] HEXADECIMAL = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+  // Instancia de BCryptPasswordEncoder para encriptar contraseñas
+  private static final BCryptPasswordEncoder bcryptEncoder = new BCryptPasswordEncoder();
 
   public static String encriptarClave(String textoEncriptar) throws ErrorServicio {
-
     try {
-
-      MessageDigest md = MessageDigest.getInstance("MD5");
-      byte[] bytes = md.digest(textoEncriptar.getBytes());
-      StringBuilder sb = new StringBuilder(2 * bytes.length);
-
-      for (int i = 0; i < bytes.length; i++) {
-        int low = (int) (bytes[i] & 0x0f);
-        int high = (int) ((bytes[i] & 0xf0) >> 4);
-        sb.append(HEXADECIMAL[high]);
-        sb.append(HEXADECIMAL[low]);
-      }
-
-      return sb.toString();
-
+      // Usar BCrypt para encriptar la contraseña
+      return bcryptEncoder.encode(textoEncriptar);
     } catch (Exception e) {
       e.printStackTrace();
-      throw new ErrorServicio("Error de sistema");
+      throw new ErrorServicio("Error de sistema al encriptar contraseña");
+    }
+  }
+
+  public static boolean verificarClave(String clavePlana, String claveEncriptada) throws ErrorServicio {
+    try {
+      return bcryptEncoder.matches(clavePlana, claveEncriptada);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error de sistema al verificar contraseña");
     }
   }
 

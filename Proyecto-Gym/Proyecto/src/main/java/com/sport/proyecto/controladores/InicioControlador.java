@@ -21,7 +21,7 @@ public class InicioControlador {
 
     @GetMapping({"/", "/index"})
     public String index(Model model) {
-        return "views/index";
+        return "index";
     }
 
     /*@GetMapping("/error")
@@ -34,22 +34,23 @@ public class InicioControlador {
         return "views/login"; // devuelve el HTML de login
     }
 
-    @PostMapping("/login")
+    // REMOVER ESTE MÉTODO - Spring Security maneja el login automáticamente
+    /*@PostMapping("/login")
     public String loginUsuario(@RequestParam String nombreUsuario, @RequestParam String clave, ModelMap model, HttpSession session) {
         try {
-            Usuario usuarioLogueado = usuarioServicio.login(nombreUsuario, clave);
-            if (usuarioLogueado == null) {
+            Usuario usuario = (Usuario) session.getAttribute("usuariosession");
+            if (usuario == null) {
                 model.put("error", "Nombre de usuario o clave incorrecto");
                 return "views/login"; // se queda en la misma página
             }
-            session.setAttribute("usuariosession", usuarioLogueado);
-            return "redirect:/index"; // login exitoso
 
+            session.setAttribute("usuariosession", usuario);
+            return "redirect:/index"; // login exitoso
         } catch (Exception e) {
-            model.put("error", "Error inesperado");
+            model.put("error", "Error inesperado: " + e.getMessage());
             return "views/login";
         }
-    }
+    }*/
 
 
 /*    @PostMapping("/login")

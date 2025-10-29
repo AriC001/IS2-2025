@@ -7,8 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,5 +30,39 @@ public class Provincia implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "pais_id")
   private Pais pais;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getNombre() {
+    return nombre;
+  }
+
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
+
+  public boolean isEliminado() {
+    return eliminado;
+  }
+
+  public void setEliminado(boolean eliminado) {
+    this.eliminado = eliminado;
+  }
+
+  public Pais getPais() {
+    return pais;
+  }
+
+  public void setPais(Pais pais) {
+    this.pais = pais;
+  }
+
+  
 
 }

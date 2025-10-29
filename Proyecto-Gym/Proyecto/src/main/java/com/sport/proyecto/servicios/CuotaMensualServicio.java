@@ -33,13 +33,15 @@ public class CuotaMensualServicio {
          if(opt.isPresent()){
              Socio s = opt.get();
              ValorCuota valor = valorCuotaServicio.obtenerValorActual();
-             CuotaMensual cuota = CuotaMensual.builder().
-                     mes(mes.actual(LocalDate.now().getMonthValue())).
-                     anio((long) LocalDate.now().getYear()).
-                     fechaVencimiento(LocalDate.now().plusWeeks(2)).
-                     eliminado(false).
-                     valorCuota(valor).
-                     estado(estadoCuota.ADEUDA).build();
+             CuotaMensual cuota = new CuotaMensual();
+
+             cuota.setMes(mes.values()[LocalDate.now().getMonthValue()-1]);
+             cuota.setAnio((long) LocalDate.now().getYear());
+             cuota.setFechaVencimiento(LocalDate.now().plusWeeks(2));
+             cuota.setEliminado(false);
+             cuota.setValorCuota(valor);
+             cuota.setEstado(estadoCuota.ADEUDA);
+
              cuotaRepositorio.save(cuota);
              List<CuotaMensual> listaCuotas = new ArrayList<>();
              if(s.getCuotas() != null){

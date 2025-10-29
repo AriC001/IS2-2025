@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.sport.proyecto.servicios.CustomUserDetailsService;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -17,6 +19,9 @@ public class SecurityConfiguration {
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,9 +32,9 @@ public class SecurityConfiguration {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .usernameParameter("email")   // <--- importante si querés usar "email"
-                        .passwordParameter("password")
-                        .defaultSuccessUrl("/index", true)
+                        .usernameParameter("nombreUsuario")   // <--- cambiar a nombreUsuario
+                        .passwordParameter("clave")           // <--- cambiar a clave
+                        .successHandler(customAuthenticationSuccessHandler)
                         .permitAll()
                 )
                 .userDetailsService(userDetailsService)

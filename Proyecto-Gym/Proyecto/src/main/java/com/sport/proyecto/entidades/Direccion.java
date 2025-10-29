@@ -6,8 +6,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -83,4 +81,94 @@ public class Direccion implements Serializable {
     }
     return sb.toString();
   }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getCalle() {
+    return calle;
+  }
+
+  public void setCalle(String calle) {
+    this.calle = calle;
+  }
+
+  public String getNumeracion() {
+    return numeracion;
+  }
+
+  public void setNumeracion(String numeracion) {
+    this.numeracion = numeracion;
+  }
+
+  public String getBarrio() {
+    return barrio;
+  }
+
+  public void setBarrio(String barrio) {
+    this.barrio = barrio;
+  }
+
+  public String getManzanaPiso() {
+    return manzanaPiso;
+  }
+
+  public void setManzanaPiso(String manzanaPiso) {
+    this.manzanaPiso = manzanaPiso;
+  }
+
+  public String getCasaDepartamento() {
+    return casaDepartamento;
+  }
+
+  public void setCasaDepartamento(String casaDepartamento) {
+    this.casaDepartamento = casaDepartamento;
+  }
+
+  public String getReferencia() {
+    return referencia;
+  }
+
+  public void setReferencia(String referencia) {
+    this.referencia = referencia;
+  }
+
+  public boolean isEliminado() {
+    return eliminado;
+  }
+
+  public void setEliminado(boolean eliminado) {
+    this.eliminado = eliminado;
+  }
+
+  public String getLatitud() {
+    return latitud;
+  }
+
+  public void setLatitud(String latitud) {
+    this.latitud = latitud;
+  }
+
+  public String getLongitud() {
+    return longitud;
+  }
+
+  public void setLongitud(String longitud) {
+    this.longitud = longitud;
+  }
+
+  public Localidad getLocalidad() {
+    return localidad;
+  }
+
+  public void setLocalidad(Localidad localidad) {
+    this.localidad = localidad;
+  }
+
+  
 }

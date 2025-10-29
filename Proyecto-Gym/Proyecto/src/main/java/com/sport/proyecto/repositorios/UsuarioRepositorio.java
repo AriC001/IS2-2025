@@ -18,4 +18,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, String> {
   @Query(value = "SELECT * FROM usuario WHERE usuario.nombre_usuario =:nombreUsuario AND usuario.eliminado = false", nativeQuery = true)
   Optional<Usuario> findByUsername(@Param("nombreUsuario") String nombreUsuario);
 
+ 
+
 }

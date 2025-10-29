@@ -7,9 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.is.biblioteca.business.domain.entity.Usuario;
-import com.is.biblioteca.business.logic.error.ErrorServiceException;
-import com.is.biblioteca.business.logic.service.UsuarioService;
+import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.servicios.CustomUserDetailsService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,33 +18,33 @@ import jakarta.servlet.http.HttpSession;
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UsuarioService usuarioService;
+    private final CustomUserDetailsService usuarioService;
 
-    public CustomAuthenticationSuccessHandler(@Lazy UsuarioService usuarioService) {
+    public CustomAuthenticationSuccessHandler(@Lazy CustomUserDetailsService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        
-      // Obtener el email del usuario autenticado
-      String email = authentication.getName();
-      
+
+      // Obtener el nombreUsuario del usuario autenticado
+      String nombreUsuario = authentication.getName();
+
       try {
         // Buscar el usuario completo en la base de datos
-        Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
-            
+        Usuario usuario = usuarioService.buscarUsuarioPorNombreUsuario(nombreUsuario);
+
           // Guardar el usuario en la sesión HTTP
           HttpSession session = request.getSession();
           session.setAttribute("usuariosession", usuario);
-            
-          // Redirigir a /regresoPage que maneja la lógica según el rol
-          response.sendRedirect("/regresoPage");
-        
-      } catch (ErrorServiceException e) {
+
+          // Redirigir a /index
+          response.sendRedirect("/index");
+
+      } catch (Exception e) {
         e.printStackTrace();
-        response.sendRedirect("/usuario/login?error");
+        response.sendRedirect("/login?error");
       }
     }
 }

@@ -12,13 +12,15 @@ import com.sport.proyecto.enums.*;
 import java.time.LocalDate;
 import java.util.Collection;
 
-@Entity
-@Getter
-@Setter
+
+
 @NoArgsConstructor
 @AllArgsConstructor
+
+@Entity
 @Table(name = "factura")
 public class Factura {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -43,6 +45,62 @@ public class Factura {
 
     @Column
     private boolean eliminado;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Long getNumeroFactura() {
+        return numeroFactura;
+    }
+
+    public void setNumeroFactura(Long numeroFactura) {
+        this.numeroFactura = numeroFactura;
+    }
+
+    public LocalDate getFechaFactura() {
+        return fechaFactura;
+    }
+
+    public void setFechaFactura(LocalDate fechaFactura) {
+        this.fechaFactura = fechaFactura;
+    }
+
+    public Long getTotalPagado() {
+        return totalPagado;
+    }
+
+    public void setTotalPagado(Long totalPagado) {
+        this.totalPagado = totalPagado;
+    }
+
+    public Collection<DetalleFactura> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(Collection<DetalleFactura> detalles) {
+        this.detalles = detalles;
+    }
+
+    public estadoFactura getEstadoFactura() {
+        return estadoFactura;
+    }
+
+    public void setEstadoFactura(estadoFactura estadoFactura) {
+        this.estadoFactura = estadoFactura;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
 
 
 }

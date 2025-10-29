@@ -7,8 +7,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -23,5 +21,27 @@ public class Socio extends Persona {
 
     public Long getNumeroSocio() {
         return numeroSocio;
+    }
+
+    public void setNumeroSocio(Long numeroSocio) {
+      this.numeroSocio = numeroSocio;
+    }
+
+    public List<Rutina> getRutinas() {
+      return rutinas;
+    }
+
+    public void setRutinas(List<Rutina> rutinas) {
+      this.rutinas = rutinas;
+    }
+
+    public List<CuotaMensual> getCuotas() {
+      return cuotas;
+    }
+
+    public void setCuotas(List<CuotaMensual> cuotas) {
+      this.cuotas = cuotas;
     }   
+
+    
 }

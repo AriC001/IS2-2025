@@ -143,7 +143,7 @@ public class UsuarioServicio {
       if (usuario == null) {
         throw new ErrorServicio("No se encontro el usuario solicitado");
       }
-      if (!usuario.getClave().equals(UtilServicio.encriptarClave(clave))) {
+      if (!UtilServicio.verificarClave(clave, usuario.getClave())) {
         throw new ErrorServicio("La clave es incorrecta");
       }
       return usuario;

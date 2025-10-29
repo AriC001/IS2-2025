@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Valores de Cuota</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      margin: 30px 0 20px 0;
+      font-weight: 500;
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 80%;
+      margin: 0 auto 30px auto;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+    }
+    tr:nth-child(even) td {
+      background-color: #fafafa;
+    }
+    tr:hover td {
+      background-color: #f5f5f5;
+    }
+    .btn-custom {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 500;
+      border: none;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn-custom:hover {
+      background-color: #d0d0d0;
+    }
+  </style>
+</head>
+<body>
+
+<div th:replace="~{components/navbar :: nav_bar}"></div>
+
+<h2>Valor de Cuota Actual</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Desde</th>
+    <th>Hasta</th>
+    <th>Valor</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:if="${valorCuotaActual != null}">
+    <td th:text="${#temporals.format(valorCuotaActual.fechaDesde, 'dd/MM/yyyy')}">01/01/2025</td>
+    <td th:text="${valorCuotaActual.fechaHasta != null ? #temporals.format(valorCuotaActual.fechaHasta, 'dd/MM/yyyy') : 'Vigente'}">Vigente</td>
+    <td th:text="${valorCuotaActual.valor}">$0</td>
+  </tr>
+  <tr th:if="${valorCuotaActual == null}">
+    <td colspan="3" class="text-center">No hay un valor actual definido</td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Botón para agregar nuevo valor de cuota -->
+<div class="text-center">
+  <a th:href="@{/valor-cuota/nuevo}">
+    <button type="button" class="btn-custom">Agregar Nuevo Valor</button>
+  </a>
+</div>
+
+<h2>Valores de Cuota Anteriores</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Desde</th>
+    <th>Hasta</th>
+    <th>Valor</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="valor : ${valoresAnteriores}">
+    <td th:text="${#temporals.format(valor.fechaDesde, 'dd/MM/yyyy')}">01/01/2024</td>
+    <td th:text="${#temporals.format(valor.fechaHasta, 'dd/MM/yyyy')}">31/12/2024</td>
+    <td th:text="${valor.valor}">$0</td>
+  </tr>
+  <tr th:if="${#lists.isEmpty(valoresAnteriores)}">
+    <td colspan="3" class="text-center">No hay valores anteriores</td>
+  </tr>
+  </tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -5,13 +5,19 @@ import com.sport.proyecto.enums.tipoDocumento;
 import com.sport.proyecto.enums.tipoEmpleado;
 import com.sport.proyecto.enums.Rol;
 import com.sport.proyecto.repositorios.*;
-import com.sport.proyecto.servicios.*;
+import com.sport.proyecto.servicios.CuotaMensualServicio;
+import com.sport.proyecto.servicios.PaisServicio;
+import com.sport.proyecto.servicios.PersonaServicio;
+import com.sport.proyecto.servicios.UsuarioServicio;
+import com.sport.proyecto.servicios.UtilServicio;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -46,6 +52,7 @@ public class InicializadorDatos implements CommandLineRunner {
     @Autowired
     private EmpresaRepositorio empresaRepositorio;
 
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -66,8 +73,9 @@ public class InicializadorDatos implements CommandLineRunner {
                     .build();
             personaRepositorio.save(adminPersona);
             System.out.println("Admin creado con ID = " + usuarioAdmin.getId());
-        }
+        } 
 
+        
         // ================== DATOS GEOGRÁFICOS =====================
         // Solo insertar si no existen
         if (paisRepositorio.findByName("Argentina") == null) {
@@ -151,6 +159,9 @@ public class InicializadorDatos implements CommandLineRunner {
                     .build();
             personaRepositorio.save(socio1);
         }
+
+
+
         Optional<Usuario> usuarioSocio2Existe = usuarioRepositorio.findByUsername("Ana García");
         if (!usuarioSocio2Existe.isPresent()) {
             Usuario usuarioSocio2 = usuarioServicio.crearUsuario("Ana García", "socio456", Rol.SOCIO);
@@ -164,6 +175,7 @@ public class InicializadorDatos implements CommandLineRunner {
                     .build();
             personaRepositorio.save(socio2);
         }
+        
         Optional<Usuario> usuarioEmpleadoExiste = usuarioRepositorio.findByUsername("Carlos López");
         if (!usuarioEmpleadoExiste.isPresent()) {
             Usuario usuarioEmpleado = usuarioServicio.crearUsuario("Carlos López", "empleado123", Rol.EMPLEADO);
