@@ -7,9 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.is.biblioteca.business.domain.entity.Usuario;
-import com.is.biblioteca.business.logic.error.ErrorServiceException;
-import com.is.biblioteca.business.logic.service.UsuarioService;
+import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.errores.ErrorServicio;
+import com.sport.proyecto.servicios.UsuarioServicio;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +19,9 @@ import jakarta.servlet.http.HttpSession;
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UsuarioService usuarioService;
+    private final UsuarioServicio usuarioService;
 
-    public CustomAuthenticationSuccessHandler(@Lazy UsuarioService usuarioService) {
+    public CustomAuthenticationSuccessHandler(@Lazy UsuarioServicio usuarioService) {
         this.usuarioService = usuarioService;
     }
 
@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
       
       try {
         // Buscar el usuario completo en la base de datos
-        Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
+        Usuario usuario = usuarioService.buscarUsuarioPorNombre(email);
             
           // Guardar el usuario en la sesión HTTP
           HttpSession session = request.getSession();
@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
           // Redirigir a /regresoPage que maneja la lógica según el rol
           response.sendRedirect("/regresoPage");
         
-      } catch (ErrorServiceException e) {
+      } catch (ErrorServicio e) {
         e.printStackTrace();
         response.sendRedirect("/usuario/login?error");
       }

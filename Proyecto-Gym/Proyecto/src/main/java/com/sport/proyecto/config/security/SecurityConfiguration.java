@@ -1,5 +1,6 @@
 package com.sport.proyecto.config.security;
 
+import com.sport.proyecto.servicios.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
