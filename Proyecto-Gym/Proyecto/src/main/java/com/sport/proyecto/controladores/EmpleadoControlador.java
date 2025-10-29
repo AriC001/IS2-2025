@@ -20,7 +20,6 @@ import com.sport.proyecto.servicios.PaisServicio;
 import com.sport.proyecto.servicios.ProvinciaServicio;
 import com.sport.proyecto.servicios.SucursalServicio;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -242,10 +241,7 @@ public class EmpleadoControlador {
   }
 
   
-  @ModelAttribute("usuariosession")
-  public Usuario usuarioSession(HttpSession session) {
-    return (Usuario) session.getAttribute("usuariosession");
-  }
+  // usuariosession provided by GlobalControllerAdvice
 
 
 }

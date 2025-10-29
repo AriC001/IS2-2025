@@ -4,7 +4,6 @@ package com.sport.proyecto.controladores;
 import com.sport.proyecto.entidades.*;
 import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.servicios.*;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -141,9 +140,6 @@ public class DireccionControlador {
     return (ResponseEntity<List<Map<String, Object>>>) ResponseEntity.ok();
   }*/
 
-  @ModelAttribute("usuariosession")
-  public Usuario usuarioSession(HttpSession session) {
-    return (Usuario) session.getAttribute("usuariosession");
-  }
+  // usuariosession provided by GlobalControllerAdvice; no local session handling required
 
 }

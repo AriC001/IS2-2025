@@ -9,7 +9,6 @@ import com.sport.proyecto.servicios.LocalidadServicio;
 import com.sport.proyecto.servicios.PaisServicio;
 import com.sport.proyecto.servicios.ProvinciaServicio;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -234,8 +233,5 @@ public class SucursalControlador {
     return "redirect:/sucursal/nueva";
   }
 
-  @ModelAttribute("usuariosession")
-  public Usuario usuarioSession(HttpSession session) {
-    return (Usuario) session.getAttribute("usuariosession");
-  }
+  // usuariosession is provided by GlobalControllerAdvice; controllers can accept it as a @ModelAttribute parameter when needed
 }

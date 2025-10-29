@@ -5,7 +5,7 @@ import com.sport.proyecto.entidades.DetalleFactura;
 import com.sport.proyecto.entidades.Factura;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.servicios.*;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,14 +32,11 @@ public class FacturaControlador {
 
 
     @GetMapping("/facturas/{cuotaId}")
-    public String verFactura(@PathVariable String cuotaId, HttpSession session, Model model) {
+    public String verFactura(@PathVariable String cuotaId, @ModelAttribute("usuariosession") Usuario user, Model model) {
 
         CuotaMensual cuota = cuotaMensualServicio.buscarCuota(cuotaId);
         DetalleFactura detalleFactura = detalleFacturaServicio.buscarDetallePorCuota(cuotaId);
         Factura factura = facturaServicio.buscarFactura(detalleFactura.getFactura().getId());
-        Usuario user = (Usuario) session.getAttribute("usuariosession");
-        session.setAttribute("usuariosession", user);
-        model.addAttribute("usuariosession", user);
         model.addAttribute("factura", factura);
         model.addAttribute("detalle", detalleFactura);
         model.addAttribute("cliente", personaServicio.buscarPorUsuario(user.getId()));

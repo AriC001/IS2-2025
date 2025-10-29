@@ -4,7 +4,7 @@ import com.sport.proyecto.entidades.Empleado;
 import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.entidades.ValorCuota;
 import com.sport.proyecto.servicios.*;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,9 +23,7 @@ public class ValorCuotaControlador {
     private ValorCuotaServicio valorCuotaServicio;
 
     @GetMapping("")
-    public String mostrarValorCuota(HttpSession session, Model model) {
-        Usuario user = (Usuario) session.getAttribute("usuariosession");
-        model.addAttribute("usuariosession", user);
+    public String mostrarValorCuota(Model model, @ModelAttribute("usuariosession") Usuario usuariosession) {
         ValorCuota valorCuotaActual = valorCuotaServicio.obtenerValorActual();
         List<ValorCuota> valoresCuotaAnterioires = valorCuotaServicio.obtenerValorNoActual();
         model.addAttribute("valorCuotaActual",valorCuotaActual);
@@ -34,10 +32,9 @@ public class ValorCuotaControlador {
     }
 
     @GetMapping("/nuevo")
-    public String generarNuevoValorCuota(HttpSession session, Model model) {
+    public String generarNuevoValorCuota(Model model, @ModelAttribute("usuariosession") Usuario usuariosession) {
         model.addAttribute("valorCuota", new ValorCuota());
-        Usuario user = (Usuario) session.getAttribute("usuariosession");
-        model.addAttribute("usuariosession", user);
+        // usuariosession is available in the model via GlobalControllerAdvice
         return "views/alta-valor-cuota";
         //ValorCuota valorCuotaActual = valorCuotaServicio.obtenerValorActual();
         //ValorCuota valorCuota = valorCuotaServicio.nuevoValorCuota()
@@ -45,10 +42,8 @@ public class ValorCuotaControlador {
 
     @PostMapping("/nuevo")
     public String generarNuevoValorCuota(@ModelAttribute ValorCuota valorCuota,
-                                         HttpSession session, Model model) {
+                                         @ModelAttribute("usuariosession") Usuario usuariosession, Model model) {
         valorCuotaServicio.nuevoValorCuota(valorCuota.getValor(),valorCuota.getFechaHasta());
-        Usuario user = (Usuario) session.getAttribute("usuariosession");
-        model.addAttribute("usuariosession", user);
         return "redirect:/valor-cuota";
     }
 
