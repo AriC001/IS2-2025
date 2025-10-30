@@ -1,9 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <head th:replace="~{components/header :: head}"></head>
-    <body>
+<head th:replace="~{components/header :: head}"></head>
+<body class="admin-portal">
 
-        <div th:replace="~{components/admin_subnav :: admin_nav}"></div>
+    <style>
+      /* Scope fixes to admin portal only to avoid global side effects */
+      .admin-portal .navigation { display: none !important; }
+      body.admin-portal { padding-top: 70px; }
+      #adminPortalNav { z-index: 1090; padding: .45rem 0; }
+      #adminPortalNav .nav-link { margin-right: .9rem; color: rgba(255,255,255,0.95); font-weight: 500; }
+      #adminPortalNav .nav-link:hover { color: #ffffff; }
+      /* Ensure the hero doesn't jump under the sticky navbar */
+      .admin-portal .fh5co-cover { margin-top: 0; }
+    </style>
+
+    <!-- Admin sub-navigation: unified style with socio_portal (light theme, responsive) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" sec:authorize="hasRole('ROLE_ADMIN')" style="z-index: 1030;">
+        <div class="container">
+            <style>
+                /* local admin overrides matching socio_portal layout */
+                #adminSubnav { display: flex !important; align-items: center !important; width: 100%; gap: 0.5rem; }
+                #adminSubnav .navbar-nav { list-style: none !important; margin: 0 !important; padding-left: 0 !important; }
+                #adminSubnav .navbar-nav.me-auto { display: flex !important; flex-direction: row !important; gap: 1rem !important; align-items: center !important; }
+                #adminSubnav .navbar-nav.ms-auto { margin-left: auto !important; display: flex !important; align-items: center !important; }
+                #adminSubnav .nav-link { padding: .45rem .65rem !important; }
+                @media (max-width: 991.98px) {
+                    #adminSubnav { flex-direction: column !important; align-items: stretch !important; }
+                    #adminSubnav .navbar-nav.me-auto { flex-direction: column !important; gap: .25rem !important; }
+                    #adminSubnav .navbar-nav.ms-auto { margin-left: 0 !important; justify-content: flex-start !important; }
+                }
+            </style>
+
+            <div class="collapse navbar-collapse" id="adminSubnav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item me-3"><a class="nav-link" th:href="@{/portal/admin}">Inicio</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" th:href="@{/rutina/mis_rutinas}">Rutinas</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" th:href="@{/valor-cuota}">Cuotas</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" th:href="@{/sucursal}">Sucursales</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" th:href="@{/empresa}">Empresas</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" th:href="@{/direccion}">Direcciones</a></li>
+                </ul>
+
+                <!-- Right-aligned logout (POST with CSRF token) -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-flex align-items-center mb-0">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
         <section class="fh5co-hero">
             <div class="fh5co-overlay"></div>
@@ -38,7 +87,7 @@
                     <div class="col-md-12 text-center">
                         <div class="list-group">
                             <a th:href="@{/rutina/mis_rutinas}" class="list-group-item list-group-item-action">ABM Rutinas</a>
-                            <a th:href="@{/portal/admin/cuotas}" class="list-group-item list-group-item-action">ABM Cuotas</a>
+                            <a th:href="@{/valor-cuota}" class="list-group-item list-group-item-action">ABM Cuotas</a>
                             <a th:href="@{/sucursal}" class="list-group-item list-group-item-action">ABM Sucursales</a>
                             <a th:href="@{/empresa}" class="list-group-item list-group-item-action">ABM Empresas</a>
                         </div>
