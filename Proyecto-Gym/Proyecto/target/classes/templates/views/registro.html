@@ -12,28 +12,36 @@
                <div class="col-12 d-flex justify-content-center">
                   <div class="auth-card card shadow-lg border-0">
                        <div class="card-body">
-                          <h3 class="text-center mb-3">Registro de Usuario</h3>
-                        <form th:action="@{/registro}" method="post" th:object="${usuario}">
+                         <h3 class="text-center mb-3">Registro de Usuario</h3>
+                        <form th:action="@{/persona/registro}" method="post">
+                             <div th:if="${error != null}" class="alert alert-danger mb-3" th:text="${error}"></div>
                              <div class="row">
                                 <div class="col-md-6 mb-3">
                                    <label class="form-label">Nombre</label>
-                                   <input type="text" th:field="*{nombre}" class="form-control" placeholder="Nombre" required />
+                                   <input type="text" name="nombre" class="form-control" th:value="${nombre}" placeholder="Nombre" required />
                                 </div>
                                 <div class="col-md-6 mb-3">
                                    <label class="form-label">Apellido</label>
-                                   <input type="text" th:field="*{apellido}" class="form-control" placeholder="Apellido" required />
+                                   <input type="text" name="apellido" class="form-control" th:value="${apellido}" placeholder="Apellido" required />
                                 </div>
                              </div>
 
                              <div class="mb-3">
                                 <label class="form-label">E-Mail</label>
-                                <input type="email" th:field="*{email}" class="form-control" placeholder="E-Mail" required />
+                                <input type="email" name="email" class="form-control" th:value="${email}" placeholder="E-Mail" required />
                              </div>
 
                              <div class="mb-3">
                                 <label class="form-label">Contraseña</label>
-                                <input type="password" th:field="*{clave}" class="form-control" placeholder="Contraseña" required />
+                                <input type="password" name="clave1" class="form-control" th:value="${clave1}" placeholder="Contraseña" required />
                              </div>
+
+                             <div class="mb-3">
+                                <label class="form-label">Repetir Contraseña</label>
+                                <input type="password" name="clave2" class="form-control" th:value="${clave2}" placeholder="Repetir Contraseña" required />
+                             </div>
+
+                             <input type="hidden" name="esEmpleado" th:value="${esEmpleado ?: false}" />
 
                            <div class="d-grid gap-2">
                               <button type="submit" class="btn btn-primary">Registrarse</button>
