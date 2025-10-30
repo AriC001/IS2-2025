@@ -58,16 +58,12 @@
                         }
                     }
                 </style>
-                <a class="navbar-brand d-lg-none" href="#">Socio</a>
-                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#socioSubnav" aria-controls="socioSubnav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
                 <div class="collapse navbar-collapse" id="socioSubnav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
                         <li class="nav-item me-3"><a class="nav-link" th:href="@{/portal/socio/rutinas}">Mis Rutinas</a></li>
                         <li class="nav-item me-3"><a class="nav-link" th:href="@{/cuotas}">Mis Cuotas</a></li>
-                        <li class="nav-item me-3"><a class="nav-link" th:href="@{/pagos}">Pagos</a></li>
+                        <li class="nav-item me-3"><a class="nav-link" th:href="@{/payment}">Pagos</a></li>
                         <li class="nav-item me-3"><a class="nav-link" th:href="@{/perfil}">Mi Perfil</a></li>
                     </ul>
 
@@ -95,7 +91,7 @@
                                 <p>Accede a tus rutinas y pagos desde aquí.</p>
                                 <p>
                                     <a class="btn btn-primary me-2" th:href="@{/portal/socio/rutinas}">Mis Rutinas</a>
-                                    <a class="btn btn-success" th:href="@{/portal/socio/pagos}">Pagar Cuota</a>
+                                    <a class="btn btn-success" th:href="@{/payment}">Pagar Cuota</a>
                                 </p>
                             </div>
                         </div>

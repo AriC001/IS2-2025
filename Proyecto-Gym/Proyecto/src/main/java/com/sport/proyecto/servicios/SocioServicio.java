@@ -235,8 +235,16 @@ public class SocioServicio {
     }
     @Transactional
     public Optional<Socio> buscarSocioPorIdUsuario(String idUsuario) {
-        Long nroSocio = this.repositorioSocio.findNroSocioByIdUsuario(idUsuario);
-        return this.repositorioSocio.findByNumeroSocio(nroSocio);
+        try {
+            Long nroSocio = this.repositorioSocio.findNroSocioByIdUsuario(idUsuario);
+            if (nroSocio == null) {
+                return Optional.empty();
+            }
+            return this.repositorioSocio.findByNumeroSocio(nroSocio);
+        } catch (Exception e) {
+            // Log if you have a logger; return empty to avoid ClassCastException or NPE
+            return Optional.empty();
+        }
     }
     @Transactional
     public java.util.List<Socio> obtenerSociosActivos() {
@@ -254,7 +262,7 @@ public class SocioServicio {
             Socio s1 = s.get();
             cuotasActuales = s1.getCuotas();
         }
-        List<CuotaMensual> cuotasPendientes = new ArrayList();
+    List<CuotaMensual> cuotasPendientes = new ArrayList<>();
         for(int i = 0; i <cuotasActuales.size();i++){
             if(cuotasActuales.get(i).getEstado() == estadoCuota.ADEUDA || cuotasActuales.get(i).getEstado() == estadoCuota.VENCIDA || cuotasActuales.get(i).getEstado() == estadoCuota.PENDIENTE){
                 cuotasPendientes.add(cuotasActuales.get(i));
@@ -270,7 +278,7 @@ public class SocioServicio {
             Socio s1 = s.get();
             cuotasActuales = s1.getCuotas();
         }
-        List<CuotaMensual> cuotasPagadas = new ArrayList();
+    List<CuotaMensual> cuotasPagadas = new ArrayList<>();
         for(int i = 0; i <cuotasActuales.size();i++){
             if(cuotasActuales.get(i).getEstado() == estadoCuota.PAGADA){
                 cuotasPagadas.add(cuotasActuales.get(i));
