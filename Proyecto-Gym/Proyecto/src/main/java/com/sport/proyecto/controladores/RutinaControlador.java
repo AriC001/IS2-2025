@@ -1,5 +1,6 @@
 package com.sport.proyecto.controladores;
 
+import com.sport.proyecto.servicios.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,6 @@ import java.util.Collection;
 import com.sport.proyecto.entidades.DetalleRutina; 
 import com.sport.proyecto.enums.EstadoRutina;
 import com.sport.proyecto.enums.EstadoDetalleRutina;
-import com.sport.proyecto.servicios.RutinaServicio;
 import com.sport.proyecto.errores.ErrorServicio;
 import org.springframework.ui.ModelMap; 
 import org.springframework.web.bind.annotation.RequestParam;    
@@ -29,9 +29,9 @@ import com.sport.proyecto.entidades.Usuario;
 import com.sport.proyecto.enums.Rol;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
-import com.sport.proyecto.servicios.SocioServicio;
+
 import com.sport.proyecto.entidades.Empleado;
-import com.sport.proyecto.servicios.EmpleadoServicio;
+
 import java.util.List;
 import java.time.LocalDate;
 import org.springframework.ui.Model;
@@ -50,8 +50,10 @@ public class RutinaControlador {
     private SocioServicio socioServicio;
     @Autowired
     private EmpleadoServicio empleadoServicio;
+    @Autowired
+    private UsuarioServicio usuarioServicio;
 
-  @GetMapping("/crear")
+    @GetMapping("/crear")
     public String mostrarFormularioRutina(Model model) {
         Rutina rutina = new Rutina();
         rutina.getDetalleRutina().add(new DetalleRutina()); // evitar lista vacía
@@ -71,6 +73,8 @@ public class RutinaControlador {
             @RequestParam List<LocalDate> fechas,
             @org.springframework.web.bind.annotation.ModelAttribute("usuariosession") Usuario login,
             ModelMap modelo) throws ErrorServicio {
+
+        System.out.println(numeroSocio + " " + fechaInicio + " " + actividades + " " + login.getId());
 
         Empleado profesor = empleadoServicio.buscarEmpleadoPorIdUsuario(login.getId());
 
