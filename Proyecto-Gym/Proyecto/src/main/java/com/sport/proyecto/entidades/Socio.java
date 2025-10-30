@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+
 public class Socio extends Persona {
 
     @Column(unique = true, nullable = true)

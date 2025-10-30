@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Gimnasio Pro - Evolve</title>
+   <!-- Use CSS files that are actually present in static/css -->
+   <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+   <link rel="stylesheet" th:href="@{/css/animate.css}">
+   <link rel="stylesheet" th:href="@{/css/icomoon.css}">
+   <link rel="stylesheet" th:href="@{/css/superfish.css}">
+   <link rel="stylesheet" th:href="@{/css/style.css}">
+   <link rel="icon" th:href="@{/images/loc.png}" type="image/png" />
+</head>
+<body>
+   <header th:fragment="header">
+      <div>
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
+                  <div class="full">
+                     <div class="center-desk">
+                        <div class="logo">
+                           <a th:href="@{/}"><img th:src="@{/images/loc.png}" alt="logo" style="height:40px;"/></a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9">
+                  <nav th:replace="~{components/navbar :: nav_bar}"></nav>
+               </div>
+            </div>
+         </div>
+      </div>
+   </header>
+
+   <div th:fragment="scripts">
+      <!-- Use JS files that exist in static/js -->
+      <script th:src="@{/js/jquery.min.js}"></script>
+      <script th:src="@{/js/bootstrap.min.js}"></script>
+      <script th:src="@{/js/superfish.js}"></script>
+      <script th:src="@{/js/main.js}"></script>
+
+      <script>
+         (function(){
+            function initDropdowns(){
+               try{
+                  if (typeof bootstrap !== 'undefined' && document.querySelectorAll){
+                     var toggles = document.querySelectorAll('.dropdown-toggle');
+                     toggles.forEach(function(el){
+                        if (!el.__dropdownInitialized){
+                           new bootstrap.Dropdown(el);
+                           el.__dropdownInitialized = true;
+                        }
+                     });
+                  }
+               }catch(e){ console && console.warn && console.warn('Dropdown init error', e); }
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(initDropdowns,50); }); else setTimeout(initDropdowns,50);
+            window.addEventListener('load', function(){ setTimeout(initDropdowns,200); });
+         })();
+      </script>
+   </div>
+</body>
+</html>

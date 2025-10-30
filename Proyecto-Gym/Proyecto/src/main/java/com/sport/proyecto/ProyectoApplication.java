@@ -12,18 +12,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 @SpringBootApplication
 public class ProyectoApplication {
 
-	@Autowired
-	private CuotaMensualServicio cuotaMensualServicio;
+    @Autowired
+    private CuotaMensualServicio cuotaMensualServicio;
 
-	public static void main(String[] args) {
-		SpringApplication.run(ProyectoApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(ProyectoApplication.class, args);
 
+    }
 
-	}
-
-	@Scheduled(cron = "0 0 2 1 * ?") // cada 1 del mes a las 2 AM
-	public void generarCuotasAutomaticamente() {
-		cuotaMensualServicio.generarCuotasMensuales();
-	}
+    @Scheduled(cron = "0 0 2 1 * ?") // cada 1 del mes a las 2 AM
+    public void generarCuotasAutomaticamente() {
+        cuotaMensualServicio.generarCuotasMensuales();
+    }
 
 }

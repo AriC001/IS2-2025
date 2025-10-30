@@ -36,12 +36,32 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // Buscar el usuario completo en la base de datos
         Usuario usuario = usuarioService.buscarUsuarioPorNombre(nombreUsuario);
 
-          // Guardar el usuario en la sesión HTTP
-          HttpSession session = request.getSession();
-          session.setAttribute("usuariosession", usuario);
-            
-          // Redirigir a /regresoPage que maneja la lógica según el rol
-          response.sendRedirect("/index");
+      // Guardar el usuario en la sesión HTTP (si existe)
+      if (usuario != null) {
+        HttpSession session = request.getSession();
+        session.setAttribute("usuariosession", usuario);
+      }
+
+      // Redirigir según rol: ADMIN -> /portal/admin, EMPLEADO -> /portal/empleado, SOCIO -> /portal/socio
+      String targetUrl = "/";
+      if (authentication.getAuthorities() != null) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        boolean isEmpleado = authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLEADO"));
+        boolean isSocio = authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"));
+
+        if (isAdmin) {
+          targetUrl = "/portal/admin";
+        } else if (isEmpleado) {
+          targetUrl = "/portal/empleado";
+        } else if (isSocio) {
+          targetUrl = "/portal/socio";
+        }
+      }
+
+      response.sendRedirect(targetUrl);
         
       } catch (ErrorServicio e) {
         e.printStackTrace();

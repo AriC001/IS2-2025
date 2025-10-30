@@ -228,5 +228,40 @@ public class RutinaControlador {
         return "views/rutina/mis_rutinas";
     }
 
+    // Endpoint para que el ADMIN cree rutinas seleccionando socio y profesor (desde ABM)
+    @PostMapping("/admin/alta")
+    public String adminCrearRutina(
+            @RequestParam Long numeroSocio,
+            @RequestParam String idProfesor,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
+            @RequestParam(required = false) List<String> actividades,
+            @RequestParam(required = false) List<String> fechas,
+            ModelMap modelo) {
+        try {
+            java.util.Collection<DetalleRutina> detalles = new java.util.ArrayList<>();
+            if (actividades != null && fechas != null) {
+                for (int i = 0; i < Math.min(actividades.size(), fechas.size()); i++) {
+                    DetalleRutina d = new DetalleRutina();
+                    d.setActividad(actividades.get(i));
+                    try {
+                        java.time.LocalDate f = fechas.get(i) != null && !fechas.get(i).isEmpty() ? java.time.LocalDate.parse(fechas.get(i)) : null;
+                        d.setFecha(f);
+                    } catch (Exception ex) {
+                        d.setFecha(null);
+                    }
+                    d.setEstado(EstadoDetalleRutina.SIN_REALIZAR);
+                    d.setEliminado(false);
+                    detalles.add(d);
+                }
+            }
+            rutinaServicio.crearRutina(numeroSocio.toString(), idProfesor, detalles, fechaInicio, fechaFin);
+            return "redirect:/portal/admin/rutinas";
+        } catch (Exception e) {
+            modelo.put("error", e.getMessage());
+            return "error";
+        }
+    }
+
 
 }

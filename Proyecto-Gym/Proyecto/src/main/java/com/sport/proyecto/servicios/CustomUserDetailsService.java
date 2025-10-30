@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import org.springframework.security.core.userdetails.User;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -29,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UsuarioRepositorio usuarioRepository; 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario =new Usuario();
+        Usuario usuario = new Usuario();
         Optional<Usuario> opt = usuarioRepository.findByUsername(email);
         if(opt.isPresent()){
             usuario = opt.get();
@@ -38,13 +40,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         // Aquí puedes agregar la lógica para obtener los roles del usuario
-        GrantedAuthority p = new SimpleGrantedAuthority(usuario.getRol().toString());
+        GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
 
 
-        return org.springframework.security.core.userdetails.User
+        return User
                 .withUsername(usuario.getNombreUsuario())
                 .password(usuario.getClave()) // ¡ya está encriptado!
-                .roles(p.toString())
+                .authorities(p)
                 .build();
     }
 

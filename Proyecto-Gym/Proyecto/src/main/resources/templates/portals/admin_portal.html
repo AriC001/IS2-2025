@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{components/header :: head}"></head>
+    <body>
+
+        <div th:replace="~{components/admin_subnav :: admin_nav}"></div>
+
+        <section class="fh5co-hero">
+            <div class="fh5co-overlay"></div>
+            <div class="fh5co-cover" style="background-image: url('/images/home-image.jpg');">
+                <div class="desc animate-box">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <h2>Panel de Administración</h2>
+                                <p>Accede rápidamente a las herramientas de administración.</p>
+                                <p><a class="btn btn-primary" th:href="@{/portal/admin/rutinas}">Administrar Rutinas</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                
+
+        <section id="fh5co-schedule-section" class="fh5co-lightgray-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="heading-section text-center animate-box">
+                            <h2>Accesos Rápidos</h2>
+                            <p>Seleccione una acción para gestionar el sistema.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="list-group">
+                            <a th:href="@{/portal/admin/rutinas}" class="list-group-item list-group-item-action">ABM Rutinas</a>
+                            <a th:href="@{/portal/admin/cuotas}" class="list-group-item list-group-item-action">ABM Cuotas</a>
+                            <a th:href="@{/portal/admin/sucursales}" class="list-group-item list-group-item-action">ABM Sucursales</a>
+                            <a th:href="@{/portal/admin/empresas}" class="list-group-item list-group-item-action">ABM Empresas</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-4 text-center">
+            <div class="container"><small>&copy; Gimnasio Pro</small></div>
+        </footer>
+
+        <div th:replace="~{components/header :: scripts}"></div>
+    </body>
+</html>

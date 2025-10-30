@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{components/header :: head}"></head>
+    <body>
+
+        <!-- Empleado sub-navigation (visible only to empleados) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" sec:authorize="hasRole('ROLE_EMPLEADO')" style="z-index: 1030;">
+            <div class="container">
+                <a class="navbar-brand d-lg-none" href="#">Empleado</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#empleadoSubnav" aria-controls="empleadoSubnav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="empleadoSubnav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" th:href="@{/socios}">Ver Socios</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/mensaje}">Enviar Mensajes</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/portal/empleado/rutinas}">Mis Rutinas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <section class="container py-5">
+            <h1>Portal Empleado</h1>
+            <p>Gestionar rutinas y detalles de rutinas:</p>
+            <div class="list-group">
+                <a th:href="@{/portal/empleado/rutinas}" class="list-group-item list-group-item-action">ABM Rutinas</a>
+                <a th:href="@{/portal/empleado/rutina/detalle}" class="list-group-item list-group-item-action">ABM Detalle de Rutinas</a>
+            </div>
+        </section>
+
+        <footer class="py-4 text-center"><div class="container"><small>&copy; Gimnasio Pro</small></div></footer>
+
+        <div th:replace="~{components/header :: scripts}"></div>
+    </body>
+</html>

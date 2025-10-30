@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head th:replace="~{components/header :: head}"></head>
+	<body>
+
+		<div th:replace="~{components/admin_subnav :: admin_nav}"></div>
+
+		<div class="container py-5" th:with="entityName='Rutinas', items=${items}">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h2>ABM Rutinas</h2>
+				<div>
+					<a class="btn btn-success" th:href="@{/portal/admin/rutina/nuevo}">Nuevo Rutina</a>
+					<a class="btn btn-secondary" th:href="@{/portal/admin}">Volver al portal</a>
+				</div>
+			</div>
+
+			<div class="table-responsive">
+				<table class="table table-striped" id="abmTable">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Fecha Inicio</th>
+							<th>Fecha Fin</th>
+							<th>Socio</th>
+							<th>Profesor</th>
+							<th>Estado</th>
+							<th>Eliminado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item : ${items}">
+							<td th:text="${item.id}">id</td>
+							<td th:text="${item.fechaInicio}">2025-01-01</td>
+							<td th:text="${item.fechaFin}">2025-02-01</td>
+							<td th:text="${item.socio != null ? item.socio.nombre : 'N/A'}">Socio</td>
+							<td th:text="${item.profesor != null ? item.profesor.nombre : 'N/A'}">Profesor</td>
+							<td th:text="${item.estado}">ACTIVO</td>
+							<td><span th:text="${item.eliminado} ? 'Sí' : 'No'">No</span></td>
+							<td>
+								<a class="btn btn-sm btn-primary" th:href="@{/portal/admin/rutina/editar/{id}(id=${item.id})}">Editar</a>
+								<button class="btn btn-sm btn-danger btn-delete" type="button" th:data-id="${item.id}">Eliminar</button>
+							</td>
+						</tr>
+						<tr th:if="${items == null or #lists.isEmpty(items)}">
+							<td colspan="8" class="text-center">No hay rutinas cargadas.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+
+		</div>
+
+		<div th:replace="~{components/header :: scripts}"></div>
+
+		<script>
+			(function(){
+				// Delete action: submit a small form to server to delete (so controller handles it)
+				document.querySelectorAll('.btn-delete').forEach(function(btn){
+					btn.addEventListener('click', function(){
+						var id = btn.getAttribute('data-id');
+						if (!confirm('¿Eliminar rutina #' + id + '?')) return;
+						var f = document.createElement('form');
+						f.method = 'POST';
+						f.action = '/rutina/eliminar';
+						var inp = document.createElement('input'); inp.type='hidden'; inp.name='id'; inp.value = id; f.appendChild(inp);
+						document.body.appendChild(f);
+						f.submit();
+					});
+				});
+			})();
+		</script>
+
+	</body>
+</html>

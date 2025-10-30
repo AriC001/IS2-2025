@@ -1,0 +1,23 @@
+<nav xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="admin_nav" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" sec:authorize="hasRole('ROLE_ADMIN')" style="z-index: 1030;">
+    <div class="container-fluid">
+      <a class="navbar-brand d-lg-none" href="#">Administrador</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminSubnav" aria-controls="adminSubnav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="adminSubnav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" th:href="@{/portal/admin/rutinas}">Rutinas</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/portal/admin/cuotas}">Cuotas</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/portal/admin/sucursales}">Sucursales</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/portal/admin/empresas}">Empresas</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/portal/admin/geografia}">Geografía</a></li>
+        </ul>
+
+        <form class="d-flex" th:action="@{/portal/admin/buscar}" method="get">
+          <input class="form-control me-2" type="search" name="q" placeholder="Buscar en Admin" aria-label="Buscar" style="min-width:200px;"/>
+          <button class="btn btn-outline-light" type="submit">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </nav>

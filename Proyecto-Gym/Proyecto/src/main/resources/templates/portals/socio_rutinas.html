@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8" />
+    <title>Mis Rutinas - Socio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <div class="container py-5">
+        <h2>Mis Rutinas</h2>
+        <p>Mostrar lista de rutinas asignadas al socio (placeholder).</p>
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action">Rutina A - Full Body</a>
+            <a href="#" class="list-group-item list-group-item-action">Rutina B - Cardio</a>
+            <a href="#" class="list-group-item list-group-item-action">Rutina C - Fuerza</a>
+        </div>
+        <p class="mt-3"><a class="btn btn-secondary" th:href="@{/portal/socio}">Volver al portal</a></p>
+    </div>
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

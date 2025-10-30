@@ -19,11 +19,6 @@ public class InicioControlador {
     @Autowired
     private UsuarioServicio usuarioServicio;
 
-    @GetMapping({"/", "/index"})
-    public String index(Model model) {
-        return "index";
-    }
-
     /*@GetMapping("/error")
     public String error(Model model){
         return "views/error";

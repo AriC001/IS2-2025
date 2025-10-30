@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{components/header :: head}"></head>
+    <body>
+
+        <!-- Socio sub-navigation (visible only to socios) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" sec:authorize="hasRole('ROLE_SOCIO')" style="z-index: 1030;">
+            <div class="container">
+                <a class="navbar-brand d-lg-none" href="#">Socio</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#socioSubnav" aria-controls="socioSubnav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="socioSubnav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" th:href="@{/portal/socio/rutinas}">Mis Rutinas</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/cuotas}">Mis Cuotas</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/pagos}">Pagos</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/perfil}">Mi Perfil</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <section class="fh5co-hero">
+            <div class="fh5co-overlay"></div>
+            <div class="fh5co-cover" style="background-image: url('/images/home-image.jpg');">
+                <div class="desc animate-box">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <h2>Bienvenido, <span th:text="${username}">Usuario</span></h2>
+                                <p>Accede a tus rutinas y pagos desde aquí.</p>
+                                <p>
+                                    <a class="btn btn-primary me-2" th:href="@{/portal/socio/rutinas}">Mis Rutinas</a>
+                                    <a class="btn btn-success" th:href="@{/portal/socio/pagos}">Pagar Cuota</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-4 text-center">
+            <div class="container"><small>&copy; Gimnasio Pro</small></div>
+        </footer>
+
+        <div th:replace="~{components/header :: scripts}"></div>
+    </body>
+</html>

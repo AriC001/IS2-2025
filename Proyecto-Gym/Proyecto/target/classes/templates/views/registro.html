@@ -1,100 +1,62 @@
 <!DOCTYPE html>
-<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <!DOCTYPE html>
+  <html xmlns:th="http://www.thymeleaf.org">
+     <head th:replace="~{components/header :: head}"></head>
+   <body>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+   <section class="auth-hero" th:style="|background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('@{/images/login-bg.jpg}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh;|">
+         <div class="container">
+            <div class="row justify-content-center">
+               <div class="col-12 d-flex justify-content-center">
+                  <div class="auth-card card shadow-lg border-0">
+                       <div class="card-body">
+                          <h3 class="text-center mb-3">Registro de Usuario</h3>
+                        <form th:action="@{/registro}" method="post" th:object="${usuario}">
+                             <div class="row">
+                                <div class="col-md-6 mb-3">
+                                   <label class="form-label">Nombre</label>
+                                   <input type="text" th:field="*{nombre}" class="form-control" placeholder="Nombre" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                   <label class="form-label">Apellido</label>
+                                   <input type="text" th:field="*{apellido}" class="form-control" placeholder="Apellido" required />
+                                </div>
+                             </div>
 
-  <title th:text="${titulo}"></title>
+                             <div class="mb-3">
+                                <label class="form-label">E-Mail</label>
+                                <input type="email" th:field="*{email}" class="form-control" placeholder="E-Mail" required />
+                             </div>
 
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+                             <div class="mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" th:field="*{clave}" class="form-control" placeholder="Contraseña" required />
+                             </div>
 
-  <!-- Custom fonts for this template -->
-  <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+                           <div class="d-grid gap-2">
+                              <button type="submit" class="btn btn-primary">Registrarse</button>
+                           </div>
+                          </form>
+                       </div>
+                       <div class="card-footer text-center">
+                          <small>¿Ya tienes cuenta? <a th:href="@{/login}">Ingresar</a></small>
+                       </div>
+                  </div>
+                 </div>
+              </div>
+           </div>
+      </section>
 
-  <!-- Custom styles for this template -->
-  <link href="css/one-page-wonder.min.css" rel="stylesheet">
-
-</head>
-
-<body>
-
-  <!-- Navigation -->
-  <div th:replace="~{components/navbar :: nav_bar}"></div>
-
-  <header class="masthead text-center text-white">
-    <div class="masthead-content">
-      <div class="container">
-        <h1 class="masthead-heading mb-0">Gimnasio SPORT</h1>
-        <a href="/registro" class="btn btn-primary btn-xl rounded-pill mt-5">¡Registrate!</a>
+   <div th:replace="~{components/header :: scripts}"></div>
+     </body>
+   </html>
       </div>
     </div>
-    <div class="bg-circle-1 bg-circle"></div>
-    <div class="bg-circle-2 bg-circle"></div>
-    <div class="bg-circle-3 bg-circle"></div>
-    <div class="bg-circle-4 bg-circle"></div>
-  </header>
+  </div>
 
-  <section>
-    <div class="container mt-4">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow">
-            <div class="card-body p-5">
-              <h2 class="mb-4 text-center">Registrate</h2>
-              <form action="/persona/registro" method="POST" enctype="multipart/form-data">
-                <div th:if="${error != null}" class="alert alert-danger mb-3" th:text="${error}"></div>
-                <div class="mb-3">
-                  <label class="form-label">Nombre</label>
-                  <input type="text" class="form-control" name="nombre" th:value="${nombre}" required/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Apellido</label>
-                  <input type="text" class="form-control" name="apellido" th:value="${apellido}" required/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">E-Mail</label>
-                  <input type="email" class="form-control" name="email" th:value="${email}" required/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Clave</label>
-                  <input type="password" class="form-control" name="clave1" th:value="${clave1}" required/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Repetir Clave</label>
-                  <input type="password" class="form-control" name="clave2" th:value="${clave2}" required/>
-                </div>
-                <input type="hidden" name="esEmpleado" th:value="${esEmpleado ?: false}"/>
-                <div class="d-flex justify-content-between mt-4">
-                  <a th:href="@{/login}" class="btn btn-secondary">Ya tengo cuenta</a>
-                  <button type="submit" class="btn btn-primary">Registrarme</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- Footer -->
-  <footer class="py-5 bg-black">
-    <div class="container">
-      <p class="m-0 text-center text-white small">Copyright &copy; Your Website 2019</p>
-    </div>
-    <!-- /.container -->
-  </footer>
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

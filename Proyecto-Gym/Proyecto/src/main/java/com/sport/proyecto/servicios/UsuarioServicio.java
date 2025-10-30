@@ -55,8 +55,8 @@ public class UsuarioServicio {
   }
 
   @Transactional
-  public Usuario buscarUsuarioPorNombre(String nombreUsuario) throws ErrorServicio {
-    Optional<Usuario> opt = usuarioRepositorio.findByUsername(nombreUsuario);
+  public Usuario buscarUsuarioPorNombre(String email) throws ErrorServicio {
+    Optional<Usuario> opt = usuarioRepositorio.findByUsername(email);
     if (opt.isEmpty()) {
       return null; // devolvemos null en vez de tirar excepción
     }
