@@ -9,6 +9,7 @@
                <div class="col-12 d-flex justify-content-center">
                   <div class="auth-card card shadow-lg border-0">
                      <div class="card-body">
+                        <h3 th:if="${descripcion != null}" th:text="${descripcion}"></h3>
                         <h3 class="text-center mb-3">Acceso al Gimnasio</h3>
                         <form th:action="@{/login}" method="post">
                            <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>

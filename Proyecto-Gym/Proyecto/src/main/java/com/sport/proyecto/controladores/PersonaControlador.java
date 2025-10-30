@@ -18,6 +18,7 @@ public class PersonaControlador {
     public String registro(ModelMap modelo, @RequestParam String nombre, @RequestParam String apellido, @RequestParam String email, @RequestParam String clave1, @RequestParam String clave2, @RequestParam boolean esEmpleado) throws ErrorServicio {
         try{
 
+            System.out.println("Registro "+nombre + " " + email + " " + clave1 + " " + esEmpleado);
             Persona p = personaServicio.registro(nombre,apellido,email,clave1,clave2,esEmpleado,null);
             modelo.put("titulo", "Bienvenido a Gimnasio Sport ");
             modelo.put("descripcion", "Tu usuario fue registrado de manera satisfactoria. ");

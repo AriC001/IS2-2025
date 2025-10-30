@@ -76,10 +76,10 @@
 						<nav id="fh5co-menu-wrap" role="navigation" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 							<ul class="sf-menu" id="fh5co-primary-menu">
 								<!-- Mostrar solo registro/login en la página principal -->
-								<li sec:authorize="!isAuthenticated()">
+								<li sec:authorize="isAnonymous()">
 									<a th:href="@{/registro}">Registrarse</a>
 								</li>
-								<li sec:authorize="!isAuthenticated()">
+								<li sec:authorize="isAnonymous()">
 									<a th:href="@{/login}">Iniciar Sesión</a>
 								</li>
 								<!-- Si el usuario está autenticado, mostramos enlaces a sus portales por rol -->

@@ -28,8 +28,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Allow public access to the home page (index) and static resources
-                        .requestMatchers("/", "/usuarios/register/**", "/registro/**", "/css/**", "/js/**", "/images/**", "/vendor/**", "/scss/**").permitAll()
+                        // Allow public access to the home page (index), registration endpoints and static resources
+                        .requestMatchers("/", "/registro/**", "/persona/registro", "/css/**", "/js/**", "/images/**", "/vendor/**", "/scss/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -60,6 +60,6 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-  }
+    }
 
 }

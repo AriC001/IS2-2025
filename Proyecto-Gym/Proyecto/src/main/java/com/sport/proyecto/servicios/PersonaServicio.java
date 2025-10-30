@@ -10,6 +10,7 @@ import com.sport.proyecto.errores.ErrorServicio;
 import com.sport.proyecto.repositorios.EmpleadoRepositorio;
 import com.sport.proyecto.repositorios.PersonaRepositorio;
 import com.sport.proyecto.repositorios.SocioRepositorio;
+import com.sport.proyecto.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,8 @@ public class PersonaServicio {
     private UsuarioServicio usuarioServicio;
     @Autowired
     private CuotaMensualServicio cuotaMensualServicio;
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
 
     @Transactional
@@ -117,6 +120,10 @@ public class PersonaServicio {
         if (email == null || email.isEmpty()) {
             throw new ErrorServicio("El email no puede ser nulo");
         }
+        Optional<Usuario> opt = usuarioRepositorio.findByUsername(email);
+        if(opt.isPresent()){
+            throw new ErrorServicio("El email ya registrado");
+        }
         if (password == null || password.length() < 6) {
             throw new ErrorServicio("La contraseña no puede ser nula y debe tener al menos 6 caracteres");
         }
@@ -130,6 +137,7 @@ public class PersonaServicio {
 
     @Transactional
     public Persona registro(String nombre, String apellido, String email, String clave1, String clave2, boolean esEmpleado, Optional<tipoEmpleado> tipoEmpleado) {
+        System.out.println("Registro 2 "+nombre + " " + email + " " + clave1);
         validar(nombre,apellido,email,clave1,clave2);
         Persona p;
         if(esEmpleado){
