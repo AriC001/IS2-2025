@@ -144,6 +144,31 @@ public class UsuarioService implements UserDetailsService {
     	  } 
 
     }
+
+    @Transactional
+    public Usuario findOrCreateOAuthUser(String provider, String providerId, String username, String name, String email) {
+        /*To do this we need to refactor all db, no thanks
+        Optional<User> found = repository.findByProviderAndProviderId(provider, providerId);
+        if (found.isPresent()) {
+            User u = found.get();
+            boolean changed = false;
+            if (name != null && !name.equals(u.getName())) { u.setName(name); changed = true; }
+            if (email != null && !email.equals(u.getEmail())) { u.setEmail(email); changed = true; }
+            if (changed) { u.setUpdatedAt(Instant.now()); repo.save(u); }
+            return u;
+        }*/
+        // create new user
+        Usuario u = new Usuario();
+        //u.setProvider(provider);
+        //u.setProviderId(providerId);
+        //u.setId(username != null ? username : provider + "_" + providerId);
+        u.setNombre(name);
+        u.setEmail(email);
+        //u.setRoles("ROLE_USER");
+        //u.setCreatedAt(Instant.now());
+        //u.setUpdatedAt(Instant.now());
+        return repository.save(u);
+    }
     
     @Transactional
     public void cambiarRol(String idUsuario) throws ErrorServiceException {

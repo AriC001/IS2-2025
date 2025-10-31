@@ -2,6 +2,14 @@ server:
   port: 8081
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope: user:email
   application:
     name: biblioteca
   main:
@@ -10,7 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/demospringsecuritybibliotecadb?useSSL=false&serverTimezone=America/Mexico_City&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: 2341
   jpa:
     hibernate:
       ddl-auto: update

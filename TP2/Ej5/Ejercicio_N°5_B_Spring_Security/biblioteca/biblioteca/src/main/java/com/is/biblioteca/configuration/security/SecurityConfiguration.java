@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +19,8 @@ public class SecurityConfiguration {
 
   @Autowired
   private CustomAuthenticationSuccessHandler successHandler;
+  @Autowired
+  private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,14 +42,25 @@ public class SecurityConfiguration {
       .logout(logout -> logout
         .logoutUrl("/usuario/logout")
         .logoutSuccessUrl("/usuario/login?logout")
-        .permitAll()
-    );
+        .permitAll())
+            .oauth2Login(login -> login
+                    .loginPage("/login")
+                    .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
+                    .successHandler(successHandler)
+                    .permitAll());
     return http.build();
   }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public AuthenticationSuccessHandler authenticationSuccessHandler() {
+    SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler("/");
+    handler.setAlwaysUseDefaultTargetUrl(true);
+    return handler;
   }
 
 }
