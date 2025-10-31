@@ -33,6 +33,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String username = (String) attributes.get("login");     // GitHub: "login"
         String name = (String) attributes.get("name");
         String email = (String) attributes.get("email");
+        System.out.println(email);
 
         // If email is null for GitHub, you must request user:email or fetch via separate API
         if (email == null) {
@@ -48,9 +49,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // You can add local user id or roles into attributes if useful
         Map<String, Object> mappedAttrs = new HashMap<>(attributes);
+        // Ensure the email attribute reflects any fallback/synthetic value we computed above
+        mappedAttrs.put("email", email);
         mappedAttrs.put("localUserId", local.getId());
         mappedAttrs.put("localName", local.getNombre());
 
-        return new DefaultOAuth2User(authorities, mappedAttrs, "id"); // "id" key used as principalNameKey
+        return new DefaultOAuth2User(authorities, mappedAttrs, "email"); // "email" key used as principalNameKey
     }
 }

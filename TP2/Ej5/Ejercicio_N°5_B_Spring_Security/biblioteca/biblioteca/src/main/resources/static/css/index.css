@@ -78,3 +78,14 @@
 .boton:active{
     box-shadow: none;
 }
+
+/* OAuth button in login page: remove default Bootstrap blue border/shadow */
+.oauth-row .btn-primary {
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.oauth-row .btn-primary svg {
+    fill: #fff; /* ensure icon is visible on dark background */
+}

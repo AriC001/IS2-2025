@@ -59,10 +59,6 @@ public class UsuarioService implements UserDetailsService {
         if (email == null || email.trim().isEmpty()) {
             throw new ErrorServiceException("Debe indicar el Email");
         }
-        Optional<Usuario> opt = repository.buscarUsuarioPorEmail(email);
-        if (opt.isPresent()) {
-            throw new ErrorServiceException("Email ya registrado");
-        }
         
         if (clave == null || clave.trim().isEmpty()) {
             throw new ErrorServiceException("Debe indicar la clave");
@@ -84,6 +80,7 @@ public class UsuarioService implements UserDetailsService {
       try {	
     	  
         validar(nombre, email, clave, confirmacion);
+        validarEmailDuplicado(email);
         
         Usuario usuario = new Usuario();
         usuario.setId(UUID.randomUUID().toString());
@@ -101,6 +98,13 @@ public class UsuarioService implements UserDetailsService {
 		   e.printStackTrace();
 		   throw new ErrorServiceException("Error de Sistemas");
 	  } 
+    }
+
+    private void validarEmailDuplicado(String email) throws ErrorServiceException {
+        Optional<Usuario> opt = repository.buscarUsuarioPorEmail(email);
+        if (opt.isPresent()) {
+            throw new ErrorServiceException("Email ya registrado");
+        }
     }
 
     @Transactional
@@ -147,27 +151,46 @@ public class UsuarioService implements UserDetailsService {
 
     @Transactional
     public Usuario findOrCreateOAuthUser(String provider, String providerId, String username, String name, String email) {
-        /*To do this we need to refactor all db, no thanks
-        Optional<User> found = repository.findByProviderAndProviderId(provider, providerId);
-        if (found.isPresent()) {
-            User u = found.get();
-            boolean changed = false;
-            if (name != null && !name.equals(u.getName())) { u.setName(name); changed = true; }
-            if (email != null && !email.equals(u.getEmail())) { u.setEmail(email); changed = true; }
-            if (changed) { u.setUpdatedAt(Instant.now()); repo.save(u); }
-            return u;
-        }*/
-        // create new user
-        Usuario u = new Usuario();
-        //u.setProvider(provider);
-        //u.setProviderId(providerId);
-        //u.setId(username != null ? username : provider + "_" + providerId);
-        u.setNombre(name);
-        u.setEmail(email);
-        //u.setRoles("ROLE_USER");
-        //u.setCreatedAt(Instant.now());
-        //u.setUpdatedAt(Instant.now());
-        return repository.save(u);
+        System.out.println("HOLAAA 1");
+            try {
+                // 1) Buscar por provider+providerId (asociación preferida)
+                Optional<Usuario> found = repository.findByProviderAndProviderId(provider, providerId);
+                if (found.isPresent()) {
+                    Usuario u = found.get();
+                    boolean changed = false;
+                    if (name != null && !name.equals(u.getNombre())) { u.setNombre(name); changed = true; }
+                    if (email != null && u.getEmail()== null) { u.setEmail(email); changed = true; }
+                    if (changed) { repository.save(u); }
+                    return u;
+                }
+
+                // 2) Si no existe, intentar buscar por email (si se recibió) y asociar
+                if (email != null && !email.trim().isEmpty()) {
+                    Optional<Usuario> byEmail = repository.buscarUsuarioPorEmail(email);
+                    if (byEmail.isPresent()) {
+                        Usuario existing = byEmail.get();
+                        // asociar provider info para futuros logins
+                        existing.setProvider(provider);
+                        existing.setProviderId(providerId);
+                        return repository.save(existing);
+                    }
+                }
+
+                // 3) Si no existe por provider ni por email, crear un usuario nuevo
+                Usuario u = new Usuario();
+                u.setId(username != null ? username : provider + "_" + providerId);
+                u.setNombre(name != null ? name : username);
+                u.setEmail(email);
+                u.setProvider(provider);
+                u.setProviderId(providerId);
+                u.setRol(Rol.USER);
+                u.setEliminado(false);
+                return repository.save(u);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                // en caso de error, lanzar unchecked para que el flujo de login falle y se pueda ver el error
+                throw new RuntimeException("Error al crear/obtener usuario OAuth", ex);
+            }
     }
     
     @Transactional
@@ -195,7 +218,7 @@ public class UsuarioService implements UserDetailsService {
     
     @Transactional(readOnly=true)
     public Usuario buscarUsuario(String idUsuario) throws ErrorServiceException {
-
+        System.out.println("HOLAAA 2");
     	try {
             
             if (idUsuario == null || idUsuario.trim().isEmpty()) {
@@ -223,7 +246,7 @@ public class UsuarioService implements UserDetailsService {
     }
     
     public Usuario buscarUsuarioPorEmail (String email) throws ErrorServiceException {
-    	
+        System.out.println("HOLAAA 3");
     	try {	
     		
     		if (email == null || email.trim().isEmpty()) {

@@ -35,4 +35,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
          + "   AND u.password = :clave"
          + "   AND u.eliminado = FALSE")
     public Usuario buscarUsuarioPorEmailYClave(@Param("email")String email, @Param("clave")String clave);
+
+    @Query("SELECT u FROM Usuario u WHERE u.provider = :provider AND u.providerId = :providerId AND u.eliminado = false")
+    Optional<Usuario> findByProviderAndProviderId(@Param("provider") String provider,@Param("providerId") String providerId);
 }
