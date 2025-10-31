@@ -1,6 +1,7 @@
 package nexora.ejd.security;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,9 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 @Configuration
 @EnableWebSecurity
 public class OAuth2ClientSecurityConfig {
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     // Inject success handler as a parameter to the filterChain method to avoid
     // a circular bean reference between SecurityFilterChain and the handler.
@@ -50,8 +54,9 @@ public class OAuth2ClientSecurityConfig {
                         .logoutSuccessUrl("/login"))
         .oauth2Login(login -> login
             .loginPage("/login")
-        .successHandler(successHandler)
-        .permitAll());
+            .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
+            .successHandler(successHandler)
+            .permitAll());
         return http.build();
     }
 
