@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth0 Token Debug</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .token-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .token-value {
+            word-break: break-all;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .copy-btn {
+            margin-top: 10px;
+        }
+        .claims-table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">🔐 Auth0 Token Debug</h1>
+        
+        <div th:if="${idToken}" class="token-box">
+            <h3>👤 Usuario Autenticado</h3>
+            <p><strong>Email:</strong> <span th:text="${email}"></span></p>
+            <p><strong>Nombre:</strong> <span th:text="${nombre}"></span></p>
+        </div>
+
+        <div th:if="${idToken}" class="token-box">
+            <h3>🎫 ID Token (JWT)</h3>
+            <p class="text-muted">Este token contiene información sobre el usuario autenticado</p>
+            <div class="token-value" id="idToken" th:text="${idToken}"></div>
+            <button class="btn btn-primary copy-btn" onclick="copyToken('idToken')">
+                📋 Copiar Token
+            </button>
+            <a href="https://jwt.io" target="_blank" class="btn btn-secondary copy-btn">
+                🔍 Ver en JWT.io
+            </a>
+        </div>
+
+        <div th:if="${claims}" class="token-box">
+            <h3>📦 Claims del Token</h3>
+            <p class="text-muted">Información decodificada dentro del JWT</p>
+            <table class="table table-striped claims-table">
+                <thead>
+                    <tr>
+                        <th>Claim</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${claims}">
+                        <td><code th:text="${entry.key}"></code></td>
+                        <td th:text="${entry.value}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:unless="${idToken}" class="alert alert-warning">
+            <h4>⚠️ No estás autenticado</h4>
+            <p>Primero debes iniciar sesión con Auth0.</p>
+            <a href="/oauth2/authorization/auth0" class="btn btn-primary">Iniciar Sesión</a>
+        </div>
+
+        <div class="token-box">
+            <h3>📚 Cómo usar este token en una API</h3>
+            <p>Para hacer peticiones a APIs protegidas, envía el token en el header:</p>
+            <pre><code>Authorization: Bearer TU_TOKEN_AQUI</code></pre>
+            
+            <h5 class="mt-4">Ejemplo con curl:</h5>
+            <pre><code>curl -H "Authorization: Bearer TU_TOKEN_AQUI" \
+     http://localhost:9000/api/v1/usuarios/me</code></pre>
+
+            <h5 class="mt-4">Ejemplo con JavaScript (fetch):</h5>
+            <pre><code>fetch('http://localhost:9000/api/v1/usuarios/me', {
+  headers: {
+    'Authorization': 'Bearer TU_TOKEN_AQUI'
+  }
+})
+.then(res => res.json())
+.then(data => console.log(data));</code></pre>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/inicio" class="btn btn-outline-primary">← Volver a Inicio</a>
+            <a href="/auth0/debug" class="btn btn-outline-info">Ver JSON Raw</a>
+        </div>
+    </div>
+
+    <script>
+        function copyToken(elementId) {
+            const tokenElement = document.getElementById(elementId);
+            const token = tokenElement.textContent;
+            
+            navigator.clipboard.writeText(token).then(() => {
+                alert('✅ Token copiado al portapapeles!');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+    </script>
+</body>
+</html>

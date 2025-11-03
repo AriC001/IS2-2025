@@ -218,6 +218,7 @@
 /TP1/mascota/mascota/src/main/java/com/mascota/business/domain/entity/Zona.java
 /TP1/mascota/mascota/src/main/java/com/mascota/business/persistence/repository/ZonaRepository.java
 /TP1/mascota/mascota/src/main/java/com/mascota/business/logic/service/ZonaService.java
-*.properties
+
 *.class
 Proyecto-Gym/Proyecto/run.bat
+Proyecto-Gym/docker-compose.yml
