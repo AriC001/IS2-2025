@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="'Detalle de ' + ${entity.nombre + ' ' + entity.apellido}">Detalle de Autor</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/autores">Autores</a></li>
+                <li class="breadcrumb-item active" th:text="${entity.nombre + ' ' + entity.apellido}">Autor</li>
+            </ol>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>
+                    <i class="bi bi-person-lines-fill text-success"></i>
+                    <span th:text="${entity.nombre + ' ' + entity.apellido}">Nombre del Autor</span>
+                </h1>
+                <p class="text-muted">Información detallada del autor</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group" role="group">
+                    <a th:href="@{/autores/{id}/editar(id=${entity.id})}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="/autores" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Información general -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle"></i> Datos del Autor
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <strong>ID:</strong>
+                                <span class="badge bg-secondary ms-2" th:text="${entity.id}">#1</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>Estado:</strong>
+                                <span class="ms-2"
+                                      th:class="${entity.eliminado ? 'badge bg-danger' : 'badge bg-success'}"
+                                      th:text="${entity.eliminado ? 'Inactivo' : 'Activo'}">Activo</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>Nombre:</strong>
+                                <span class="ms-2" th:text="${entity.nombre}">Nombre</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <strong>Apellido:</strong>
+                                <span class="ms-2" th:text="${entity.apellido}">Apellido</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biografía -->
+                <div class="card mb-4" th:if="${entity.biografia}">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-journal-text"></i> Biografía
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0" th:text="${entity.biografia}">Biografía del autor</p>
+                    </div>
+                </div>
+
+                <!-- Mensaje si no hay biografía -->
+                <div class="card mb-4" th:unless="${entity.biografia}">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> Biografía no disponible
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">Este autor aún no tiene una biografía cargada.</p>
+                        <a th:href="@{/autores/{id}/editar(id=${entity.id})}" class="btn btn-sm btn-warning mt-2">
+                            <i class="bi bi-pencil"></i> Agregar biografía
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Acciones -->
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clipboard-check"></i> Acciones
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/autores/{id}/editar(id=${entity.id})}" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Editar Autor
+                            </a>
+                            <form th:action="@{/autores/{id}/eliminar(id=${entity.id})}" method="post">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Eliminar Autor
+                                </button>
+                            </form>
+                            <hr>
+                            <a href="/autores" class="btn btn-secondary">
+                                <i class="bi bi-list"></i> Ver todos
+                            </a>
+                            <a href="/autores/nuevo" class="btn btn-success">
+                                <i class="bi bi-person-plus"></i> Nuevo Autor
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información rápida -->
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-lightning-charge"></i> Información rápida
+                        </h6>
+                    </div>
+                    <div class="card-body small">
+                        <p class="mb-1">
+                            <strong>ID:</strong>
+                            <span th:text="${entity.id}">1</span>
+                        </p>
+                        <p class="mb-1">
+                            <strong>Nombre completo:</strong>
+                            <span th:text="${entity.nombre + ' ' + entity.apellido}">Nombre Apellido</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Estado:</strong>
+                            <span th:class="${entity.eliminado ? 'badge bg-danger' : 'badge bg-success'}"
+                                  th:text="${entity.eliminado ? 'Inactivo' : 'Activo'}">Activo</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts"></div>
+</html>
