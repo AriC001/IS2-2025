@@ -1,0 +1,439 @@
+/* ===============================================
+   Paleta de Colores Pastel Minimalista
+   =============================================== */
+
+:root {
+    /* Paleta Principal Pastel */
+    --pastel-lavender: #E8E2F0;
+    --pastel-sage: #E6F2E6;
+    --pastel-peach: #FFF0E6;
+    --pastel-powder: #E6F4F2;
+    --pastel-cream: #FDF8F5;
+    --pastel-rose: #F5E6E8;
+    --pastel-sky: #E6F0FF;
+    
+    /* Colores de Acento Suaves */
+    --soft-purple: #B8A9C9;
+    --soft-green: #A8C9A8;
+    --soft-orange: #E6C29A;
+    --soft-teal: #9DBAB7;
+    --soft-pink: #D4B5C4;
+    --soft-blue: #A8C4E6;
+    
+    /* Neutrales Minimalistas */
+    --neutral-white: #FEFEFE;
+    --neutral-light: #F8F9FA;
+    --neutral-soft: #F1F3F5;
+    --neutral-medium: #E9ECEF;
+    --neutral-dark: #8E9BAE;
+    --neutral-charcoal: #495057;
+    
+    /* Shadows Suaves */
+    --shadow-soft: 0 2px 8px rgba(174, 174, 192, 0.15);
+    --shadow-medium: 0 4px 16px rgba(174, 174, 192, 0.2);
+    --shadow-hover: 0 6px 20px rgba(174, 174, 192, 0.25);
+    
+    /* Borders Sutiles */
+    --border-soft: 1px solid rgba(174, 174, 192, 0.2);
+    --border-medium: 1px solid rgba(174, 174, 192, 0.3);
+    
+    /* Radius Minimalista */
+    --radius-small: 6px;
+    --radius-medium: 8px;
+    --radius-large: 12px;
+}
+
+/* ===============================================
+   Override Bootstrap con Paleta Pastel
+   =============================================== */
+
+body {
+    background-color: var(--neutral-light);
+    color: var(--neutral-charcoal);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Cards Minimalistas */
+.card {
+    background-color: var(--neutral-white);
+    border: var(--border-soft);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: var(--pastel-lavender) !important;
+    color: var(--neutral-charcoal) !important;
+    border-bottom: var(--border-soft);
+    border-radius: var(--radius-medium) var(--radius-medium) 0 0 !important;
+    padding: 1rem 1.25rem;
+}
+
+.card-header.bg-primary {
+    background-color: var(--pastel-sky) !important;
+}
+
+.card-header.bg-success {
+    background-color: var(--pastel-sage) !important;
+}
+
+.card-header.bg-warning {
+    background-color: var(--pastel-peach) !important;
+}
+
+.card-header.bg-info {
+    background-color: var(--pastel-powder) !important;
+}
+
+.card-header.bg-light {
+    background-color: var(--pastel-cream) !important;
+}
+
+/* Botones Pastel */
+.btn {
+    border-radius: var(--radius-small);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--soft-blue);
+    border-color: var(--soft-blue);
+    color: var(--neutral-charcoal);
+}
+
+.btn-primary:hover {
+    background-color: var(--pastel-sky);
+    border-color: var(--pastel-sky);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-success {
+    background-color: var(--soft-green);
+    border-color: var(--soft-green);
+    color: var(--neutral-charcoal);
+}
+
+.btn-success:hover {
+    background-color: var(--pastel-sage);
+    border-color: var(--pastel-sage);
+}
+
+.btn-warning {
+    background-color: var(--soft-orange);
+    border-color: var(--soft-orange);
+    color: var(--neutral-charcoal);
+}
+
+.btn-warning:hover {
+    background-color: var(--pastel-peach);
+    border-color: var(--pastel-peach);
+}
+
+.btn-info {
+    background-color: var(--soft-teal);
+    border-color: var(--soft-teal);
+    color: var(--neutral-charcoal);
+}
+
+.btn-info:hover {
+    background-color: var(--pastel-powder);
+    border-color: var(--pastel-powder);
+}
+
+.btn-danger {
+    background-color: var(--soft-pink);
+    border-color: var(--soft-pink);
+    color: var(--neutral-charcoal);
+}
+
+.btn-danger:hover {
+    background-color: var(--pastel-rose);
+    border-color: var(--pastel-rose);
+}
+
+.btn-secondary {
+    background-color: var(--neutral-medium);
+    border-color: var(--neutral-medium);
+    color: var(--neutral-charcoal);
+}
+
+.btn-secondary:hover {
+    background-color: var(--neutral-soft);
+    border-color: var(--neutral-soft);
+}
+
+/* Outline Buttons */
+.btn-outline-primary {
+    color: var(--soft-blue);
+    border-color: var(--soft-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--pastel-sky);
+    border-color: var(--soft-blue);
+    color: var(--neutral-charcoal);
+}
+
+.btn-outline-info {
+    color: var(--soft-teal);
+    border-color: var(--soft-teal);
+}
+
+.btn-outline-info:hover {
+    background-color: var(--pastel-powder);
+    border-color: var(--soft-teal);
+    color: var(--neutral-charcoal);
+}
+
+/* Forms Minimalistas */
+.form-control, .form-select {
+    border: var(--border-medium);
+    border-radius: var(--radius-small);
+    background-color: var(--neutral-white);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--soft-blue);
+    box-shadow: 0 0 0 0.2rem rgba(168, 196, 230, 0.25);
+    background-color: var(--neutral-white);
+}
+
+.form-label {
+    color: var(--neutral-charcoal);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Navbar Pastel */
+.navbar {
+    background-color: var(--neutral-white) !important;
+    border-bottom: var(--border-soft);
+    box-shadow: var(--shadow-soft);
+}
+
+.navbar-brand {
+    color: var(--neutral-charcoal) !important;
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link {
+    color: var(--neutral-charcoal) !important;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--soft-blue) !important;
+    background-color: var(--pastel-sky);
+    border-radius: var(--radius-small);
+}
+
+.dropdown-menu {
+    background-color: var(--neutral-white);
+    border: var(--border-soft);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+}
+
+.dropdown-item:hover {
+    background-color: var(--pastel-lavender);
+    color: var(--neutral-charcoal);
+}
+
+/* Tables Minimalistas */
+.table {
+    background-color: var(--neutral-white);
+}
+
+.table th {
+    background-color: var(--pastel-lavender);
+    color: var(--neutral-charcoal);
+    border-bottom: var(--border-medium);
+    font-weight: 600;
+}
+
+.table td {
+    border-bottom: var(--border-soft);
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--pastel-cream);
+}
+
+/* Badges Pastel */
+.badge.bg-success {
+    background-color: var(--soft-green) !important;
+    color: var(--neutral-charcoal);
+}
+
+.badge.bg-warning {
+    background-color: var(--soft-orange) !important;
+    color: var(--neutral-charcoal);
+}
+
+.badge.bg-secondary {
+    background-color: var(--neutral-medium) !important;
+    color: var(--neutral-charcoal);
+}
+
+.badge.bg-info {
+    background-color: var(--soft-teal) !important;
+    color: var(--neutral-charcoal);
+}
+
+/* Alerts Pastel */
+.alert {
+    border: none;
+    border-radius: var(--radius-medium);
+}
+
+.alert-success {
+    background-color: var(--pastel-sage);
+    color: var(--neutral-charcoal);
+}
+
+.alert-warning {
+    background-color: var(--pastel-peach);
+    color: var(--neutral-charcoal);
+}
+
+.alert-info {
+    background-color: var(--pastel-powder);
+    color: var(--neutral-charcoal);
+}
+
+.alert-danger {
+    background-color: var(--pastel-rose);
+    color: var(--neutral-charcoal);
+}
+
+/* Breadcrumb Minimalista */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.75rem 0;
+}
+
+.breadcrumb-item a {
+    color: var(--soft-blue);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--neutral-charcoal);
+}
+
+/* Modal Pastel */
+.modal-content {
+    border: var(--border-soft);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-hover);
+}
+
+.modal-header {
+    background-color: var(--pastel-lavender);
+    border-bottom: var(--border-soft);
+}
+
+.modal-footer {
+    background-color: var(--neutral-light);
+    border-top: var(--border-soft);
+}
+
+/* Footer Minimalista */
+footer {
+    background-color: var(--neutral-white);
+    border-top: var(--border-soft);
+    color: var(--neutral-dark);
+}
+
+/* Iconos Bootstrap con Color Suave */
+.bi {
+    opacity: 0.8;
+}
+
+/* Dashboard Cards Especiales */
+.dashboard-card {
+    background: linear-gradient(135deg, var(--neutral-white) 0%, var(--pastel-cream) 100%);
+    border: var(--border-soft);
+    transition: all 0.4s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.dashboard-card .card-body {
+    padding: 2rem;
+}
+
+.dashboard-card h5 {
+    color: var(--neutral-charcoal);
+    margin-bottom: 1rem;
+}
+
+.dashboard-card .display-4 {
+    color: var(--soft-blue);
+    font-weight: 300;
+}
+
+/* Search Box */
+.search-container {
+    background-color: var(--neutral-white);
+    border: var(--border-medium);
+    border-radius: var(--radius-medium);
+    padding: 1rem;
+    box-shadow: var(--shadow-soft);
+}
+
+/* Animaciones Suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card {
+        border-radius: var(--radius-small);
+        margin-bottom: 1rem;
+    }
+    
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Scrollbar Personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--neutral-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--neutral-medium);
+    border-radius: var(--radius-small);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neutral-dark);
+}
