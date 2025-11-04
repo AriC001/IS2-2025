@@ -1,6 +1,5 @@
 server:
   port: 8081
-
 spring:
   security:
     oauth2:
@@ -16,7 +15,7 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/demospringsecuritybibliotecadb?useSSL=false&serverTimezone=America/Mexico_City&allowPublicKeyRetrieval=true
+    url: ${DB_NAME:jdbc:mysql://localhost:3306/demospringsecuritybibliotecadb?createDatabaseIfNotExists=true&serverTimezone=UTC}
     username: root
     password: 2341
   jpa:
@@ -26,6 +25,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     generate-ddl: true
     show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
   servlet:
     multipart:
       max-file-size: 20MB
