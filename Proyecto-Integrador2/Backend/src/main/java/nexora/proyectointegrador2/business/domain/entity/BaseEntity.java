@@ -12,8 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
@@ -26,5 +25,21 @@ public abstract class BaseEntity<ID> implements Serializable{
   
   @Column(nullable = false)
   protected boolean eliminado;
+
+  public ID getId() {
+    return id;
+  }
+
+  public void setId(ID id) {
+    this.id = id;
+  }
+
+  public boolean isEliminado() {
+    return eliminado;
+  }
+
+  public void setEliminado(boolean eliminado) {
+    this.eliminado = eliminado;
+  }
 
 }
