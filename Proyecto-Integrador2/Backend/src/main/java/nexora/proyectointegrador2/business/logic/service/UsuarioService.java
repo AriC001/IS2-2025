@@ -8,6 +8,10 @@ import nexora.proyectointegrador2.business.persistence.repository.UsuarioReposit
 @Service
 public class UsuarioService extends BaseService<Usuario, String> {
 
+  private static final int MIN_USERNAME_LENGTH = 4;
+  private static final int MIN_PASSWORD_LENGTH = 6;
+  private static final String USERNAME_PATTERN = "^[a-zA-Z0-9._-]{4,}$";
+
   private final UsuarioRepository usuarioRepository;
 
   public UsuarioService(UsuarioRepository repository) {
@@ -20,14 +24,17 @@ public class UsuarioService extends BaseService<Usuario, String> {
     if (entity.getNombreUsuario() == null || entity.getNombreUsuario().trim().isEmpty()) {
       throw new Exception("El nombre de usuario es obligatorio");
     }
-    if (entity.getNombreUsuario().length() < 4) {
-      throw new Exception("El nombre de usuario debe tener al menos 4 caracteres");
+    if (entity.getNombreUsuario().length() < MIN_USERNAME_LENGTH) {
+      throw new Exception("El nombre de usuario debe tener al menos " + MIN_USERNAME_LENGTH + " caracteres");
+    }
+    if (!entity.getNombreUsuario().matches(USERNAME_PATTERN)) {
+      throw new Exception("El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos");
     }
     if (entity.getClave() == null || entity.getClave().trim().isEmpty()) {
       throw new Exception("La clave es obligatoria");
     }
-    if (entity.getClave().length() < 6) {
-      throw new Exception("La clave debe tener al menos 6 caracteres");
+    if (entity.getClave().length() < MIN_PASSWORD_LENGTH) {
+      throw new Exception("La clave debe tener al menos " + MIN_PASSWORD_LENGTH + " caracteres");
     }
     if (entity.getRol() == null) {
       throw new Exception("El rol es obligatorio");
