@@ -32,7 +32,14 @@ Este README describe, de forma muy breve, los ejercicios y proyectos contenidos 
 
 - `Ej5/`
   - `Ejercicio_N°5_B_Spring_Security/` y `Ejercicio_N°5_C_Spring_Security/`: ejercicios de seguridad con Spring Security; incluyen `docker-compose.yml`, ejemplos de requests y configuración.
-
+  - `5-d`: Aplicado a Gym-Sport, se encuentra en la carpeta Proyecto-Gym
+  - `5-f`: Aplicado en Ejercicio_N°5_B_Spring_Security.
+    
+- `Ej6/`
+  - `6-a`: Incluye Diagrama de clases, historias de usuarios, presupuesto, prototipos, acuerdo de confidencialidad y citaciones a 3 páginas del mismo rubro.
+  - `6-c`: Proyecto 1 desplegado y dockerizado. Se encuentra en la carpeta Proyecto-Gym. 
+  - `ej6-e`: Desarrollo de sofware para un sistema de gestión de contactos (Incluye 6-i).
+    
 - `Ej7/`
   - `B_Seguridad_Avanzada/`: Trabajo avanzado de seguridad (guías, Auth0, ejemplos de endpoints, JMX test plan).
   - `ej-d/`: Proyecto con `Dockerfile` y configuración — corresponde a uno de los ejercicios desplegados (7d).
