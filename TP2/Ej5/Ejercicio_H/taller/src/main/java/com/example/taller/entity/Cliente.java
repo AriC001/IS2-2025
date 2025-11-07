@@ -14,7 +14,7 @@ public class Cliente extends Persona {
     private String documento;
     private String email;
 
-    @OneToMany
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Vehiculo> vehiculos;
 
 

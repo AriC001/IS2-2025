@@ -7,25 +7,15 @@ import com.example.taller.error.ErrorServicio;
 import com.example.taller.repository.MecanicoRepository;
 import com.example.taller.repository.BaseRepository;
 import com.example.taller.repository.UsuarioRepository;
-import jakarta.servlet.http.HttpSession;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
-public class UsuarioService extends BaseService<Usuario, String> implements UserDetailsService {
+public class UsuarioService extends BaseService<Usuario, String> {
 
     public UsuarioService(BaseRepository<Usuario, String> repository) {
         super(repository);
@@ -36,6 +26,7 @@ public class UsuarioService extends BaseService<Usuario, String> implements User
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     @Override
     protected Usuario createEmpty() {
@@ -64,6 +55,7 @@ public class UsuarioService extends BaseService<Usuario, String> implements User
         if (!clave.equals(clave2)) {
             throw new ErrorServicio("Las claves deben coincidir");
         }
+    // Validaciones básicas ya implementadas en validar(entidad)
         if (usuarioRepository.findByNombreUsuario(nombre).isPresent()) {
             throw new ErrorServicio("El nombre de usuario ya existe");
         }
@@ -79,22 +71,5 @@ public class UsuarioService extends BaseService<Usuario, String> implements User
         usuarioRepository.save(usuario);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByNombreUsuario(username).get();
-
-        if (usuario != null) {
-            List<GrantedAuthority> permisos = new ArrayList();
-            GrantedAuthority p = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().toString());
-            permisos.add(p);
-
-            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            HttpSession session = attr.getRequest().getSession(true);
-            session.setAttribute("usuariosession", usuario);
-
-            return new User(usuario.getNombreUsuario(), usuario.getClave(), permisos);
-        } else {
-            throw new UsernameNotFoundException("Usuario no encontrado: " + username);
-        }
-    }
+    // Nota: la lógica de UserDetails se centraliza ahora en CustomUserDetailsService.
 }

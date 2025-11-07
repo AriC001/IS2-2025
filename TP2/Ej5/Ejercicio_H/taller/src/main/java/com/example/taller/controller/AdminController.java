@@ -1,18 +1,18 @@
 package com.example.taller.controller;
-import com.example.taller.service.UsuarioService;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.sound.midi.ShortMessage;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/panel")
     public String panelAdminController() {
-        return "adminPanel";
+        return "admin/panel";
     }
 
 }

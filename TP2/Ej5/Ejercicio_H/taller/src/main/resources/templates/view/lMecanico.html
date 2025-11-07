@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title th:text="${titleList}">Listado de Mecánicos</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" style="padding:20px;">
+    <h1 th:text="${titleList}">Listado de Mecánicos</h1>
+
+    <div style="margin-bottom:12px">
+        <a class="btn btn-success" th:href="@{/mecanico/alta}"><i class="fas fa-plus"></i> Nuevo</a>
+        <a class="btn btn-link" th:href="@{/admin/panel}">Volver al panel</a>
+    </div>
+
+    <div th:if="${msgExito != null}" class="alert alert-success" th:text="${msgExito}"></div>
+    <div th:if="${msgError != null}" class="alert alert-danger" th:text="${msgError}"></div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre completo</th>
+            <th>Legajo</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.id}">ID</td>
+            <td th:text="${item.usuario != null ? item.usuario.nombreUsuario : (item.nombre != null ? item.nombre + ' ' + item.apellido : '-')}">Nombre</td>
+            <td th:text="${item.legajo}">Legajo</td>
+            <td th:text="${item.usuario != null ? item.usuario.nombreUsuario : '-'}">Usuario</td>
+            <td>
+                <a class="btn btn-sm btn-primary" th:href="@{/mecanico/modificar/{id}(id=${item.id})}"><i class="fas fa-edit"></i> Editar</a>
+                <a class="btn btn-sm btn-danger" th:href="@{/mecanico/baja/{id}(id=${item.id})}" onclick="return confirm('¿Confirma eliminar este registro?');"><i class="fas fa-trash"></i> Eliminar</a>
+            </td>
+        </tr>
+        <tr th:if="${items.size() == 0}">
+            <td colspan="6">No hay registros.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

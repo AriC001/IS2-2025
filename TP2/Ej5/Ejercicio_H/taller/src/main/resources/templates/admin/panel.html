@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Panel Admin</title>
+</head>
+<body>
+<h1>Panel de Administración</h1>
+<p>Opciones de administración aparecerán aquí.</p>
+<div class="container" style="padding:20px;font-family:Arial, sans-serif">
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <!-- Mecanicos card -->
+        <div style="border:1px solid #ddd;padding:16px;border-radius:8px;width:320px;">
+            <h2><i class="fas fa-user-cog" aria-hidden="true"></i> Mecánicos</h2>
+            <p>Gestionar mecánicos: agregar, editar o eliminar registros.</p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+                <a class="btn btn-sm btn-success" th:href="@{/mecanico/alta}" title="Agregar mecánico">
+                    <i class="fas fa-plus"></i> Agregar
+                </a>
+                <a class="btn btn-sm btn-primary" th:href="@{/mecanico/list}" title="Ver / Editar mecánicos">
+                    <i class="fas fa-edit"></i> Ver / Editar
+                </a>
+                <a class="btn btn-sm btn-danger" th:href="@{/mecanico/list}" title="Eliminar mecánicos (desde la lista)">
+                    <i class="fas fa-trash"></i> Eliminar
+                </a>
+            </div>
+        </div>
+
+        <!-- Vehiculos card -->
+        <div style="border:1px solid #ddd;padding:16px;border-radius:8px;width:320px;">
+            <h2><i class="fas fa-car" aria-hidden="true"></i> Vehículos</h2>
+            <p>Gestionar vehículos: agregar, editar o eliminar registros.</p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+                <a class="btn btn-sm btn-success" th:href="@{/vehiculo/alta}" title="Agregar vehículo">
+                    <i class="fas fa-plus"></i> Agregar
+                </a>
+                <a class="btn btn-sm btn-primary" th:href="@{/vehiculo/list}" title="Ver / Editar vehículos">
+                    <i class="fas fa-edit"></i> Ver / Editar
+                </a>
+                <a class="btn btn-sm btn-danger" th:href="@{/vehiculo/list}" title="Eliminar vehículos (desde la lista)">
+                    <i class="fas fa-trash"></i> Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:20px">
+        <a th:href="@{/}" class="btn btn-link">Volver</a>
+    </div>
+</div>
+</body>
+</html>
