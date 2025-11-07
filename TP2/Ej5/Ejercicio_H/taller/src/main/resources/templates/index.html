@@ -90,11 +90,22 @@
 
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
-                            <a href="about.html" class="nav-item nav-link">About</a>
-                            <a href="service.html" class="nav-item nav-link">Service</a>
+                            <a href="#" class="nav-item nav-link active">Home</a>
+                            <a href="#" class="nav-item nav-link">About</a>
+                            <a href="#" class="nav-item nav-link">Service</a>
                         <div class="ml-auto">
-                            <a class="btn btn-custom" th:action="@{/login}">Iniciar sesión</a>
+                            <!-- Mostrar botón de login sólo si no hay usuario en sesión. Si hay, mostrar logout (POST con CSRF) -->
+                            <div th:if="${session.usuariosession == null}">
+                                <a class="btn btn-custom" th:href="@{/login}">Iniciar sesión</a>
+                            </div>
+                            <div th:if="${session.usuariosession != null}">
+                                <a class="btn btn-custom" th:href="@{/mis-vehiculos}">Mis Vehículos</a>
+                                <a th:if="${session.ismecanico == true}" class="btn btn-custom" th:href="@{/mecanico/arreglos}" style="margin-left:8px;">Mis Arreglos</a>
+                                <form th:action="@{/logout}" method="post" style="display:inline; margin-left:8px;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button class="btn btn-custom" type="submit">Cerrar sesión</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </nav>
@@ -260,6 +271,7 @@
         <!-- Location Start -->
         <div class="location">
             <div class="container">
+                <!--
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="section-header text-left">
@@ -284,6 +296,7 @@
                         </div>
                     </div>
                 </div>
+                -->
             </div>
         </div>
         <!-- Location End -->

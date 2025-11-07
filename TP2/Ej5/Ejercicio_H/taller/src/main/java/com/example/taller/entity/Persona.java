@@ -20,3 +20,4 @@ public abstract class Persona extends BaseEntity<String> {
     protected boolean eliminado;
     
 }
+    

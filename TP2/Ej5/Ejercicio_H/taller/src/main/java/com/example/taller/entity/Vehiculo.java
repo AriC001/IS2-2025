@@ -25,7 +25,7 @@ public class Vehiculo extends BaseEntity<String>{
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @OneToMany
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
     private List<HistorialArreglo> historialArreglo;
 
 

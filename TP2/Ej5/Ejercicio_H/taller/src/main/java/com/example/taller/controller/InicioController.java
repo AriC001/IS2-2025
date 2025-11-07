@@ -1,6 +1,6 @@
 package com.example.taller.controller;
 
-import com.example.taller.entity.Usuario;
+import com.example.taller.dto.UsuarioSafeDTO;
 import com.example.taller.error.ErrorServicio;
 import com.example.taller.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
@@ -23,21 +23,21 @@ public class InicioController {
         this.usuarioService = usuarioService;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    //@PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/")
     public String home(Model model, HttpSession session) {
         model.addAttribute("taller", "Bienvenido al Sistema");
 
-        Usuario usuario = (Usuario) session.getAttribute("usuariosession");
+        UsuarioSafeDTO usuario = (UsuarioSafeDTO) session.getAttribute("usuariosession");
 
         if (usuario != null) {
-            if (usuario.getRol().toString().equals("ADMIN")) {
+            if (usuario.getRol() != null && usuario.getRol().toString().equals("ADMIN")) {
                 return "redirect:/admin/panel";
-            }else {
-                return "views/home";
+            } else {
+                return "index"; // usar plantilla existente en templates/index.html
             }
-        }else {
-            return "views/home";
+        } else {
+            return "index"; // si no hay usuario en sesión mostrar index
         }
 
     }

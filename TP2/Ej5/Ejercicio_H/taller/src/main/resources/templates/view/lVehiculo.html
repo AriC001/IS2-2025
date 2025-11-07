@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title th:text="${titleList}">Listado de Vehículos</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" style="padding:20px;">
+    <h1 th:text="${titleList}">Listado de Vehículos</h1>
+
+    <div style="margin-bottom:12px">
+        <a class="btn btn-success" th:href="@{/vehiculo/alta}"><i class="fas fa-plus"></i> Nuevo</a>
+        <a class="btn btn-link" th:href="@{/admin/panel}">Volver al panel</a>
+    </div>
+
+    <div th:if="${msgExito != null}" class="alert alert-success" th:text="${msgExito}"></div>
+    <div th:if="${msgError != null}" class="alert alert-danger" th:text="${msgError}"></div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Patente</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Cliente</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.id}">ID</td>
+            <td th:text="${item.patente}">Patente</td>
+            <td th:text="${item.marca}">Marca</td>
+            <td th:text="${item.modelo}">Modelo</td>
+            <td th:text="${item.cliente != null ? item.cliente.nombre + ' ' + item.cliente.apellido : '-'}">Cliente</td>
+            <td>
+                <a class="btn btn-sm btn-primary" th:href="@{/vehiculo/modificar/{id}(id=${item.id})}"><i class="fas fa-edit"></i> Editar</a>
+                <a class="btn btn-sm btn-danger" th:href="@{/vehiculo/baja/{id}(id=${item.id})}" onclick="return confirm('¿Confirma eliminar este registro?');"><i class="fas fa-trash"></i> Eliminar</a>
+            </td>
+        </tr>
+        <tr th:if="${items.size() == 0}">
+            <td colspan="6">No hay registros.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

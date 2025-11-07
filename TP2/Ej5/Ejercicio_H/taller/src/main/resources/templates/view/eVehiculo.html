@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title th:text="${titleEdit}">Editar Vehículo</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" style="padding:20px;">
+    <h1 th:text="${titleEdit}">Editar Vehículo</h1>
+
+    <div th:if="${msgExito != null}" class="alert alert-success" th:text="${msgExito}"></div>
+    <div th:if="${msgError != null}" class="alert alert-danger" th:text="${msgError}"></div>
+
+    <form th:action="@{/${nameEntityLower}/actualizar}" th:object="${item}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group">
+         <label for="patente">Patente</label>
+         <input id="patente" class="form-control" th:field="*{patente}"
+             th:disabled="${isDisabled}" />
+        </div>
+
+        <div class="form-group">
+         <label for="marca">Marca</label>
+         <input id="marca" class="form-control" th:field="*{marca}"
+             th:disabled="${isDisabled}" />
+        </div>
+
+        <div class="form-group">
+         <label for="modelo">Modelo</label>
+         <input id="modelo" class="form-control" th:field="*{modelo}"
+             th:disabled="${isDisabled}" />
+        </div>
+
+        <div class="form-group">
+            <label for="cliente">Cliente</label>
+        <select id="cliente" class="form-control" th:field="*{cliente.id}"
+            th:disabled="${isDisabled}">
+                <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nombre + ' ' + c.apellido}"></option>
+            </select>
+        </div>
+
+        <div style="margin-top:12px">
+            <button type="submit" class="btn btn-primary" th:if="${!isDisabled}">Guardar</button>
+            <a th:href="@{/${nameEntityLower}/cancelar}" class="btn btn-link">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

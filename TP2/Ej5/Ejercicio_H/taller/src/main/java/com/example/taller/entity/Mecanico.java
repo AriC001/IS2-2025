@@ -15,10 +15,10 @@ import java.io.Serializable;
 public class Mecanico extends Persona {
     private String legajo;
 
-    @OneToMany
+    @OneToMany(mappedBy = "mecanico", cascade = CascadeType.ALL)
     private List<HistorialArreglo> arreglos;
 
-    @OneToOne
+    @OneToOne(mappedBy = "mecanico")
     private Usuario usuario;
 
     @Override

@@ -22,6 +22,7 @@
 
         <!-- Template Stylesheet -->
         <link th:href="@{css/style.css}" rel="stylesheet">
+        <link rel="stylesheet" href="../../static/lib/owlcarousel/assets/owl.carousel.min.css">
     </head>
 
     <body>
@@ -107,7 +108,16 @@
                             <a href="contact.html" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="ml-auto">
-                            <a class="btn btn-custom" href="#">Get Appointment</a>
+                            <!-- Show login/ logout depending on session. This keeps navbar consistent with index -->
+                            <div th:if="${session.usuariosession == null}">
+                                <a class="btn btn-custom" th:href="@{/login}">Iniciar sesión</a>
+                            </div>
+                            <div th:if="${session.usuariosession != null}">
+                                <form th:action="@{/logout}" method="post" style="display:inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button class="btn btn-custom" type="submit">Cerrar sesión</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </nav>
