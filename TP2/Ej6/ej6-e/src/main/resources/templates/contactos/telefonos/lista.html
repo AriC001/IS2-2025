@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Contactos Teléfono - Nexora</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Topbar -->
+                <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+                <!-- Main Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Contactos por Teléfono</h1>
+                        <a th:href="@{/contactos/telefonos/nuevo}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Contacto Teléfono
+                        </a>
+                    </div>
+
+                    <!-- DataTales -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Lista de Contactos Teléfono</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Teléfono</th>
+                                            <th>Tipo Teléfono</th>
+                                            <th>Tipo Contacto</th>
+                                            <th>Persona</th>
+                                            <th>Observación</th>
+                                            <th>WhatsApp</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="contacto : ${entities}">
+                                            <td th:text="${contacto.id}">1</td>
+                                            <td>
+                                                <span th:text="${contacto.numeroTelefono}">+54 9 11 1234-5678</span>
+                                                <a th:if="${contacto.tipoTelefono?.name() == 'CELULAR'}" 
+                                                   th:href="@{'https://wa.me/' + ${contacto.numeroTelefono.replaceAll('[^0-9]', '')}}" 
+                                                   target="_blank" 
+                                                   class="btn btn-success btn-xs ml-2"
+                                                   title="Abrir en WhatsApp Web"
+                                                   style="padding: 2px 6px; font-size: 12px;">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span th:if="${contacto.tipoTelefono?.name() == 'CELULAR'}" class="badge badge-success">
+                                                    <i class="fas fa-mobile-alt"></i> <span th:text="${contacto.tipoTelefono}">CELULAR</span>
+                                                </span>
+                                                <span th:if="${contacto.tipoTelefono?.name() == 'FIJO'}" class="badge badge-secondary">
+                                                    <i class="fas fa-phone"></i> <span th:text="${contacto.tipoTelefono}">FIJO</span>
+                                                </span>
+                                            </td>
+                                            <td th:text="${contacto.tipoContacto}">PERSONAL</td>
+                                            <td th:text="${contacto.persona != null ? contacto.persona.nombre + ' ' + contacto.persona.apellido : 'Sin persona'}">Juan Pérez</td>
+                                            <td th:text="${contacto.observacion}">Observación</td>
+                                            <td class="text-center">
+                                                <a th:if="${contacto.tipoTelefono?.name() == 'CELULAR'}" 
+                                                   th:href="@{'https://wa.me/' + ${contacto.numeroTelefono.replaceAll('[^0-9]', '')}}" 
+                                                   target="_blank" 
+                                                   class="btn btn-success btn-sm"
+                                                   title="Abrir en WhatsApp Web">
+                                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                                </a>
+                                                <span th:if="${contacto.tipoTelefono?.name() != 'CELULAR'}" class="text-muted">
+                                                    <i class="fas fa-minus"></i>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a th:href="@{/contactos/telefonos/{id}/editar(id=${contacto.id})}" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                                <form th:action="@{/contactos/telefonos/{id}/eliminar(id=${contacto.id})}" method="post" style="display:inline;">
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Está seguro de eliminar este contacto?')">
+                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Nexora 2025</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>
