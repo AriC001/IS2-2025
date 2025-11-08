@@ -2,6 +2,9 @@ package com.nexora.proyecto.gestion.business.logic.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.nexora.proyecto.gestion.business.persistence.dao.UsuarioDAO;
 import com.nexora.proyecto.gestion.dto.UsuarioDTO;
 
@@ -39,5 +42,15 @@ public class UsuarioService extends BaseService<UsuarioDTO, String> {
     }
   }
 
+    public Optional<UsuarioDTO> findByUsername(String nombreUsuario) {
+      if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+        return Optional.empty();
+      }
+      // Buscar entre las entidades activas expuestas por la API
+      List<UsuarioDTO> usuarios = dao.findAllActives();
+      return usuarios.stream()
+          .filter(u -> nombreUsuario.equals(u.getNombreUsuario()))
+          .findFirst();
+    }
 }
 

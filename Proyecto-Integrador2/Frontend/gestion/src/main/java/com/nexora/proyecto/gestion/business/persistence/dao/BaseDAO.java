@@ -187,5 +187,4 @@ public abstract class BaseDAO<T extends BaseDTO, ID> {
   private Class<T[]> getArrayClass() {
     return (Class<T[]>) Array.newInstance(getEntityClass(), 0).getClass();
   }
-
 }
