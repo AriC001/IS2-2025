@@ -22,19 +22,29 @@ Este README describe, de forma muy breve, los ejercicios y proyectos contenidos 
   - Nota: hay varias carpetas `EJ2-b-*` repetidas en distintas raíces; contienen distintas versiones/entregas.
 
 - `Ej3/`
+  - `Ej3-c/` (subcarpetas): Ejercicio 1-b con Template Method.
+  - `Ej3-b`: Se encuentra aplicado el patrón Template en el ejercicio 2-b.
   - `e-Template/`: Implementación basada en patrón Template Method (plantilla y ejemplos).
-  - `Ej3-c/` (subcarpetas): más variantes del ejercicio 3.
+  
 
 - `Ej4/`
   - `b-VideojuegosRest/`: API REST para videojuegos (JSON de ejemplo `allGames.json`, `fewGames.json`).
-  - `c-biblioteca/`: Ejercicios vinculados al dominio biblioteca (consumer/rest separados en subcarpetas).
+  - `c-biblioteca/`: Ejercicios vinculados al dominio biblioteca (consumer/rest separados en subcarpetas). Allí verá los patrones aplicados.
   - `ej4-a.txt`: Notas o enunciado para el subejercicio a.
 
 - `Ej5/`
   - `Ejercicio_N°5_B_Spring_Security/` y `Ejercicio_N°5_C_Spring_Security/`: ejercicios de seguridad con Spring Security; incluyen `docker-compose.yml`, ejemplos de requests y configuración.
-
+  - `5-d`: Aplicado a Gym-Sport, se encuentra en la carpeta Proyecto-Gym
+  - `5-f`: Aplicado en Ejercicio_N°5_B_Spring_Security.
+    
+- `Ej6/`
+  - `6-a`: Incluye Diagrama de clases, historias de usuarios, presupuesto, prototipos, acuerdo de confidencialidad y citaciones a 3 páginas del mismo rubro.
+  - `6-c`: Proyecto 1 desplegado y dockerizado. Se encuentra en la carpeta Proyecto-Gym. 
+  - `ej6-e`: Desarrollo de sofware para un sistema de gestión de contactos (Incluye 6-i).
+    
 - `Ej7/`
-  - `B_Seguridad_Avanzada/`: Trabajo avanzado de seguridad (guías, Auth0, ejemplos de endpoints, JMX test plan).
+  - `B_Seguridad_Avanzada/`: Trabajo avanzado de seguridad (guías, Auth0, ejemplos de endpoints, JMX test plan) en el proyecto de Mascotas.
+  - `7-c`: Seguridad avanzada aplicada en Integrador 1 (usando oauth2 con Github para la autenticación y autorización), se encuentra en la carpeta Proyecto-Gym.
   - `ej-d/`: Proyecto con `Dockerfile` y configuración — corresponde a uno de los ejercicios desplegados (7d).
   - `ej-e/`: Contiene dos subproyectos `EJ2-b-Consumer/` y `EJ2-b-Rest/` como ejemplos/adaptaciones.
   - Notas de despliegue: Los ejercicios del grupo 7 están desplegados en DonWeb (VPS). Hay dos entregas desplegadas:
