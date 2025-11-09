@@ -17,7 +17,7 @@ import nexora.proyectointegrador2.utils.dto.AuthResponseDTO;
 import nexora.proyectointegrador2.utils.dto.LoginRequestDTO;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
   private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
