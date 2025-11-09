@@ -14,6 +14,6 @@ import lombok.Setter;
 public class ProvinciaDTO extends BaseDTO {
 
   private String nombre;
-  private String paisId;
+  private PaisDTO pais;
 
 }

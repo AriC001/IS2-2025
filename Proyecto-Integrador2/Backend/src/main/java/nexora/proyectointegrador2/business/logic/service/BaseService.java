@@ -22,6 +22,8 @@ public abstract class BaseService<T extends BaseEntity<ID>, ID> {
     if (entity == null) {
       throw new Exception("La entidad no puede ser nula");
     }
+    // Hook method: permite a las subclases persistir entidades relacionadas antes de guardar
+    preAlta(entity);
     validar(entity);
     entity.setEliminado(false);
     return repository.save(entity);
@@ -38,6 +40,8 @@ public abstract class BaseService<T extends BaseEntity<ID>, ID> {
     if (!repository.existsById(id)) {
       throw new Exception("La entidad no existe con ID: " + id);
     }
+    // Hook method: permite a las subclases persistir entidades relacionadas antes de actualizar
+    preUpdate(id, entity);
     validar(entity);
     entity.setId(id);
     return repository.save(entity);
@@ -103,6 +107,33 @@ public abstract class BaseService<T extends BaseEntity<ID>, ID> {
   @Transactional(readOnly = true)
   public long count() {
     return repository.count();
+  }
+
+  /**
+   * Permite a las subclases persistir entidades relacionadas antes de guardar la entidad principal.
+   * Por defecto no realiza ninguna acción. Las subclases pueden sobrescribirlo si necesitan
+   * persistir entidades relacionadas (ej: Dirección, Contacto antes de Cliente).
+   * 
+   * @param entity Entidad que se va a persistir
+   * @throws Exception Si ocurre algún error al procesar las entidades relacionadas
+   */
+  protected void preAlta(T entity) throws Exception {
+    // Implementación por defecto: no hace nada
+    // Las subclases pueden sobrescribir este método para persistir entidades relacionadas
+  }
+
+  /**
+   * Permite a las subclases persistir o actualizar entidades relacionadas antes de actualizar la entidad principal.
+   * Por defecto no realiza ninguna acción. Las subclases pueden sobrescribirlo si necesitan
+   * manejar entidades relacionadas durante la actualización.
+   * 
+   * @param id ID de la entidad que se va a actualizar
+   * @param entity Entidad con los nuevos datos
+   * @throws Exception Si ocurre algún error al procesar las entidades relacionadas
+   */
+  protected void preUpdate(ID id, T entity) throws Exception {
+    // Implementación por defecto: no hace nada
+    // Las subclases pueden sobrescribir este método para persistir/actualizar entidades relacionadas
   }
 
   protected abstract void validar(T entity) throws Exception;

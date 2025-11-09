@@ -1,12 +1,17 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import nexora.proyectointegrador2.business.domain.entity.Direccion;
 import nexora.proyectointegrador2.business.domain.entity.Empresa;
 import nexora.proyectointegrador2.business.persistence.repository.EmpresaRepository;
 
 @Service
 public class EmpresaService extends BaseService<Empresa, String> {
+
+  @Autowired
+  private DireccionService direccionService;
 
   public EmpresaService(EmpresaRepository repository) {
     super(repository);
@@ -32,6 +37,32 @@ public class EmpresaService extends BaseService<Empresa, String> {
     
     if (entity.getDireccion() == null) {
       throw new Exception("La dirección es obligatoria");
+    }
+  }
+
+  @Override
+  protected void preAlta(Empresa entity) throws Exception {
+    if (entity.getDireccion() != null && entity.getDireccion().getId() == null) {
+      Direccion direccionGuardada = direccionService.save(entity.getDireccion());
+      entity.setDireccion(direccionGuardada);
+    } else if (entity.getDireccion() != null && entity.getDireccion().getId() != null) {
+      Direccion direccionExistente = direccionService.findById(entity.getDireccion().getId());
+      entity.setDireccion(direccionExistente);
+    }
+  }
+
+  @Override
+  protected void preUpdate(String id, Empresa entity) throws Exception {
+    if (entity.getDireccion() != null && entity.getDireccion().getId() == null) {
+      Direccion direccionGuardada = direccionService.save(entity.getDireccion());
+      entity.setDireccion(direccionGuardada);
+    } else if (entity.getDireccion() != null && entity.getDireccion().getId() != null) {
+      Empresa empresaExistente = findById(id);
+      if (empresaExistente.getDireccion() == null ||
+          !empresaExistente.getDireccion().getId().equals(entity.getDireccion().getId())) {
+        Direccion direccionExistente = direccionService.findById(entity.getDireccion().getId());
+        entity.setDireccion(direccionExistente);
+      }
     }
   }
 
