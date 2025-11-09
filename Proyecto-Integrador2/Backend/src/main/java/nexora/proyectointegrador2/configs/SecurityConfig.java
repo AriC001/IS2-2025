@@ -36,11 +36,13 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/**").authenticated()
-            .anyRequest().permitAll()
-        )
+    .authorizeHttpRequests(auth -> auth
+      // Permit the authentication endpoints (v1) used by the clients
+      .requestMatchers("/api/v1/auth/**","/favicon.ico", "/public/**").permitAll()
+      // Protect other API endpoints under /api/**
+      .requestMatchers("/api/**").authenticated()
+      .anyRequest().permitAll()
+    )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
