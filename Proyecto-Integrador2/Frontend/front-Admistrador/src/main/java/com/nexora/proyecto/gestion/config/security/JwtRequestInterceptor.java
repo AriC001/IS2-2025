@@ -1,4 +1,4 @@
-package com.nexora.proyecto.gestion.config;
+package com.nexora.proyecto.gestion.config.security;
 
 import java.io.IOException;
 
