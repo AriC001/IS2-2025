@@ -21,8 +21,8 @@ public abstract class PersonaDTO extends BaseDTO {
   private TipoDocumentacion tipoDocumento;
   private String numeroDocumento;
   private String usuarioId;
-  private String direccionId;
-  private String contactoId;
+  private DireccionDTO direccion;
+  private ContactoDTO contacto;
   private String imagenPerfilId;
 
 }

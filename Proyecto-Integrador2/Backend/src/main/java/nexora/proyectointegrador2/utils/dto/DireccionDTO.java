@@ -19,6 +19,6 @@ public class DireccionDTO extends BaseDTO {
   private String manzanaPiso;
   private String casaDepartamento;
   private String referencia;
-  private String localidadId;
+  private LocalidadDTO localidad;
 
 }

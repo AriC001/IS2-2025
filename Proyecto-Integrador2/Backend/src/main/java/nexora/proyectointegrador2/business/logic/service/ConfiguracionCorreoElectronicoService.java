@@ -1,12 +1,17 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nexora.proyectointegrador2.business.domain.entity.ConfiguracionCorreoElectronico;
+import nexora.proyectointegrador2.business.domain.entity.Empresa;
 import nexora.proyectointegrador2.business.persistence.repository.ConfiguracionCorreoElectronicoRepository;
 
 @Service
 public class ConfiguracionCorreoElectronicoService extends BaseService<ConfiguracionCorreoElectronico, String> {
+
+  @Autowired
+  private EmpresaService empresaService;
 
   public ConfiguracionCorreoElectronicoService(ConfiguracionCorreoElectronicoRepository repository) {
     super(repository);
@@ -35,6 +40,32 @@ public class ConfiguracionCorreoElectronicoService extends BaseService<Configura
     }
     if (entity.getEmpresa() == null) {
       throw new Exception("La empresa es obligatoria");
+    }
+  }
+
+  @Override
+  protected void preAlta(ConfiguracionCorreoElectronico entity) throws Exception {
+    if (entity.getEmpresa() != null && entity.getEmpresa().getId() == null) {
+      Empresa empresaGuardada = empresaService.save(entity.getEmpresa());
+      entity.setEmpresa(empresaGuardada);
+    } else if (entity.getEmpresa() != null && entity.getEmpresa().getId() != null) {
+      Empresa empresaExistente = empresaService.findById(entity.getEmpresa().getId());
+      entity.setEmpresa(empresaExistente);
+    }
+  }
+
+  @Override
+  protected void preUpdate(String id, ConfiguracionCorreoElectronico entity) throws Exception {
+    if (entity.getEmpresa() != null && entity.getEmpresa().getId() == null) {
+      Empresa empresaGuardada = empresaService.save(entity.getEmpresa());
+      entity.setEmpresa(empresaGuardada);
+    } else if (entity.getEmpresa() != null && entity.getEmpresa().getId() != null) {
+      ConfiguracionCorreoElectronico configuracionExistente = findById(id);
+      if (configuracionExistente.getEmpresa() == null ||
+          !configuracionExistente.getEmpresa().getId().equals(entity.getEmpresa().getId())) {
+        Empresa empresaExistente = empresaService.findById(entity.getEmpresa().getId());
+        entity.setEmpresa(empresaExistente);
+      }
     }
   }
 

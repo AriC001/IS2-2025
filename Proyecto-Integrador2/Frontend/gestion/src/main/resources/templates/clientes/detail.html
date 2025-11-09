@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Detalle Cliente - My Car</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/dashboard}">
+                <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-car"></i></div>
+                <div class="sidebar-brand-text mx-3">My Car</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Gestión</div>
+            <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/clientes}"><i class="fas fa-fw fa-users"></i><span>Clientes</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+        </ul>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${nombreUsuario}">Usuario</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar Sesión
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Detalle del Cliente</h1>
+                        <div>
+                            <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a th:href="@{/clientes}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Datos Personales</h6></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Nombre:</strong> <span th:text="${cliente.nombre}">-</span></p>
+                                    <p><strong>Apellido:</strong> <span th:text="${cliente.apellido}">-</span></p>
+                                    <p><strong>Fecha de Nacimiento:</strong> <span th:text="${#temporals.format(cliente.fechaNacimiento, 'dd/MM/yyyy')}">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Tipo de Documento:</strong> <span th:text="${cliente.tipoDocumento}">-</span></p>
+                                    <p><strong>Número de Documento:</strong> <span th:text="${cliente.numeroDocumento}">-</span></p>
+                                    <p><strong>Nacionalidad:</strong> <span th:text="${cliente.nacionalidad?.nombre}">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4" th:if="${cliente.direccion != null}">
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Dirección</h6></div>
+                        <div class="card-body">
+                            <p><strong>Calle:</strong> <span th:text="${cliente.direccion?.calle}">-</span> <span th:text="${cliente.direccion?.numero}">-</span></p>
+                            <p><strong>Barrio:</strong> <span th:text="${cliente.direccion?.barrio}">-</span></p>
+                            <p><strong>Localidad:</strong> <span th:text="${cliente.direccion?.localidad?.nombre}">-</span></p>
+                            <p><strong>Referencia:</strong> <span th:text="${cliente.direccion?.referencia}">-</span></p>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4" th:if="${cliente.contacto != null}">
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Contacto</h6></div>
+                        <div class="card-body">
+                            <p><strong>Tipo de Contacto:</strong> <span th:text="${cliente.contacto?.tipoContacto}">-</span></p>
+                            <p th:if="${cliente.contacto?.class.simpleName == 'ContactoTelefonicoDTO'}">
+                                <strong>Teléfono:</strong> <span th:text="${cliente.contacto?.telefono}">-</span>
+                            </p>
+                            <p th:if="${cliente.contacto?.class.simpleName == 'ContactoCorreoElectronicoDTO'}">
+                                <strong>Email:</strong> <span th:text="${cliente.contacto?.email}">-</span>
+                            </p>
+                            <p><strong>Observación:</strong> <span th:text="${cliente.contacto?.observacion}">-</span></p>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4" th:if="${cliente.direccionEstadia != null}">
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Dirección de Estadía</h6></div>
+                        <div class="card-body">
+                            <p th:text="${cliente.direccionEstadia}">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white"><div class="container my-auto"><div class="copyright text-center my-auto"><span>Copyright &copy; My Car 2025</span></div></div></footer>
+        </div>
+    </div>
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Cerrar Sesión</h5><button class="close" data-dismiss="modal"><span>&times;</span></button></div>
+                <div class="modal-body">¿Estás seguro que deseas cerrar tu sesión?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <a class="btn btn-primary" th:href="@{/auth/logout}">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>
+

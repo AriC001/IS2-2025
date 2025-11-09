@@ -30,7 +30,7 @@ public class AuthService {
 
   public AuthResponseDTO login(LoginRequestDTO loginRequest) throws Exception {
     try {
-      String url = baseUrl + "/auth/login";
+      String url = baseUrl + "/api/auth/login";
       
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_JSON);

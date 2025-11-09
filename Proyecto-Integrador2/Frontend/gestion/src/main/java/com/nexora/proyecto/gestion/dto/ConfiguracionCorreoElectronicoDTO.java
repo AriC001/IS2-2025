@@ -18,6 +18,6 @@ public class ConfiguracionCorreoElectronicoDTO extends BaseDTO {
   private String email;
   private String clave;
   private boolean tls;
-  private String empresaId;
+  private EmpresaDTO empresa;
 
 }

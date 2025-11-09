@@ -14,6 +14,6 @@ import lombok.Setter;
 public class ClienteDTO extends PersonaDTO {
 
   private String direccionEstadia;
-  private String nacionalidadId;
+  private NacionalidadDTO nacionalidad;
 
 }

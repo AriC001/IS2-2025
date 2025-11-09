@@ -1,0 +1,34 @@
+package com.nexora.proyecto.gestion.business.logic.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nexora.proyecto.gestion.business.persistence.dao.LocalidadDAO;
+import com.nexora.proyecto.gestion.dto.LocalidadDTO;
+
+@Service
+public class LocalidadService extends BaseService<LocalidadDTO, String> {
+
+  @Autowired
+  private DepartamentoService departamentoService;
+
+  @Autowired
+  public LocalidadService(LocalidadDAO dao) {
+    super(dao);
+  }
+
+  @Override
+  protected void validateEntity(LocalidadDTO entity) throws Exception {
+    if (entity.getNombre() == null || entity.getNombre().trim().isEmpty()) {
+      throw new Exception("El nombre de la localidad es obligatorio");
+    }
+
+    if (entity.getCodigoPostal() == null || entity.getCodigoPostal().trim().isEmpty()) {
+      throw new Exception("El código postal es obligatorio");
+    }
+    if (entity.getDepartamentoId() == null || entity.getDepartamentoId().trim().isEmpty()) {
+      throw new Exception("El departamento es obligatorio");
+    }
+  }
+
+}

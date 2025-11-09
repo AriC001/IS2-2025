@@ -16,7 +16,7 @@ public interface LocalidadMapper extends BaseMapper<Localidad, LocalidadDTO, Str
 
   /**
    * Convierte Localidad a LocalidadDTO.
-   * El Departamento se mapea solo su ID.
+   * El Departamento se mapea solo su ID (se mantiene así para evitar recursión infinita).
    */
   @Override
   @Mapping(source = "departamento.id", target = "departamentoId")

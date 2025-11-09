@@ -1,0 +1,40 @@
+package com.nexora.proyecto.gestion.business.logic.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.nexora.proyecto.gestion.business.persistence.dao.ClienteDAO;
+import com.nexora.proyecto.gestion.dto.ClienteDTO;
+
+@Service
+public class ClienteService extends BaseService<ClienteDTO, String> {
+
+  @Autowired
+  public ClienteService(ClienteDAO dao) {
+    super(dao);
+  }
+
+  @Override
+  protected void validateEntity(ClienteDTO entity) throws Exception {
+    if (entity.getNombre() == null || entity.getNombre().trim().isEmpty()) {
+      throw new Exception("El nombre es obligatorio");
+    }
+    if (entity.getApellido() == null || entity.getApellido().trim().isEmpty()) {
+      throw new Exception("El apellido es obligatorio");
+    }
+    if (entity.getFechaNacimiento() == null) {
+      throw new Exception("La fecha de nacimiento es obligatoria");
+    }
+    if (entity.getTipoDocumento() == null) {
+      throw new Exception("El tipo de documento es obligatorio");
+    }
+    if (entity.getNumeroDocumento() == null || entity.getNumeroDocumento().trim().isEmpty()) {
+      throw new Exception("El número de documento es obligatorio");
+    }
+    if (entity.getNacionalidad() == null) {
+      throw new Exception("La nacionalidad es obligatoria");
+    }
+  }
+
+}
+

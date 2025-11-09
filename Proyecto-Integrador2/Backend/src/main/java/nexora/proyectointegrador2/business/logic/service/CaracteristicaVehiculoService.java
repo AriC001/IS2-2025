@@ -1,12 +1,21 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
+import nexora.proyectointegrador2.business.domain.entity.CostoVehiculo;
+import nexora.proyectointegrador2.business.domain.entity.Imagen;
 import nexora.proyectointegrador2.business.persistence.repository.CaracteristicaVehiculoRepository;
 
 @Service
 public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVehiculo, String> {
+
+  @Autowired
+  private ImagenService imagenService;
+
+  @Autowired
+  private CostoVehiculoService costoVehiculoService;
 
   public CaracteristicaVehiculoService(CaracteristicaVehiculoRepository repository) {
     super(repository);
@@ -31,6 +40,52 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
     }
     if (entity.getCostoVehiculo() == null) {
       throw new Exception("El costo del vehículo es obligatorio");
+    }
+  }
+
+  @Override
+  protected void preAlta(CaracteristicaVehiculo entity) throws Exception {
+    if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() == null) {
+      Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
+      entity.setImagenVehiculo(imagenGuardada);
+    } else if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() != null) {
+      Imagen imagenExistente = imagenService.findById(entity.getImagenVehiculo().getId());
+      entity.setImagenVehiculo(imagenExistente);
+    }
+
+    if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() == null) {
+      CostoVehiculo costoGuardado = costoVehiculoService.save(entity.getCostoVehiculo());
+      entity.setCostoVehiculo(costoGuardado);
+    } else if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() != null) {
+      CostoVehiculo costoExistente = costoVehiculoService.findById(entity.getCostoVehiculo().getId());
+      entity.setCostoVehiculo(costoExistente);
+    }
+  }
+
+  @Override
+  protected void preUpdate(String id, CaracteristicaVehiculo entity) throws Exception {
+    if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() == null) {
+      Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
+      entity.setImagenVehiculo(imagenGuardada);
+    } else if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() != null) {
+      CaracteristicaVehiculo caracteristicaExistente = findById(id);
+      if (caracteristicaExistente.getImagenVehiculo() == null ||
+          !caracteristicaExistente.getImagenVehiculo().getId().equals(entity.getImagenVehiculo().getId())) {
+        Imagen imagenExistente = imagenService.findById(entity.getImagenVehiculo().getId());
+        entity.setImagenVehiculo(imagenExistente);
+      }
+    }
+
+    if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() == null) {
+      CostoVehiculo costoGuardado = costoVehiculoService.save(entity.getCostoVehiculo());
+      entity.setCostoVehiculo(costoGuardado);
+    } else if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() != null) {
+      CaracteristicaVehiculo caracteristicaExistente = findById(id);
+      if (caracteristicaExistente.getCostoVehiculo() == null ||
+          !caracteristicaExistente.getCostoVehiculo().getId().equals(entity.getCostoVehiculo().getId())) {
+        CostoVehiculo costoExistente = costoVehiculoService.findById(entity.getCostoVehiculo().getId());
+        entity.setCostoVehiculo(costoExistente);
+      }
     }
   }
 

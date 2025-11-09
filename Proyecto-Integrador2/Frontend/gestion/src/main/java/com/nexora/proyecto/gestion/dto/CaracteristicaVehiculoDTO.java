@@ -20,7 +20,7 @@ public class CaracteristicaVehiculoDTO extends BaseDTO {
   private Integer anio;
   private Integer cantidadTotalVehiculo;
   private Integer cantidadVehiculoDisponible;
-  private String imagenVehiculoId;
-  private String costoVehiculoId;
+  private ImagenDTO imagenVehiculo;
+  private CostoVehiculoDTO costoVehiculo;
 
 }

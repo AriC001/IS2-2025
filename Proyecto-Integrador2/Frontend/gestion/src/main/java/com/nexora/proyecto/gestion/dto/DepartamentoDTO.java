@@ -14,6 +14,6 @@ import lombok.Setter;
 public class DepartamentoDTO extends BaseDTO {
 
   private String nombre;
-  private String provinciaId;
+  private ProvinciaDTO provincia;
 
 }
