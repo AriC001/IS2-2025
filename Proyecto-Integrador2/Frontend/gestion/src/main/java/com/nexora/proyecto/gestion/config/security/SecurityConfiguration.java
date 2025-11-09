@@ -4,24 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.JwtValidators;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.nexora.proyecto.gestion.business.logic.service.CustomUserDetailsService;
 
 
 
@@ -38,8 +26,8 @@ public class SecurityConfiguration {
     private CustomLogoutSuccessHandler logoutSuccessHandler;
     // Maneja qué hacer DESPUÉS de un logout (redirigir a /index)
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+        @Autowired
+        private BackendAuthenticationProvider backendAuthenticationProvider;
     // Carga usuarios desde tu base de datos para el login con formulario
 
     @Autowired
@@ -82,13 +70,11 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+        @Bean
+        public org.springframework.security.authentication.AuthenticationProvider authenticationProvider() {
+                // Use backend-based authentication provider that delegates to AuthService
+                return backendAuthenticationProvider;
+        }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

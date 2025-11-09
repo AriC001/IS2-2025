@@ -35,22 +35,43 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
       System.out.println("CustomAuthenticationSuccessHandler: authentication.getPrincipal()=" + authentication.getPrincipal().getClass().getName());
 
       try {
-        // Buscar el usuario completo en la base de datos
-        Optional<UsuarioDTO> usuarioOpt = usuarioService.findByUsername(nombreUsuario);
+        // Preferir usar los detalles devueltos por el Authentication (provistos por BackendAuthenticationProvider)
+        Object details = authentication.getDetails();
+        UsuarioDTO usuario = null;
 
-        if (usuarioOpt.isEmpty()) {
-          System.err.println("ERROR: No se encontró usuario en BD con nombre: " + nombreUsuario);
-          response.sendRedirect("/auth/login?error=usuario_no_encontrado");
-          return;
+        if (details instanceof com.nexora.proyecto.gestion.dto.AuthResponseDTO) {
+          com.nexora.proyecto.gestion.dto.AuthResponseDTO authResp = (com.nexora.proyecto.gestion.dto.AuthResponseDTO) details;
+      usuario = new UsuarioDTO();
+      usuario.setId(authResp.getId());
+      usuario.setNombreUsuario(authResp.getNombreUsuario());
+      usuario.setRol(authResp.getRol());
+          // Store token in session as well
+          HttpSession session = request.getSession();
+          session.setAttribute("token", authResp.getToken());
+          session.setAttribute("usuarioId", authResp.getId());
+          session.setAttribute("nombreUsuario", authResp.getNombreUsuario());
+          session.setAttribute("rol", authResp.getRol() != null ? authResp.getRol().toString() : null);
+
+          System.out.println("Usuario obtenido desde AuthResponseDTO: " + authResp.getNombreUsuario() + " (rol: " + authResp.getRol() + ")");
+        } else {
+          // Fallback: intentar obtenerlo vía UsuarioService (si el backend permite acceso)
+          Optional<UsuarioDTO> usuarioOpt = usuarioService.findByUsername(nombreUsuario);
+          if (usuarioOpt.isEmpty()) {
+            System.err.println("ERROR: No se encontró usuario en BD con nombre: " + nombreUsuario);
+            response.sendRedirect("/auth/login?error=usuario_no_encontrado");
+            return;
+          }
+          usuario = usuarioOpt.get();
+          System.out.println("Usuario encontrado en BD: " + usuario.getNombreUsuario() + " (rol: " + usuario.getRol() + ")");
+          HttpSession session = request.getSession();
+          session.setAttribute("usuariosession", usuario);
         }
-
-        UsuarioDTO usuario = usuarioOpt.get();
-        System.out.println("Usuario encontrado en BD: " + usuario.getNombreUsuario() + " (rol: " + usuario.getRol() + ")");
-
-        // Guardar el usuario en la sesión HTTP
+        // Si no lo habíamos guardado en sesión aún (caso donde creamos desde AuthResponseDTO), guardarlo
         HttpSession session = request.getSession();
-        session.setAttribute("usuariosession", usuario);
-        System.out.println("Usuario guardado en sesión HTTP");
+        if (session.getAttribute("usuariosession") == null && usuario != null) {
+          session.setAttribute("usuariosession", usuario);
+          System.out.println("Usuario guardado en sesión HTTP");
+        }
 
         // Redirigir según rol: ADMIN -> /portal/admin, EMPLEADO -> /portal/empleado, SOCIO -> /portal/socio
         String targetUrl = "/";
