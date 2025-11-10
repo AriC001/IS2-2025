@@ -45,7 +45,7 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Detalle del Cliente</h1>
                         <div>
-                            <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-warning btn-sm">
+                            <a th:if="${cliente?.id != null}" th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
                             <a th:href="@{/clientes}" class="btn btn-secondary btn-sm">
@@ -60,7 +60,7 @@
                                 <div class="col-md-6">
                                     <p><strong>Nombre:</strong> <span th:text="${cliente.nombre}">-</span></p>
                                     <p><strong>Apellido:</strong> <span th:text="${cliente.apellido}">-</span></p>
-                                    <p><strong>Fecha de Nacimiento:</strong> <span th:text="${#temporals.format(cliente.fechaNacimiento, 'dd/MM/yyyy')}">-</span></p>
+                                    <p><strong>Fecha de Nacimiento:</strong> <span th:text="${cliente.fechaNacimiento != null ? #dates.format(cliente.fechaNacimiento, 'dd/MM/yyyy') : '-'}">-</span></p>
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Tipo de Documento:</strong> <span th:text="${cliente.tipoDocumento}">-</span></p>
@@ -77,19 +77,6 @@
                             <p><strong>Barrio:</strong> <span th:text="${cliente.direccion?.barrio}">-</span></p>
                             <p><strong>Localidad:</strong> <span th:text="${cliente.direccion?.localidad?.nombre}">-</span></p>
                             <p><strong>Referencia:</strong> <span th:text="${cliente.direccion?.referencia}">-</span></p>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4" th:if="${cliente.contacto != null}">
-                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Contacto</h6></div>
-                        <div class="card-body">
-                            <p><strong>Tipo de Contacto:</strong> <span th:text="${cliente.contacto?.tipoContacto}">-</span></p>
-                            <p th:if="${cliente.contacto?.class.simpleName == 'ContactoTelefonicoDTO'}">
-                                <strong>Teléfono:</strong> <span th:text="${cliente.contacto?.telefono}">-</span>
-                            </p>
-                            <p th:if="${cliente.contacto?.class.simpleName == 'ContactoCorreoElectronicoDTO'}">
-                                <strong>Email:</strong> <span th:text="${cliente.contacto?.email}">-</span>
-                            </p>
-                            <p><strong>Observación:</strong> <span th:text="${cliente.contacto?.observacion}">-</span></p>
                         </div>
                     </div>
                     <div class="card shadow mb-4" th:if="${cliente.direccionEstadia != null}">

@@ -1,17 +1,18 @@
 package com.nexora.proyecto.gestion.dto;
 
+import com.nexora.proyecto.gestion.dto.enums.TipoDocumentacion;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.nexora.proyecto.gestion.dto.enums.TipoDocumentacion;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class DocumentoDTO extends BaseDTO {
 
   private TipoDocumentacion tipoDocumento;

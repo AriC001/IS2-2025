@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.nexora.proyecto.gestion.dto.enums.TipoDocumentacion;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@SuperBuilder
 public abstract class PersonaDTO extends BaseDTO {
 
   private String nombre;
@@ -21,9 +21,9 @@ public abstract class PersonaDTO extends BaseDTO {
   private Date fechaNacimiento;
   private TipoDocumentacion tipoDocumento;
   private String numeroDocumento;
-  private String usuarioId;
+  private UsuarioDTO usuario;
   private DireccionDTO direccion;
   private List<ContactoDTO> contactos;
-  private String imagenPerfilId;
+  private ImagenDTO imagenPerfil;
 
 }

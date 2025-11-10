@@ -1,30 +1,72 @@
 package nexora.proyectointegrador2.utils.mapper.impl;
 
-import org.mapstruct.Mapper;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.Provincia;
 import nexora.proyectointegrador2.utils.dto.ProvinciaDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
- * Mapper para convertir entre Provincia (entidad) y ProvinciaDTO.
- * MapStruct genera automáticamente la implementación.
+ * Mapper manual para convertir entre Provincia (entidad) y ProvinciaDTO.
  */
-@Mapper(componentModel = "spring", uses = {PaisMapper.class})
-public interface ProvinciaMapper extends BaseMapper<Provincia, ProvinciaDTO, String> {
+@Component
+public class ProvinciaMapper implements BaseMapper<Provincia, ProvinciaDTO, String> {
 
-  /**
-   * Convierte Provincia a ProvinciaDTO.
-   * El Pais se mapea como DTO completo.
-   */
+  private final PaisMapper paisMapper;
+
+  public ProvinciaMapper(PaisMapper paisMapper) {
+    this.paisMapper = paisMapper;
+  }
+
   @Override
-  ProvinciaDTO toDTO(Provincia entity);
+  public ProvinciaDTO toDTO(Provincia entity) {
+    if (entity == null) {
+      return null;
+    }
 
-  /**
-   * Convierte ProvinciaDTO a Provincia.
-   * El Pais se mapea desde su DTO.
-   */
+    return ProvinciaDTO.builder()
+        .id(entity.getId())
+        .eliminado(entity.isEliminado())
+        .nombre(entity.getNombre())
+        .pais(paisMapper.toDTO(entity.getPais()))
+        .build();
+  }
+
   @Override
-  Provincia toEntity(ProvinciaDTO dto);
+  public Provincia toEntity(ProvinciaDTO dto) {
+    if (dto == null) {
+      return null;
+    }
 
+    Provincia provincia = new Provincia();
+    provincia.setId(dto.getId());
+    provincia.setEliminado(dto.isEliminado());
+    provincia.setNombre(dto.getNombre());
+    provincia.setPais(paisMapper.toEntity(dto.getPais()));
+    return provincia;
+  }
+
+  @Override
+  public List<ProvinciaDTO> toDTOList(Collection<Provincia> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Provincia> toEntityList(List<ProvinciaDTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toList());
+  }
 }

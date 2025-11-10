@@ -41,6 +41,11 @@ public class ClienteService extends BaseService<ClienteDTO, String> {
     if (entity.getNacionalidad() == null) {
       throw new Exception("La nacionalidad es obligatoria");
     }
+    if (entity.getUsuario() != null) {
+      if (entity.getUsuario().getId() == null || entity.getUsuario().getId().trim().isEmpty()) {
+        entity.setUsuario(null);
+      }
+    }
   }
 
 }

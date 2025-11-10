@@ -20,9 +20,9 @@ public abstract class PersonaDTO extends BaseDTO {
   private Date fechaNacimiento;
   private TipoDocumentacion tipoDocumento;
   private String numeroDocumento;
-  private String usuarioId;
+  private UsuarioDTO usuario;
   private DireccionDTO direccion;
   private List<ContactoDTO> contactos;
-  private String imagenPerfilId;
+  private ImagenDTO imagenPerfil;
 
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +15,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.nexora.proyecto.gestion.business.logic.service.DireccionService;
 import com.nexora.proyecto.gestion.business.logic.service.EmpleadoService;
 import com.nexora.proyecto.gestion.business.logic.service.LocalidadService;
 import com.nexora.proyecto.gestion.business.logic.service.UsuarioService;
 import com.nexora.proyecto.gestion.dto.DireccionDTO;
 import com.nexora.proyecto.gestion.dto.EmpleadoDTO;
+import com.nexora.proyecto.gestion.dto.ImagenDTO;
+import com.nexora.proyecto.gestion.dto.LocalidadDTO;
 import com.nexora.proyecto.gestion.dto.UsuarioDTO;
 import com.nexora.proyecto.gestion.dto.enums.RolUsuario;
 import com.nexora.proyecto.gestion.dto.enums.TipoEmpleado;
@@ -33,12 +37,15 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
   private final LocalidadService localidadService;
   private final EmpleadoService empleadoService;
   private final UsuarioService usuarioService;
+  private final DireccionService direccionService;
 
-  public EmpleadoController(EmpleadoService empleadoService, LocalidadService localidadService, UsuarioService usuarioService) {
+  public EmpleadoController(EmpleadoService empleadoService, LocalidadService localidadService,
+      UsuarioService usuarioService, DireccionService direccionService) {
     super(empleadoService, "empleado", "empleados");
     this.empleadoService = empleadoService;
     this.localidadService = localidadService;
     this.usuarioService = usuarioService;
+    this.direccionService = direccionService;
   }
 
   /**
@@ -55,9 +62,16 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
   @Override
   protected EmpleadoDTO createNewEntity() {
     EmpleadoDTO empleado = new EmpleadoDTO();
-    // Inicializar dirección y contacto para evitar NullPointerException
     if (empleado.getDireccion() == null) {
-      empleado.setDireccion(new DireccionDTO());
+      DireccionDTO direccion = new DireccionDTO();
+      direccion.setLocalidad(new LocalidadDTO());
+      empleado.setDireccion(direccion);
+    }
+    if (empleado.getUsuario() == null) {
+      empleado.setUsuario(new UsuarioDTO());
+    }
+    if (empleado.getImagenPerfil() == null) {
+      empleado.setImagenPerfil(new ImagenDTO());
     }
     // Los contactos se manejarán como lista más adelante
     return empleado;
@@ -66,7 +80,24 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
   @Override
   protected void prepareFormModel(Model model) {
     try {
+      EmpleadoDTO empleado = (EmpleadoDTO) model.getAttribute("empleado");
+      if (empleado != null) {
+        if (empleado.getDireccion() == null) {
+          DireccionDTO direccion = new DireccionDTO();
+          direccion.setLocalidad(new LocalidadDTO());
+          empleado.setDireccion(direccion);
+        } else if (empleado.getDireccion().getLocalidad() == null) {
+          empleado.getDireccion().setLocalidad(new LocalidadDTO());
+        }
+        if (empleado.getUsuario() == null) {
+          empleado.setUsuario(new UsuarioDTO());
+        }
+        if (empleado.getImagenPerfil() == null) {
+          empleado.setImagenPerfil(new ImagenDTO());
+        }
+      }
       model.addAttribute("localidades", localidadService.findAllActives());
+      model.addAttribute("direcciones", direccionService.findAllActives());
       model.addAttribute("tiposEmpleado", TipoEmpleado.values());
       model.addAttribute("rolesUsuario", RolUsuario.values());
     } catch (Exception e) {
@@ -85,6 +116,7 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
       return redirect;
     }
     try {
+      sanitizeDireccion(entity);
       // Validar que solo JEFE puede crear empleados ADMINISTRATIVO
       String rolUsuario = (String) session.getAttribute("rol");
       empleadoService.validateTipoEmpleado(entity, rolUsuario);
@@ -112,8 +144,10 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
         nuevoUsuario.setRol(RolUsuario.valueOf(nuevoRol));
         
         UsuarioDTO usuarioCreado = usuarioService.create(nuevoUsuario);
-        entity.setUsuarioId(usuarioCreado.getId());
+        entity.setUsuario(usuarioCreado);
       }
+
+      sanitizeUsuario(entity);
       
       service.create(entity);
       addSuccessMessage(redirectAttributes, "Empleado creado exitosamente");
@@ -138,6 +172,8 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
     try {
       // Validar que solo JEFE puede cambiar a ADMINISTRATIVO
       String rolUsuario = (String) session.getAttribute("rol");
+      sanitizeDireccion(entity);
+      sanitizeUsuario(entity);
       
       // Obtener el empleado actual para comparar
       EmpleadoDTO empleadoActual = service.findById(id);
@@ -153,6 +189,18 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
     } catch (Exception e) {
       handleException(e, redirectAttributes, "actualizar");
       return "redirect:/" + entityPath + "/" + id + "/editar";
+    }
+  }
+
+  private void sanitizeDireccion(EmpleadoDTO entity) {
+    if (entity.getDireccion() != null && !StringUtils.hasText(entity.getDireccion().getId())) {
+      entity.setDireccion(null);
+    }
+  }
+
+  private void sanitizeUsuario(EmpleadoDTO entity) {
+    if (entity.getUsuario() != null && !StringUtils.hasText(entity.getUsuario().getId())) {
+      entity.setUsuario(null);
     }
   }
 }

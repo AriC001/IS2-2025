@@ -10,9 +10,6 @@ import com.nexora.proyecto.gestion.dto.LocalidadDTO;
 public class LocalidadService extends BaseService<LocalidadDTO, String> {
 
   @Autowired
-  private DepartamentoService departamentoService;
-
-  @Autowired
   public LocalidadService(LocalidadDAO dao) {
     super(dao);
   }
@@ -26,7 +23,8 @@ public class LocalidadService extends BaseService<LocalidadDTO, String> {
     if (entity.getCodigoPostal() == null || entity.getCodigoPostal().trim().isEmpty()) {
       throw new Exception("El código postal es obligatorio");
     }
-    if (entity.getDepartamentoId() == null || entity.getDepartamentoId().trim().isEmpty()) {
+    if (entity.getDepartamento() == null || entity.getDepartamento().getId() == null
+        || entity.getDepartamento().getId().trim().isEmpty()) {
       throw new Exception("El departamento es obligatorio");
     }
   }

@@ -144,11 +144,19 @@ public abstract class BaseController<T extends BaseDTO, ID> {
     }
     try {
       addSessionAttributesToModel(model, session);
-      model.addAttribute(entityName, createNewEntity());
-      prepareFormModel(model);
+      // Asegurar que el objeto siempre esté en el modelo antes de llamar a prepareFormModel
+      T entity = createNewEntity();
+      model.addAttribute(entityName, entity);
+      try {
+        prepareFormModel(model);
+      } catch (Exception e) {
+        logger.error("Error al preparar modelo del formulario: {}", e.getMessage(), e);
+        // Agregar el error al modelo pero continuar renderizando el formulario
+        addErrorToModel(model, "Error al cargar datos del formulario: " + e.getMessage());
+      }
       return entityPath + "/form";
     } catch (Exception e) {
-      logger.error("Error al cargar formulario: {}", e.getMessage());
+      logger.error("Error al cargar formulario: {}", e.getMessage(), e);
       return "redirect:/" + entityPath + "?error=" + e.getMessage();
     }
   }
@@ -164,11 +172,19 @@ public abstract class BaseController<T extends BaseDTO, ID> {
     }
     try {
       addSessionAttributesToModel(model, session);
-      model.addAttribute(entityName, service.findById(id));
-      prepareFormModel(model);
+      // Asegurar que el objeto siempre esté en el modelo antes de llamar a prepareFormModel
+      T entity = service.findById(id);
+      model.addAttribute(entityName, entity);
+      try {
+        prepareFormModel(model);
+      } catch (Exception e) {
+        logger.error("Error al preparar modelo del formulario: {}", e.getMessage(), e);
+        // Agregar el error al modelo pero continuar renderizando el formulario
+        addErrorToModel(model, "Error al cargar datos del formulario: " + e.getMessage());
+      }
       return entityPath + "/form";
     } catch (Exception e) {
-      logger.error("Error al cargar {} para editar: {}", entityName, e.getMessage());
+      logger.error("Error al cargar {} para editar: {}", entityName, e.getMessage(), e);
       return "redirect:/" + entityPath + "?error=" + e.getMessage();
     }
   }

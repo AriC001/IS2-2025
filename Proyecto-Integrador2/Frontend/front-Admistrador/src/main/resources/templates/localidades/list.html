@@ -22,11 +22,21 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Gestión</div>
             <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/clientes}"><i class="fas fa-fw fa-users"></i><span>Clientes</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i><span>Empleados</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+                    <i class="fas fa-fw fa-users"></i><span>Usuarios</span>
+                </a>
+                <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gestión de Usuarios:</h6>
+                        <a class="collapse-item" th:href="@{/clientes}"><i class="fas fa-fw fa-user"></i> Clientes</a>
+                        <a class="collapse-item" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i> Empleados</a>
+                    </div>
+                </div>
+            </li>
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Geografía</div>
             <li class="nav-item">
@@ -40,9 +50,19 @@
                         <a class="collapse-item" th:href="@{/provincias}"><i class="fas fa-fw fa-map"></i> Provincias</a>
                         <a class="collapse-item" th:href="@{/departamentos}"><i class="fas fa-fw fa-building"></i> Departamentos</a>
                         <a class="collapse-item" th:href="@{/localidades}"><i class="fas fa-fw fa-map-marker-alt"></i> Localidades</a>
+                        <a class="collapse-item" th:href="@{/direcciones}"><i class="fas fa-fw fa-home"></i> Direcciones</a>
                     </div>
                 </div>
             </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -99,7 +119,7 @@
                                         <tr th:each="localidad : ${localidades}">
                                             <td th:text="${localidad.nombre}">-</td>
                                             <td th:text="${localidad.codigoPostal}">-</td>
-                                            <td th:text="${localidad.departamentoId}">-</td>
+                                            <td th:text="${localidad.departamento != null ? localidad.departamento.nombre : '-'}">-</td>
                                             <td>
                                                 <a th:href="@{/localidades/{id}/editar(id=${localidad.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
                                                 <form th:action="@{/localidades/{id}/eliminar(id=${localidad.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">

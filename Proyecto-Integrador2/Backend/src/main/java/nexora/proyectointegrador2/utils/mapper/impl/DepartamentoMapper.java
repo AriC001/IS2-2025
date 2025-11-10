@@ -1,30 +1,72 @@
 package nexora.proyectointegrador2.utils.mapper.impl;
 
-import org.mapstruct.Mapper;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.Departamento;
 import nexora.proyectointegrador2.utils.dto.DepartamentoDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
- * Mapper para convertir entre Departamento (entidad) y DepartamentoDTO.
- * MapStruct genera automáticamente la implementación.
+ * Mapper manual para convertir entre Departamento (entidad) y DepartamentoDTO.
  */
-@Mapper(componentModel = "spring", uses = {ProvinciaMapper.class})
-public interface DepartamentoMapper extends BaseMapper<Departamento, DepartamentoDTO, String> {
+@Component
+public class DepartamentoMapper implements BaseMapper<Departamento, DepartamentoDTO, String> {
 
-  /**
-   * Convierte Departamento a DepartamentoDTO.
-   * La Provincia se mapea como DTO completo.
-   */
+  private final ProvinciaMapper provinciaMapper;
+
+  public DepartamentoMapper(ProvinciaMapper provinciaMapper) {
+    this.provinciaMapper = provinciaMapper;
+  }
+
   @Override
-  DepartamentoDTO toDTO(Departamento entity);
+  public DepartamentoDTO toDTO(Departamento entity) {
+    if (entity == null) {
+      return null;
+    }
 
-  /**
-   * Convierte DepartamentoDTO a Departamento.
-   * La Provincia se mapea desde su DTO.
-   */
+    return DepartamentoDTO.builder()
+        .id(entity.getId())
+        .eliminado(entity.isEliminado())
+        .nombre(entity.getNombre())
+        .provincia(provinciaMapper.toDTO(entity.getProvincia()))
+        .build();
+  }
+
   @Override
-  Departamento toEntity(DepartamentoDTO dto);
+  public Departamento toEntity(DepartamentoDTO dto) {
+    if (dto == null) {
+      return null;
+    }
 
+    Departamento departamento = new Departamento();
+    departamento.setId(dto.getId());
+    departamento.setEliminado(dto.isEliminado());
+    departamento.setNombre(dto.getNombre());
+    departamento.setProvincia(provinciaMapper.toEntity(dto.getProvincia()));
+    return departamento;
+  }
+
+  @Override
+  public List<DepartamentoDTO> toDTOList(Collection<Departamento> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Departamento> toEntityList(List<DepartamentoDTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toList());
+  }
 }

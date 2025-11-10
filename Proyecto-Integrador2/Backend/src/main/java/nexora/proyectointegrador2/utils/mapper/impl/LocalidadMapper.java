@@ -1,33 +1,74 @@
 package nexora.proyectointegrador2.utils.mapper.impl;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.Localidad;
 import nexora.proyectointegrador2.utils.dto.LocalidadDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
- * Mapper para convertir entre Localidad (entidad) y LocalidadDTO.
- * MapStruct genera automáticamente la implementación.
+ * Mapper manual para convertir entre Localidad (entidad) y LocalidadDTO.
  */
-@Mapper(componentModel = "spring")
-public interface LocalidadMapper extends BaseMapper<Localidad, LocalidadDTO, String> {
+@Component
+public class LocalidadMapper implements BaseMapper<Localidad, LocalidadDTO, String> {
 
-  /**
-   * Convierte Localidad a LocalidadDTO.
-   * El Departamento se mapea solo su ID (se mantiene así para evitar recursión infinita).
-   */
+  private final DepartamentoMapper departamentoMapper;
+
+  public LocalidadMapper(DepartamentoMapper departamentoMapper) {
+    this.departamentoMapper = departamentoMapper;
+  }
+
   @Override
-  @Mapping(source = "departamento.id", target = "departamentoId")
-  LocalidadDTO toDTO(Localidad entity);
+  public LocalidadDTO toDTO(Localidad entity) {
+    if (entity == null) {
+      return null;
+    }
 
-  /**
-   * Convierte LocalidadDTO a Localidad.
-   * El departamento se ignora, debe ser seteado manualmente o desde el servicio.
-   */
+    return LocalidadDTO.builder()
+        .id(entity.getId())
+        .eliminado(entity.isEliminado())
+        .nombre(entity.getNombre())
+        .codigoPostal(entity.getCodigoPostal())
+        .departamento(departamentoMapper.toDTO(entity.getDepartamento()))
+        .build();
+  }
+
   @Override
-  @Mapping(target = "departamento", ignore = true)
-  Localidad toEntity(LocalidadDTO dto);
+  public Localidad toEntity(LocalidadDTO dto) {
+    if (dto == null) {
+      return null;
+    }
 
+    Localidad localidad = new Localidad();
+    localidad.setId(dto.getId());
+    localidad.setEliminado(dto.isEliminado());
+    localidad.setNombre(dto.getNombre());
+    localidad.setCodigoPostal(dto.getCodigoPostal());
+    localidad.setDepartamento(departamentoMapper.toEntity(dto.getDepartamento()));
+    return localidad;
+  }
+
+  @Override
+  public List<LocalidadDTO> toDTOList(Collection<Localidad> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Localidad> toEntityList(List<LocalidadDTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toList());
+  }
 }

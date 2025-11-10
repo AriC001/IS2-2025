@@ -45,7 +45,7 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Detalle del Vehículo</h1>
                         <div>
-                            <a th:href="@{/vehiculos/{id}/editar(id=${vehiculo.id})}" class="btn btn-warning btn-sm">
+                            <a th:if="${vehiculo?.id != null}" th:href="@{/vehiculos/{id}/editar(id=${vehiculo.id})}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
                             <a th:href="@{/vehiculos}" class="btn btn-secondary btn-sm">
@@ -84,8 +84,8 @@
                     <div class="card shadow mb-4" th:if="${vehiculo.caracteristicaVehiculo?.costoVehiculo != null}">
                         <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Costo</h6></div>
                         <div class="card-body">
-                            <p><strong>Fecha Desde:</strong> <span th:text="${#temporals.format(vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaDesde, 'dd/MM/yyyy')}">-</span></p>
-                            <p><strong>Fecha Hasta:</strong> <span th:text="${#temporals.format(vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaHasta, 'dd/MM/yyyy')}">-</span></p>
+                            <p><strong>Fecha Desde:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaDesde != null ? #dates.format(vehiculo.caracteristicaVehiculo.costoVehiculo.fechaDesde, 'dd/MM/yyyy') : '-'}">-</span></p>
+                            <p><strong>Fecha Hasta:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaHasta != null ? #dates.format(vehiculo.caracteristicaVehiculo.costoVehiculo.fechaHasta, 'dd/MM/yyyy') : '-'}">-</span></p>
                             <p><strong>Costo:</strong> $<span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.costo}">-</span></p>
                         </div>
                     </div>

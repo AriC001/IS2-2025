@@ -1,29 +1,70 @@
 package nexora.proyectointegrador2.utils.mapper.impl;
 
-import org.mapstruct.Mapper;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.Documento;
 import nexora.proyectointegrador2.utils.dto.DocumentoDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
- * Mapper para convertir entre Documento (entidad) y DocumentoDTO.
- * MapStruct genera automáticamente la implementación.
+ * Mapper manual para convertir entre Documento (entidad) y DocumentoDTO.
  */
-@Mapper(componentModel = "spring")
-public interface DocumentoMapper extends BaseMapper<Documento, DocumentoDTO, String> {
+@Component
+public class DocumentoMapper implements BaseMapper<Documento, DocumentoDTO, String> {
 
-  /**
-   * Convierte Documento a DocumentoDTO.
-   */
   @Override
-  DocumentoDTO toDTO(Documento entity);
+  public DocumentoDTO toDTO(Documento entity) {
+    if (entity == null) {
+      return null;
+    }
 
-  /**
-   * Convierte DocumentoDTO a Documento.
-   */
+    return DocumentoDTO.builder()
+        .id(entity.getId())
+        .eliminado(entity.isEliminado())
+        .tipoDocumento(entity.getTipoDocumento())
+        .observacion(entity.getObservacion())
+        .pathArchivo(entity.getPathArchivo())
+        .nombreArchivo(entity.getNombreArchivo())
+        .build();
+  }
+
   @Override
-  Documento toEntity(DocumentoDTO dto);
+  public Documento toEntity(DocumentoDTO dto) {
+    if (dto == null) {
+      return null;
+    }
 
+    Documento documento = new Documento();
+    documento.setId(dto.getId());
+    documento.setEliminado(dto.isEliminado());
+    documento.setTipoDocumento(dto.getTipoDocumento());
+    documento.setObservacion(dto.getObservacion());
+    documento.setPathArchivo(dto.getPathArchivo());
+    documento.setNombreArchivo(dto.getNombreArchivo());
+    return documento;
+  }
+
+  @Override
+  public List<DocumentoDTO> toDTOList(Collection<Documento> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Documento> toEntityList(List<DocumentoDTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toList());
+  }
 }
-

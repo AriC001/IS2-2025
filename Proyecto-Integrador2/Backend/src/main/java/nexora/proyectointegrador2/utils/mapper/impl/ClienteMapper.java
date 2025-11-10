@@ -35,6 +35,12 @@ public class ClienteMapper implements BaseMapper<Cliente, ClienteDTO, String> {
   @Autowired
   private ContactoCorreoElectronicoMapper contactoCorreoElectronicoMapper;
 
+  @Autowired
+  private UsuarioMapper usuarioMapper;
+
+  @Autowired
+  private ImagenMapper imagenMapper;
+
   @Override
   public ClienteDTO toDTO(Cliente entity) {
     if (entity == null) {
@@ -51,15 +57,9 @@ public class ClienteMapper implements BaseMapper<Cliente, ClienteDTO, String> {
         .numeroDocumento(entity.getNumeroDocumento())
         .direccionEstadia(entity.getDireccionEstadia())
         .direccion(direccionMapper.toDTO(entity.getDireccion()))
-        .nacionalidad(nacionalidadMapper.toDTO(entity.getNacionalidad()));
-
-    // Mapear usuarioId e imagenPerfilId
-    if (entity.getUsuario() != null) {
-      builder.usuarioId(entity.getUsuario().getId());
-    }
-    if (entity.getImagenPerfil() != null) {
-      builder.imagenPerfilId(entity.getImagenPerfil().getId());
-    }
+        .nacionalidad(nacionalidadMapper.toDTO(entity.getNacionalidad()))
+        .usuario(usuarioMapper.toDTO(entity.getUsuario()))
+        .imagenPerfil(imagenMapper.toDTO(entity.getImagenPerfil()));
 
     // Mapear lista de contactos según su tipo
     if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
@@ -98,7 +98,9 @@ public class ClienteMapper implements BaseMapper<Cliente, ClienteDTO, String> {
     cliente.setFechaNacimiento(dto.getFechaNacimiento());
     cliente.setTipoDocumento(dto.getTipoDocumento());
     cliente.setNumeroDocumento(dto.getNumeroDocumento());
+    cliente.setUsuario(usuarioMapper.toEntity(dto.getUsuario()));
     cliente.setDireccion(direccionMapper.toEntity(dto.getDireccion()));
+    cliente.setImagenPerfil(imagenMapper.toEntity(dto.getImagenPerfil()));
     
     // Establecer propiedades específicas de Cliente
     cliente.setDireccionEstadia(dto.getDireccionEstadia());

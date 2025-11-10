@@ -32,6 +32,12 @@ public class EmpleadoMapper implements BaseMapper<Empleado, EmpleadoDTO, String>
   @Autowired
   private ContactoCorreoElectronicoMapper contactoCorreoElectronicoMapper;
 
+  @Autowired
+  private UsuarioMapper usuarioMapper;
+
+  @Autowired
+  private ImagenMapper imagenMapper;
+
   @Override
   public EmpleadoDTO toDTO(Empleado entity) {
     if (entity == null) {
@@ -47,15 +53,9 @@ public class EmpleadoMapper implements BaseMapper<Empleado, EmpleadoDTO, String>
         .tipoDocumento(entity.getTipoDocumento())
         .numeroDocumento(entity.getNumeroDocumento())
         .tipoEmpleado(entity.getTipoEmpleado())
-        .direccion(direccionMapper.toDTO(entity.getDireccion()));
-
-    // Mapear usuarioId e imagenPerfilId
-    if (entity.getUsuario() != null) {
-      builder.usuarioId(entity.getUsuario().getId());
-    }
-    if (entity.getImagenPerfil() != null) {
-      builder.imagenPerfilId(entity.getImagenPerfil().getId());
-    }
+        .direccion(direccionMapper.toDTO(entity.getDireccion()))
+        .usuario(usuarioMapper.toDTO(entity.getUsuario()))
+        .imagenPerfil(imagenMapper.toDTO(entity.getImagenPerfil()));
 
     // Mapear lista de contactos según su tipo
     if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
@@ -94,7 +94,9 @@ public class EmpleadoMapper implements BaseMapper<Empleado, EmpleadoDTO, String>
     empleado.setFechaNacimiento(dto.getFechaNacimiento());
     empleado.setTipoDocumento(dto.getTipoDocumento());
     empleado.setNumeroDocumento(dto.getNumeroDocumento());
+    empleado.setUsuario(usuarioMapper.toEntity(dto.getUsuario()));
     empleado.setDireccion(direccionMapper.toEntity(dto.getDireccion()));
+    empleado.setImagenPerfil(imagenMapper.toEntity(dto.getImagenPerfil()));
     
     // Establecer propiedades específicas de Empleado
     empleado.setTipoEmpleado(dto.getTipoEmpleado());
@@ -118,8 +120,6 @@ public class EmpleadoMapper implements BaseMapper<Empleado, EmpleadoDTO, String>
           .collect(Collectors.toList());
       empleado.setContactos(contactos);
     }
-
-    // El usuario y la imagen de perfil se ignoran, deben ser seteados manualmente
 
     return empleado;
   }

@@ -1,5 +1,7 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +12,14 @@ import nexora.proyectointegrador2.business.persistence.repository.DireccionRepos
 @Service
 public class DireccionService extends BaseService<Direccion, String> {
 
+  private final DireccionRepository direccionRepository;
+
   @Autowired
   private LocalidadService localidadService;
 
   public DireccionService(DireccionRepository repository) {
     super(repository);
+    this.direccionRepository = repository;
   }
 
   @Override
@@ -54,6 +59,19 @@ public class DireccionService extends BaseService<Direccion, String> {
         entity.setLocalidad(localidadExistente);
       }
     }
+  }
+
+  @Override
+  public Collection<Direccion> findAllActives() throws Exception {
+    return direccionRepository.findAllActivesWithLocalidad();
+  }
+
+  public Direccion findByIdWithLocalidad(String id) throws Exception {
+    if (id == null) {
+      throw new Exception("El ID no puede ser nulo");
+    }
+    return direccionRepository.findByIdWithLocalidad(id)
+        .orElseThrow(() -> new Exception("Dirección no encontrada con ID: " + id));
   }
 
 }

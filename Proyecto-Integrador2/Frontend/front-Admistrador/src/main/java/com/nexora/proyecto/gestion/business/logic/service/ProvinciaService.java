@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.nexora.proyecto.gestion.business.persistence.dao.ProvinciaDAO;
 import com.nexora.proyecto.gestion.dto.ProvinciaDTO;
-import com.nexora.proyecto.gestion.dto.PaisDTO;
 
 @Service
 public class ProvinciaService extends BaseService<ProvinciaDTO, String> {

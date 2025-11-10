@@ -42,6 +42,16 @@ public class EmpleadoService extends BaseService<EmpleadoDTO, String> {
     if (entity.getTipoEmpleado() == null) {
       throw new Exception("El tipo de empleado es obligatorio");
     }
+    if (entity.getUsuario() != null) {
+      if (entity.getUsuario().getId() == null || entity.getUsuario().getId().trim().isEmpty()) {
+        entity.setUsuario(null);
+      }
+    }
+    if (entity.getImagenPerfil() != null) {
+      if (entity.getImagenPerfil().getId() == null || entity.getImagenPerfil().getId().trim().isEmpty()) {
+        entity.setImagenPerfil(null);
+      }
+    }
   }
 
   /**

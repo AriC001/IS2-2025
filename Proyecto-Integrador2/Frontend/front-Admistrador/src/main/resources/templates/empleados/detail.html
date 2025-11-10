@@ -21,8 +21,21 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Gestión</div>
             <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/clientes}"><i class="fas fa-fw fa-users"></i><span>Clientes</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+                    <i class="fas fa-fw fa-users"></i><span>Usuarios</span>
+                </a>
+                <div id="collapseUsuarios" class="collapse show" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gestión de Usuarios:</h6>
+                        <a class="collapse-item" th:href="@{/clientes}"><i class="fas fa-fw fa-user"></i> Clientes</a>
+                        <a class="collapse-item active" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i> Empleados</a>
+                    </div>
+                </div>
+            </li>
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Geografía</div>
             <li class="nav-item">
@@ -36,6 +49,7 @@
                         <a class="collapse-item" th:href="@{/provincias}"><i class="fas fa-fw fa-map"></i> Provincias</a>
                         <a class="collapse-item" th:href="@{/departamentos}"><i class="fas fa-fw fa-building"></i> Departamentos</a>
                         <a class="collapse-item" th:href="@{/localidades}"><i class="fas fa-fw fa-map-marker-alt"></i> Localidades</a>
+                        <a class="collapse-item" th:href="@{/direcciones}"><i class="fas fa-fw fa-home"></i> Direcciones</a>
                     </div>
                 </div>
             </li>
@@ -67,7 +81,7 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Detalle del Empleado</h1>
                         <div>
-                            <a th:href="@{/empleados/{id}/editar(id=${empleado.id})}" class="btn btn-warning btn-sm">
+                            <a th:if="${empleado?.id != null}" th:href="@{/empleados/{id}/editar(id=${empleado.id})}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
                             <a th:href="@{/empleados}" class="btn btn-secondary btn-sm">
@@ -82,7 +96,7 @@
                                 <div class="col-md-6">
                                     <p><strong>Nombre:</strong> <span th:text="${empleado.nombre}">-</span></p>
                                     <p><strong>Apellido:</strong> <span th:text="${empleado.apellido}">-</span></p>
-                                    <p><strong>Fecha de Nacimiento:</strong> <span th:text="${#temporals.format(empleado.fechaNacimiento, 'dd/MM/yyyy')}">-</span></p>
+                                    <p><strong>Fecha de Nacimiento:</strong> <span th:text="${empleado.fechaNacimiento != null ? #dates.format(empleado.fechaNacimiento, 'dd/MM/yyyy') : '-'}">-</span></p>
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Tipo de Documento:</strong> <span th:text="${empleado.tipoDocumento}">-</span></p>
@@ -99,14 +113,6 @@
                             <p><strong>Barrio:</strong> <span th:text="${empleado.direccion?.barrio}">-</span></p>
                             <p><strong>Localidad:</strong> <span th:text="${empleado.direccion?.localidad?.nombre}">-</span></p>
                             <p><strong>Referencia:</strong> <span th:text="${empleado.direccion?.referencia}">-</span></p>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4" th:if="${empleado.contacto != null}">
-                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Contacto</h6></div>
-                        <div class="card-body">
-                            <p th:if="${empleado.contacto.telefono != null}"><strong>Teléfono:</strong> <span th:text="${empleado.contacto.telefono}">-</span></p>
-                            <p th:if="${empleado.contacto.email != null}"><strong>Email:</strong> <span th:text="${empleado.contacto.email}">-</span></p>
-                            <p th:if="${empleado.contacto.observacion != null}"><strong>Observación:</strong> <span th:text="${empleado.contacto.observacion}">-</span></p>
                         </div>
                     </div>
                 </div>

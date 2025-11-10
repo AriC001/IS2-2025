@@ -1,31 +1,88 @@
 package nexora.proyectointegrador2.utils.mapper.impl;
 
-import org.mapstruct.Mapper;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
 import nexora.proyectointegrador2.utils.dto.CaracteristicaVehiculoDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
- * Mapper para convertir entre CaracteristicaVehiculo (entidad) y CaracteristicaVehiculoDTO.
- * MapStruct genera automáticamente la implementación.
+ * Mapper manual para convertir entre CaracteristicaVehiculo (entidad) y su DTO.
  */
-@Mapper(componentModel = "spring", uses = {ImagenMapper.class, CostoVehiculoMapper.class})
-public interface CaracteristicaVehiculoMapper extends BaseMapper<CaracteristicaVehiculo, CaracteristicaVehiculoDTO, String> {
+@Component
+public class CaracteristicaVehiculoMapper implements BaseMapper<CaracteristicaVehiculo, CaracteristicaVehiculoDTO, String> {
 
-  /**
-   * Convierte CaracteristicaVehiculo a CaracteristicaVehiculoDTO.
-   * La Imagen y CostoVehiculo se mapean como DTOs completos.
-   */
+  private final ImagenMapper imagenMapper;
+  private final CostoVehiculoMapper costoVehiculoMapper;
+
+  public CaracteristicaVehiculoMapper(ImagenMapper imagenMapper, CostoVehiculoMapper costoVehiculoMapper) {
+    this.imagenMapper = imagenMapper;
+    this.costoVehiculoMapper = costoVehiculoMapper;
+  }
+
   @Override
-  CaracteristicaVehiculoDTO toDTO(CaracteristicaVehiculo entity);
+  public CaracteristicaVehiculoDTO toDTO(CaracteristicaVehiculo entity) {
+    if (entity == null) {
+      return null;
+    }
 
-  /**
-   * Convierte CaracteristicaVehiculoDTO a CaracteristicaVehiculo.
-   * La Imagen y CostoVehiculo se mapean desde sus DTOs.
-   */
+    return CaracteristicaVehiculoDTO.builder()
+        .id(entity.getId())
+        .eliminado(entity.isEliminado())
+        .marca(entity.getMarca())
+        .modelo(entity.getModelo())
+        .cantidadPuerta(entity.getCantidadPuerta())
+        .cantidadAsiento(entity.getCantidadAsiento())
+        .anio(entity.getAnio())
+        .cantidadTotalVehiculo(entity.getCantidadTotalVehiculo())
+        .cantidadVehiculoDisponible(entity.getCantidadVehiculoDisponible())
+        .imagenVehiculo(imagenMapper.toDTO(entity.getImagenVehiculo()))
+        .costoVehiculo(costoVehiculoMapper.toDTO(entity.getCostoVehiculo()))
+        .build();
+  }
+
   @Override
-  CaracteristicaVehiculo toEntity(CaracteristicaVehiculoDTO dto);
+  public CaracteristicaVehiculo toEntity(CaracteristicaVehiculoDTO dto) {
+    if (dto == null) {
+      return null;
+    }
 
+    CaracteristicaVehiculo caracteristica = new CaracteristicaVehiculo();
+    caracteristica.setId(dto.getId());
+    caracteristica.setEliminado(dto.isEliminado());
+    caracteristica.setMarca(dto.getMarca());
+    caracteristica.setModelo(dto.getModelo());
+    caracteristica.setCantidadPuerta(dto.getCantidadPuerta());
+    caracteristica.setCantidadAsiento(dto.getCantidadAsiento());
+    caracteristica.setAnio(dto.getAnio());
+    caracteristica.setCantidadTotalVehiculo(dto.getCantidadTotalVehiculo());
+    caracteristica.setCantidadVehiculoDisponible(dto.getCantidadVehiculoDisponible());
+    caracteristica.setImagenVehiculo(imagenMapper.toEntity(dto.getImagenVehiculo()));
+    caracteristica.setCostoVehiculo(costoVehiculoMapper.toEntity(dto.getCostoVehiculo()));
+    return caracteristica;
+  }
+
+  @Override
+  public List<CaracteristicaVehiculoDTO> toDTOList(Collection<CaracteristicaVehiculo> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<CaracteristicaVehiculo> toEntityList(List<CaracteristicaVehiculoDTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toList());
+  }
 }
-

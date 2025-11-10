@@ -3,16 +3,16 @@ package nexora.proyectointegrador2.utils.dto;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class CostoVehiculoDTO extends BaseDTO {
 
   private Date fechaDesde;

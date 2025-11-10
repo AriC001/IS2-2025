@@ -63,13 +63,6 @@
                     <span>Alquileres</span></a>
             </li>
 
-            <!-- Nav Item - Clientes -->
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/clientes}">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>Clientes</span></a>
-            </li>
-
             <!-- Nav Item - Vehículos -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/vehiculos}">
@@ -84,18 +77,31 @@
                     <span>Empresas</span></a>
             </li>
 
-            <!-- Nav Item - Empleados -->
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/empleados}">
-                    <i class="fas fa-fw fa-user-tie"></i>
-                    <span>Empleados</span></a>
-            </li>
-
             <!-- Nav Item - Contactos -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/contactos}">
                     <i class="fas fa-fw fa-address-book"></i>
                     <span>Contactos</span></a>
+            </li>
+
+            <!-- Nav Item - Usuarios Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios"
+                    aria-expanded="true" aria-controls="collapseUsuarios">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+                <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gestión de Usuarios:</h6>
+                        <a class="collapse-item" th:href="@{/clientes}">
+                            <i class="fas fa-fw fa-user"></i> Clientes
+                        </a>
+                        <a class="collapse-item" th:href="@{/empleados}">
+                            <i class="fas fa-fw fa-user-tie"></i> Empleados
+                        </a>
+                    </div>
+                </div>
             </li>
 
             <!-- Divider -->
@@ -127,6 +133,9 @@
                         </a>
                         <a class="collapse-item" th:href="@{/localidades}">
                             <i class="fas fa-fw fa-map-marker-alt"></i> Localidades
+                        </a>
+                        <a class="collapse-item" th:href="@{/direcciones}">
+                            <i class="fas fa-fw fa-home"></i> Direcciones
                         </a>
                     </div>
                 </div>

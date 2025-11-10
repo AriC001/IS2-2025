@@ -1,30 +1,82 @@
 package nexora.proyectointegrador2.utils.mapper.impl;
 
-import org.mapstruct.Mapper;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.Direccion;
 import nexora.proyectointegrador2.utils.dto.DireccionDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
- * Mapper para convertir entre Direccion (entidad) y DireccionDTO.
- * MapStruct genera automáticamente la implementación.
+ * Mapper manual para convertir entre Direccion (entidad) y DireccionDTO.
  */
-@Mapper(componentModel = "spring", uses = {LocalidadMapper.class})
-public interface DireccionMapper extends BaseMapper<Direccion, DireccionDTO, String> {
+@Component
+public class DireccionMapper implements BaseMapper<Direccion, DireccionDTO, String> {
 
-  /**
-   * Convierte Direccion a DireccionDTO.
-   * La Localidad se mapea como DTO completo.
-   */
+  private final LocalidadMapper localidadMapper;
+
+  public DireccionMapper(LocalidadMapper localidadMapper) {
+    this.localidadMapper = localidadMapper;
+  }
+
   @Override
-  DireccionDTO toDTO(Direccion entity);
+  public DireccionDTO toDTO(Direccion entity) {
+    if (entity == null) {
+      return null;
+    }
 
-  /**
-   * Convierte DireccionDTO a Direccion.
-   * La Localidad se mapea desde su DTO.
-   */
+    return DireccionDTO.builder()
+        .id(entity.getId())
+        .eliminado(entity.isEliminado())
+        .calle(entity.getCalle())
+        .numero(entity.getNumero())
+        .barrio(entity.getBarrio())
+        .manzanaPiso(entity.getManzanaPiso())
+        .casaDepartamento(entity.getCasaDepartamento())
+        .referencia(entity.getReferencia())
+        .localidad(localidadMapper.toDTO(entity.getLocalidad()))
+        .build();
+  }
+
   @Override
-  Direccion toEntity(DireccionDTO dto);
+  public Direccion toEntity(DireccionDTO dto) {
+    if (dto == null) {
+      return null;
+    }
 
+    Direccion direccion = new Direccion();
+    direccion.setId(dto.getId());
+    direccion.setEliminado(dto.isEliminado());
+    direccion.setCalle(dto.getCalle());
+    direccion.setNumero(dto.getNumero());
+    direccion.setBarrio(dto.getBarrio());
+    direccion.setManzanaPiso(dto.getManzanaPiso());
+    direccion.setCasaDepartamento(dto.getCasaDepartamento());
+    direccion.setReferencia(dto.getReferencia());
+    direccion.setLocalidad(localidadMapper.toEntity(dto.getLocalidad()));
+    return direccion;
+  }
+
+  @Override
+  public List<DireccionDTO> toDTOList(Collection<Direccion> entities) {
+    if (entities == null) {
+      return null;
+    }
+    return entities.stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Direccion> toEntityList(List<DireccionDTO> dtos) {
+    if (dtos == null) {
+      return null;
+    }
+    return dtos.stream()
+        .map(this::toEntity)
+        .collect(Collectors.toList());
+  }
 }
