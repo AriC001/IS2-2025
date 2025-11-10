@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>My Car - Iniciar Sesión</title>
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+
+    <style>
+        .input-group-text {
+            border-radius: 50rem 0 0 50rem !important;
+        }
+        
+        .border-left-0 {
+            border-left: 0 !important;
+        }
+        
+        .border-right-0 {
+            border-right: 0 !important;
+        }
+        
+        .form-control-user.border-left-0 {
+            padding-left: 0.5rem;
+        }
+        
+        .rotate-n-15 {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: rotate(-15deg) translateY(0px); }
+            50% { transform: rotate(-15deg) translateY(-10px); }
+        }
+        
+        .card {
+            border-radius: 1rem !important;
+        }
+        
+        .btn-user {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .alert {
+            border-radius: 0.5rem;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center mb-4">
+                                        <div class="sidebar-brand-icon rotate-n-15" style="display: inline-block; font-size: 3rem; color: #4e73df;">
+                                            <i class="fas fa-car"></i>
+                                        </div>
+                                        <h1 class="h2 text-gray-900 mt-3 mb-2" style="font-weight: 700;">My Car</h1>
+                                        <p class="text-gray-600">Sistema de Gestión de Vehículos</p>
+                                    </div>
+                                    
+                                    <!-- Mostrar mensaje de error si existe -->
+                                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                                        <span th:text="${error}">Error de autenticación</span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Mostrar mensaje de éxito si existe -->
+                                    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        <span th:text="${message}">Mensaje</span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <form class="user" th:action="@{/auth/login}" method="post">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-white border-right-0">
+                                                        <i class="fas fa-user text-gray-400"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control form-control-user border-left-0"
+                                                    id="nombreUsuario" name="nombreUsuario" 
+                                                    placeholder="Nombre de usuario"
+                                                    required
+                                                    autofocus>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-white border-right-0">
+                                                        <i class="fas fa-lock text-gray-400"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="password" class="form-control form-control-user border-left-0"
+                                                    id="clave" name="clave" 
+                                                    placeholder="Contraseña"
+                                                    required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox small">
+                                                <input type="checkbox" class="custom-control-input" 
+                                                    id="recordarme" name="recordarme">
+                                                <label class="custom-control-label" for="recordarme">
+                                                    Recordarme
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                                            <i class="fas fa-sign-in-alt mr-2"></i>
+                                            Iniciar Sesión
+                                        </button>
+                                        <!-- Botón de GitHub OAuth
+                                        <div class="form-group text-center mt-3">
+                                            <a th:href="@{/oauth2/authorization/github}" class="btn btn-dark btn-user d-inline-block">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github me-2" viewBox="0 0 16 16">
+                                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                                                </svg>
+                                                Ingresar con GitHub
+                                            </a>
+                                        </div>
+                                        -->
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <a class="small text-muted" href="#" th:href="@{/auth/forgot-password}">
+                                            <i class="fas fa-question-circle mr-1"></i>
+                                            ¿Olvidaste tu contraseña?
+                                        </a>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle mr-1"></i>
+                                            Usuarios del sistema: JEFE y ADMINISTRATIVO
+                                        </small>
+                                    </div>
+
+        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+</body>
+
+</html>
