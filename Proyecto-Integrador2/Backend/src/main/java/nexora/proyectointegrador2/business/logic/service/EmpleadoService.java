@@ -74,23 +74,26 @@ public class EmpleadoService extends BaseService<Empleado, String> {
       entity.setDireccion(direccionExistente);
     }
 
-    // Persistir Contacto si existe y es nuevo (no tiene ID)
-    if (entity.getContacto() != null && entity.getContacto().getId() == null) {
-      Contacto contactoGuardado;
-      
-      // Determinar el tipo de contacto y usar el servicio correspondiente
-      if (entity.getContacto() instanceof ContactoTelefonico) {
-        contactoGuardado = contactoTelefonicoService.save((ContactoTelefonico) entity.getContacto());
-      } else if (entity.getContacto() instanceof ContactoCorreoElectronico) {
-        contactoGuardado = contactoCorreoElectronicoService.save((ContactoCorreoElectronico) entity.getContacto());
-      } else {
-        throw new Exception("Tipo de contacto no soportado");
+    // Persistir Contactos si existen y son nuevos (no tienen ID)
+    if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
+      for (int i = 0; i < entity.getContactos().size(); i++) {
+        Contacto contacto = entity.getContactos().get(i);
+        if (contacto.getId() == null) {
+          Contacto contactoGuardado;
+          
+          // Determinar el tipo de contacto y usar el servicio correspondiente
+          if (contacto instanceof ContactoTelefonico) {
+            contactoGuardado = contactoTelefonicoService.save((ContactoTelefonico) contacto);
+          } else if (contacto instanceof ContactoCorreoElectronico) {
+            contactoGuardado = contactoCorreoElectronicoService.save((ContactoCorreoElectronico) contacto);
+          } else {
+            throw new Exception("Tipo de contacto no soportado");
+          }
+          
+          // Actualizar la referencia en la lista
+          entity.getContactos().set(i, contactoGuardado);
+        }
       }
-      
-      entity.setContacto(contactoGuardado);
-    } else if (entity.getContacto() != null && entity.getContacto().getId() != null) {
-      // Si tiene ID, verificar que existe
-      // En una implementación más completa, podrías cargar la entidad aquí
     }
   }
 
@@ -114,17 +117,24 @@ public class EmpleadoService extends BaseService<Empleado, String> {
       }
     }
 
-    // Similar para Contacto
-    if (entity.getContacto() != null && entity.getContacto().getId() == null) {
-      Contacto contactoGuardado;
-      if (entity.getContacto() instanceof ContactoTelefonico) {
-        contactoGuardado = contactoTelefonicoService.save((ContactoTelefonico) entity.getContacto());
-      } else if (entity.getContacto() instanceof ContactoCorreoElectronico) {
-        contactoGuardado = contactoCorreoElectronicoService.save((ContactoCorreoElectronico) entity.getContacto());
-      } else {
-        throw new Exception("Tipo de contacto no soportado");
+    // Similar para Contactos
+    if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
+      for (int i = 0; i < entity.getContactos().size(); i++) {
+        Contacto contacto = entity.getContactos().get(i);
+        if (contacto.getId() == null) {
+          Contacto contactoGuardado;
+          if (contacto instanceof ContactoTelefonico) {
+            contactoGuardado = contactoTelefonicoService.save((ContactoTelefonico) contacto);
+          } else if (contacto instanceof ContactoCorreoElectronico) {
+            contactoGuardado = contactoCorreoElectronicoService.save((ContactoCorreoElectronico) contacto);
+          } else {
+            throw new Exception("Tipo de contacto no soportado");
+          }
+          
+          // Actualizar la referencia en la lista
+          entity.getContactos().set(i, contactoGuardado);
+        }
       }
-      entity.setContacto(contactoGuardado);
     }
   }
 

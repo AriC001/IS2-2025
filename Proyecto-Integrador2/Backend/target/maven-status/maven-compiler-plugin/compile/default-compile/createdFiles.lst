@@ -82,7 +82,6 @@ nexora\proyectointegrador2\business\logic\service\NacionalidadService.class
 nexora\proyectointegrador2\business\domain\entity\Empleado.class
 nexora\proyectointegrador2\utils\mapper\impl\ImagenMapperImpl.class
 nexora\proyectointegrador2\utils\mapper\impl\CaracteristicaVehiculoMapperImpl.class
-nexora\proyectointegrador2\utils\mapper\impl\EmpresaMapperImpl.class
 nexora\proyectointegrador2\controller\PaisRestController.class
 nexora\proyectointegrador2\ProyectoIntegrador2Application.class
 nexora\proyectointegrador2\utils\dto\BaseDTO$BaseDTOBuilder.class
