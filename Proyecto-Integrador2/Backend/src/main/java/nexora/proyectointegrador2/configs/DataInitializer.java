@@ -62,7 +62,7 @@ public class DataInitializer {
   private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
   @Bean
-  public CommandLineRunner initDatabase(UsuarioRepository usuarioRepository, 
+  public CommandLineRunner initDatabase(UsuarioRepository usuarioRepository,
                                         PasswordEncoder passwordEncoder,
                                         PaisService paisService,
                                         ProvinciaService provinciaService,
@@ -125,10 +125,56 @@ public class DataInitializer {
       } else {
         logger.info("✓ Usuario operador ya existe en la base de datos");
       }
+
+      if (usuarioRepository.findByNombreUsuario("cliente").isEmpty()) {
+        Usuario cliente = Usuario.builder()
+                .nombreUsuario("cliente")
+                .clave(passwordEncoder.encode("cliente123"))
+                .rol(RolUsuario.CLIENTE)
+                .build();
+        cliente.setEliminado(false);
+
+        usuarioRepository.save(cliente);
+        logger.info("✅ Usuario CLIENTE creado exitosamente");
+        logger.info("   Usuario: cliente");
+        logger.info("   Contraseña: cliente123");
+        logger.info("   Rol: CLIENTE");
+      } else {
+        logger.info("✓ Usuario cliente ya existe en la base de datos");
+      }
       
       // Inicializar datos geográficos de Mendoza, Argentina
       initDatosGeograficos(paisService, provinciaService, departamentoService, localidadService,
                           paisRepository, provinciaRepository, departamentoRepository, localidadRepository);
+
+      //5.Crear un auto si no existe
+      /*if(!vehiculoRepository.existsById("1")){
+        CostoVehiculo cost1 = CostoVehiculo.builder()
+                .costo(Double.valueOf("5000"))
+                // fechaDesde: ahora
+                .fechaDesde(Date.from(Instant.now()))
+                // fechaHasta: 30 días desde ahora (ajustable según necesidad)
+                .fechaHasta(Date.from(Instant.now().plus(30, ChronoUnit.DAYS))).build();
+        costoVehiculoRepository.save(cost1);
+        CaracteristicaVehiculo char1 = CaracteristicaVehiculo.builder()
+                .anio(2000)
+                .cantidadAsiento(5)
+                .cantidadPuerta(4)
+                .cantidadTotalVehiculo(2)
+                .cantidadVehiculoDisponible(2)
+                .costoVehiculo(cost1)
+                .marca("BMW")
+                .modelo("1").build();
+        caracteristicaVehiculoRepository.save(char1);
+        Vehiculo v = Vehiculo.builder()
+          .patente("AA123AA")
+          .caracteristicaVehiculo(char1)
+          .estadoVehiculo(EstadoVehiculo.DISPONIBLE)
+          .build();
+
+        // Guardar el vehículo creado
+        vehiculoRepository.save(v);
+      }*/
       
       // Inicializar datos de prueba
       initDatosPrueba(direccionService, direccionRepository, nacionalidadService, nacionalidadRepository,
@@ -140,7 +186,7 @@ public class DataInitializer {
     };
   }
 
-  private void initDatosGeograficos(PaisService paisService, 
+  private void initDatosGeograficos( PaisService paisService, 
                                      ProvinciaService provinciaService,
                                      DepartamentoService departamentoService,
                                      LocalidadService localidadService,
@@ -205,6 +251,8 @@ public class DataInitializer {
 
         // 4. Crear Localidades según el departamento
         crearLocalidadesPorDepartamento(depto, localidadService, localidadRepository);
+
+
       }
 
       logger.info("✅ Datos geográficos de Mendoza, Argentina inicializados correctamente");
