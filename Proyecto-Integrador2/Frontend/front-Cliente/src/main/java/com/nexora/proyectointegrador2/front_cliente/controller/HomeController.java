@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
-
+  /** 
   @GetMapping("/")
   public String home(HttpSession session) {
     // Si no hay sesión activa, redirigir al login
@@ -34,5 +34,27 @@ public class HomeController {
     // Mostrar dashboard principal (index.html)
     return "index";
   }
+  **/
 
+
+    // Landing pública
+    @GetMapping("/")
+    public String landing() {
+        return "landing";  
+    }
+
+    // Dashboard protegido
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("nombreUsuario", session.getAttribute("nombreUsuario"));
+        model.addAttribute("rol", session.getAttribute("rol"));
+
+        return "index";
+    }
 }
+

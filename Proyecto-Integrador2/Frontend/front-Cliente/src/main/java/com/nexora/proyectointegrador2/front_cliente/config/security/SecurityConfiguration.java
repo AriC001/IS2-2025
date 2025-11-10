@@ -39,7 +39,7 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(auth -> auth
                         // Allow public access to the home page (index), registration endpoints and static resources
-                        .requestMatchers("/", "/registro/**", "/persona/registro", "/css/**", "/js/**", "/images/**", "/vendor/**", "/scss/**").permitAll()
+                        .requestMatchers("/", "/registro/**", "/persona/registro", "/css/**", "/js/**", "/img/**", "/vendor/**", "/scss/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

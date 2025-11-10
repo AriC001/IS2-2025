@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>My Car</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+
+    <<style>
+    /* Reset básico y fuente */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+
+    body {
+        background: #f4f6fb;
+    }
+
+    /* NAV */
+    .nav {
+        padding: 25px 80px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    /* --- LOGO --- */
+    .logo-icon {
+        display: inline-block;
+        font-size: 3rem;
+        color: #4e73df;
+    }
+
+    /* Rotación y animación del ícono de auto */
+    .rotate {
+        transform: rotate(-15deg);
+    }
+
+    .rotate-n-15 {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: rotate(-15deg) translateY(0px); }
+        50% { transform: rotate(-15deg) translateY(-10px); }
+    }
+
+    /* NAV LINKS */
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: #333;
+    }
+
+    .btn-primary {
+        padding: 10px 25px;
+        background: #1e6dfb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    /* HERO SECTION */
+    /* HERO SECTION - AJUSTADO PARA CORTE INFERIOR */
+    .hero {
+        display: flex;
+        /* Reduzco el padding un poco, pero añado un min-height */
+        padding: 100px 80px; /* Padding para el texto */
+        min-height: 700px; /* ¡NUEVO! Altura mínima para asegurar espacio */
+        align-items: center;
+        justify-content: space-between;
+        overflow: hidden; 
+        position: relative;
+    }
+
+    .hero-text h1 {
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    /* Subrayado azul */
+    .blue-underline {
+        color: #1e6dfb;
+        border-bottom: 4px solid #1e6dfb;
+    }
+
+    .hero-text p {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #666;
+    }
+
+    .store-buttons {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+    }
+
+    .store-buttons img {
+        width: 150px;
+        cursor: pointer;
+    }
+
+    /* Fondo abstracto (Detrás del auto) */
+    /* Fondo abstracto */
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 700px;
+            height: 450px;
+            background-color: #bfe4ff;
+            border-top-left-radius: 50%;
+            transform: translateX(40%) translateY(0%);
+            z-index: 0;
+        }
+
+
+    /* IMAGE - ESTILOS DEL AUTO (Corregido) */
+   /* Tus valores fijos implementados - AJUSTE TOP */
+    .hero-img {
+        position: absolute;
+        width: 1048px; 
+        height: 537px; 
+        left: 649px;
+        top: 150px; /* ¡NUEVO! Bajé el 'top' de 182px a 150px para subir un poco el auto */
+
+        z-index: 1; 
+    }
+
+    .hero-img img {
+        /* La imagen debe llenar el contenedor fijo (1048x537px) */
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Asegura que la imagen no se estire */
+        filter: drop-shadow(5px 10px 15px rgba(0, 0, 0, 0.1));
+    }
+
+    /* ESTILOS DE FORMULARIO Y UTILITY (del sb-admin-2) */
+
+    .input-group-text {
+        border-radius: 50rem 0 0 50rem !important;
+    }
+
+    .border-left-0 {
+        border-left: 0 !important;
+    }
+
+    .border-right-0 {
+        border-right: 0 !important;
+    }
+
+    .form-control-user.border-left-0 {
+        padding-left: 0.5rem;
+    }
+
+    .card {
+        border-radius: 1rem !important;
+    }
+
+    .btn-user {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .alert {
+        border-radius: 0.5rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+        .hero-img {
+            width: 60%;
+            transform: translateY(-50%) translateX(10%);
+        }
+        .hero-text h1 {
+            font-size: 40px;
+        }
+        .hero::before {
+            width: 600px;
+            height: 400px;
+            transform: translateX(60%) translateY(30%);
+        }
+    }
+
+    @media (max-width: 900px) {
+        .hero {
+            flex-direction: column;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-text {
+            z-index: 2;
+        }
+
+        .hero-img {
+            position: relative; 
+            width: 90%; 
+            margin-top: 40px;
+            top: auto;
+            right: auto;
+            transform: none; 
+            order: 1; 
+            margin-bottom: 20px;
+        }
+
+        .hero-img img {
+            width: 100%;
+            filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.1));
+        }
+
+        .nav {
+            padding: 20px;
+        }
+
+        .hero::before {
+            display: none; 
+        }
+    }
+</style>
+
+</head>
+
+<body>
+    <header class="nav">
+        <div class="logo">
+            <div class="logo-icon rotate">
+                <i class="fas fa-car"></i>
+            </div>
+            <span>MyCar</span>
+        </div>
+
+        <div class="nav-links">
+            <a th:href="@{/auth/login}">Sign in</a>
+            <button class="btn-primary" >Sign up</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h1>
+                Find, book and <br>
+                rent a car <span class="blue-underline">Easily</span>
+            </h1>
+
+            <p>
+                Get a car wherever and whenever you need it
+                with your IOS and Android device.
+            </p>
+
+            </div>
+
+        <div class="hero-img">
+            <img th:src="@{/img/auto.png}" alt="Auto">
+        </div>
+    </section>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+</body>
+
+</html>
