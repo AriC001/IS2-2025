@@ -11,7 +11,7 @@ public class DocumentoDAO extends BaseDAO<DocumentoDTO, String> {
 
   @Autowired
   public DocumentoDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/documentos");
+    super(restTemplate, "/documentos");
   }
 
   @Override

@@ -10,7 +10,7 @@ import com.nexora.proyecto.gestion.dto.ProvinciaDTO;
 public class ProvinciaDAO extends BaseDAO<ProvinciaDTO, String> {
   @Autowired
   public ProvinciaDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/provincias");
+    super(restTemplate, "/provincias");
   }
 
   @Override

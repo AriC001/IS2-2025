@@ -11,7 +11,7 @@ public class AlquilerDAO extends BaseDAO<AlquilerDTO, String> {
 
   @Autowired
   public AlquilerDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/alquileres");
+    super(restTemplate, "/alquileres");
   }
 
   @Override

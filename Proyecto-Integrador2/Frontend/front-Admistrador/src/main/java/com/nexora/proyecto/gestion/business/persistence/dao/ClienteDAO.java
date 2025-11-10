@@ -11,7 +11,7 @@ public class ClienteDAO extends BaseDAO<ClienteDTO, String> {
 
   @Autowired
   public ClienteDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/clientes");
+    super(restTemplate, "/clientes");
   }
 
   @Override

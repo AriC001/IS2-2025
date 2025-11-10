@@ -1,5 +1,7 @@
 package com.nexora.proyecto.gestion.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +19,6 @@ public class EmpresaDTO extends BaseDTO {
   private String telefono;
   private String email;
   private DireccionDTO direccion;
+  private List<ContactoDTO> contactos;
 
 }

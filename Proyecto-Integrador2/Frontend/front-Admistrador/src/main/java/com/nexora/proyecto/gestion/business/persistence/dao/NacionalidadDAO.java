@@ -11,7 +11,7 @@ public class NacionalidadDAO extends BaseDAO<NacionalidadDTO, String> {
 
   @Autowired
   public NacionalidadDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/nacionalidades");
+    super(restTemplate, "/nacionalidades");
   }
 
   @Override

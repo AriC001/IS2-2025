@@ -36,13 +36,21 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    .authorizeHttpRequests(auth -> auth
-      // Permit the authentication endpoints (v1) used by the clients
-      .requestMatchers("/api/v1/auth/**","/favicon.ico", "/public/**").permitAll()
-      // Protect other API endpoints under /api/**
-      .requestMatchers("/api/**").authenticated()
-      .anyRequest().permitAll()
-    )
+        .authorizeHttpRequests(auth -> auth
+          // IMPORTANTE: El orden de las reglas es crítico. Las más específicas primero.
+          // Permitir OPTIONS requests (preflight CORS) - debe ir primero
+          .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+          // Permitir endpoints de autenticación - debe ir ANTES de /api/**
+          // Especificamos explícitamente el endpoint de login
+          .requestMatchers("/api/v1/auth/login").permitAll()
+          .requestMatchers("/api/v1/auth/**").permitAll()
+          // Permitir recursos estáticos
+          .requestMatchers("/favicon.ico", "/public/**", "/error").permitAll()
+          // Proteger otros endpoints de la API (esto NO debe coincidir con /api/v1/auth/**)
+          .requestMatchers("/api/**").authenticated()
+          // Permitir cualquier otra petición
+          .anyRequest().permitAll()
+        )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();

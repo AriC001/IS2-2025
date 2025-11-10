@@ -1,5 +1,7 @@
 package com.nexora.proyecto.gestion.business.logic.service;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,11 @@ public class ClienteService extends BaseService<ClienteDTO, String> {
     }
     if (entity.getFechaNacimiento() == null) {
       throw new Exception("La fecha de nacimiento es obligatoria");
+    }
+    // Validar que la fecha de nacimiento no sea futura
+    Date hoy = new Date();
+    if (entity.getFechaNacimiento().after(hoy)) {
+      throw new Exception("La fecha de nacimiento no puede ser una fecha futura");
     }
     if (entity.getTipoDocumento() == null) {
       throw new Exception("El tipo de documento es obligatorio");

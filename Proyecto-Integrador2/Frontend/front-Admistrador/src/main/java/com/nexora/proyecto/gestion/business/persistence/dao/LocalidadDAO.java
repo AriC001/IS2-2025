@@ -11,7 +11,7 @@ public class LocalidadDAO extends BaseDAO<LocalidadDTO, String> {
 
   @Autowired
   public LocalidadDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/localidades");
+    super(restTemplate, "/localidades");
   }
 
   @Override

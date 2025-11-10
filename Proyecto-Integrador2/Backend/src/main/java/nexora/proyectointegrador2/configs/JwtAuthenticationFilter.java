@@ -106,9 +106,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        // No filtrar endpoints de autenticación (v1)
+        // No filtrar endpoints de autenticación
         // The application exposes authentication endpoints under /api/v1/auth/ —
         // make sure the JWT filter does not run for them so login/register work
-        return path.startsWith("/api/v1/auth/");
+        boolean shouldSkip = path != null && (path.startsWith("/api/v1/auth/") || path.equals("/api/v1/auth/login"));
+        if (shouldSkip) {
+            log.debug("✅ Saltando filtro JWT para endpoint público: {}", path);
+        } else {
+            log.debug("🔍 Filtro JWT se ejecutará para: {}", path);
+        }
+        return shouldSkip;
     }
 }

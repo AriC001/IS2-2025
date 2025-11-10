@@ -10,7 +10,7 @@ import com.nexora.proyecto.gestion.dto.PaisDTO;
 public class PaisDAO extends BaseDAO<PaisDTO, String> {
   @Autowired
   public PaisDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/paises");
+    super(restTemplate, "/paises");
   }
 
   @Override

@@ -10,7 +10,7 @@ import com.nexora.proyecto.gestion.dto.DepartamentoDTO;
 public class DepartamentoDAO extends BaseDAO<DepartamentoDTO, String> {
   @Autowired
   public DepartamentoDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/departamentos");
+    super(restTemplate, "/departamentos");
   }
 
   @Override

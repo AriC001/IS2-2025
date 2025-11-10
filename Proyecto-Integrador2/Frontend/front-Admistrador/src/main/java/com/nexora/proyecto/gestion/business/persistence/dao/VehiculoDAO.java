@@ -11,7 +11,7 @@ public class VehiculoDAO extends BaseDAO<VehiculoDTO, String> {
 
   @Autowired
   public VehiculoDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/api/v1/vehiculos");
+    super(restTemplate, "/vehiculos");
   }
 
   @Override
