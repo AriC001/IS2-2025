@@ -44,6 +44,8 @@ public class SecurityConfig {
           // Especificamos explícitamente el endpoint de login
           .requestMatchers("/api/v1/auth/login").permitAll()
           .requestMatchers("/api/v1/auth/**").permitAll()
+          // Permitir creación de usuarios desde el frontend (ej. flujo OAuth2)
+          .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/usuarios").permitAll()
           // Permitir recursos estáticos
           .requestMatchers("/favicon.ico", "/public/**", "/error").permitAll()
           // Proteger otros endpoints de la API (esto NO debe coincidir con /api/v1/auth/**)
@@ -59,7 +61,8 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081"));
+  // Allow common local dev origins used by the frontend (adjust as needed)
+  configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:8082"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);
@@ -68,5 +71,8 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
+
+  // NOTE: RestTemplate bean has been moved to RestTemplateConfig to avoid
+  // circular dependencies between SecurityConfig -> JwtAuthenticationFilter -> GitHubTokenService
 
 }

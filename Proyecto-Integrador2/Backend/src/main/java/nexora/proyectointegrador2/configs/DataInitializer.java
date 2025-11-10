@@ -75,6 +75,23 @@ public class DataInitializer {
       } else {
         logger.info("✓ Usuario operador ya existe en la base de datos");
       }
+
+      if (usuarioRepository.findByNombreUsuario("cliente").isEmpty()) {
+        Usuario cliente = Usuario.builder()
+                .nombreUsuario("cliente")
+                .clave(passwordEncoder.encode("cliente123"))
+                .rol(RolUsuario.CLIENTE)
+                .build();
+        cliente.setEliminado(false);
+
+        usuarioRepository.save(cliente);
+        logger.info("✅ Usuario CLIENTE creado exitosamente");
+        logger.info("   Usuario: cliente");
+        logger.info("   Contraseña: cliente123");
+        logger.info("   Rol: CLIENTE");
+      } else {
+        logger.info("✓ Usuario cliente ya existe en la base de datos");
+      }
       
       // Inicializar datos geográficos de Mendoza, Argentina
       initDatosGeograficos(paisService, provinciaService, departamentoService, localidadService,

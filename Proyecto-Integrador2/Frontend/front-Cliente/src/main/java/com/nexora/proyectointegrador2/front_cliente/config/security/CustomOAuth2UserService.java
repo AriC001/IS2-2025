@@ -1,6 +1,17 @@
 package  com.nexora.proyectointegrador2.front_cliente.config.security;
 
 import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,9 +37,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
 
     private final UsuarioService usuarioService;
+    private final RestTemplate restTemplate;
 
-    public CustomOAuth2UserService(UsuarioService usuarioService) {
+    @Value("${api.base.url}")
+    private String baseUrl;
+
+    public CustomOAuth2UserService(UsuarioService usuarioService, RestTemplate restTemplate) {
         this.usuarioService = usuarioService;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -48,28 +64,81 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             throw new OAuth2AuthenticationException("No se pudo obtener email o login de GitHub");
         }
 
-        // 3. Buscar o crear usuario local (usando la API/DAO a través de UsuarioService)
+        // Guardar en variable final para usar dentro de lambdas
+        final String loginEmail = email;
+
+        // 3. Buscar o crear usuario local usando el access token del proveedor OAuth2
         UsuarioDTO usuario = null;
+        String accessToken = null;
         try {
-            Optional<UsuarioDTO> existing = usuarioService.findByUsername(email);
-
-            if (existing.isPresent()) {
-                usuario = existing.get();
-                System.out.println("Usuario OAuth2 ya existe: " + email);
-            } else {
-                // Usuario no existe - crear Usuario (rol mapeado a RolUsuario.CLIENTE por defecto)
-                System.out.println("Creando nuevo usuario para OAuth2: " + email);
-                String randomPwd = UUID.randomUUID().toString().substring(0, 8);
-
-                UsuarioDTO nuevo = UsuarioDTO.builder()
-                        .nombreUsuario(email)
-                        .clave(randomPwd)
-                        .rol(RolUsuario.CLIENTE)
-                        .build();
-
-                usuario = usuarioService.create(nuevo);
-                System.out.println("Usuario creado vía API: " + email + " (id: " + (usuario != null ? usuario.getId() : "N/A") + ")");
+            if (userRequest != null && userRequest.getAccessToken() != null) {
+                accessToken = userRequest.getAccessToken().getTokenValue();
             }
+
+            // Si tenemos token del proveedor, usarlo en las llamadas al backend
+            if (accessToken != null && !accessToken.isBlank()) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setBearerAuth(accessToken);
+
+                // Obtener todos los usuarios activos y buscar por nombreUsuario
+                ResponseEntity<UsuarioDTO[]> resp = restTemplate.exchange(
+                        baseUrl + "/usuarios",
+                        HttpMethod.GET,
+                        new HttpEntity<>(headers),
+                        UsuarioDTO[].class
+                );
+
+                List<UsuarioDTO> usuarios = resp.getBody() != null ? Arrays.asList(resp.getBody()) : List.of();
+        Optional<UsuarioDTO> existing = usuarios.stream()
+            .filter(u -> loginEmail.equals(u.getNombreUsuario()))
+                        .findFirst();
+
+                if (existing.isPresent()) {
+            usuario = existing.get();
+            System.out.println("Usuario OAuth2 ya existe: " + loginEmail);
+                } else {
+                    // Crear nuevo usuario directamente pasando el mismo header
+            System.out.println("Creando nuevo usuario para OAuth2: " + loginEmail);
+                    String randomPwd = UUID.randomUUID().toString().substring(0, 8);
+
+                    UsuarioDTO nuevo = UsuarioDTO.builder()
+                .nombreUsuario(loginEmail)
+                            .clave(randomPwd)
+                            .rol(RolUsuario.CLIENTE)
+                            .build();
+
+                    ResponseEntity<UsuarioDTO> created = restTemplate.exchange(
+                            baseUrl + "/usuarios",
+                            HttpMethod.POST,
+                            new HttpEntity<>(nuevo, headers),
+                            UsuarioDTO.class
+                    );
+                    usuario = created.getBody();
+                    System.out.println("Usuario creado vía API: " + loginEmail + " (id: " + (usuario != null ? usuario.getId() : "N/A") + ")");
+                }
+            } else {
+                // Fallback: intentar usar el servicio existente (puede requerir token de servicio en config)
+                Optional<UsuarioDTO> existing = usuarioService.findByUsername(loginEmail);
+                if (existing.isPresent()) {
+                    usuario = existing.get();
+                    System.out.println("Usuario OAuth2 ya existe (fallback): " + loginEmail);
+                } else {
+                    System.out.println("Creando nuevo usuario para OAuth2 (fallback): " + loginEmail);
+                    String randomPwd = UUID.randomUUID().toString().substring(0, 8);
+
+                    UsuarioDTO nuevo = UsuarioDTO.builder()
+                            .nombreUsuario(loginEmail)
+                            .clave(randomPwd)
+                            .rol(RolUsuario.CLIENTE)
+                            .build();
+
+                    usuario = usuarioService.create(nuevo);
+                    System.out.println("Usuario creado vía API (fallback): " + loginEmail + " (id: " + (usuario != null ? usuario.getId() : "N/A") + ")");
+                }
+            }
+        } catch (HttpClientErrorException e) {
+            System.err.println("Error creando/obteniendo usuario OAuth2 vía API: " + e.getMessage());
+            throw new OAuth2AuthenticationException("Error al crear/obtener usuario local: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Error creando usuario OAuth2 vía API: " + e.getMessage());
             e.printStackTrace();

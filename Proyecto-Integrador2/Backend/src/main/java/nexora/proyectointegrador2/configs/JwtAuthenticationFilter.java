@@ -16,6 +16,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nexora.proyectointegrador2.utils.security.JwtUtil;
+import nexora.proyectointegrador2.utils.security.GitHubTokenService;
 
 /**
  * Filtro que intercepta cada petición HTTP y valida el token JWT
@@ -30,10 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     
   private final JwtUtil jwtUtil;
+        private final GitHubTokenService gitHubTokenService;
 
-  public JwtAuthenticationFilter(JwtUtil jwtUtil) {
-    this.jwtUtil = jwtUtil;
-  }
+        public JwtAuthenticationFilter(JwtUtil jwtUtil, GitHubTokenService gitHubTokenService) {
+            this.jwtUtil = jwtUtil;
+            this.gitHubTokenService = gitHubTokenService;
+        }
 
   @Override
   protected void doFilterInternal(
@@ -53,21 +56,49 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 log.debug("Token JWT detectado en la petición: {}", request.getRequestURI());
 
-                // 4. Primero extraemos el username para poder validar
-                String username = jwtUtil.extractUsername(token);
-                
-                // 5. Validar el token (firma, expiración, formato)
-                if (jwtUtil.validateToken(token, username)) {
-                    
+                // 4. Primero intentamos manejarlo como JWT (token emitido por nuestra app)
+                String username = null;
+                boolean jwtValid = false;
+                boolean isProviderToken = false;
+                try {
+                    username = jwtUtil.extractUsername(token);
+                    // 5. Validar el token (firma, expiración, formato)
+                    jwtValid = jwtUtil.validateToken(token, username);
+                } catch (Exception e) {
+                    // No es un JWT válido — puede ser un token de proveedor (ej. GitHub)
+                    username = null;
+                    jwtValid = false;
+                }
+
+                if (!jwtValid) {
+                    // Intentar validar como token de GitHub (u otro proveedor)
+                    String githubLogin = gitHubTokenService.validateTokenAndGetLogin(token);
+                    if (githubLogin != null) {
+                        // Autenticamos al usuario usando el login de GitHub
+                        username = "github:" + githubLogin;
+                        jwtValid = true;
+                        isProviderToken = true;
+                        log.debug("Token de proveedor válido (GitHub) para: {}", githubLogin);
+                    }
+                }
+
+                if (jwtValid) {
                     // 6. Extraer información adicional del usuario desde el token
-                    String rol = jwtUtil.extractRol(token);
-                    String usuarioId = jwtUtil.extractUsuarioId(token);
+                    String rol;
+                    String usuarioId = null;
+                    if (isProviderToken) {
+                        // Token de proveedor (GitHub): asignar rol por defecto
+                        rol = "USER";
+                    } else {
+                        rol = jwtUtil.extractRol(token);
+                        usuarioId = jwtUtil.extractUsuarioId(token);
+                    }
 
                     log.debug("Token válido para usuario: {} (ID: {}, Rol: {})", username, usuarioId, rol);
 
                     // 7. Crear objeto de autenticación de Spring Security
                     // El rol se convierte a ROLE_JEFE, ROLE_ADMINISTRATIVO, etc.
-                    UsernamePasswordAuthenticationToken authentication = 
+                    UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                             username,
                             null, // No necesitamos la contraseña aquí
@@ -81,7 +112,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.debug("Usuario autenticado exitosamente en el contexto de seguridad");
                     
                 } else {
-                    log.warn("Token JWT inválido o expirado en petición a: {}", request.getRequestURI());
+                    log.warn("Token inválido o expirado en petición a: {}", request.getRequestURI());
                 }
             } else {
                 log.debug("No se encontró token JWT en la petición a: {}", request.getRequestURI());
