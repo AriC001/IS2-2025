@@ -12,6 +12,10 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -39,28 +43,49 @@ public class RestTemplateConfig {
       @Override
       public ClientHttpResponse intercept(org.springframework.http.HttpRequest request, byte[] body,
           ClientHttpRequestExecution execution) throws IOException {
-        try {
-          if (apiClientToken != null && !apiClientToken.isBlank()) {
-            request.getHeaders().setBearerAuth(apiClientToken.trim());
-            return execution.execute(request, body);
-          }
+          try {
+            // 1) If an application-level API token is configured, use it (highest priority)
+            if (apiClientToken != null && !apiClientToken.isBlank()) {
+              request.getHeaders().setBearerAuth(apiClientToken.trim());
+              return execution.execute(request, body);
+            }
 
-          Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-          if (auth instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
-            String registrationId = oauth2.getAuthorizedClientRegistrationId();
-            String principalName = oauth2.getName();
-            if (registrationId != null && principalName != null) {
-              OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(registrationId,
-                  principalName);
-              if (client != null && client.getAccessToken() != null) {
-                String tokenValue = client.getAccessToken().getTokenValue();
-                if (tokenValue != null && !tokenValue.isBlank()) {
-                  request.getHeaders().setBearerAuth(tokenValue);
+            // 2) Try to obtain a backend JWT stored in the current HTTP session (e.g. after form login)
+            ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attrs != null) {
+              HttpServletRequest servletReq = attrs.getRequest();
+              if (servletReq != null) {
+                HttpSession session = servletReq.getSession(false);
+                if (session != null) {
+                  Object tokenAttr = session.getAttribute("token");
+                  if (tokenAttr instanceof String) {
+                    String sessionToken = ((String) tokenAttr).trim();
+                    if (!sessionToken.isBlank()) {
+                      request.getHeaders().setBearerAuth(sessionToken);
+                      return execution.execute(request, body);
+                    }
+                  }
                 }
               }
             }
-          }
+
+            // 3) Fall back to OAuth2AuthorizedClient token from SecurityContext (user token)
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth instanceof OAuth2AuthenticationToken) {
+              OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
+              String registrationId = oauth2.getAuthorizedClientRegistrationId();
+              String principalName = oauth2.getName();
+              if (registrationId != null && principalName != null) {
+                OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(registrationId,
+                    principalName);
+                if (client != null && client.getAccessToken() != null) {
+                  String tokenValue = client.getAccessToken().getTokenValue();
+                  if (tokenValue != null && !tokenValue.isBlank()) {
+                    request.getHeaders().setBearerAuth(tokenValue);
+                  }
+                }
+              }
+            }
         } catch (Exception e) {
           // don't fail requests if we couldn't resolve a token; proceed without auth header
         }

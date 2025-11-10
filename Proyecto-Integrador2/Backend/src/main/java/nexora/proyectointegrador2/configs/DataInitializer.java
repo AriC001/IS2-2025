@@ -1,5 +1,8 @@
 package nexora.proyectointegrador2.configs;
 
+import nexora.proyectointegrador2.business.domain.entity.*;
+import nexora.proyectointegrador2.business.enums.EstadoVehiculo;
+import nexora.proyectointegrador2.business.persistence.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -7,21 +10,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import nexora.proyectointegrador2.business.domain.entity.Departamento;
-import nexora.proyectointegrador2.business.domain.entity.Localidad;
-import nexora.proyectointegrador2.business.domain.entity.Pais;
-import nexora.proyectointegrador2.business.domain.entity.Provincia;
-import nexora.proyectointegrador2.business.domain.entity.Usuario;
 import nexora.proyectointegrador2.business.enums.RolUsuario;
 import nexora.proyectointegrador2.business.logic.service.DepartamentoService;
 import nexora.proyectointegrador2.business.logic.service.LocalidadService;
 import nexora.proyectointegrador2.business.logic.service.PaisService;
 import nexora.proyectointegrador2.business.logic.service.ProvinciaService;
-import nexora.proyectointegrador2.business.persistence.repository.DepartamentoRepository;
-import nexora.proyectointegrador2.business.persistence.repository.LocalidadRepository;
-import nexora.proyectointegrador2.business.persistence.repository.PaisRepository;
-import nexora.proyectointegrador2.business.persistence.repository.ProvinciaRepository;
-import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
+
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Configuration
 public class DataInitializer {
@@ -29,7 +27,7 @@ public class DataInitializer {
   private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
   @Bean
-  public CommandLineRunner initDatabase(UsuarioRepository usuarioRepository, 
+  public CommandLineRunner initDatabase(UsuarioRepository usuarioRepository,
                                         PasswordEncoder passwordEncoder,
                                         PaisService paisService,
                                         ProvinciaService provinciaService,
@@ -38,7 +36,8 @@ public class DataInitializer {
                                         PaisRepository paisRepository,
                                         ProvinciaRepository provinciaRepository,
                                         DepartamentoRepository departamentoRepository,
-                                        LocalidadRepository localidadRepository) {
+                                        LocalidadRepository localidadRepository,
+                                        VehiculoRepository vehiculoRepository, CostoVehiculoRepository costoVehiculoRepository, CaracteristicaVehiculoRepository caracteristicaVehiculoRepository) {
     return args -> {
       // Verificar si ya existe un usuario admin
       if (usuarioRepository.findByNombreUsuario("admin").isEmpty()) {
@@ -96,6 +95,35 @@ public class DataInitializer {
       // Inicializar datos geográficos de Mendoza, Argentina
       initDatosGeograficos(paisService, provinciaService, departamentoService, localidadService,
                           paisRepository, provinciaRepository, departamentoRepository, localidadRepository);
+
+      //5.Crear un auto si no existe
+      /*if(!vehiculoRepository.existsById("1")){
+        CostoVehiculo cost1 = CostoVehiculo.builder()
+                .costo(Double.valueOf("5000"))
+                // fechaDesde: ahora
+                .fechaDesde(Date.from(Instant.now()))
+                // fechaHasta: 30 días desde ahora (ajustable según necesidad)
+                .fechaHasta(Date.from(Instant.now().plus(30, ChronoUnit.DAYS))).build();
+        costoVehiculoRepository.save(cost1);
+        CaracteristicaVehiculo char1 = CaracteristicaVehiculo.builder()
+                .anio(2000)
+                .cantidadAsiento(5)
+                .cantidadPuerta(4)
+                .cantidadTotalVehiculo(2)
+                .cantidadVehiculoDisponible(2)
+                .costoVehiculo(cost1)
+                .marca("BMW")
+                .modelo("1").build();
+        caracteristicaVehiculoRepository.save(char1);
+        Vehiculo v = Vehiculo.builder()
+          .patente("AA123AA")
+          .caracteristicaVehiculo(char1)
+          .estadoVehiculo(EstadoVehiculo.DISPONIBLE)
+          .build();
+
+        // Guardar el vehículo creado
+        vehiculoRepository.save(v);
+      }*/
       
     };
   }
@@ -165,6 +193,8 @@ public class DataInitializer {
 
         // 4. Crear Localidades según el departamento
         crearLocalidadesPorDepartamento(depto, localidadService, localidadRepository);
+
+
       }
 
       logger.info("✅ Datos geográficos de Mendoza, Argentina inicializados correctamente");
