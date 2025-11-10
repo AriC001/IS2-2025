@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalle vehículo</title>
+  <style>
+    .container { max-width: 900px; margin: 24px auto; font-family: Arial, sans-serif; }
+    .card { border:1px solid #ddd; padding:16px; border-radius:8px; }
+    .row { display:flex; gap:16px; }
+    .col { flex:1 }
+    .thumb { width:300px; height:200px; background:#f4f4f4; display:flex;align-items:center;justify-content:center;border-radius:6px }
+    .btn { display:inline-block;padding:8px 12px;background:#007bff;color:#fff;text-decoration:none;border-radius:4px }
+    dt { font-weight:600 }
+    dd { margin:0 0 8px 0 }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/vehiculos" class="btn">← Volver al listado</a>
+
+    <h1>Detalle del vehículo</h1>
+
+    <!-- Versión que usa la variable 'vehiculo' (sin acento) -->
+    <div th:if="${vehiculo != null}" th:object="${vehiculo}" class="card">
+      <div class="row">
+        <div class="thumb col">
+          <span th:if="${caracteristicaVehiculo != null and caracteristicaVehiculo.imagenVehiculo != null}">
+            <!-- Si la imagen se sirve por endpoint, cambia por th:src -->
+            <img th:src="@{'/imagenes/' + ${caracteristicaVehiculo.imagenVehiculo.id}}" alt="Imagen vehículo" style="max-width:100%;max-height:100%;object-fit:cover;border-radius:6px" />
+          </span>
+          <span th:if="${caracteristicaVehiculo == null or caracteristicaVehiculo.imagenVehiculo == null}">
+            Sin imagen disponible
+          </span>
+        </div>
+        <div class="col">
+          <dl>
+            
+
+            <dt>Patente</dt>
+            <dd th:text="*{patente}">ABC123</dd>
+
+            <dt>Estado</dt>
+            <dd th:text="*{estadoVehiculo}">DISPONIBLE</dd>
+
+            <dt>Marca</dt>
+            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.marca : ''}">Marca</dd>
+
+            <dt>Modelo</dt>
+            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.modelo : ''}">Modelo</dd>
+
+            <dt>Año</dt>
+            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.anio : ''}">2020</dd>
+
+            <dt>Asientos</dt>
+            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.cantidadAsiento : ''}">5</dd>
+
+            <dt>Puertas</dt>
+            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.cantidadPuerta : ''}">4</dd>
+          </dl>
+
+          <p>
+            <a th:href="@{'/vehiculos/' + *{id} + '/editar'}" class="btn">Editar</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- (Se eliminó la versión con variable con acento. Usar siempre 'vehiculo' sin tilde en el modelo) -->
+
+  </div>
+</body>
+</html>
