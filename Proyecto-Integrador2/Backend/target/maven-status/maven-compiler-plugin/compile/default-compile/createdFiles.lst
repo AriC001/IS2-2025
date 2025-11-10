@@ -102,11 +102,13 @@ nexora\proyectointegrador2\utils\dto\CostoVehiculoDTO$CostoVehiculoDTOBuilderImp
 nexora\proyectointegrador2\utils\dto\LoginRequestDTO.class
 nexora\proyectointegrador2\controller\DireccionRestController.class
 nexora\proyectointegrador2\controller\ClienteRestController.class
+nexora\proyectointegrador2\configs\RestTemplateConfig.class
 nexora\proyectointegrador2\utils\dto\ContactoCorreoElectronicoDTO$ContactoCorreoElectronicoDTOBuilderImpl.class
 nexora\proyectointegrador2\business\domain\entity\DetalleFactura$DetalleFacturaBuilder.class
 nexora\proyectointegrador2\utils\dto\CostoVehiculoDTO$CostoVehiculoDTOBuilder.class
 nexora\proyectointegrador2\business\domain\entity\Alquiler.class
 nexora\proyectointegrador2\utils\dto\AuthResponseDTO$AuthResponseDTOBuilder.class
+nexora\proyectointegrador2\utils\security\GitHubTokenService.class
 nexora\proyectointegrador2\business\domain\entity\Imagen.class
 nexora\proyectointegrador2\business\enums\TipoEmpleado.class
 nexora\proyectointegrador2\business\logic\service\ProvinciaService.class

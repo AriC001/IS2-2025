@@ -79,6 +79,7 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\persistence\repository\VehiculoRepository.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\configs\DataInitializer.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\configs\JwtAuthenticationFilter.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\configs\RestTemplateConfig.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\configs\SecurityConfig.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\AlquilerRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\AuthController.java
@@ -151,4 +152,5 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\ProvinciaMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\UsuarioMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\VehiculoMapper.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\security\GitHubTokenService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\security\JwtUtil.java
