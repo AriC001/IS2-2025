@@ -1,0 +1,151 @@
+Spring Security usa los siguientes patrones de diseño:
+°  Patron Estrategia
+    Spring Security esta diseñado alrededor de estrategias conectables, para cada preocupacion en seguridad 
+    (Codificacion de contraseñas, autentificacion, etc) existe una interfaz que define el contrato, ademas 
+    de multiples implementaciones que pueden ser intercambiadas, siendo estas implementaciones 'estrategias'.
+  Codificacion de contraseñas
+    
+public interface PasswordEncoder {
+    String encode(CharSequence rawPassword);
+    boolean matches(CharSequence rawPassword, String encodedPassword);
+}
+    Al ser una interfaz, puede ser implementada de distintas maneras, por ejemplo:
+      BCryptPasswordEncoder
+      Arcon2PasswordEncoder
+      Pdkdf2PasswordEncoder
+    Entonces cada vez que se utilice PasswordEncoder no importara que tipo de encriptacion se utilice, pues
+    es una interfaz.
+
+°  Patron Cadena de Responsabilidad
+    El patrón Cadena de Responsabilidad permite que una petición (request) pase a través de una cadena de 
+    objetos manejadores, donde cada uno decide si procesa la solicitud o la pasa al siguiente en la cadena.
+    Esto evita que un único objeto tenga que manejar todos los casos posibles y facilita la extensibilidad 
+    del sistema.
+
+    En Spring Security, este patrón se ve reflejado en el Security Filter Chain — la cadena de filtros de 
+    seguridad que intercepta todas las peticiones HTTP entrantes antes de llegar a tu aplicación.
+    Cada filtro de la cadena es un eslabón que puede:
+    °  Autenticar al usuario.
+    °  Autorizar la solicitud.
+    °  Manejar excepciones.
+    °  Aplicar controles adicionales (CSRF, CORS, sesiones, etc.).
+    °  O simplemente pasar la solicitud al siguiente filtro.
+
+°  Patron Decorador
+    El patrón Decorator (o decorador) permite añadir responsabilidades o comportamientos adicionales a un 
+    objeto de forma dinámica, sin modificar su código original.
+    En vez de heredar (subclase), se envuelve el objeto original dentro de otro que implementa la misma 
+    interfaz y que puede añadir funcionalidad antes o después de delegar la llamada.
+
+    Spring Security usa el patrón Decorator principalmente en dos lugares clave:
+    DelegatingFilterProxy:
+      En una aplicación web Java, el punto de entrada para la seguridad está en la cadena de filtros del 
+      contenedor de servlets (por ejemplo, Tomcat).
+      Spring Security no registra directamente sus filtros ahí, sino que usa un único filtro llamado 
+      DelegatingFilterProxy, el cual:
+      °  Implementa javax.servlet.Filter, como cualquier otro filtro del contenedor.
+      °  En lugar de contener la lógica de seguridad, delegará las llamadas (doFilter, init, destroy) a 
+        un bean de Spring (por ejemplo, un FilterChainProxy).
+      °  Esto le permite “decorar” la cadena de filtros del contenedor, añadiendo las capacidades de 
+        Spring (inyección de dependencias, configuración declarativa, AOP, etc.).
+    FilterChainProxy:
+      El bean FilterChainProxy es el decorador interno principal dentro de Spring Security.
+      Su trabajo es interceptar todas las peticiones HTTP y pasarlas por una lista de filtros de 
+      seguridad, definidos por la configuración de Spring (HttpSecurity).
+      Cada filtro (como UsernamePasswordAuthenticationFilter, SecurityContextPersistenceFilter, etc.) puede:
+      °  procesar o modificar la petición;
+      °  añadir cabeceras;
+      °  realizar autenticación o autorización;
+      °  y finalmente delegar al siguiente filtro.
+
+      Cómo encaja el patrón Decorator aquí:
+      °  Cada filtro implementa la interfaz Filter.
+      °  Cada uno envuelve la llamada al siguiente filtro (chain.doFilter(request, response)).
+      °  De esta forma, cada filtro añade funcionalidad de seguridad adicional, decorando el flujo antes o después de delegar.
+
+°  Patron Fabrica
+    El patrón Factory (o Factory Method / Abstract Factory) se utiliza para centralizar la creación de objetos 
+    complejos, ocultando los detalles de su construcción al cliente.
+    En lugar de instanciar clases directamente con new, el cliente delega la creación a una fábrica, que decide 
+    qué clase concreta devolver, cómo configurarla y cómo integrarla en el sistema.
+    En Spring Security, este patrón es clave para su modularidad y extensibilidad, ya que permite crear 
+    componentes de seguridad configurables sin que el usuario necesite conocer sus implementaciones internas.
+
+    Se usa en:
+    Creación de objetos de seguridad a través de configuradores y builders
+      Los objetos centrales de seguridad (como el SecurityFilterChain, AuthenticationManager, UserDetailsService, 
+      etc.) no se instancian directamente.
+      En su lugar, Spring usa factories y builders que ensamblan los componentes según la configuración del desarrollador.
+    AuthenticationProvider y AuthenticationManager
+      El AuthenticationManager utiliza el patrón Factory para crear y coordinar los diferentes proveedores de autenticación.
+      Esto permite a Spring Security crear jerarquías dinámicas de autenticación: por ejemplo, combinar autenticación 
+      en base de datos, LDAP o JWT sin modificar el código central.
+    Factories internas y beans gestionados por Spring
+      Spring Security también define factories a nivel de contexto de aplicación, que crean y configuran beans 
+      de seguridad según las anotaciones o el XML/YAML del proyecto.
+°  Patron Constructor
+    El Patrón Builder (o Constructor Encadenado) se utiliza para construir objetos complejos paso a paso, 
+    ofreciendo una API fluida (fluent API) que mejora la legibilidad y flexibilidad de la configuración.
+    En lugar de crear manualmente objetos con muchos parámetros o dependencias, el Builder permite definir 
+    la configuración mediante una secuencia de métodos encadenados, y al final genera el objeto completo (por ejemplo, una SecurityFilterChain).
+    
+    El uso más visible del patrón Builder está en las clases de configuración de seguridad, especialmente en:
+    °  HttpSecurity
+    °  WebSecurity
+    °  SecurityFilterChain
+    °  AuthenticationManagerBuilder
+    °  UserDetailsServiceBuilder
+    Estos “builders” permiten definir la seguridad de la aplicación web sin tener que crear manualmente cada 
+    filtro o componente.
+°  Patron Proxy
+    El patrón Proxy (o Sustituto) consiste en crear un objeto intermediario que controla el acceso a otro objeto.
+    Este proxy intercepta las llamadas a métodos o peticiones, y puede:
+    °  Ejecutar lógica adicional (como verificar permisos, loguear, medir rendimiento, etc.),
+    °  Y luego decidir si delegar o no la llamada al objeto real.
+
+    Spring Security utiliza el patrón Proxy para aplicar seguridad a nivel de método o clase, sin necesidad 
+    de que el desarrollador modifique el código original.
+    Esto es posible gracias al AOP (Aspect-Oriented Programming) de Spring, que permite interceptar métodos 
+    en tiempo de ejecución.
+°  Patron Observador
+    El patrón Observer (Observador) establece una relación uno-a-muchos entre objetos:
+    °  Un sujeto (subject) mantiene una lista de observadores (observers).
+    °  Cuando el sujeto cambia de estado o realiza una acción relevante, notifica automáticamente a todos 
+      los observadores suscritos.
+    °  Los observadores pueden reaccionar sin que el sujeto necesite saber quiénes son ni qué hacen.
+    
+    Spring Security usa el patrón Observer a través del mecanismo de eventos de aplicación (Application Events) provisto por Spring Framework.
+    El flujo es así:
+    °  Ocurre un evento de seguridad (por ejemplo, un login exitoso o un intento fallido).
+    °  Spring Security publica un evento usando ApplicationEventPublisher.
+    °  Uno o más listeners registrados (clases que implementan ApplicationListener o anotadas con @EventListener) reciben la notificación y ejecutan alguna acción.
+°  Patron Template
+    El Template Method es un patrón de comportamiento que:
+      Define el esqueleto de un algoritmo en una clase base, delegando algunos pasos concretos a las subclases.
+    En otras palabras, la clase abstracta define qué pasos hay que seguir y en qué orden, pero deja que las subclases 
+    implementen los detalles de esos pasos.
+    Esto permite que el flujo general se mantenga coherente (y no se duplique código), pero que cada subclase pueda 
+    adaptarse a su propia lógica.
+
+    Spring Security lo usa extensamente para definir flujos de autenticación y autorización de forma reutilizable y extensible.
+    Las clases clave donde aparece son:
+    ° AbstractAuthenticationProcessingFilter
+        Esta clase abstracta define el flujo completo de autenticación HTTP, usado por filtros como UsernamePasswordAuthenticationFilter, JwtAuthenticationFilter, o OAuth2LoginAuthenticationFilter.
+        doFilter() establece el orden de pasos fijos:
+        °  Verificar si la solicitud requiere autenticación.
+        °  Intentar autenticar al usuario.
+        °  Manejar el éxito o el fallo.
+    ° AbstractSecurityInterceptor
+        Esta clase define el flujo de autorización, es decir, decidir si el usuario puede acceder a un recurso protegido.
+        Pasos del algoritmo:
+        °  Antes de la invocación: se obtiene el Authentication del contexto.
+        °  Se decide el acceso: usando un AccessDecisionManager.
+        °  Se continúa con la ejecución del recurso (si está permitido).
+        °  Después de la invocación: se limpia el contexto o aplica post-procesamiento.
+     ° AbstractUserDetailsAuthenticationProvider
+        Define el flujo general de autenticación basada en usuarios cargados desde un UserDetailsService.
+        El método authenticate() fija el orden:
+        °  Recuperar el usuario.          
+        °  Verificar estado (bloqueado, expirado, etc.).          
+        °  Verificar credenciales.         
+        °  Crear el token autenticado.

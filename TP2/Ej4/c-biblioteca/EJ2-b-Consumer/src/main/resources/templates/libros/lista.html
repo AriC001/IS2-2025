@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Lista de Libros - Sistema de Gestión</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row align-items-center mb-4">
+            <div class="col-lg-8">
+                <h1 class="mb-1">
+                    <i class="bi bi-book text-success"></i>
+                    Lista de Libros
+                </h1>
+                <p class="text-muted mb-0">Consulta y administra el catálogo completo de libros.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <a href="/libros/nuevo" class="btn btn-success btn-lg shadow-sm">
+                    <i class="bi bi-plus-circle me-2"></i> Nuevo Libro
+                </a>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3">
+                            <i class="bi bi-funnel text-success me-2"></i>
+                            Búsqueda de Libros
+                        </h6>
+                        <form action="/libros/buscar" method="get">
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="criterio" name="criterio" required>
+                                        <option value="">Seleccionar criterio</option>
+                                        <option value="titulo" th:selected="${criterio == 'titulo'}">Por Título</option>
+                                        <option value="autor" th:selected="${criterio == 'autor'}">Por Autor</option>
+                                        <option value="genero" th:selected="${criterio == 'genero'}">Por Género</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white">
+                                            <i class="bi bi-search text-muted"></i>
+                                        </span>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="valor"
+                                               name="valor"
+                                               th:value="${valor}"
+                                               placeholder="Escribe para buscar..."
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success w-100" type="submit">
+                                        <i class="bi bi-search me-1"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mt-2">
+                            <a th:href="@{/libros}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Mostrar todos
+                            </a>
+                            <span th:if="${mensajeBusqueda}" class="ms-3 badge bg-info text-dark" th:text="${mensajeBusqueda}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card dashboard-card">
+            <div class="card-header bg-success text-white d-flex align-items-center">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-journal me-2"></i>
+                    Catálogo de Libros
+                </h5>
+                <small class="fw-normal ms-2">
+                    (Total: <span th:text="${#lists.size(entities)}" class="badge bg-light text-success">0</span>)
+                </small>
+            </div>
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(entities)}" class="text-center py-5">
+                    <i class="bi bi-book display-1 text-muted"></i>
+                    <p class="text-muted mt-3 mb-4">Aún no hay libros registrados.</p>
+                    <a href="/libros/nuevo" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Registrar un libro
+                    </a>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(entities)}" class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Género</th>
+                                <th>Páginas</th>
+                                <th>Fecha</th>
+                                <th>Autores</th>
+                                <th>Responsable</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="libro : ${entities}">
+                                <td class="fw-bold" th:text="${libro.id}">1</td>
+                                <td><strong th:text="${libro.titulo}">Título</strong></td>
+                                <td th:text="${libro.genero}">Género</td>
+                                <td th:text="${libro.paginas}">0</td>
+                                <td th:text="${libro.fecha != null ? #dates.format(libro.fecha, 'dd/MM/yyyy') : '—'}">—</td>
+                                <td>
+                                    <span th:if="${libro.autores == null or #lists.isEmpty(libro.autores)}"
+                                          class="badge bg-warning text-dark">Sin autores</span>
+                                    <div th:unless="${libro.autores == null or #lists.isEmpty(libro.autores)}"
+                                         class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-light text-dark border"
+                                              th:each="autor : ${libro.autores}"
+                                              th:text="${autor.nombre + ' ' + autor.apellido}">Autor</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:if="${libro.persona != null}" th:text="${libro.persona.nombre + ' ' + libro.persona.apellido}">Responsable</span>
+                                    <span th:unless="${libro.persona != null}" class="text-muted">No asignado</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{/libros/{id}(id=${libro.id})}"
+                                           class="btn btn-outline-info"
+                                           title="Ver detalle">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/libros/{id}/editar(id=${libro.id})}"
+                                           class="btn btn-outline-success"
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/libros/{id}/eliminar(id=${libro.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        // Búsqueda local en tiempo real (opcional)
+        const searchInput = document.getElementById('valor');
+        
+        if (searchInput) {
+            // Auto-dismiss de alertas después de 5 segundos
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        }
+    </script>
+</div>
+</html>

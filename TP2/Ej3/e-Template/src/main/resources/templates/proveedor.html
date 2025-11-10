@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ubicación del Proveedor</title>
+
+    <!-- CSS de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <!-- JS de Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        #map {
+            height: 400px; /* altura del mapa */
+            width: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+<h2 th:text="${proveedor.name}">Proveedor Ejemplo</h2>
+<p><b>Dirección:</b> <span th:text="${proveedor.direccion}">Av. Siempre Viva 742</span></p>
+
+<!-- Contenedor del mapa -->
+<div id="map"></div>
+
+<!-- Leaflet.js es una interfaz JavaScript liviana para mostrar mapas interactivos.
+Leaflet no es un proveedor de mapas, sino un visor (como un navegador de mapas). -->
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const lat = /*[[${proveedor.direccion.latitud}]]*/ -34.6037;
+    const lon = /*[[${proveedor.direccion.longitud}]]*/ -58.3816;
+    const nombre = /*[[${proveedor.name}]]*/ 'Proveedor';
+
+    // Crear el mapa centrado en las coordenadas
+    const map = L.map('map').setView([lat, lon], 15);
+
+    // Agregar capa base de OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Agregar marcador
+    L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup(nombre)
+        .openPopup();
+    /*]]>*/
+</script>
+
+</body>
+</html>

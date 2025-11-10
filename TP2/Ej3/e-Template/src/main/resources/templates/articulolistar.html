@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Lista de Artículos</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body class="p-4">
+
+<h1 class="mb-4">Artículos</h1>
+
+<a href="/articulos/nuevo" class="btn btn-primary mb-3">Nuevo Artículo</a>
+<a href="/" class="btn btn-primary mb-3">Volver</a>
+
+<table class="table table-striped table-bordered">
+  <thead class="table-dark">
+  <tr>
+    <th>Nombre</th>
+    <th>Precio</th>
+    <th>Proveedores</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="articulo : ${articulos}">
+    <td th:text="${articulo.name}"></td>
+    <td th:text="${articulo.price}"></td>
+    <td>
+      <ul class="mb-0">
+        <li th:each="prov : ${articulo.provedor}" th:text="${prov.name}"></li>
+      </ul>
+    </td>
+    <td>
+      <a th:href="@{/articulos/editar/{id}(id=${articulo.id})}" class="btn btn-sm btn-warning">Editar</a>
+      <a th:href="@{/articulos/eliminar/{id}(id=${articulo.id})}"
+         class="btn btn-sm btn-danger"
+         onclick="return confirm('¿Eliminar este artículo?')">Eliminar</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

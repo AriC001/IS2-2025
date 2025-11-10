@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${historia != null and historia.id != null} ? '✏ Modificar Historia Clínica' : '➕ Crear Historia Clínica'"></title>
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+
+    <style>
+            html, body {
+        height: auto !important;
+        overflow-y: auto !important;
+        }
+
+        #wrapper {
+        min-height: 100vh;
+        padding-top: 120px; /* para no tapar el navbar fijo */
+        }
+
+        .navbar-fixed-top {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        }
+        body { background-color: #f2f8f8; }
+        .card { background-color: #fff; border-radius: 12px; padding: 30px; max-width: 800px; margin: 50px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #38b6b3; margin-bottom: 25px; }
+        .detalle-historia { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ddd; }
+        .btn-agregar { background-color: #38b6b3; color: #fff; border: none; margin-top: 10px; }
+        .btn-agregar:hover { background-color: #2ea29e; }
+        .btn-eliminar { background-color: #dc3545; color: white; border: none; margin-top: 5px; }
+        .btn-eliminar:hover { background-color: #bb2d3b; }
+    </style>
+</head>
+<body id="page-top" data-spy="scroll" data-target=".navbar-custom">
+    <div id="wrapper">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="top-area">
+        <div class="container">
+            <div class="row">
+            <div class="col-sm-6">
+                <p class="bold text-left">Servicio web de Medicio</p>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="container navigation">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+            <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand" th:href="@{/home}">
+            <img th:src="@{/img/logo.png}" alt="Medicio" width="150" height="40"/>
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+            <ul class="nav navbar-nav">
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/medicos}">Médicos</a></li>
+            <li class="active"><a th:href="@{/pacientes}">Pacientes</a></li>
+            <li><a th:href="@{/historias}">Historias clínicas</a></li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+    <div class="card">
+        <h1 th:text="${historia != null and historia.id != null} ? '✏ Modificar historia' : '➕ Crear historia'"></h1>
+        <div th:if="${error != null}" class='alert alert-danger' th:text="${error}" role='alert'></div>
+        <form th:action="@{/historiasClinicas/crear}" method="post">
+    
+        <!-- Paciente -->
+        <div class="mb-3">
+            <label for="paciente" class="form-label">Paciente</label>
+            <select id="paciente" name="pacienteId" class="form-select" required>
+            <option th:each="p : ${pacientes}"
+                    th:value="${p.id}"
+                    th:text="${p.nombre + ' ' + p.apellido + ' - ' + p.documento}">
+            </option>
+            </select>
+        </div>
+
+        <!-- Contenedor de detalles -->
+        <div id="detallesContainer">
+            <div class="detalle-historia mb-3">
+            <input type="text" name="detalles[]" placeholder="Detalle" class="form-control mb-2" required />
+            <input type="date" name="fechas[]" class="form-control mb-2" required />
+
+            <label class="form-label">Médico</label>
+            <select name="medicoIds[]" class="form-select mb-2" required>
+                <option th:each="m : ${medicos}"
+                        th:value="${m.id}"
+                        th:text="${m.nombre + ' ' + m.apellido + ' - ' + m.documento}">
+                </option>
+            </select>
+
+            <button type="button" class="btn btn-danger" onclick="eliminarDetalle(this)">Eliminar</button>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <button type="button" class="btn btn-agregar" onclick="agregarDetalle()">+ Agregar detalle</button>
+        <button type="submit" class="btn btn-primary" onclick="this.disabled=true; this.form.submit();">
+            Crear historia
+            </button>
+
+        </form>
+    </div>
+</div>
+</body>
+<script>
+  // Clon dinámico
+  function agregarDetalle() {
+    const contenedor = document.getElementById("detallesContainer");
+    const primerDetalle = contenedor.querySelector(".detalle-historia");
+    const nuevoDetalle = primerDetalle.cloneNode(true);
+
+    // Limpiar los valores de los nuevos campos
+    nuevoDetalle.querySelectorAll("input").forEach(input => input.value = "");
+    contenedor.appendChild(nuevoDetalle);
+  }
+
+  // Eliminar bloque
+  function eliminarDetalle(btn) {
+    const contenedor = document.getElementById("detallesContainer");
+    if (contenedor.children.length > 1) {
+      btn.closest(".detalle-historia").remove();
+    } else {
+      alert("Debe haber al menos un detalle.");
+    }
+  }
+</script>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

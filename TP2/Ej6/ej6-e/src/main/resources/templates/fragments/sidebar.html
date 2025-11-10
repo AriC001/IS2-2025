@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Sidebar Fragment -->
+    <ul th:fragment="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/index}">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-address-book"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">Nexora</div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/index}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Gestión
+        </div>
+
+        <!-- Nav Item - Usuarios -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/usuarios}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Usuarios</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Personas -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/personas}">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Personas</span>
+            </a>
+        </li>
+
+        <!-- Nav Item - Empresas -->
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/empresas}">
+                <i class="fas fa-fw fa-building"></i>
+                <span>Empresas</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Contactos
+        </div>
+
+        <!-- Nav Item - Contactos Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseContactos"
+                aria-expanded="true" aria-controls="collapseContactos">
+                <i class="fas fa-fw fa-address-card"></i>
+                <span>Contactos</span>
+            </a>
+            <div id="collapseContactos" class="collapse" aria-labelledby="headingContactos" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Tipos de Contacto:</h6>
+                    <a class="collapse-item" th:href="@{/contactos/correos}">
+                        <i class="fas fa-envelope"></i> Correos Electrónicos
+                    </a>
+                    <a class="collapse-item" th:href="@{/contactos/telefonos}">
+                        <i class="fas fa-phone"></i> Teléfonos
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+
+    </ul>
+</body>
+</html>

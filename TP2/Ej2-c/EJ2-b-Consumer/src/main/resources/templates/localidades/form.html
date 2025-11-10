@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${entity.id != null ? 'Editar Localidad' : 'Nueva Localidad'}">Localidad</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/localidades">Localidades</a></li>
+                <li class="breadcrumb-item active" th:text="${entity.id != null ? 'Editar' : 'Nueva Localidad'}"></li>
+            </ol>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>
+                    <i th:class="${entity.id != null ? 'bi bi-pencil-square text-danger' : 'bi bi-map text-danger'}"></i>
+                    <span th:text="${entity.id != null ? 'Editar Localidad' : 'Nueva Localidad'}">Formulario</span>
+                </h1>
+                <p class="text-muted" th:text="${entity.id != null ? 'Actualiza el nombre de la localidad' : 'Registra una nueva localidad para asignar a domicilios'}"></p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/localidades" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/messages :: messages}"></div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-geo"></i> Datos de la Localidad
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                <form th:object="${entity}"
+                    th:attr="action=${entity.id != null} ? '/localidades/' + entity.id : '/localidades'"
+                    method="post" novalidate>
+
+                            <input type="hidden" th:if="${entity.id != null}" th:field="*{id}">
+
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">
+                                    <i class="bi bi-signpost text-danger"></i> Nombre <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="nombre" class="form-control"
+                                       th:field="*{nombre}"
+                                       th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
+                                       placeholder="Nombre de la localidad" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Indica un nombre válido</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i th:class="${entity.id != null ? 'bi bi-check-circle' : 'bi bi-plus-circle'}"></i>
+                                        <span th:text="${entity.id != null ? 'Actualizar Localidad' : 'Crear Localidad'}">Guardar</span>
+                                    </button>
+                                    <a href="/localidades" class="btn btn-secondary ms-2">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </a>
+                                </div>
+                                <div th:if="${entity.id != null}">
+                                    <form th:action="@{/localidades/{id}/eliminar(id=${entity.id})}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-info-circle text-danger"></i> Ayuda
+                        </h6>
+                    </div>
+                    <div class="card-body small">
+                        <ul class="mb-0">
+                            <li>Utiliza nombres oficiales o reconocidos para facilitar la búsqueda.</li>
+                            <li>Puedes editar o eliminar localidades en cualquier momento.</li>
+                            <li>Las localidades se utilizan para completar domicilios.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        const nombreInput = document.getElementById('nombre');
+        if (nombreInput) {
+            nombreInput.addEventListener('blur', function() {
+                this.value = this.value.trim().toUpperCase();
+            });
+        }
+    </script>
+</div>
+</html>

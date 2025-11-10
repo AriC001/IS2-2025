@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-func.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <title>Inicio</title>
+</head>
+<body>
+<nav th:replace="~{components/navbar :: nav_bar}"></nav>
+<div class="container py-4">
+    <div class="row mb-3">
+        <div class="col-8">
+            <h3>Videojuegos</h3>
+        </div>
+        <div class="col-4 text-right">
+            <a th:href="@{/videogames/list}" class="btn btn-outline-primary">Ver CRUD</a>
+        </div>
+    </div>
+    <div id="main">
+    <div id="content">
+      <div class="box">
+        <div class="head">
+          <p class="text-right"><a href="#">See all</a></p>
+        </div>
+        <div class="row games-grid" id="games-grid">
+            <!-- Cards will be injected here by JS -->
+        </div>
+
+        <!-- 🔽 Paginación -->
+        <div class="d-flex justify-content-center mt-4" id="pagination-container">
+            <!-- Pagination controls injected by JS -->
+        </div>
+
+      </div>
+    </div>
+    </div>
+  </div>    
+
+
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+async function fetchPage(page = 0, size = 12) {
+  const res = await fetch(`/api/v1/videogames?page=${page}&size=${size}`, {
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  // Spring PageImpl => { content: [...], totalElements, totalPages, number, size, ... }
+  const items = data.content;
+  return { items, meta: { total: data.totalElements, pages: data.totalPages, page: data.number, size: data.size } };
+}
+
+function formatPrice(p) {
+    try { return p == null ? '$0' : '$' + Number(p).toFixed(2); } catch { return '$0'; }
+}
+
+function createCard(item) {
+    const col = document.createElement('div');
+    col.className = 'col-12 col-md-6 col-lg-4 mb-4 px-3';
+
+    const card = document.createElement('div');
+    card.className = 'vg-card';
+
+    const link = document.createElement('a');
+    link.className = 'vg-link';
+    link.href = `/api/v1/videogames/${item.id}`;
+
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'vg-img-wrap';
+    const img = document.createElement('img');
+    img.className = 'vg-img';
+    img.alt = item.title || 'Portada';
+    img.src = item.img || '/images/no-image.png';
+    imgWrap.appendChild(img);
+    link.appendChild(imgWrap);
+
+    const body = document.createElement('div');
+    body.className = 'vg-body';
+
+    const h5 = document.createElement('h5');
+    h5.className = 'vg-title';
+    const aTitle = document.createElement('a');
+    aTitle.href = `/videogames/${item.id}`;
+    aTitle.textContent = item.title || 'Untitled';
+    h5.appendChild(aTitle);
+
+    const meta = document.createElement('div');
+    meta.className = 'vg-meta';
+    const spanPrice = document.createElement('span');
+    spanPrice.className = 'vg-price';
+    spanPrice.textContent = formatPrice(item.price);
+    meta.appendChild(spanPrice);
+
+    body.appendChild(h5);
+    body.appendChild(meta);
+
+    card.appendChild(link);
+    card.appendChild(body);
+    col.appendChild(card);
+    return col;
+}
+
+function renderCards(items) {
+    const grid = document.getElementById('games-grid');
+    grid.innerHTML = '';
+    if (!items || items.length === 0) {
+        grid.innerHTML = '<div class="col-12"><p class="text-center">No se encontraron videojuegos.</p></div>';
+        return;
+    }
+    items.forEach(it => grid.appendChild(createCard(it)));
+}
+
+function renderPagination(meta) {
+    const container = document.getElementById('pagination-container');
+    container.innerHTML = '';
+    if (!meta || meta.pages <= 1) return;
+
+    const nav = document.createElement('nav');
+    nav.setAttribute('aria-label', 'Page navigation');
+    const ul = document.createElement('ul');
+    ul.className = 'pagination';
+
+    const prevLi = document.createElement('li');
+    prevLi.className = 'page-item' + (meta.page <= 0 ? ' disabled' : '');
+    const prevA = document.createElement('a');
+    prevA.className = 'page-link';
+    prevA.href = '#';
+    prevA.innerHTML = '&laquo; Prev';
+    prevA.onclick = (e) => { e.preventDefault(); if (meta.page > 0) loadPage(meta.page - 1, meta.size); };
+    prevLi.appendChild(prevA);
+
+    const infoLi = document.createElement('li');
+    infoLi.className = 'page-item disabled';
+    const infoSpan = document.createElement('span');
+    infoSpan.className = 'page-link';
+    infoSpan.textContent = `Página ${meta.page + 1} de ${meta.pages}`;
+    infoLi.appendChild(infoSpan);
+
+    const nextLi = document.createElement('li');
+    nextLi.className = 'page-item' + (meta.page >= meta.pages - 1 ? ' disabled' : '');
+    const nextA = document.createElement('a');
+    nextA.className = 'page-link';
+    nextA.href = '#';
+    nextA.innerHTML = 'Next &raquo;';
+    nextA.onclick = (e) => { e.preventDefault(); if (meta.page < meta.pages - 1) loadPage(meta.page + 1, meta.size); };
+    nextLi.appendChild(nextA);
+
+    ul.appendChild(prevLi);
+    ul.appendChild(infoLi);
+    ul.appendChild(nextLi);
+    nav.appendChild(ul);
+    container.appendChild(nav);
+}
+
+async function loadPage(page = 0, size = 12) {
+    try {
+        const { items, meta } = await fetchPage(page, size);
+        renderCards(items);
+        renderPagination(meta);
+    } catch (err) {
+        console.error(err);
+        const grid = document.getElementById('games-grid');
+        grid.innerHTML = `<div class="col-12"><p class="text-danger text-center">Error cargando datos: ${err.message}</p></div>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPage(0, 12);
+});
+</script>
+</body>
+</html>

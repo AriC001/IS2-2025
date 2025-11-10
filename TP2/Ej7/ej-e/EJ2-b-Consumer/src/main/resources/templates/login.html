@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign in</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#f4f7fb;
+            --card:#ffffff;
+            --accent:#4f46e5;
+            --muted:#6b7280;
+            --danger:#ef4444;
+            --shadow: 0 6px 20px rgba(21,24,40,0.08);
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+            margin:0;
+            font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg,#eef2ff 0%, var(--bg) 100%);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:32px;
+            color:#111827;
+        }
+        .container{
+            width:100%;
+            max-width:420px;
+        }
+        .card{
+            background:var(--card);
+            border-radius:12px;
+            padding:28px;
+            box-shadow:var(--shadow);
+            border:1px solid rgba(16,24,40,0.04);
+        }
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:18px;
+        }
+        .logo{
+            width:44px;height:44px;border-radius:10px;
+            background:linear-gradient(135deg,var(--accent),#06b6d4);
+            display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
+            box-shadow: 0 6px 18px rgba(79,70,229,0.12);
+            font-size:18px;
+        }
+        h1{margin:0;font-size:20px}
+        p.sub{margin:6px 0 18px;color:var(--muted);font-size:13px}
+        form{display:flex;flex-direction:column;gap:12px}
+        label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+        .input{
+            width:100%;
+            padding:12px 14px;
+            border-radius:8px;
+            border:1px solid rgba(15,23,42,0.06);
+            background:#fff;
+            font-size:14px;
+            outline:none;
+            transition:box-shadow .15s, border-color .15s;
+        }
+        .input:focus{
+            border-color:rgba(79,70,229,0.9);
+            box-shadow:0 6px 18px rgba(79,70,229,0.08);
+        }
+        .row{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+        .actions{display:flex;gap:12px;margin-top:8px}
+        .btn{
+            padding:10px 14px;border-radius:8px;border:0;cursor:pointer;font-weight:600;
+        }
+        .btn-primary{
+            background:var(--accent);color:white;flex:1;
+            box-shadow: 0 8px 30px rgba(79,70,229,0.12);
+        }
+        .btn-secondary{
+            background:transparent;border:1px solid rgba(15,23,42,0.06);color:var(--muted);flex:1;
+        }
+        .small{font-size:13px;color:var(--muted)}
+        .alert{
+            padding:10px 12px;border-radius:8px;background:#fff7f7;color:var(--danger);border:1px solid rgba(239,68,68,0.12);
+            font-size:13px;margin-bottom:6px;
+        }
+        .meta{
+            margin-top:14px;text-align:center;color:var(--muted);font-size:13px;
+        }
+        @media (max-width:420px){
+            .card{padding:20px}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" role="main">
+            <div class="brand">
+                <div class="logo">IS</div>
+                <div>
+                    <h1>Welcome back</h1>
+                    <p class="sub">Sign in to your account</p>
+                </div>
+            </div>
+
+            <div th:if="${param.error}" class="alert">Invalid username or password.</div>
+            <div th:if="${param.logout}" class="alert" style="background:#effaf5;color:#059669;border-color:rgba(5,150,105,0.12)">You have been signed out.</div>
+
+            <form th:action="@{/login}" method="post">
+                <div>
+                    <label for="dni">DNI</label>
+                    <input id="dni" name="dni" class="input" type="text" autocomplete="username" required />
+                </div>
+
+                <!-- <div>
+                    <label for="password">Password</label>
+                    <input id="password" name="password" class="input" type="password" autocomplete="current-password" required />
+                </div> -->
+
+                <div class="row">
+                    <label style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" name="remember-me" style="width:16px;height:16px" />
+                        <span class="small">Remember me</span>
+                    </label>
+                    <a th:href="@{/register}" class="small" style="color:var(--accent);text-decoration:none">Create account</a>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">Sign in</button>
+                    <a th:href="@{/register}" class="btn btn-secondary" role="button" style="text-align:center;display:inline-flex;align-items:center;justify-content:center">Register</a>
+                </div>
+            </form>
+
+            <div class="meta">
+                By signing in you agree to our <a href="#" style="color:var(--accent);text-decoration:none">terms</a>.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

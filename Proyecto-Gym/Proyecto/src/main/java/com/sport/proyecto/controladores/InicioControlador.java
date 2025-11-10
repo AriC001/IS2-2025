@@ -1,0 +1,83 @@
+package com.sport.proyecto.controladores;
+
+import com.sport.proyecto.entidades.Usuario;
+import com.sport.proyecto.servicios.PersonaServicio;
+import com.sport.proyecto.servicios.UsuarioServicio;
+import org.springframework.stereotype.Controller;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+ 
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+public class InicioControlador {
+
+    @Autowired
+    private PersonaServicio personaServicio;
+
+    @Autowired
+    private UsuarioServicio usuarioServicio;
+
+    /*@GetMapping("/error")
+    public String error(Model model){
+        return "views/error";
+    }*/
+
+    @GetMapping("/login")
+    public String loginForm(Model model) {
+        return "views/login"; // devuelve el HTML de login
+    }
+
+    // NOTE: authentication is handled by Spring Security. The old manual login POST
+    // has been removed to avoid conflicts with the security filter chain.
+
+
+/*    @PostMapping("/login")
+    public String loginUsuario(@RequestParam String email,
+                               @RequestParam String clave,
+                               ModelMap model,
+                               HttpSession session) {
+        try {
+            Persona persona = personaServicio.login(email, clave);
+            if (persona == null) {
+                model.put("error", "Nombre de usuario o clave incorrecto");
+                return "login"; // se queda en la misma página
+            }
+
+            session.setAttribute("usuariosession", persona);
+            return "redirect:/index"; // login exitoso
+        } catch (Exception e) {
+            model.put("error", "Error inesperado: " + e.getMessage());
+            return "login";
+        }
+    }*/
+
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/index";
+    }
+
+    @GetMapping("/registro")
+    public String registro(@org.springframework.web.bind.annotation.ModelAttribute("usuariosession") Usuario login, Model model) {
+        boolean esEmpleado = false; // por defecto false
+        if (login != null && login.getId() != null) {
+            if (usuarioServicio.esAdmin(login.getId())) {
+                esEmpleado = true;
+            }
+        }
+
+        model.addAttribute("esEmpleado", esEmpleado);
+        //List<Pais> paises = paisServicio.mostrarPaises paises(); // trae todas
+        //model.addAttribute("paises", paises); // <-- esto asegura que ${paises} exista en Thymeleaf
+        //List<Provincia> provincias = provinciaServicio.mostrarProvincias provincias(); // trae todas
+        //model.addAttribute("provincias", provincias);
+        //List<Localidad> localidades = localidadServicio.mostrarLocalidades localidades(); // trae todas
+        //model.addAttribute("localidades", localidades);
+        return "views/registro";
+    }
+    
+
+}

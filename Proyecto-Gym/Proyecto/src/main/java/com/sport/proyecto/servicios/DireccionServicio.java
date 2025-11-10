@@ -1,0 +1,245 @@
+package com.sport.proyecto.servicios;
+
+import com.sport.proyecto.controladores.SucursalEdicionDTO;
+import com.sport.proyecto.entidades.Direccion;
+import com.sport.proyecto.entidades.Localidad;
+import com.sport.proyecto.errores.ErrorServicio;
+import com.sport.proyecto.repositorios.DireccionRepositorio;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.sport.proyecto.servicios.LocalidadServicio;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class DireccionServicio {
+
+  @Autowired
+  private DireccionRepositorio direccionRepositorio;
+
+  @Autowired
+  private LocalidadServicio localidadServicio;
+
+  // Busqueda
+
+  @Transactional
+  public List<Direccion> listarDireccion() throws ErrorServicio{
+    try {
+      return direccionRepositorio.findAll();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  @Transactional
+  public List<Direccion> listarDireccionActiva() throws ErrorServicio {
+    try {
+      return direccionRepositorio.findAllActives();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+  @Transactional
+  public Direccion buscarDireccion(String id) throws ErrorServicio {
+    try {
+      Optional<Direccion> opt = direccionRepositorio.findById(id);
+      if (opt.isPresent()) {
+        return opt.get();
+      } else {
+        throw new ErrorServicio("No se encontro la direccion solicitada");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  @Transactional
+  public Direccion buscarDireccionPorCalleYNumeracion(String calle, String numeracion) throws ErrorServicio {
+    try {
+      Direccion direccion = direccionRepositorio.findByStreetAndNumber(calle, numeracion);
+      if (direccion != null) {
+        return direccion;
+      } else {
+        throw new ErrorServicio("No se encontro la direccion solicitada");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  // Escritura
+
+  @Transactional
+  public void crearDireccion(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
+    validar(calle, numeracion, barrio, manzanaPiso, casaDepartamento, referencia, idLocalidad);
+    try {
+      Localidad localidad = localidadServicio.buscarLocalidad(idLocalidad);
+      if (localidad == null) {
+        throw new ErrorServicio("No se encontro la localidad solicitada");
+      }
+      Direccion direccion = new Direccion();
+      direccion.setCalle(calle);
+      direccion.setNumeracion(numeracion);
+      direccion.setBarrio(barrio);
+      direccion.setManzanaPiso(manzanaPiso);
+      direccion.setCasaDepartamento(casaDepartamento);
+      direccion.setReferencia(referencia);
+      direccion.setEliminado(false);
+      direccion.setLocalidad(localidad);
+      direccionRepositorio.save(direccion);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  @Transactional
+  public void modificarDireccion(String id, String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
+    validar(calle, numeracion, barrio, manzanaPiso, casaDepartamento, referencia, idLocalidad);
+    try {
+      Direccion direccion = buscarDireccion(id);
+      if (direccion == null) {
+        throw new ErrorServicio("No se encontro la direccion solicitada");
+      }
+      Localidad localidad = localidadServicio.buscarLocalidad(idLocalidad);
+      if (localidad == null) {
+        throw new ErrorServicio("No se encontro la localidad solicitada");
+      }
+      direccion.setCalle(calle);
+      direccion.setNumeracion(numeracion);
+      direccion.setBarrio(barrio);
+      direccion.setManzanaPiso(manzanaPiso);
+      direccion.setCasaDepartamento(casaDepartamento);
+      direccion.setReferencia(referencia);
+      direccion.setLocalidad(localidad);
+      direccionRepositorio.save(direccion);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  @Transactional
+  public void eliminarDireccion(String id) throws ErrorServicio {
+    try {
+      Direccion direccion = buscarDireccion(id);
+      if (direccion == null) {
+        throw new ErrorServicio("No se encontro la direccion solicitada");
+      }
+      direccion.setEliminado(true);
+      direccionRepositorio.save(direccion);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  // Validacion
+
+  private void validar(String calle, String numeracion, String barrio, String manzanaPiso, String casaDepartamento, String referencia, String idLocalidad) throws ErrorServicio {
+    if (calle == null || calle.isEmpty()) {
+      throw new ErrorServicio("La calle no puede ser nula o estar vacia");
+    }
+    if (numeracion == null || numeracion.isEmpty()) {
+      throw new ErrorServicio("La numeracion no puede ser nula o estar vacia");
+    }
+    if (barrio == null || barrio.isEmpty()) {
+      throw new ErrorServicio("El barrio no puede ser nulo o estar vacio");
+    }
+    if (manzanaPiso == null || manzanaPiso.isEmpty()) {
+      throw new ErrorServicio("La manzana/piso no puede ser nulo o estar vacio");
+    }
+    if (casaDepartamento == null || casaDepartamento.isEmpty()) {
+      throw new ErrorServicio("La casa/departamento no puede ser nulo o estar vacio");
+    }
+    if (idLocalidad == null || idLocalidad.toString().isEmpty()) {
+      throw new ErrorServicio("La localidad no puede ser nula o estar vacia");
+    }
+  }
+  @Transactional 
+  public Direccion guardarDireccion(Direccion nuevaDireccion){
+        validar(nuevaDireccion.getCalle(),nuevaDireccion.getNumeracion(),nuevaDireccion.getBarrio()
+                ,nuevaDireccion.getManzanaPiso(),nuevaDireccion.getCasaDepartamento(),nuevaDireccion.getReferencia(),
+                nuevaDireccion.getLocalidad().getId());
+    try {
+      System.out.println("busca localidad");
+      Localidad localidad = localidadServicio.buscarLocalidad(nuevaDireccion.getLocalidad().getId());
+      if (localidad == null) {
+        System.out.println("no encuentra localidad");
+        throw new ErrorServicio("No se encontro la localidad solicitada");
+      }
+      Direccion direccion = new Direccion();
+      System.out.println("id creado: "+direccion.getId());
+      direccion.setCalle(nuevaDireccion.getCalle());
+      direccion.setNumeracion(nuevaDireccion.getNumeracion());
+      direccion.setBarrio(nuevaDireccion.getBarrio());
+      direccion.setManzanaPiso(nuevaDireccion.getManzanaPiso());
+      direccion.setCasaDepartamento(nuevaDireccion.getCasaDepartamento());
+      direccion.setReferencia(nuevaDireccion.getReferencia());
+      direccion.setEliminado(false);
+      direccion.setLocalidad(localidad);
+      if (nuevaDireccion.getLongitud() != null && nuevaDireccion.getLongitud() != null){
+        direccion.setLatitud(nuevaDireccion.getLatitud());
+        direccion.setLongitud(nuevaDireccion.getLongitud());
+      }
+      System.out.println("guardando");
+      direccionRepositorio.save(direccion);
+      return direccion;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ErrorServicio("Error del sistema: " + e.getMessage());
+    }
+  }
+
+  @Transactional
+  public void actualizarDireccion(Direccion direccion) throws ErrorServicio {
+    if (direccion == null || direccion.getId() == null || direccion.getId().isEmpty()) {
+      throw new ErrorServicio("La dirección no puede ser nula y debe tener un ID");
+    }
+
+    Direccion existente = buscarDireccion(direccion.getId());
+
+    existente.setCalle(direccion.getCalle());
+    existente.setNumeracion(direccion.getNumeracion());
+    existente.setBarrio(direccion.getBarrio());
+    existente.setCasaDepartamento(direccion.getCasaDepartamento());
+    existente.setManzanaPiso(direccion.getManzanaPiso());
+    existente.setLatitud(direccion.getLatitud());
+    existente.setLongitud(direccion.getLongitud());
+    existente.setReferencia(direccion.getReferencia());
+
+    if (direccion.getLocalidad() != null && direccion.getLocalidad().getId() != null) {
+      existente.setLocalidad(localidadServicio.buscarLocalidad(direccion.getLocalidad().getId()));
+    }
+
+    direccionRepositorio.save(existente);
+  }
+
+
+  @Transactional
+  public Direccion actualizarDireccionDesdeDTO(SucursalEdicionDTO dto) throws ErrorServicio {
+    Direccion direccion = buscarDireccion(dto.getDireccionId());
+    Localidad localidad = localidadServicio.buscarLocalidad(dto.getLocalidadId());
+
+    direccion.setLocalidad(localidad);
+    direccion.setCalle(dto.getCalle());
+    direccion.setNumeracion(dto.getNumeracion());
+    direccion.setBarrio(dto.getBarrio());
+    direccion.setCasaDepartamento(dto.getCasaDepartamento());
+    direccion.setManzanaPiso(dto.getManzanaPiso());
+    direccion.setLatitud(dto.getLatitud());
+    direccion.setLongitud(dto.getLongitud());
+    direccion.setReferencia(dto.getReferencia());
+
+    return direccionRepositorio.save(direccion);
+  }
+
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${empresaDTO.id != null} ? 'Editar Empresa' : 'Agregar Empresa'">Formulario Empresa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="/css/styles.css" rel="stylesheet" />
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      background: linear-gradient(180deg,#071034 0%, #05102a 100%);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+    .form-panel {
+      background: rgba(255,255,255,0.96);
+      border-radius: 1rem;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.15);
+      padding: 2rem 2.5rem;
+      max-width: 900px;
+      margin: 3rem auto;
+    }
+    .form-title {
+      color: var(--accent-1, #6C5CE7);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .btn-accent {
+      background: linear-gradient(90deg,#6C5CE7,#00C2FF);
+      color: white;
+      font-weight: 600;
+    }
+    .msg {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-panel">
+    <h2 class="form-title"><i class="fa-solid fa-building"></i> <span th:text="${empresaDTO.id != null} ? 'Editar Empresa' : 'Agregar Empresa'"></span></h2>
+    <form th:action="${empresaDTO != null and empresaDTO.id != null} ? @{/empresa/actualizar/{id}(id=${empresaDTO.id})} : @{/empresa/crear}"
+          th:object="${empresaDTO}" method="post">
+      <div th:if="${error}" class="alert alert-danger msg" th:text="${error}"></div>
+      <div class="row g-3 mb-3">
+        <div class="col-12"><h5 class="mt-3"><i class="fa-solid fa-location-dot"></i> Ubicación</h5></div>
+        <div class="col-md-3">
+          <label class="form-label"><i class="fa-solid fa-flag"></i> País</label>
+          <select id="emp_pais" th:field="*{direccionDTO.paisId}" class="form-select">
+            <option value="">-- Seleccionar país --</option>
+            <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"></option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label"><i class="fa-solid fa-map"></i> Provincia</label>
+          <select id="emp_provincia" th:field="*{direccionDTO.provinciaId}" class="form-select"></select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label"><i class="fa-solid fa-map-location-dot"></i> Departamento</label>
+          <select id="emp_departamento" th:field="*{direccionDTO.departamentoId}" class="form-select"></select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label"><i class="fa-solid fa-city"></i> Localidad</label>
+          <select id="emp_localidad" th:field="*{direccionDTO.localidadId}" class="form-select"></select>
+        </div>
+        <input type="hidden" id="emp_initialPais" th:value="${empresaDTO.direccionDTO.paisId}" />
+        <input type="hidden" id="emp_initialProv" th:value="${empresaDTO.direccionDTO.provinciaId}" />
+        <input type="hidden" id="emp_initialDep" th:value="${empresaDTO.direccionDTO.departamentoId}" />
+        <input type="hidden" id="emp_initialLoc" th:value="${empresaDTO.direccionDTO.localidadId}" />
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12"><h5 class="mt-3"><i class="fa-solid fa-road"></i> Dirección</h5></div>
+        <div class="col-md-3">
+          <label class="form-label"><i class="fa-solid fa-road"></i> Calle</label>
+          <input type="text" th:field="*{direccionDTO.calle}" class="form-control" required/>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label"><i class="fa-solid fa-hashtag"></i> Número</label>
+          <input type="text" th:field="*{direccionDTO.numeracion}" class="form-control" required/>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label"><i class="fa-solid fa-tree-city"></i> Barrio</label>
+          <input type="text" th:field="*{direccionDTO.barrio}" class="form-control" required/>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label"><i class="fa-solid fa-layer-group"></i> Manzana/Piso</label>
+          <input type="text" th:field="*{direccionDTO.manzanaPiso}" class="form-control" required/>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label"><i class="fa-solid fa-door-open"></i> Casa/Departamento</label>
+          <input type="text" th:field="*{direccionDTO.casaDepartamento}" class="form-control" required/>
+        </div>
+      </div>
+
+      <div class="col-md-1">
+        <label class="form-label"><i class="fa-solid fa-thumbtack"></i> Referencia</label>
+        <input type="text" th:field="*{direccionDTO.referencia}" class="form-control"/>
+      </div>
+
+      <br>
+
+      <!-- Latitud / Longitud -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Latitud</label>
+          <input type="number" step="any" th:field="*{direccionDTO.latitud}" class="form-control" placeholder="-34.5" />
+          <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('direccionDTO.latitud')}" th:errors="*{direccionDTO.latitud}"></div>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Longitud</label>
+          <input type="number" step="any" th:field="*{direccionDTO.longitud}" class="form-control" placeholder="-68.2" />
+          <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('direccionDTO.longitud')}" th:errors="*{direccionDTO.longitud}"></div>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <small class="text-muted">Opcional: introducí coordenadas para ubicar la dirección en el mapa.</small>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Razón Social</label>
+          <input type="text" th:field="*{razonSocial}" class="form-control" required />
+        </div>
+      </div>
+
+      <!-- ...agrega aquí el resto de los campos según tu modelo... -->
+      <div class="d-flex gap-2 justify-content-end">
+        <a th:href="@{/empresa/listar}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-accent">Guardar</button>
+      </div>
+    </form>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/js/scripts.js"></script>
+  <script src="/js/datatables-simple-demo.js"></script>
+  <!-- JS cascada (misma lógica, IDs con prefijo "emp_") -->
+  <script>
+      async function load(url, params = {}) {
+          const qs = new URLSearchParams(params).toString();
+          const res = await fetch(url + (qs ? `?${qs}` : ''));
+          if (!res.ok) throw new Error('Fetch error');
+          return res.json();
+      }
+      function fillSelect(sel, items, placeholder='-- Seleccionar --') {
+          sel.innerHTML = `<option value="">${placeholder}</option>`;
+          items.forEach(i => sel.insertAdjacentHTML('beforeend', `<option value="${i.id}">${i.nombre}</option>`));
+      }
+      document.addEventListener('DOMContentLoaded', () => {
+          const $pais = document.getElementById('emp_pais');
+          const $prov = document.getElementById('emp_provincia');
+          const $dep  = document.getElementById('emp_departamento');
+          const $loc  = document.getElementById('emp_localidad');
+          $pais.addEventListener('change', async () => {
+              fillSelect($prov, []); fillSelect($dep, []); fillSelect($loc, []);
+              if ($pais.value) {
+                  const provincias = await load('/api/ubicacion/provincias', { paisId: $pais.value });
+                  fillSelect($prov, provincias, '-- Seleccionar provincia --');
+              }
+          });
+          $prov.addEventListener('change', async () => {
+              fillSelect($dep, []); fillSelect($loc, []);
+              if ($prov.value) {
+                  const deps = await load('/api/ubicacion/departamentos', { provinciaId: $prov.value });
+                  fillSelect($dep, deps, '-- Seleccionar departamento --');
+              }
+          });
+          $dep.addEventListener('change', async () => {
+              fillSelect($loc, []);
+              if ($dep.value) {
+                  const locs = await load('/api/ubicacion/localidades', { departamentoId: $dep.value });
+                  fillSelect($loc, locs, '-- Seleccionar localidad --');
+              }
+          });
+          // precarga
+          (async function preCarga() {
+              const initialPais = document.getElementById('emp_initialPais')?.value;
+              const initialProv = document.getElementById('emp_initialProv')?.value;
+              const initialDep  = document.getElementById('emp_initialDep')?.value;
+              const initialLoc  = document.getElementById('emp_initialLoc')?.value;
+              if (!initialPais) return;
+              try {
+                  $pais.value = initialPais;
+                  const provincias = await load('/api/ubicacion/provincias', { paisId: initialPais });
+                  fillSelect($prov, provincias, '-- Seleccionar provincia --');
+                  if (initialProv) {
+                      $prov.value = initialProv;
+                      const deps = await load('/api/ubicacion/departamentos', { provinciaId: initialProv });
+                      fillSelect($dep, deps, '-- Seleccionar departamento --');
+                      if (initialDep) {
+                          $dep.value = initialDep;
+                          const locs = await load('/api/ubicacion/localidades', { departamentoId: initialDep });
+                          fillSelect($loc, locs, '-- Seleccionar localidad --');
+                          if (initialLoc) $loc.value = initialLoc;
+                      }
+                  }
+              } catch (e) { console.error('Precarga Empresa error:', e); }
+          })();
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Tinder de Mascota - Registro</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/css/one-page-wonder.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <header>
+      <h1 style="margin-top:80px; text-align: center;"> Votar</h1>
+      <div th:if="${errorMensaje}" style="color:red; margin-bottom:10px;">
+          <p th:text="${errorMensaje}"></p>
+      </div>
+  </header>
+
+  <section class="text-center">
+    <div class="container d-flex justify-content-center" style="margin-bottom: 70px;">
+      <div class="card text-center" style="width: 18rem;">
+        <img th:if="${mascotaAVotar.foto != null}" th:src="${'/foto/mascota/' + mascotaAVotar.id}" th:alt="${mascotaAVotar.nombre}" class="card-img-top rounded"style="width:100%; height:200px; object-fit:cover; border-top-left-radius: .25rem; border-top-right-radius: .25rem;">
+        <div class="card-body"></div>
+          <h4 class="card-title" th:text="${mascotaAVotar.nombre}"> Nombre mascota</h4>
+          <h5 class="card-subtitle" th:text="${mascotaAVotar.sexo}"> Sexo</h4>
+        </div>
+      </div>
+
+      <h3>¿Con cuál de tus mascotas querés votar?</h3>
+
+      <form th:action="@{/votar/confirmar-voto}" method="post">
+          <input type="hidden" name="idMascotaVotada" th:value="${mascotaAVotar.id}" />
+
+          <div th:each="m : ${mascotasUsuario}">
+              <label>
+                  <input type="radio" name="idMascotaVotante" th:value="${m.id}" required>
+                  <img th:if="${m.foto != null}" th:src="${'/foto/mascota/' + m.id}"  th:alt="${m.nombre}" style="width:50px; height:50px; margin: auto;">
+                  <span th:text="${m.nombre}"></span>
+              </label>
+              <br/>
+          </div>
+
+          <button type="submit"class=" btn btn-primary btn-xl rounded-pill mt" style="margin-top: 25px;">Confirmar Voto</button>
+      </form>
+
+      <br/>
+      <a th:href="@{'/mascotas/votar-mascotas'}">⬅ Volver a la página anterior</a>
+    </div>
+  </section>
+
+
+  <!-- Footer -->
+  <footer class="py-5 bg-black">
+    <div class="container">
+      <p class="m-0 text-center text-white small">Copyright &copy; Your Website 2019</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

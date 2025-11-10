@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{components/header :: head}"></head>
+<body>
+
+   <style>
+      .auth-bg {
+         position: relative;
+         min-height: 100vh;
+         background: url('/images/login-bg.jpg') no-repeat center center fixed;
+         background-size: cover;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 2rem;
+         box-sizing: border-box;
+      }
+
+      .auth-bg::before {
+         content: '';
+         position: absolute;
+         inset: 0;
+         background: rgba(0,0,0,0.25);
+         z-index: 1;
+      }
+
+      .auth-card {
+         position: relative;
+         z-index: 2;
+         background: #ffffff;
+         border-radius: 12px;
+         box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+         max-width: 720px;
+         width: 100%;
+         padding: 1rem;
+      }
+
+      @media (max-width: 576px) {
+         .auth-card { margin: 0 0.5rem; }
+      }
+   </style>
+
+   <div class="auth-bg">
+      <div class="auth-card card">
+         <div class="card-body">
+            <h3 class="text-center mb-3">Registro de Usuario</h3>
+            <form th:action="@{/persona/registro}" method="post">
+               <!-- error -->
+               <div th:if="${error != null}" class="alert alert-danger mb-3" th:text="${error}"></div>
+
+               <div class="row">
+                  <div class="col-md-6 mb-3">
+                     <label class="form-label">Nombre</label>
+                     <input type="text" name="nombre" class="form-control" th:value="${nombre}" placeholder="Nombre" required />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                     <label class="form-label">Apellido</label>
+                     <input type="text" name="apellido" class="form-control" th:value="${apellido}" placeholder="Apellido" required />
+                  </div>
+               </div>
+
+               <div class="mb-3">
+                  <label class="form-label">E-Mail</label>
+                  <input type="email" name="email" class="form-control" th:value="${email}" placeholder="E-Mail" required />
+               </div>
+
+               <div class="row">
+                  <div class="col-md-6 mb-3">
+                     <label class="form-label">Contraseña</label>
+                     <input type="password" name="clave1" class="form-control" th:value="${clave1}" placeholder="Contraseña" required />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                     <label class="form-label">Repetir Contraseña</label>
+                     <input type="password" name="clave2" class="form-control" th:value="${clave2}" placeholder="Repetir Contraseña" required />
+                  </div>
+               </div>
+
+               <input type="hidden" name="esEmpleado" th:value="${esEmpleado ?: false}" />
+
+               <br>
+               
+               <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary">Registrarse</button>
+               </div>
+            </form>
+         </div>
+         <div class="card-footer text-center small">
+            ¿Ya tienes cuenta? <a th:href="@{/login}">Ingresar</a>
+         </div>
+      </div>
+   </div>
+
+   <div th:replace="~{components/header :: scripts}"></div>
+
+</body>
+</html>

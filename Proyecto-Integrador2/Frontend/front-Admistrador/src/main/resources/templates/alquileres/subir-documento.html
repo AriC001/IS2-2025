@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Subir Documento</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body class="container mt-4">
+
+    <h2 class="mb-4">Subir Documento del Alquiler</h2>
+
+    <!-- Mensajes -->
+    <div th:if="${mensaje}" class="alert alert-success" role="alert">
+        <span th:text="${mensaje}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Formulario -->
+    <form th:action="@{'/alquileres/' + ${alquilerId} + '/documentos'}"
+          method="post" enctype="multipart/form-data"
+          class="border p-4 rounded shadow-sm bg-light">
+
+        <div class="mb-3">
+            <label for="file" class="form-label">Archivo (PDF o Word):</label>
+            <input type="file" id="file" name="file" class="form-control"
+                   accept=".pdf,.doc,.docx" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="tipoDocumento" class="form-label">Tipo de Documento:</label>
+            <select id="tipoDocumento" name="tipoDocumento" class="form-select" required>
+                <option value="">-- Seleccione tipo --</option>
+                <option value="DNI">DNI</option>
+                <option value="CARNET_DE_CONDUCIR">Carnet de Conducir</option>
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a th:href="@{'/alquileres'}" class="btn btn-secondary">Volver</a>
+            <button type="submit" class="btn btn-primary">Subir Documento</button>
+        </div>
+    </form>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

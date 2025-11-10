@@ -1,0 +1,24 @@
+package com.sport.proyecto.repositorios;
+
+import com.sport.proyecto.entidades.ValorCuota;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface ValorCuotaRepositorio extends JpaRepository<ValorCuota,String> {
+    @Query(value = "SELECT v FROM ValorCuota v WHERE v.id = '1'")
+    Optional<ValorCuota> obtenerPrimerValorCuota();
+    @Query("SELECT v FROM ValorCuota v WHERE v.fechaHasta >= :fechaActual OR v.fechaHasta = (SELECT MAX(v2.fechaHasta) FROM ValorCuota v2)ORDER BY v.fechaDesde DESC")
+    List<ValorCuota> obtenerValorActualoUltimo(@Param("fechaActual")LocalDate fechaActual);
+    @Query("SELECT v FROM ValorCuota v WHERE v.fechaHasta < :fechaActual")
+    List<ValorCuota> obtenerValoresAnteriores(@Param("fechaActual")LocalDate fechaActual);
+}
+
+
+

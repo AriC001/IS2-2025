@@ -1,0 +1,186 @@
+Diagrama de clases:
+@startuml
+enum Estado{
+Borrador
+Publicada
+Archivada
+}
+enum Rol{
+Redactor
+Editor
+Admin
+}
+class Noticia{
+int idNoticia
+String titulo
+String bajada
+String contenido
+Date fechaPublicacion
+Estado estado
+void publicar()
+void editar(contenidoActualizado)
+void archivar()
+String obtenerResumen()
+}
+class Autor{
+int idAutor
+String nombre
+String email
+String bio
+Noticia crearNoticia(datos)
+void editarNoticia(id: int, cambios)
+List<Noticia> obtenerMisNoticias()
+}
+class Imagen{
+int idImagen
+String url
+String altText
+int orden
+void subir(fichero)
+void redimensionar(w,h)
+void eliminar()
+}
+class Categoria{
+int idCategoria
+String nombre
+String descripcion
+void asignarNoticia(n: Noticia)
+void removerNoticia(n: Noticia)
+}
+class Comentario{
+int idComentario
+String autor
+String email
+String texto
+Date fecha
+boolean aprobado
+void aprobar()
+void rechazar()
+}
+class Usuario{
+int idUsuario
+String usuario
+String hashPassword
+Rol rol
+void login()
+void logout()
+boolean tienePermiso(perm: String)
+}
+Autor "1" --> "0..*" Noticia: escribe
+Noticia "1" --> "0..*" Imagen: puede tener
+Noticia "1" --> "0..*" Comentario: opcionalmente tiene
+Categoria "1" --> "0..*" Noticia: contiene
+Usuario "1" --> "0..1" Autor: Puede ser
+@enduml
+
+/--------------------------------------------------------------------------
+
+Historias de Usuario
+
+HU-1
+  Como visitante quiero ver la lista de noticias en la pagina principal
+  Para conocer novedades
+Criterios de aceptacion:
+  Muestra titulo
+  imagen principal
+  bajada yy fecha
+  paginacion
+  funcionando
+Prioridad: Alta
+Estimacion: 3 puntos
+
+HU-2
+  Como visitante quiero ver la noticia complta al hacer click
+  Para leer el contenido y ver la imagen y autor
+Criterios de aceptacion:
+  Muestra titulo
+  contenido
+  imagen(es)
+  autor y fecha
+  permite compartir en redes
+Prioridad: Alta
+Estimacion: 3 puntos
+
+HU-3
+  Como autor quiero crear una noticia con titulo, bajada, contenido, imagen y categoria
+  Para publicarla luego
+Criterios de aceptacion:
+  Formulacion con validacion
+  subir imagen
+  guardar en Borrador
+Prioridad: Alta
+Estimacion: 5 puntos
+
+HU-4
+  Como editor quiero publicar/archivar noticias
+  Para controlar que aparece en el portal
+Criterios de aceptacion:
+  Boton publicar/archivar
+  fecha de publicacion guardada 
+  solo roles con permiso
+Prioridad: Alta
+Estimacion: 3 puntos
+
+HU-5
+  Como administrador quiero gestionar autores y roles
+  Para asignar permisos de redaccion/edicion
+Criterios de aceptacion:
+  CRUD de autores
+  asignacion de rol
+  acceso controlado
+Prioridad: Media
+Estimacion: 5 puntos
+
+HU-6
+  Como visitante quiero filtrar noticias por categoria y buscar por palabra clave
+  Para encontrar rapidamente
+Criterios de aceptacion:
+  Buscador en titulo/contenido y filtro por categoria
+  resultados relevantes
+Prioridad: Media
+Estimacion: 5 puntos
+
+HU-7
+  Como redactor quiero subir imagenes optimizadas y recortarlas
+  Para que se vean bien el portada y detalle
+Criterios de aceptacion:
+  Uploader con preview
+  Crop/resizing
+  Generacion de miniaturas
+Prioridad: Media
+Estimacion: 3 puntos
+
+/--------------------------------------------------------------------------
+
+Sprint Roadmap
+Duracion sprint: 2 semanas, 5 dias habiles, 8 horas.
+Suposicion: 1 Punto implica 4 horas.
+
+Sprint 1: Fundamentos y Portada
+  HU-1: Portada y Listado de noticias. 3 puntos
+  HU-2: Detalle de noticia. 3 puntos
+Total minimo 6 puntos de 20 por sprint
+
+Sprint 2: Editor y Creacion
+  HU-3: Formulario creacion + uploader de imagenes. 5 puntos
+  HU-7: Gestion basica de Imagenes
+Total minimo 8 puntos de 20 por sprint
+
+Sprint 3: Publicacion, roles y busqueda
+  HU-4: Publicar/archivar + permisos. 3 puntos
+  HU-5: Gestion de autores/roles. 5 puntos
+  HU-6: Buscador y filtros. 5 puntos
+Total minimo 13 puntos de 20 por sprint
+
+/--------------------------------------------------------------------------
+
+Prototipado: https://ninjamock.com/s/7JV7QZx
+
+/--------------------------------------------------------------------------
+
+Servicios similares:
+https://medios.io
+https://amuracms.com
+https://www.unq.edu.ar/noticias/
+
+

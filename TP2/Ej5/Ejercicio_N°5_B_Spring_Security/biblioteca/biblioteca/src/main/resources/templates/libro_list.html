@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+    <head th:replace="~{fragments/head :: head}"></head>
+
+    <body>
+      <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+      
+        <div class="container m-5" >
+        
+            <!-- Formulario de búsqueda usando el Patrón Strategy -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-search"></i> Búsqueda de Libros
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" th:action="@{/libro/buscar}" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="tipoBusqueda" class="form-label">Buscar por:</label>
+                            <select class="form-select" id="tipoBusqueda" name="tipoBusqueda" required>
+                                <option value="">Seleccione...</option>
+                                <option value="anio" th:selected="${tipoBusqueda == 'anio'}">Año de Publicación</option>
+                                <option value="autor" th:selected="${tipoBusqueda == 'autor'}">Nombre del Autor</option>
+                                <option value="editorial" th:selected="${tipoBusqueda == 'editorial'}">Nombre de Editorial</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="criterio" class="form-label">Criterio de búsqueda:</label>
+                            <input type="text" class="form-control" id="criterio" name="criterio" 
+                                   th:value="${criterio}" placeholder="Ingrese el criterio de búsqueda" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-2">
+                        <a th:href="@{/libro/lista}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-list"></i> Ver todos los libros
+                        </a>
+                    </div>
+                    <!-- Mensaje de resultado de búsqueda -->
+                    <div th:if="${mensaje}" class="alert alert-info mt-3 mb-0" role="alert">
+                        <i class="fas fa-info-circle"></i> <span th:text="${mensaje}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">ISBN</th>
+                        <th scope="col">Titulo</th>
+                        <th scope="col">Año de Publicación</th>
+                        <th scope="col">Portada</th>
+                        <th scope="col">Ejemplares</th>
+                        <th scope="col">Autor</th>
+                        <th scope="col">Editorial</th>
+                        <th scope="col" sec:authorize="hasRole('ADMIN')">Acciones</th>
+                        
+                    </tr>
+                </thead>
+                <tbody th:each="libro : ${libros}"> 
+                    <tr>
+                        <th scope="row" th:text="${libro.isbn}"></th>
+                        <td th:text="${libro.titulo}"></td>
+                        <td th:text="${libro.anio}"></td>
+                        <td class="text-center">
+                            <img th:if="${libro.imagen != null}"
+                                 th:src="${'/imagen/perfil/' + libro.id}"
+                                 alt="Portada del libro"
+                                 class="libro-portada"
+                                 style="max-height: 80px; max-width: 60px; object-fit: cover; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            <span th:if="${libro.imagen == null}" class="text-muted">📚 Sin imagen</span>
+                        </td>
+                        <td th:text="${libro.ejemplares}"></td>
+                        <td th:text="${libro.autor.nombre}"></td>
+                        <td th:text="${libro.editorial.nombre}"></td>
+                         <td sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/libro/modificar/__${libro.isbn}__}" class="btn btn-sm btn-warning me-2">
+                                <i class="fas fa-edit"></i> Modificar
+                            </a>
+                            <a th:href="@{/libro/eliminar/__${libro.id}__}" 
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('¿Está seguro de eliminar este libro?');">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            
+              <div th:if="${exito}!=null" class="card text-white bg-success mb-3 mt-3 mensajeExito" >
+                <div class="card-body">
+                    <h5 class="card-title">Exito ð</h5>
+                    <p class="card-text" th:text="${exito}"></p>
+                </div>
+            </div>
+            <div th:if="${error}!=null" class="card text-white bg-danger mb-3 mensajeError" >
+                <div class="card-body">
+                    <h5 class="card-title">Error ð</h5>
+                    <p class="card-text" th:text="${error}"></p>
+                </div>
+            </div>
+
+            <section class="py-5 text-center container">
+                <div class="row py-lg-5">
+                    <div class="col-lg-6 col-md-8 mx-auto">
+                        <a th:href="@{/regresoPage}" class="btn btn-primary my-2">Volver</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="text-muted py-5">
+            <div class="containerFooter">
+                <p class="mb-1">Album example is &copy; Bootstrap,<br>but please download and customize it for yourself!</p>
+                <p class="mb-0">New to Bootstrap? <a href="/"><br>Visit the homepage</a> or read our <a href="../getting-started/introduction/">getting started guide</a>.</p>
+                <p class="float-end mb-1">
+                    <a href="#" style="text-decoration:none"><span>⬆️</span> Back to top</a>
+                </p>
+            </div>
+        </footer>
+
+
+
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+
+</html>
+

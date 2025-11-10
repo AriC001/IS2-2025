@@ -1,0 +1,80 @@
+<nav xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="admin_nav" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" style="z-index: 1030;">
+    <div class="container-fluid">
+      <!-- local styles to match socio portal subnav spacing and layout -->
+      <style>
+        #adminSubnav {
+          display: flex !important;
+          align-items: center !important;
+          width: 100%;
+          gap: 0.5rem;
+        }
+        #adminSubnav .navbar-nav {
+          list-style: none !important;
+          margin: 0 !important;
+          padding-left: 0 !important;
+        }
+        #adminSubnav .navbar-nav.me-auto {
+          display: flex !important;
+          flex-direction: row !important;
+          gap: 1rem !important;
+          align-items: center !important;
+        }
+        #adminSubnav .navbar-nav.ms-auto {
+          margin-left: auto !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+        #adminSubnav .nav-link { padding: .45rem .65rem !important; }
+        @media (max-width: 991.98px) {
+          #adminSubnav { flex-direction: column !important; align-items: stretch !important; }
+          #adminSubnav .navbar-nav.me-auto { flex-direction: column !important; gap: .25rem !important; }
+          #adminSubnav .navbar-nav.ms-auto { margin-left: 0 !important; justify-content: flex-start !important; }
+        }
+      </style>
+
+      <a class="navbar-brand d-lg-none" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/portal/admin}">Administrador</a>
+      <a class="navbar-brand d-lg-none" sec:authorize="hasRole('ROLE_SOCIO')" th:href="@{/portal/socio}">Socio</a>
+      <a class="navbar-brand d-lg-none" sec:authorize="hasRole('ROLE_EMPLEADO')" th:href="@{/portal/empleado}">Empleado</a>
+
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminSubnav" aria-controls="adminSubnav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="adminSubnav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- Inicio: visible para ADMIN only (portal landing) -->
+          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/portal/admin}">Inicio</a></li>
+          <li class="nav-item" sec:authorize="hasRole('ROLE_EMPLEADO')"><a class="nav-link" th:href="@{/portal/empleado}">Inicio</a></li>
+          <li class="nav-item" sec:authorize="hasRole('ROLE_SOCIO')"><a class="nav-link" th:href="@{/portal/socio}">Inicio</a></li>
+
+          <!-- Rutinas: visible para todos los roles (ADMIN, EMPLEADO, SOCIO) -->
+          <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLEADO','ROLE_SOCIO')"><a class="nav-link" th:href="@{/rutina/mis_rutinas}">Rutinas</a></li>
+
+          <!-- Socios and Mensajes: visible for ADMIN and EMPLEADO -->
+          <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_EMPLEADO')"><a class="nav-link" th:href="@{/socio}">Socios</a></li>
+
+          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/valor-cuota}">Cuotas</a></li>
+          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/sucursal}">Sucursales</a></li>
+          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/empresa}">Empresas</a></li>
+          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/direccion}">Direcciones</a></li>
+        </ul>
+
+        <!-- Right side: search + logout -->
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <form class="d-flex" th:action="@{/portal/admin/buscar}" method="get">
+              <input class="form-control me-2" type="search" name="q" placeholder="Buscar en Admin" aria-label="Buscar" style="min-width:200px;"/>
+              <button class="btn btn-outline-light" type="submit">Buscar</button>
+            </form>
+          </li>
+          <li class="nav-item">
+            <form th:action="@{/logout}" method="post" class="d-flex align-items-center mb-0 ms-3">
+              <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+              <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="~{components/header :: head}"></head>
+    <body>
+
+        <!-- Empleado sub-navigation: unified with admin style (light theme, responsive) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" sec:authorize="hasRole('ROLE_EMPLEADO')" style="z-index: 1030;">
+            <div class="container">
+                <style>
+                    /* reuse the same layout rules as admin_subnav */
+                    #empleadoSubnav { display: flex !important; align-items: center !important; width: 100%; gap: 0.5rem; }
+                    #empleadoSubnav .navbar-nav { list-style: none !important; margin: 0 !important; padding-left: 0 !important; }
+                    #empleadoSubnav .navbar-nav.me-auto { display: flex !important; flex-direction: row !important; gap: 1rem !important; align-items: center !important; }
+                    #empleadoSubnav .navbar-nav.ms-auto { margin-left: auto !important; display: flex !important; align-items: center !important; }
+                    #empleadoSubnav .nav-link { padding: .45rem .65rem !important; }
+                    @media (max-width: 991.98px) {
+                        #empleadoSubnav { flex-direction: column !important; align-items: stretch !important; }
+                        #empleadoSubnav .navbar-nav.me-auto { flex-direction: column !important; gap: .25rem !important; }
+                        #empleadoSubnav .navbar-nav.ms-auto { margin-left: 0 !important; justify-content: flex-start !important; }
+                    }
+                </style>
+
+                <div class="collapse navbar-collapse" id="empleadoSubnav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item me-3"><a class="nav-link" th:href="@{/portal/empleado}">Inicio</a></li>
+                        <li class="nav-item me-3"><a class="nav-link" th:href="@{/socios}">Ver Socios</a></li>
+                        <li class="nav-item me-3"><a class="nav-link" th:href="@{/mensaje}">Enviar Mensajes</a></li>
+                        <li class="nav-item me-3"><a class="nav-link" th:href="@{/rutina/mis_rutinas}">Mis Rutinas</a></li>
+                    </ul>
+
+                    <!-- Right-aligned logout (POST with CSRF token) -->
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <form th:action="@{/logout}" method="post" class="d-flex align-items-center mb-0">
+                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <section class="fh5co-hero">
+            <div class="fh5co-overlay"></div>
+            <div class="fh5co-cover" style="background-image: url('/images/home-image.jpg');">
+                <div class="desc animate-box">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <h2>Panel de Empleado</h2>
+                                <p>Accede rápidamente a las herramientas de administración.</p>
+                                <p><a class="btn btn-primary" th:href="@{rutina/mis_rutinas}">Administrar Rutinas</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <br>
+
+        <section class="container py-5">
+            <h1>Portal Empleado</h1>
+            <p>Gestionar rutinas y detalles de rutinas:</p>
+            <div class="list-group">
+                <a th:href="@{/rutina/mis_rutinas}" class="list-group-item list-group-item-action">ABM Rutinas</a>
+                <!-- <a th:href="@{/portal/empleado/rutina/detalle}" class="list-group-item list-group-item-action">ABM Detalle de Rutinas</a> -->
+            </div>
+        </section>
+
+        <footer class="py-4 text-center"><div class="container"><small>&copy; Gimnasio Pro</small></div></footer>
+
+        <div th:replace="~{components/header :: scripts}"></div>
+    </body>
+</html>

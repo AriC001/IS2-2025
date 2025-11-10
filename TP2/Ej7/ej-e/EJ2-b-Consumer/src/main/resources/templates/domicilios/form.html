@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${entity.id != null ? 'Editar Domicilio' : 'Nuevo Domicilio'}">Domicilio</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="/domicilios">Domicilios</a></li>
+                <li class="breadcrumb-item active" th:text="${entity.id != null ? 'Editar' : 'Nuevo Domicilio'}"></li>
+            </ol>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1>
+                    <i th:class="${entity.id != null ? 'bi bi-pencil-square text-info' : 'bi bi-house-add text-info'}"></i>
+                    <span th:text="${entity.id != null ? 'Editar Domicilio' : 'Nuevo Domicilio'}">Formulario</span>
+                </h1>
+                <p class="text-muted" th:text="${entity.id != null ? 'Actualiza la dirección seleccionada' : 'Completa los datos del nuevo domicilio'}"></p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/domicilios" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver a la lista
+                </a>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/messages :: messages}"></div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-geo-alt"></i> Datos del Domicilio
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                <form th:object="${entity}"
+                    th:attr="action=${entity.id != null} ? '/domicilios/' + entity.id : '/domicilios'"
+                    method="post" novalidate>
+
+                            <input type="hidden" th:if="${entity.id != null}" th:field="*{id}">
+
+                            <div class="mb-3">
+                                <label for="calle" class="form-label">
+                                    <i class="bi bi-signpost text-info"></i> Calle <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="calle" class="form-control"
+                                       th:field="*{calle}"
+                                       th:classappend="${#fields.hasErrors('calle')} ? 'is-invalid' : ''"
+                                       placeholder="Nombre de la calle" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('calle')}" th:errors="*{calle}">Error en la calle</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="numero" class="form-label">
+                                    <i class="bi bi-123 text-info"></i> Número <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="numero" class="form-control"
+                                       th:field="*{numero}"
+                                       th:classappend="${#fields.hasErrors('numero')} ? 'is-invalid' : ''"
+                                       placeholder="Número de puerta" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}">Error en el número</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="localidad" class="form-label">
+                                    <i class="bi bi-geo text-info"></i> Localidad <span class="text-danger">*</span>
+                                </label>
+                                <select id="localidad" class="form-select"
+                                        th:field="*{localidad}"
+                                        th:classappend="${#fields.hasErrors('localidad')} ? 'is-invalid' : ''"
+                                        required>
+                                    <option value="">Seleccione una localidad</option>
+                                    <option th:each="loc : ${localidadesDisponibles}"
+                                            th:value="${loc.id}"
+                                            th:selected="${entity.localidad != null && loc.id == entity.localidad.id}"
+                                            th:text="${loc.nombre}">Localidad</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('localidad')}" th:errors="*{localidad}">Seleccione una localidad</div>
+                                <div class="form-text">
+                                    ¿No encuentras la localidad? <a href="/localidades/nuevo" target="_blank" class="text-decoration-none">Crea una nueva</a>.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div>
+                                    <button type="submit" class="btn btn-info text-white">
+                                        <i th:class="${entity.id != null ? 'bi bi-check-circle' : 'bi bi-plus-circle'}"></i>
+                                        <span th:text="${entity.id != null ? 'Actualizar Domicilio' : 'Crear Domicilio'}">Guardar</span>
+                                    </button>
+                                    <a href="/domicilios" class="btn btn-secondary ms-2">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </a>
+                                </div>
+                                <div th:if="${entity.id != null}">
+                                    <form th:action="@{/domicilios/{id}/eliminar(id=${entity.id})}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-info-circle text-info"></i> Ayuda
+                        </h6>
+                    </div>
+                    <div class="card-body small">
+                        <ul class="mb-0">
+                            <li>Los campos marcados con <span class="text-danger">*</span> son obligatorios.</li>
+                            <li>El número admite letras adicionales (ej. "123 Bis").</li>
+                            <li>La localidad se utiliza para relacionar el domicilio con la ubicación.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts"></div>
+</html>

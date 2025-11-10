@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title th:text="${titleEdit}">Editar Mecánico</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" style="padding:20px;">
+    <h1 th:text="${titleEdit}">Editar Mecánico</h1>
+
+    <div th:if="${msgExito != null}" class="alert alert-success" th:text="${msgExito}"></div>
+    <div th:if="${msgError != null}" class="alert alert-danger" th:text="${msgError}"></div>
+
+    <form th:action="@{/mecanico/actualizar}" th:object="${item}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <!-- only include id input when editing an existing mecanico to avoid empty-string id on create -->
+    <input type="hidden" th:if="${item.id != null and item.id != ''}" th:field="*{id}" />
+
+        <div class="form-group">
+            <!-- Nombre y apellido se derivan de la Persona asociada al Usuario; no son editables aquí -->
+            <label>Nombre completo</label>
+            <p th:text="${item.usuario != null ? item.usuario.nombreUsuario : (item.nombre != null ? item.nombre + ' ' + item.apellido : '—')}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="legajo">Legajo</label>
+            <input id="legajo" class="form-control" th:field="*{legajo}"
+                   th:disabled="${isDisabled}" />
+        </div>
+
+        <div class="form-group">
+            <label>Usuario asignado</label>
+            <div th:if="${isDisabled}">
+                <p th:text="${item.usuario != null ? item.usuario.nombreUsuario : '—'}"></p>
+            </div>
+            <div th:if="${!isDisabled}">
+                <select id="usuario" class="form-control" th:field="*{usuario.id}">
+                    <option value="">-- Crear nuevo usuario --</option>
+                    <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombreUsuario}"></option>
+                </select>
+
+                <div style="margin-top:10px">
+                    <label>O crear nuevo usuario</label>
+                    <input class="form-control" th:field="*{usuario.nombreUsuario}" placeholder="Nombre de usuario (nuevo)" />
+                    <input type="password" class="form-control" th:field="*{usuario.clave}" placeholder="Clave (nuevo)" />
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:12px">
+            <button type="submit" class="btn btn-primary" th:if="${!isDisabled}">Guardar</button>
+            <a th:href="@{/${nameEntityLower}/cancelar}" class="btn btn-link">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

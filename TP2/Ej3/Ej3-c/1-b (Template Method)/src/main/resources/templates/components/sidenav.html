@@ -1,0 +1,206 @@
+<!-- sidenav.html -->
+<div th:fragment="sidenav" id="layoutSidenav_nav">
+  <style>
+      /* Sidenav styles con paleta beige pastel más oscuro */
+      #layoutSidenav_nav nav.sb-sidenav {
+          background: var(--sidenav-bg, #D4C5B9);
+          border-radius: 12px;
+          padding: 0.7rem;
+          color: #FFFFFF;
+          height: calc(100vh - 90px);
+          box-shadow: var(--shadow-md, 0 4px 16px rgba(92, 75, 55, 0.2));
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+      }
+
+      .sb-sidenav-menu { 
+          padding: 0.2rem;
+          flex: 0 0 auto;
+      }
+
+      .sb-sidenav-menu-heading {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.9);
+          padding: 0.3rem 0.8rem 0.2rem 0.8rem;
+          margin-bottom: 0.1rem;
+          letter-spacing: .06em;
+          text-transform: uppercase;
+      }
+
+      /* link styles - Enlaces principales */
+      .sb-sidenav .nav-link {
+          display: flex;
+          align-items: center;
+          gap: .6rem;
+          color: #FFFFFF;
+          font-weight: 500;
+          padding: .7rem .8rem;
+          border-radius: 8px;
+          margin-bottom: 0.3rem;
+          transition: all 0.2s ease;
+          text-decoration: none;
+      }
+      
+      .sb-sidenav .nav-link .sb-nav-link-icon {
+          width: 36px;
+          height: 36px; 
+          display: inline-grid; 
+          place-items: center;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.2);
+          color: #FFFFFF;
+          font-size: 1rem;
+          flex-shrink: 0;
+      }
+
+      .sb-sidenav .nav-link:hover {
+          background: var(--btn-primary, #6C63FF);
+          color: white;
+          box-shadow: 0 4px 12px rgba(108, 99, 255, 0.4);
+          transform: translateX(4px);
+      }
+
+      .sb-sidenav .nav-link:hover .sb-nav-link-icon {
+          background: rgba(255, 255, 255, 0.3);
+          color: white;
+      }
+
+      /* Enlaces secundarios (sub-enlaces sin icono grande) */
+      .sb-sidenav .nav-link-sub {
+          display: flex;
+          align-items: center;
+          gap: .5rem;
+          color: rgba(255, 255, 255, 0.85);
+          font-weight: 400;
+          font-size: 0.9rem;
+          padding: .5rem .8rem .5rem 2.5rem;
+          border-radius: 8px;
+          margin-bottom: 0.3rem;
+          transition: all 0.2s ease;
+          text-decoration: none;
+      }
+
+      .sb-sidenav .nav-link-sub i {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.7);
+      }
+
+      .sb-sidenav .nav-link-sub:hover {
+          background: rgba(108, 99, 255, 0.3);
+          color: white;
+          transform: translateX(2px);
+      }
+
+      .sb-sidenav .nav-link-sub:hover i {
+          color: white;
+      }
+
+      /* footer */
+      .sb-sidenav-footer {
+          margin-top: auto;
+          padding: .9rem .8rem;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.15);
+          color: #FFFFFF;
+          display: flex;
+          align-items: center;
+          gap: .6rem;
+          font-size: .92rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          flex-shrink: 0;
+      }
+      
+      .sb-sidenav-footer .small {
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 500;
+      }
+      
+      .sb-sidenav-footer i {
+          color: rgba(255, 255, 255, 0.9);
+      }
+
+      /* small scrollbar style */
+      #layoutSidenav_nav nav.sb-sidenav::-webkit-scrollbar { width:8px; }
+      #layoutSidenav_nav nav.sb-sidenav::-webkit-scrollbar-thumb { 
+          background: var(--accent-1, #B4A7D6); 
+          border-radius:8px; 
+      }
+
+      /* responsive: hide background rounding on small screens */
+      @media(max-width:991px){
+          #layoutSidenav_nav nav.sb-sidenav { height:auto; box-shadow:none; border-radius:0.5rem; }
+      }
+  </style>
+
+  <nav class="sb-sidenav sb-sidenav-dark" id="sidenavAccordion" aria-label="Panel lateral">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+        <div class="sb-sidenav-menu-heading">Gestión</div>
+
+        <!-- Usuarios -->
+        <a class="nav-link" th:href="@{/usuario/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+          Usuarios
+        </a>
+        <a class="nav-link-sub" th:if="${session.usuario != null}" th:href="@{'/usuario/cambioContraseña/' + ${session.usuario.id}}">
+          <i class="fas fa-key"></i> Cambiar Clave
+        </a>
+
+        <div class="sb-sidenav-menu-heading">Ubicación</div>
+
+        <!-- País -->
+        <a class="nav-link" th:href="@{/pais/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-globe"></i></div>
+          Países
+        </a>
+
+        <!-- Provincia -->
+        <a class="nav-link" th:href="@{/provincia/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-map"></i></div>
+          Provincias
+        </a>
+
+        <!-- Departamento -->
+        <a class="nav-link" th:href="@{/departamento/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+          Departamentos
+        </a>
+
+        <!-- Localidad -->
+        <a class="nav-link" th:href="@{/localidad/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-thumbtack"></i></div>
+          Localidades
+        </a>
+
+        <!-- Dirección -->
+        <a class="nav-link" th:href="@{/direccion/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-location-dot"></i></div>
+          Direcciones
+        </a>
+
+        <div class="sb-sidenav-menu-heading">Negocios</div>
+
+        <!-- Empresa -->
+        <a class="nav-link" th:href="@{/empresa/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+          Empresas
+        </a>
+
+        <!-- Proveedor -->
+        <a class="nav-link" th:href="@{/proveedor/listar}">
+          <div class="sb-nav-link-icon"><i class="fas fa-truck"></i></div>
+          Proveedores
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sb-sidenav-footer">
+      <div class="small">Usuario actual:</div>
+      <i class="fas fa-user-circle me-2"></i>
+      <span th:text="${session.usuario != null ? session.usuario.nombreUsuario : 'Invitado'}">NombreUsuario</span>
+    </div>
+  </nav>
+</div>

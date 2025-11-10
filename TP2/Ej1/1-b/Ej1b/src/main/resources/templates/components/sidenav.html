@@ -1,0 +1,189 @@
+<!-- sidenav.html -->
+<div th:fragment="sidenav" id="layoutSidenav_nav">
+  <style>
+      /* Sidenav styles (coherent with index) */
+      :root{
+          --accent-1: #6C5CE7;
+          --accent-2: #00C2FF;
+          --sidenav-bg: linear-gradient(180deg, rgba(108,92,231,0.12), rgba(0,194,255,0.04));
+          --sidenav-dark: #071034;
+          --muted-contrast: rgba(255,255,255,0.85);
+      }
+
+      /* container */
+      #layoutSidenav_nav nav.sb-sidenav {
+          background: linear-gradient(180deg, rgba(11,18,32,0.95), rgba(7,16,36,0.95));
+          border-radius: 12px;
+          padding: 0.7rem;
+          color: var(--muted-contrast);
+          height: calc(100vh - 2rem);
+          box-shadow: 0 12px 30px rgba(2,6,23,0.5);
+          overflow-y: auto;
+      }
+
+      .sb-sidenav-menu { padding: 0.2rem; }
+
+      .sb-sidenav-menu-heading {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: rgba(255,255,255,0.75);
+          padding: 0.3rem 0.8rem 0.2rem 0.8rem;
+          margin-bottom: 0.1rem;
+          letter-spacing: .06em;
+      }
+
+      /* link styles */
+      .sb-sidenav .nav-link {
+          display:flex;
+          align-items:center;
+          gap:.6rem;
+          color: rgba(255,255,255,0.92);
+          padding: .35rem .8rem;
+          border-radius: 8px;
+          margin-bottom: 0.1rem;
+      }
+      .sb-sidenav .nav-link .sb-nav-link-icon {
+          width:36px; height:36px; display:inline-grid; place-items:center;
+          border-radius:8px;
+          background: rgba(255,255,255,0.03);
+          color: rgba(255,255,255,0.9);
+          font-size: 0.95rem;
+      }
+
+      .sb-sidenav .nav-link.active, .sb-sidenav .nav-link:hover {
+          background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+          color: white;
+      }
+
+      /* Submenú compactado */
+      .sb-sidenav-menu .nav .nav-link {
+          padding: .25rem 1.2rem;
+          font-size: 0.97rem;
+          margin-bottom: 0.05rem;
+      }
+
+      /* collapsed arrow */
+      .sb-sidenav-collapse-arrow { margin-left:auto; transition: transform .18s ease; color: rgba(255,255,255,0.7); }
+
+      /* nested links */
+      .sb-sidenav-menu-nested .nav-link {
+          padding-left: 2.2rem;
+          font-weight:500;
+          color: rgba(255,255,255,0.82);
+          background: transparent;
+      }
+      .sb-sidenav-menu-nested .nav-link i { width: 18px; text-align:center; margin-right: .5rem; color: rgba(255,255,255,0.8); }
+
+      /* footer */
+      .sb-sidenav-footer {
+          margin-top:1rem;
+          padding:.9rem .8rem;
+          border-radius:8px;
+          background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+          color: rgba(255,255,255,0.9);
+          display:flex;
+          align-items:center;
+          gap:.6rem;
+          font-size:.92rem;
+      }
+
+      /* small scrollbar style */
+      #layoutSidenav_nav nav.sb-sidenav::-webkit-scrollbar { width:8px; }
+      #layoutSidenav_nav nav.sb-sidenav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius:8px; }
+
+      /* responsive: hide background rounding on small screens */
+      @media(max-width:991px){
+          #layoutSidenav_nav nav.sb-sidenav { height:auto; box-shadow:none; border-radius:0.5rem; }
+      }
+  </style>
+
+  <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion" aria-label="Panel lateral">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+        <div class="sb-sidenav-menu-heading">Funcionalidades</div>
+
+        <!-- Usuario -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts"
+           aria-expanded="false" aria-controls="collapseLayouts">
+          <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+          Usuario
+          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" th:href="@{/usuario/listar}"><i class="fas fa-users-cog me-2"></i>ABM Usuario</a>
+            <a class="nav-link" th:href="@{'/usuario/cambioContraseña/' + ${session.usuario.id}}"><i class="fas fa-key me-2"></i>Cambiar Clave</a>
+          </nav>
+        </div>
+        <!-- Dirección -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+           aria-expanded="false" aria-controls="collapsePages">
+          <div class="sb-nav-link-icon"><i class="fas fa-map-marked-alt"></i></div>
+          Dirección
+          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" th:href="@{/pais/listar}"><i class="fas fa-flag me-2"></i>ABM País</a>
+            <a class="nav-link" th:href="@{/provincia/listar}"><i class="fas fa-map me-2"></i>ABM Provincia</a>
+            <a class="nav-link" th:href="@{/departamento/listar}"><i class="fas fa-city me-2"></i>ABM Departamento</a>
+            <a class="nav-link" th:href="@{/localidad/listar}"><i class="fas fa-thumbtack me-2"></i>ABM Localidad</a>
+            <a class="nav-link" th:href="@{/direccion/listar}"><i class="fas fa-road me-2"></i>ABM Dirección</a>
+          </nav>
+        </div>
+
+        <!-- Empresa -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEmpresa"
+           aria-expanded="false" aria-controls="collapseEmpresa">
+          <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+          Empresa
+          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapseEmpresa" aria-labelledby="headingEmpresa" data-bs-parent="#sidenavAccordion">
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" th:href="@{/empresa/listar}"><i class="fas fa-briefcase me-2"></i>ABM Empresa</a>
+          </nav>
+        </div>
+
+        <!-- Proveedor -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProveedor"
+           aria-expanded="false" aria-controls="collapseProveedor">
+          <div class="sb-nav-link-icon"><i class="fas fa-truck"></i></div>
+          Proveedor
+          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapseProveedor" aria-labelledby="headingProveedor" data-bs-parent="#sidenavAccordion">
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" th:href="@{/proveedor/listar}"><i class="fas fa-boxes me-2"></i>ABM Proveedor</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sb-sidenav-footer">
+      <div class="small">Usuario actual:</div>
+      <i class="fas fa-user-circle me-2"></i>
+      <span th:text="${session.usuario.nombreUsuario}">NombreUsuario</span>
+    </div>
+  </nav>
+
+  <script>
+      // Rotate collapse arrows when a section opens/closes
+      (function(){
+          const accordion = document.getElementById('sidenavAccordion');
+          if (!accordion) return;
+          accordion.querySelectorAll('[data-bs-toggle="collapse"]').forEach(trigger => {
+              const targetSelector = trigger.getAttribute('data-bs-target');
+              const arrow = trigger.querySelector('.sb-sidenav-collapse-arrow i');
+              if (!targetSelector || !arrow) return;
+              const target = document.querySelector(targetSelector);
+              if (!target) return;
+              target.addEventListener('show.bs.collapse', () => arrow.style.transform = 'rotate(180deg)');
+              target.addEventListener('hide.bs.collapse', () => arrow.style.transform = 'rotate(0deg)');
+              // initialize based on current state
+              if (target.classList.contains('show')) arrow.style.transform = 'rotate(180deg)';
+          });
+      })();
+  </script>
+</div>

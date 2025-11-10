@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body style="font-family: Arial, sans-serif;">
+    <h1 style="color: green;">🎉 Happy New Year! 🎉</h1>
+    <p>Thank you for being with us this year.</p>
+
+    <a th:href="${https://ingenieria.uncuyo.edu.ar}"
+       style="display:inline-block;
+              padding:12px 20px;
+              margin-top:15px;
+              font-size:16px;
+              color:#ffffff;
+              background-color:#28a745;
+              text-decoration:none;
+              border-radius:6px;">
+       <span th:text="${buttonText}">Empiece el año en la Facultad</span>
+    </a>
+
+    <p style="margin-top:25px;">
+      See you in <b>the next one!</b>
+    </p>
+  </body>
+</html>

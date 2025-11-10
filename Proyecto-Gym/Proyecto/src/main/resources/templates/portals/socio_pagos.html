@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8" />
+    <title>Pagar Cuota - Socio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <div class="container py-5">
+        <h2>Pagar Cuota</h2>
+        <p>Formulario / resumen de pago aquí (placeholder).</p>
+        <div class="card p-3">
+            <p>Importe a pagar: <strong>$50.00</strong></p>
+            <a class="btn btn-success">Pagar con tarjeta (simulado)</a>
+        </div>
+        <p class="mt-3"><a class="btn btn-secondary" th:href="@{/portal/socio}">Volver al portal</a></p>
+    </div>
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

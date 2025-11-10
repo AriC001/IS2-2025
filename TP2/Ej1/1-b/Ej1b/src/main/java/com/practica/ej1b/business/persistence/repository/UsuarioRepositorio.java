@@ -1,0 +1,15 @@
+package com.practica.ej1b.business.persistence.repository;
+
+import com.practica.ej1b.business.domain.entity.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+
+@Repository
+public interface UsuarioRepositorio extends JpaRepository<Usuario, String> {
+
+  Collection<Usuario> findAllByEliminadoFalse();
+
+  Usuario findUsuarioByNombreUsuarioAndEliminadoFalse(String nombreUsuario);
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+    <div class="container py-4">
+      <div id="slider1" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button class="active" data-bs-target="#slider1" data-bs-slide-to="0"></button>
+            <button data-bs-target="#slider1" data-bs-slide-to="1"></button>
+            <button data-bs-target="#slider1" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner carousel-fade">
+            <div class="carousel-item active"data-bs-interval="1000">
+                <img class="d-block w-100"src="https://cdn.pixabay.com/photo/2020/11/04/18/59/leaves-5713290_640.jpg" alt="">
+                <div class="carousel-caption d-none d-md-block">
+                   <h2> Descrip 1</h2>
+                </div>
+            </div>
+            <div class="carousel-item" data-bs-interval="5000">
+                <img class="d-block w-100" src="https://cdn.pixabay.com/photo/2025/08/02/17/47/cat-9751060_1280.jpg" alt="">
+                <div class="carousel-caption d-none d-md-block">
+                    <h2>Descrip 2</h2>
+                </div>
+            </div>
+            <div class="carousel-item" data-bs-interval="3000">
+                <img class="d-block w-100" src="https://cdn.pixabay.com/photo/2025/02/07/16/09/flower-9390482_1280.jpg" alt="">
+                <div class="carousel-caption d-none d-md-block">
+                   <h2> Descrip 3</h2>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" data-bs-target="#slider1" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" data-bs-target="#slider1" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    </div>
+    
+   
+</body>
+</html>

@@ -1,0 +1,91 @@
+package com.example.taller.service;
+
+
+import com.example.taller.entity.BaseEntity;
+import com.example.taller.error.ErrorServicio;
+import com.example.taller.repository.BaseRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public abstract class BaseService<T extends BaseEntity<ID>, ID> {
+
+    protected final BaseRepository<T, ID> repository;
+
+    protected BaseService(BaseRepository<T, ID> repository) {
+        this.repository = repository;
+    }
+
+    protected abstract T createEmpty();
+
+    public T alta(T entidad) throws ErrorServicio {
+        try {
+            validar(entidad);
+            preAlta(entidad);
+            entidad.setEliminado(false);
+            T guardado = repository.save(entidad);
+            postAlta(guardado);
+            return guardado;
+        }catch(Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio(e.getMessage());
+        }
+    }
+
+    public Optional<T> modificar(ID id, T entidadNueva)throws ErrorServicio {
+        try {
+            validar(entidadNueva);
+            preModificacion(entidadNueva);
+            return repository.findById(id).map(entidad -> {
+                entidadNueva.setId(id);
+                T actualizado = repository.save(entidadNueva);
+                return actualizado;
+            });
+
+        }catch(Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio(e.getMessage());
+        }
+    }
+
+    public boolean bajaLogica(ID id)throws ErrorServicio {
+        try {
+            preBaja(id);
+            return repository.findById(id).map(entidad -> {
+                entidad.setEliminado(true);
+                repository.save(entidad);
+                return true;
+            }).orElse(false);
+        }catch(Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio(e.getMessage());
+        }
+    }
+
+    public Optional<T> obtener(ID id)throws ErrorServicio {
+        try {
+            return repository.findById(id).
+                    filter(e -> !Boolean.TRUE.equals(e.getEliminado()));
+        }catch(Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio(e.getMessage());
+        }
+    }
+
+    public List<T> listarActivos()throws ErrorServicio {
+        try {
+            return repository.findAll().stream()
+                    .filter(e -> !Boolean.TRUE.equals(e.getEliminado()))
+                    .toList();
+        }catch(Exception e) {
+            e.printStackTrace();
+            throw new ErrorServicio(e.getMessage());
+        }
+    }
+
+    protected void validar(T entidad) throws ErrorServicio {}
+    protected void preAlta(T entidad) throws ErrorServicio {}
+    protected void postAlta(T entidad)throws ErrorServicio {}
+    protected void preModificacion(T entidad)throws ErrorServicio {}
+    protected void preBaja(ID id)throws ErrorServicio {}
+}

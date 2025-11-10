@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Sucursal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <head th:replace="~{components/header :: head}"></head>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 700px;">
+        <div class="card-header text-center">
+            <h3 th:text="${modoEdicion} ? 'Editar Sucursal' : 'Nueva Sucursal'"></h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/sucursal/actualizar/{id}(id=${sucursalDTO.id})}" th:object="${sucursalDTO}" method="post">
+
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" th:field="*{nombre}" class="form-control" required>
+                </div>
+
+                <!-- Empresa -->
+                <div class="mb-3">
+                    <label class="form-label">Empresa</label>
+                    <select th:field="*{empresaId}" class="form-select" required>
+                        <option value="">-- Seleccione empresa --</option>
+                        <option th:each="e : ${empresas}" th:value="${e.id}" th:text="${e.nombre}"
+                                th:selected="${sucursalDTO.empresaId} == ${e.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Dirección -->
+                <div id="nuevaDireccionForm" class="border rounded p-3">
+                    <h5>Dirección</h5>
+
+                    <input type="hidden" th:field="*{direccionId}">
+
+                    <!-- País -->
+                    <select id="paisSelect" th:field="*{paisId}" class="form-select" required>
+                        <option value="">-- Seleccione País --</option>
+                        <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"
+                                th:selected="${p.id} == ${sucursalDTO.paisId}">
+                        </option>
+                    </select>
+
+                    <!-- Provincia -->
+                    <select id="provinciaSelect" th:field="*{provinciaId}" class="form-select" required>
+                        <option value="">-- Seleccione Provincia --</option>
+                        <option th:each="prov : ${provincias}" th:value="${prov.id}" th:text="${prov.nombre}"
+                                th:selected="${prov.id} == ${sucursalDTO.provinciaId}">
+                        </option>
+                    </select>
+
+                    <!-- Departamento -->
+                    <select id="departamentoSelect" th:field="*{departamentoId}" class="form-select" required>
+                        <option value="">-- Seleccione Departamento --</option>
+                        <option th:each="d : ${departamentos}" th:value="${d.id}" th:text="${d.nombre}"
+                                th:selected="${d.id} == ${sucursalDTO.departamentoId}">
+                        </option>
+                    </select>
+
+                    <!-- Localidad -->
+                    <select id="localidadSelect" th:field="*{localidadId}" class="form-select" required>
+                        <option value="">-- Seleccione Localidad --</option>
+                        <option th:each="l : ${localidades}" th:value="${l.id}" th:text="${l.nombre}"
+                                th:selected="${l.id} == ${sucursalDTO.localidadId}">
+                        </option>
+                    </select>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Calle *</label>
+                            <input type="text" th:field="*{calle}" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Número</label>
+                            <input type="text" th:field="*{numeracion}" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Barrio</label>
+                            <input type="text" th:field="*{barrio}" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label>Casa/Depto</label>
+                        <input type="text" th:field="*{casaDepartamento}" class="form-control" placeholder="Ej: 4B">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label>Manzana/Piso</label>
+                        <input type="text" th:field="*{manzanaPiso}" class="form-control" placeholder="Ej: Mz 5 / 2°">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Latitud</label>
+                        <input type="text" th:field="*{latitud}" class="form-control">
+                        <label>Longitud</label>
+                        <input type="text" th:field="*{longitud}" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Referencia</label>
+                        <input type="text" th:field="*{referencia}" class="form-control">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a th:href="@{/sucursal}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const paisSelect = document.getElementById("paisSelect");
+        const provinciaSelect = document.getElementById("provinciaSelect");
+        const departamentoSelect = document.getElementById("departamentoSelect");
+        const localidadSelect = document.getElementById("localidadSelect");
+
+        paisSelect.addEventListener("change", async () => {
+            provinciaSelect.innerHTML = '<option value="">-- Seleccione Provincia --</option>';
+            departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+            localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+            if (!paisSelect.value) return;
+            const provincias = await fetch(`/sucursal/ubicacion/provincias/${paisSelect.value}`).then(r => r.json());
+            provincias.forEach(p => provinciaSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`);
+        });
+
+        provinciaSelect.addEventListener("change", async () => {
+            departamentoSelect.innerHTML = '<option value="">-- Seleccione Departamento --</option>';
+            localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+            if (!provinciaSelect.value) return;
+            const departamentos = await fetch(`/sucursal/ubicacion/departamentos/${provinciaSelect.value}`).then(r => r.json());
+            departamentos.forEach(d => departamentoSelect.innerHTML += `<option value="${d.id}">${d.nombre}</option>`);
+        });
+
+        departamentoSelect.addEventListener("change", async () => {
+            localidadSelect.innerHTML = '<option value="">-- Seleccione Localidad --</option>';
+            if (!departamentoSelect.value) return;
+            const localidades = await fetch(`/sucursal/ubicacion/localidades/${departamentoSelect.value}`).then(r => r.json());
+            localidades.forEach(l => localidadSelect.innerHTML += `<option value="${l.id}">${l.nombre}</option>`);
+        });
+    });
+</script>
+</body>
+</html>

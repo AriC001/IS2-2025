@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Empleados - Gimnasio</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{components/navbar :: nav_bar}"></div>
+
+<div class="container mt-4">
+
+  <!-- Mensajes -->
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+  <div th:if="${msg}" class="alert alert-success" th:text="${msg}"></div>
+
+  <form th:action="${empleado != null and empleado.id != null} ? @{/empleados/actualizar/{id}(id=${empleado.id})} : @{/empleados/crear}"
+            method="post" th:object="${empleado}">
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre</label>
+      <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Ingrese el nombre" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="apellido" class="form-label">Apellido</label>
+      <input type="text" id="apellido" th:field="*{apellido}" class="form-control" placeholder="Ingrese el apellido" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Ingrese el email" required>
+    </div>
+    <div class="mb-3">
+      <label for="tipoDocumento" class="form-label">Tipo Documento</label>
+      <select class="form-control" id="tipoDocumento"
+              th:field="*{tipoDocumento}" onchange="toggleDocumento()">
+        <option th:each="tipoDocumento : ${T(com.sport.proyecto.enums.tipoDocumento).values()}"
+                th:value="${tipoDocumento.name()}"
+                th:text="${tipoDocumento.descripcion}">
+        </option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="dni" class="form-label">DNI</label>
+      <input type="text" id="dni" th:field="*{numeroDocumento}" class="form-control" placeholder="Ingrese el DNI" required>
+    </div>
+    <div class="mb-3">
+      <label for="tipoEmpleado" class="form-label">Tipo Empleado</label>
+      <select class="form-control" name="tipoEmpleado">
+        <option th:each="tipoEmpleado : ${tiposEmpleado}"
+                th:value="${tipoEmpleado}"
+                th:text="${tipoEmpleado}">
+        </option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+      <input type="text" class="form-control" id="fechaNacimiento"
+             name="fechaNacimiento"
+             th:value="${empleado.fechaNacimiento != null} ? ${#temporals.format(empleado.fechaNacimiento, 'dd-MM-yyyy')} : ''"
+             required>
+    </div>
+    <div class="mb-3">
+      <label for="sucursal" class="form-label">Sucursal</label>
+      <select class="form-control" name="sucursal">
+        <option th:each="sucursal : ${sucursales}"
+                th:value="${sucursal.id}"
+                th:text="${sucursal.nombre}">
+        </option>
+      </select>
+    <div class="mb-3">
+      <label for="telefono" class="form-label">Teléfono</label>
+      <input type="text" id="telefono" th:field="*{telefono}" class="form-control" placeholder="Ingrese el teléfono" required>
+    </div>
+    <!-- Dirección existente -->
+        <div class="mb-3">
+          <label for="direccion" class="form-label">Dirección existente</label>
+          <select th:field="*{direccion.id}" class="form-select">
+            <option value="">-- Seleccione dirección existente --</option>
+            <option th:each="d : ${direcciones}" th:value="${d.id}"
+                    th:text="${d.calle + ' ' + d.numeracion}"></option>
+          </select>
+        </div>
+
+        <!-- Flag para indicar nueva dirección -->
+        <input type="hidden" id="crearNuevaDireccion" name="crearNuevaDireccion" value="false">
+
+        <!-- Botón para nueva dirección -->
+        <button type="button" class="btn btn-outline-primary mb-3" id="toggleNuevaDir">
+          + Nueva Dirección
+        </button>
+
+        <!-- 🟢 Formulario de nueva dirección -->
+        <div id="nuevaDireccionForm" class="border rounded p-3" style="display:none;"
+             th:object="${nuevaDireccion}">
+          <h5>Nueva Dirección</h5>
+
+          <!-- País -->
+          <div class="mb-3">
+            <label class="form-label">País *</label>
+            <select th:field="*{localidad.departamento.provincia.pais.id}" class="form-select" required>
+              <option value="">-- Seleccione País --</option>
+              <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Provincia -->
+          <div class="mb-3">
+            <label class="form-label">Provincia *</label>
+            <select th:field="*{localidad.departamento.provincia.id}" class="form-select" required>
+              <option value="">-- Seleccione Provincia --</option>
+              <option th:each="prov : ${provincias}" th:value="${prov.id}" th:text="${prov.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Departamento -->
+          <div class="mb-3">
+            <label class="form-label">Departamento *</label>
+            <select th:field="*{localidad.departamento.id}" class="form-select" required>
+              <option value="">-- Seleccione Departamento --</option>
+              <option th:each="dep : ${departamentos}" th:value="${dep.id}" th:text="${dep.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Localidad -->
+          <div class="mb-3">
+            <label class="form-label">Localidad *</label>
+            <select th:field="*{localidad.id}" class="form-select" required>
+              <option value="">-- Seleccione Localidad --</option>
+              <option th:each="loc : ${localidades}" th:value="${loc.id}" th:text="${loc.nombre}"></option>
+            </select>
+          </div>
+            
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Calle *</label>
+              <input type="text" th:field="*{calle}" class="form-control" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>Número</label>
+              <input type="text" th:field="*{numeracion}" class="form-control">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>Barrio</label>
+              <input type="text" th:field="*{barrio}" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Casa/Depto</label>
+            <input type="text" class="form-control" name="casaDepartamento" th:field="*{casaDepartamento}" placeholder="Ej: 4B">
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Manzana/Piso</label>
+            <input type="text" class="form-control" name="manzanaPiso" th:field="*{manzanaPiso}" placeholder="Ej: Mz 5 / 2°">
+          </div>
+
+          <div class="mb-3">
+            <label>Referencia</label>
+            <input type="text" th:field="*{referencia}" class="form-control">
+          </div>
+        </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">
+        Aceptar
+      </button>
+    </div>
+    </form>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Incluí esto antes de cerrar el </body> -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $('#fechaNacimiento').datepicker({
+      format: 'dd-mm-yyyy',     // formato visible
+      autoclose: true,
+      todayHighlight: true
+    });
+  });
+
+  function toggleDocumento() {
+    const tipoSelect = document.getElementById("tipoDocumento");
+    const documentoGroup = document.getElementById("documentoGroup");
+    const documentoInput = document.getElementById("dni");
+
+    if (tipoSelect.value === "SIN_DOCUMENTO") { // ajustá al valor real que uses
+      documentoGroup.style.display = "none";
+      documentoInput.value = ""; // limpia si ya había escrito
+    } else {
+      documentoGroup.style.display = "block";
+    }
+  }
+</script>
+<script>
+  const toggleBtn = document.getElementById('toggleNuevaDir');
+  const formNueva = document.getElementById('nuevaDireccionForm');
+  const flag = document.getElementById('crearNuevaDireccion');
+
+  // Tomamos todos los campos que tienen "required" en el bloque de nueva dirección
+  const camposNuevaDireccion = formNueva.querySelectorAll('[required]');
+
+  // Desactiva validación de los campos ocultos
+  function desactivarCampos() {
+    camposNuevaDireccion.forEach(campo => campo.removeAttribute('required'));
+  }
+
+  // Activa validación de los campos cuando el bloque se muestra
+  function activarCampos() {
+    camposNuevaDireccion.forEach(campo => campo.setAttribute('required', 'required'));
+  }
+
+  // Al cargar la página, el bloque está oculto → desactivamos sus required
+  desactivarCampos();
+
+  toggleBtn.addEventListener('click', () => {
+    if (formNueva.style.display === 'none') {
+      // Mostrar bloque de nueva dirección
+      formNueva.style.display = 'block';
+      flag.value = 'true';
+      activarCampos();  // activamos required
+    } else {
+      // Ocultar bloque de nueva dirección
+      formNueva.style.display = 'none';
+      flag.value = 'false';
+      desactivarCampos(); // desactivamos required
+    }
+  });
+</script>
+
+<script th:inline="javascript">
+    const isEdit = /*[[${empleado.id != null}]]*/ false;
+    if (isEdit) {
+        document.getElementById('toggleNuevaDir').style.display = 'none';
+    }
+</script>
+</body>
+</html>

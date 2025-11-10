@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Register</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;background:#f6f8fa;padding:40px}
+      .card{max-width:520px;margin:0 auto;background:#fff;padding:24px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.05)}
+      label{display:block;margin-bottom:6px;color:#333}
+      input{width:100%;padding:10px;margin-bottom:12px;border:1px solid #ddd;border-radius:6px}
+      .btn{display:inline-block;padding:10px 14px;border-radius:6px;background:#2563eb;color:#fff;border:0;cursor:pointer}
+      .small{color:#666;font-size:13px}
+      .alert{padding:10px;background:#fff7ed;border:1px solid #ffedd5;color:#92400e;margin-bottom:12px}
+    </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Create account</h2>
+    <p class="small">Register a new person so you can login with DNI</p>
+
+    <div th:if="${param.error}" class="alert">Error creating account. Try again.</div>
+
+    <form th:action="@{/register}" method="post">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" type="text" required />
+
+      <label for="apellido">Apellido</label>
+      <input id="apellido" name="apellido" type="text" required />
+
+      <label for="dni">DNI</label>
+      <input id="dni" name="dni" type="text" required />
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <a href="/login" class="small" style="align-self:center">Back to login</a>
+        <button type="submit" class="btn">Register</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario Empleado</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <head th:replace="~{components/header :: head}"></head>
+</head>
+<body>
+
+<div class="container mt-4">
+  <div th:if="${errorMessage != null}" class='alert alert-danger' th:text="${errorMessage}" role='alert'></div>
+  <h2 th:text="${empleado?.id} != null ? 'Editar Empleado' : 'Nuevo Empleado'"></h2>
+
+
+  <form th:action="@{/empleados/guardar}" th:object="${empleado}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" class="form-control" th:field="*{nombre}" required/>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Apellido</label>
+      <input type="text" class="form-control" th:field="*{apellido}" required/>
+    </div>
+
+    <div class="row">
+      <label>Fecha de Nacimiento</label>
+      <div class="col">
+        <label>Día</label>
+        <input type="text" class="form-control" name="dia" required/>
+      </div>
+      <div class="col">
+        <label>Mes</label>
+        <input type="text" class="form-control" name="mes" required/>
+      </div>
+      <div class="col">
+        <label>Año</label>
+        <input type="text" class="form-control" name="anio" required/>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Tipo de DNI</label>
+      <select class="form-select" th:field="*{tipoDocumento}" required>
+        <option th:each="tipo : ${tiposDocumento}"
+                th:value="${tipo}"
+                th:text="${tipo}">
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">DNI</label>
+      <input type="text" class="form-control" th:field="*{numeroDocumento}" required/>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a th:href="@{/empleados}" class="btn btn-secondary">Cancelar</a>
+  </form>
+
+</div>
+
+</body>
+</html>

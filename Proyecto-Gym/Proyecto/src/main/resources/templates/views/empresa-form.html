@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${empresa.id != null ? 'Editar Empresa' : 'Registrar Empresa'}">Empresa</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <head th:replace="~{components/header :: head}"></head>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-body p-5">
+          <h2 class="mb-4 text-center" th:text="${empresa.id != null ? 'Editar Empresa' : 'Registrar Empresa'}"></h2>
+          <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+          <form th:action="${empresa.id != null} ? @{/empresa/actualizar/{id}(id=${empresa.id})} : @{/empresa/guardar}" th:object="${empresa}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" th:field="*{nombre}" placeholder="Nombre de la empresa" required>
+              <div class="text-danger small" th:errors="*{nombre}"></div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="text" class="form-control" th:field="*{telefono}" placeholder="Teléfono" required>
+              <div class="text-danger small" th:errors="*{telefono}"></div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" th:field="*{correoElectronico}" placeholder="Email" required>
+              <div class="text-danger small" th:errors="*{correoElectronico}"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+              <a th:href="@{/empresa}" class="btn btn-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

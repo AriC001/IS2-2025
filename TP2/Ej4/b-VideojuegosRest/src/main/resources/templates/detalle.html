@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <title>Detalle videojuego</title>
+    <style>
+        :root{
+            --gap: 1rem;
+            --img-max-width: 20rem;
+            --img-max-height: 18rem;
+            --muted: #9c9c9c;
+        }
+        body { background:#0f0f0f; color:#eee; }
+        .detail-card { background: #141414; border: none; border-radius:0.6rem; box-shadow: 0 0.6rem 1.2rem rgba(0,0,0,0.6); padding: 1.2rem; }
+        .detail-img { max-width: var(--img-max-width); max-height: var(--img-max-height); width:100%; height:auto; object-fit:contain; border-radius:0.4rem; background:#0b0b0b; display:block; }
+        .meta { color: var(--muted); font-size: 0.95rem; }
+        .price { font-size: 1.6rem; font-weight:700; color:#4ade80; padding:0.25rem 0.6rem; background: rgba(74,222,128,0.08); border-radius:0.4rem; }
+        .stock { font-weight:600; }
+        .description { margin-top: 0.8rem; color:#ddd; }
+        .back-btn { margin-top: 1rem; }
+        @media (max-width: 767px) {
+            :root{ --img-max-width: 14rem; --img-max-height: 12rem; }
+            .price { font-size:1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<nav th:replace="~{components/navbar :: nav_bar}"></nav>
+<div class="container py-4">
+    <!-- allow controller to provide either 'entity' (BaseController) or 'videojuego' -->
+    <div id="detail-root">
+        <div id="not-found" class="alert alert-warning" style="display:none;">No se encontró el videojuego solicitado.</div>
+
+        <div class="row" id="detail-card-row" style="display:none;">
+            <div class="col-12">
+                <div class="detail-card">
+                    <div class="row align-items-start">
+                        <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+                            <img id="detail-img" src="/images/no-image.png" alt="Portada" class="detail-img"/>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <h2 id="detail-title">Título del juego</h2>
+                            <div class="d-flex flex-wrap align-items-center" style="gap:0.8rem;">
+                                <div class="meta">
+                                    <div id="detail-dev" style="display:none">Desarrollador: <strong id="detail-dev-name"></strong></div>
+                                    <div id="detail-genre" style="display:none">Género: <strong id="detail-genre-name"></strong></div>
+                                    <div id="detail-release" style="display:none">Lanzamiento: <span id="detail-release-date"></span></div>
+                                </div>
+                                <div>
+                                    <span class="price" id="detail-price">$0.00</span>
+                                </div>
+                                <div>
+                                    <span class="stock" id="detail-stock" style="display:none"></span>
+                                    <span class="text-danger" id="detail-outofstock" style="display:none">Sin stock</span>
+                                </div>
+                                <div>
+                                    <span id="detail-inactive" class="badge badge-danger" style="display:none">Inactivo</span>
+                                </div>
+                            </div>
+
+                            <div class="description">
+                                <p id="detail-desc">Descripción del juego...</p>
+                            </div>
+
+                            <div class="mt-3">
+                                <a href="/" class="btn btn-outline-light back-btn">Volver al listado</a>
+                                <a id="detail-edit" href="#" style="display:none" class="btn btn-warning ml-2">Editar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function getIdFromPath() {
+        // support paths like /videogames/123 or /api/v1/videogames/123
+        const parts = location.pathname.split('/').filter(p => p.length > 0);
+        // look for a numeric segment from the end
+        for (let i = parts.length - 1; i >= 0; i--) {
+            const p = parts[i];
+            if (/^\d+$/.test(p)) return p;
+        }
+        return null;
+    }
+
+    function formatPrice(p) { try { return p == null ? '$0' : '$' + Number(p).toFixed(2); } catch { return '$0'; } }
+
+    function populate(data) {
+        if (!data) { document.getElementById('not-found').style.display = 'block'; return; }
+        document.getElementById('detail-card-row').style.display = 'block';
+        document.getElementById('detail-title').textContent = data.title || '';
+        document.getElementById('detail-img').src = data.img || '/images/no-image.png';
+        if (data.developerName) { document.getElementById('detail-dev').style.display = 'block'; document.getElementById('detail-dev-name').textContent = data.developerName; }
+        if (data.genreName) { document.getElementById('detail-genre').style.display = 'block'; document.getElementById('detail-genre-name').textContent = data.genreName; }
+        if (data.releaseDate) { document.getElementById('detail-release').style.display = 'block'; document.getElementById('detail-release-date').textContent = data.releaseDate.split('T')[0]; }
+        document.getElementById('detail-price').textContent = formatPrice(data.price);
+        if (data.stock && data.stock > 0) { document.getElementById('detail-stock').style.display = 'inline'; document.getElementById('detail-stock').textContent = 'Stock: ' + data.stock; } else { document.getElementById('detail-outofstock').style.display = 'inline'; }
+        if (data.active === false) document.getElementById('detail-inactive').style.display = 'inline';
+        document.getElementById('detail-desc').textContent = data.description || '';
+        if (data.id) { document.getElementById('detail-edit').style.display = 'inline'; document.getElementById('detail-edit').href = `/videogames/${data.id}/edit`; }
+    }
+
+    async function loadDetail() {
+        // if server-side Thymeleaf provided 'game' we don't need to load. We detect that by presence of an element with th:if (not present) — but simpler: try to extract id
+        const id = getIdFromPath();
+        if (!id) { document.getElementById('not-found').style.display = 'block'; return; }
+        try {
+            const res = await fetch(`/api/v1/videogames/${id}`, { headers: { 'Accept': 'application/json' } });
+            if (res.status === 404) { document.getElementById('not-found').style.display = 'block'; return; }
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            populate(data);
+        } catch (err) {
+            console.error(err);
+            document.getElementById('not-found').style.display = 'block';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDetail();
+    });
+
+</script>
+</html>
