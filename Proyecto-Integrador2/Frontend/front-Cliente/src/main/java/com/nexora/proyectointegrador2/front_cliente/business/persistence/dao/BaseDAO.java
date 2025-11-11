@@ -51,7 +51,7 @@ public abstract class BaseDAO<T extends BaseDTO, ID> {
    */
   public List<T> findByQueryParams(Map<String, String> params) {
     try {
-      String url = baseUrl + entityPath;
+      String url = baseUrl + entityPath + "/filter";
       if (params != null && !params.isEmpty()) {
         StringJoiner sj = new StringJoiner("&");
         for (Map.Entry<String, String> e : params.entrySet()) {

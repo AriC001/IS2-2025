@@ -48,21 +48,7 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
 
       // Llamar al servicio (heredado desde BaseController) para obtener DTOs
       List<VehiculoDTO> vehiculos;
-      boolean hasFilter = (marca != null && !marca.isBlank()) || (modelo != null && !modelo.isBlank())
-          || (precioMax != null && !precioMax.isBlank()) || (fechaDesde != null && !fechaDesde.isBlank())
-          || (fechaHasta != null && !fechaHasta.isBlank());
-
-      if (hasFilter) {
-        java.util.Map<String, String> filters = new java.util.HashMap<>();
-        filters.put("marca", marca);
-        filters.put("modelo", modelo);
-        filters.put("precioMax", precioMax);
-        filters.put("fechaDesde", fechaDesde);
-        filters.put("fechaHasta", fechaHasta);
-        vehiculos = service.findByFilters(filters);
-      } else {
-        vehiculos = service.findAllActives();
-      }
+      vehiculos = service.findAllActives();
 
       // Añadir lista al modelo con el nombre del entityPath ("vehiculos")
       model.addAttribute(entityPath, vehiculos);
@@ -82,6 +68,7 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
       return "vehiculos/list";
     }
   }
+
   @GetMapping("/filter")
   public String filtro(
           @RequestParam(required = false) String marca,
@@ -107,7 +94,7 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
       boolean hasFilter = (marca != null && !marca.isBlank()) || (modelo != null && !modelo.isBlank())
               || (precioMax != null && !precioMax.isBlank()) || (fechaDesde != null && !fechaDesde.isBlank())
               || (fechaHasta != null && !fechaHasta.isBlank());
-
+      System.out.println(hasFilter);
       if (hasFilter) {
         java.util.Map<String, String> filters = new java.util.HashMap<>();
         filters.put("marca", marca);
@@ -117,6 +104,7 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
         filters.put("fechaHasta", fechaHasta);
         vehiculos = service.findByFilters(filters);
       } else {
+        System.out.println("aAAAAa");
         vehiculos = service.findAllActives();
       }
 
