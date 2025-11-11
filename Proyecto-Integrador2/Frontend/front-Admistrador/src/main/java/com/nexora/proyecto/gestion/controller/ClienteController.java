@@ -1,7 +1,9 @@
 package com.nexora.proyecto.gestion.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -94,12 +96,50 @@ public class ClienteController extends BaseController<ClienteDTO, String> {
           cliente.getDireccion().setLocalidad(new LocalidadDTO());
         }
       }
-      model.addAttribute("nacionalidades", nacionalidadService.findAllActives());
-      model.addAttribute("localidades", localidadService.findAllActives());
-      model.addAttribute("usuarios", usuarioService.findAllActives());
-      model.addAttribute("direcciones", direccionService.findAllActives());
     } catch (Exception e) {
-      logger.error("Error al preparar modelo del formulario: {}", e.getMessage());
+      logger.error("Error al inicializar cliente en el modelo: {}", e.getMessage(), e);
+    }
+
+    // Cargar direcciones con manejo de errores específico
+    try {
+      List<DireccionDTO> direcciones = direccionService.findAllActives();
+      logger.debug("Cargadas {} direcciones para el formulario de cliente", direcciones != null ? direcciones.size() : 0);
+      model.addAttribute("direcciones", direcciones != null ? direcciones : Collections.emptyList());
+    } catch (Exception e) {
+      logger.error("Error al cargar direcciones para el formulario de cliente: {}", e.getMessage(), e);
+      logger.error("Stack trace completo:", e);
+      // Asegurar que siempre haya un atributo direcciones en el modelo, incluso si está vacío
+      model.addAttribute("direcciones", Collections.emptyList());
+    }
+
+    // Cargar localidades con manejo de errores específico
+    try {
+      List<LocalidadDTO> localidades = localidadService.findAllActives();
+      logger.debug("Cargadas {} localidades para el formulario de cliente", localidades != null ? localidades.size() : 0);
+      model.addAttribute("localidades", localidades != null ? localidades : Collections.emptyList());
+    } catch (Exception e) {
+      logger.error("Error al cargar localidades para el formulario de cliente: {}", e.getMessage(), e);
+      model.addAttribute("localidades", Collections.emptyList());
+    }
+
+    // Cargar nacionalidades con manejo de errores específico
+    try {
+      List<NacionalidadDTO> nacionalidades = nacionalidadService.findAllActives();
+      logger.debug("Cargadas {} nacionalidades para el formulario de cliente", nacionalidades != null ? nacionalidades.size() : 0);
+      model.addAttribute("nacionalidades", nacionalidades != null ? nacionalidades : Collections.emptyList());
+    } catch (Exception e) {
+      logger.error("Error al cargar nacionalidades para el formulario de cliente: {}", e.getMessage(), e);
+      model.addAttribute("nacionalidades", Collections.emptyList());
+    }
+
+    // Cargar usuarios con manejo de errores específico
+    try {
+      List<UsuarioDTO> usuarios = usuarioService.findAllActives();
+      logger.debug("Cargados {} usuarios para el formulario de cliente", usuarios != null ? usuarios.size() : 0);
+      model.addAttribute("usuarios", usuarios != null ? usuarios : Collections.emptyList());
+    } catch (Exception e) {
+      logger.error("Error al cargar usuarios para el formulario de cliente: {}", e.getMessage(), e);
+      model.addAttribute("usuarios", Collections.emptyList());
     }
   }
 

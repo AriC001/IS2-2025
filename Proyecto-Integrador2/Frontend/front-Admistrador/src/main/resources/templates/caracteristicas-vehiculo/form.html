@@ -4,11 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Gestión de Contactos - My Car</title>
+    <title th:text="${caracteristicaVehiculo?.id != null ? 'Editar Característica Vehículo' : 'Nueva Característica Vehículo'} + ' - My Car'">Formulario Característica Vehículo - My Car</title>
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -24,11 +23,11 @@
             <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/costos-vehiculo}"><i class="fas fa-fw fa-dollar-sign"></i><span>Costos Vehículo</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/caracteristicas-vehiculo}"><i class="fas fa-fw fa-cog"></i><span>Características Vehículo</span></a></li>
+            <li class="nav-item active"><a class="nav-link" th:href="@{/caracteristicas-vehiculo}"><i class="fas fa-fw fa-cog"></i><span>Características Vehículo</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="false" aria-controls="collapseUsuarios">
                     <i class="fas fa-fw fa-users"></i><span>Usuarios</span>
                 </a>
                 <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
@@ -42,7 +41,7 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Geografía</div>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeografia" aria-expanded="true" aria-controls="collapseGeografia">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeografia" aria-expanded="false" aria-controls="collapseGeografia">
                     <i class="fas fa-fw fa-globe"></i><span>Geografía</span>
                 </a>
                 <div id="collapseGeografia" class="collapse" aria-labelledby="headingGeografia" data-parent="#accordionSidebar">
@@ -56,15 +55,10 @@
                     </div>
                 </div>
             </li>
-
-            <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -72,11 +66,12 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${nombreUsuario}">Usuario</span>
                                 <img class="img-profile rounded-circle" th:src="@{/img/undraw_profile.svg}">
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil</a>
                                 <a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Configuración</a>
                                 <div class="dropdown-divider"></div>
@@ -91,66 +86,95 @@
                 </nav>
                 <div class="container-fluid">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Gestión de Contactos</h1>
-                        <a th:href="@{/contactos/nuevo}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                            <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Contacto
-                        </a>
-                    </div>
-                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <span th:text="${success}"></span>
-                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                        <h1 class="h3 mb-0 text-gray-800" th:text="${caracteristicaVehiculo?.id != null ? 'Editar Característica Vehículo' : 'Nueva Característica Vehículo'}">Formulario Característica Vehículo</h1>
+                        <a th:href="@{/caracteristicas-vehiculo}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
                     </div>
                     <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                         <span th:text="${error}"></span>
                         <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
                     </div>
-
-                    <!-- Lista de Contactos -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Contactos Registrados</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Canal</th>
-                                            <th>Valor</th>
-                                            <th>Tipo contacto</th>
-                                            <th>Tipo teléfono</th>
-                                            <th>Persona (ID)</th>
-                                            <th>Observación</th>
-                                            <th class="text-right">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:if="${#lists.isEmpty(contactos)}">
-                                            <td colspan="7" class="text-center text-muted py-4">No hay contactos cargados todavía.</td>
-                                        </tr>
-                                        <tr th:each="registro : ${contactos}">
-                                            <td th:text="${registro.canal == 'CORREO' ? 'Correo' : 'Teléfono'}">Canal</td>
-                                            <td th:text="${registro.valorPrincipal}">valor</td>
-                                            <td th:text="${registro.tipoContacto}">TIPO</td>
-                                            <td th:text="${registro.tipoTelefono != null ? registro.tipoTelefono : '-'}">Tipo Teléfono</td>
-                                            <td th:text="${#strings.isEmpty(registro.personaId) ? '-' : registro.personaId}">Persona ID</td>
-                                            <td th:text="${#strings.isEmpty(registro.observacion) ? '-' : registro.observacion}">Observación</td>
-                                            <td class="text-right">
-                                                <a class="btn btn-sm btn-warning" th:href="@{/contactos/{id}/editar(canal=${registro.canal}, id=${registro.id})}">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </a>
-                                                <form th:action="@{/contactos/{canal}/{id}/eliminar(canal=${registro.canal}, id=${registro.id})}" method="post" class="d-inline">
-                                                    <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('¿Confirma eliminar el contacto seleccionado?');">
-                                                        <i class="fas fa-trash"></i> Eliminar
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <form th:action="${caracteristicaVehiculo?.id != null ? '/caracteristicas-vehiculo/' + caracteristicaVehiculo.id : '/caracteristicas-vehiculo'}" 
+                          th:object="${caracteristicaVehiculo}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}" th:if="${caracteristicaVehiculo?.id != null}">
+                        
+                        <!-- Sección 1: Datos Básicos -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 1: Datos Básicos</h6></div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Marca <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" th:field="*{marca}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Modelo <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" th:field="*{modelo}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Año <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" th:field="*{anio}" min="1900" max="2100" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Cantidad de Puertas <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" th:field="*{cantidadPuerta}" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Cantidad de Asientos <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" th:field="*{cantidadAsiento}" min="1" required>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Sección 2: Costo -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 2: Costo</h6></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Costo Vehículo <span class="text-danger">*</span></label>
+                                    <select class="form-control" th:field="*{costoVehiculo.id}" required>
+                                        <option value="">Seleccione un costo</option>
+                                        <option th:each="costo : ${costosVehiculo}" 
+                                                th:value="${costo.id}"
+                                                th:text="${'Desde ' + (costo.fechaDesde != null ? #dates.format(costo.fechaDesde, 'dd/MM/yyyy') : '-') + ' hasta ' + (costo.fechaHasta != null ? #dates.format(costo.fechaHasta, 'dd/MM/yyyy') : '-') + ' - $' + #numbers.formatDecimal(costo.costo, 0, 'POINT', 2, 'POINT')}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 3: Imagen -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 3: Imagen</h6></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <input type="hidden" th:field="*{imagenVehiculo.id}">
+                                    <label>Imagen del Vehículo</label>
+                                    <input type="file" class="form-control-file" id="imagenVehiculo" name="imagenVehiculo" accept="image/*">
+                                    <small class="form-text text-muted">Subir imagen del vehículo</small>
+                                </div>
+                                <div th:if="${caracteristicaVehiculo?.imagenVehiculo != null}">
+                                    <p><strong>Imagen actual:</strong> <span th:text="${caracteristicaVehiculo?.imagenVehiculo?.nombre}">-</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                            <a th:href="@{/caracteristicas-vehiculo}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                        </div>
+                    </form>
                 </div>
             </div>
             <footer class="sticky-footer bg-white"><div class="container my-auto"><div class="copyright text-center my-auto"><span>Copyright &copy; My Car 2025</span></div></div></footer>
@@ -172,13 +196,6 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
-    <script>
-        $(document).ready(function() {
-            $('#dataTable').DataTable();
-        });
-    </script>
 </body>
 </html>
 

@@ -22,7 +22,7 @@ public class VehiculoService extends BaseService<VehiculoDTO, String> {
     if (entity.getEstadoVehiculo() == null) {
       throw new Exception("El estado del vehículo es obligatorio");
     }
-    if (entity.getCaracteristicaVehiculo() == null) {
+    if (entity.getCaracteristicaVehiculo() == null || entity.getCaracteristicaVehiculo().getId() == null) {
       throw new Exception("La característica del vehículo es obligatoria");
     }
   }

@@ -406,6 +406,9 @@ public class DataInitializer {
             .calle("San Martín")
             .numero("1234")
             .barrio("Centro")
+            .manzanaPiso("Piso 3")
+            .casaDepartamento("Depto 5B")
+            .referencia("Cerca del supermercado, esquina con calle Mitre")
             .localidad(godoycruz)
             .build();
         direccion1.setEliminado(false);
@@ -425,6 +428,9 @@ public class DataInitializer {
             .calle("Belgrano")
             .numero("567")
             .barrio("El Plumerillo")
+            .manzanaPiso("Manzana 12")
+            .casaDepartamento("Casa 8")
+            .referencia("Frente a la plaza principal")
             .localidad(lasHeras)
             .build();
         direccion2.setEliminado(false);
@@ -587,7 +593,7 @@ public class DataInitializer {
         byte[] imagenBytes2 = leerImagen("2021-honda-civic-sdn.jpg");
         Imagen imagenVehiculo2 = Imagen.builder()
             .nombre("2021-honda-civic-sdn.jpg")
-            .mime("image/jpg")
+            .mime("image/jpeg")
             .contenido(imagenBytes2)
             .tipoImagen(TipoImagen.VEHICULO)
             .build();

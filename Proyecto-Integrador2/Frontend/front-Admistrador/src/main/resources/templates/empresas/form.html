@@ -56,6 +56,20 @@
                     <span>Vehículos</span></a>
             </li>
 
+            <!-- Nav Item - Costos Vehículo -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/costos-vehiculo}">
+                    <i class="fas fa-fw fa-dollar-sign"></i>
+                    <span>Costos Vehículo</span></a>
+            </li>
+
+            <!-- Nav Item - Características Vehículo -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/caracteristicas-vehiculo}">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Características Vehículo</span></a>
+            </li>
+
             <!-- Nav Item - Empresas -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/empresas}">
@@ -242,7 +256,7 @@
                                             <option value="">Seleccione una dirección</option>
                                             <option th:each="direccion : ${direcciones}" 
                                                     th:value="${direccion.id}"
-                                                    th:text="${direccion.calle + ' ' + (direccion.numero ?: '') + (direccion.barrio ? ', ' + direccion.barrio : '') + (direccion.localidad != null ? ', ' + direccion.localidad.nombre : '')}"></option>
+                                                    th:text="${direccion.calle + ' ' + direccion.numero + (direccion.barrio != null and direccion.barrio != '' ? ', ' + direccion.barrio : '') + (direccion.localidad?.nombre != null and direccion.localidad?.nombre != '' ? ', ' + direccion.localidad?.nombre : '')}"></option>
                                         </select>
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#nuevaDireccionModal">

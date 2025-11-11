@@ -106,7 +106,9 @@ public abstract class BaseController<T extends BaseDTO, ID> {
     }
     try {
       addSessionAttributesToModel(model, session);
-      model.addAttribute(entityPath, service.findAllActives());
+      // Convertir entityPath (puede tener guiones) a camelCase para el nombre del atributo
+      String attributeName = toCamelCase(entityPath);
+      model.addAttribute(attributeName, service.findAllActives());
       return entityPath + "/list";
     } catch (Exception e) {
       handleExceptionToModel(e, model, "listar");
@@ -270,6 +272,30 @@ public abstract class BaseController<T extends BaseDTO, ID> {
       return str;
     }
     return str.substring(0, 1).toUpperCase() + str.substring(1);
+  }
+
+  /**
+   * Convierte una cadena en kebab-case a camelCase.
+   * Ejemplo: "costos-vehiculo" -> "costosVehiculo"
+   */
+  private String toCamelCase(String str) {
+    if (str == null || str.isEmpty()) {
+      return str;
+    }
+    if (!str.contains("-")) {
+      return str;
+    }
+    String[] parts = str.split("-");
+    StringBuilder result = new StringBuilder(parts[0]);
+    for (int i = 1; i < parts.length; i++) {
+      if (!parts[i].isEmpty()) {
+        result.append(parts[i].substring(0, 1).toUpperCase());
+        if (parts[i].length() > 1) {
+          result.append(parts[i].substring(1));
+        }
+      }
+    }
+    return result.toString();
   }
 
 }

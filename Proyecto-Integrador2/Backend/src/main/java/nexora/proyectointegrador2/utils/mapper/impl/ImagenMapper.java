@@ -37,7 +37,7 @@ public class ImagenMapper implements BaseMapper<Imagen, ImagenDTO, String> {
     if (dto == null) {
       return null;
     }
-
+    
     Imagen imagen = new Imagen();
     imagen.setId(dto.getId());
     imagen.setEliminado(dto.isEliminado());

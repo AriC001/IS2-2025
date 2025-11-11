@@ -50,10 +50,24 @@
             </li>
 
             <!-- Nav Item - Vehículos -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" th:href="@{/vehiculos}">
                     <i class="fas fa-fw fa-car"></i>
                     <span>Vehículos</span></a>
+            </li>
+
+            <!-- Nav Item - Costos Vehículo -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/costos-vehiculo}">
+                    <i class="fas fa-fw fa-dollar-sign"></i>
+                    <span>Costos Vehículo</span></a>
+            </li>
+
+            <!-- Nav Item - Características Vehículo -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/caracteristicas-vehiculo}">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Características Vehículo</span></a>
             </li>
 
             <!-- Nav Item - Empresas -->
@@ -201,12 +215,12 @@
                         <span th:text="${error}"></span>
                         <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
                     </div>
-                    <form th:action="${vehiculo?.id != null ? '/vehiculos/' + vehiculo.id : '/vehiculos'}" th:object="${vehiculo}" method="post" enctype="multipart/form-data">
+                    <form th:action="${vehiculo?.id != null ? '/vehiculos/' + vehiculo.id : '/vehiculos'}" th:object="${vehiculo}" method="post">
                         <input type="hidden" th:field="*{id}" th:if="${vehiculo?.id != null}">
                         
                         <!-- Sección 1: Datos Básicos -->
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 1: Datos Básicos</h6></div>
+                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Datos Básicos</h6></div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -226,101 +240,20 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Sección 2: Características -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 2: Características</h6></div>
-                            <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
-                                            <label>Marca <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" th:field="*{caracteristicaVehiculo.marca}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Modelo <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" th:field="*{caracteristicaVehiculo.modelo}" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Año <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" th:field="*{caracteristicaVehiculo.anio}" min="1900" max="2100" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Cantidad de Puertas</label>
-                                            <input type="number" class="form-control" th:field="*{caracteristicaVehiculo.cantidadPuerta}" min="0">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Cantidad de Asientos</label>
-                                            <input type="number" class="form-control" th:field="*{caracteristicaVehiculo.cantidadAsiento}" min="0">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Cantidad Total de Vehículos <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" th:field="*{caracteristicaVehiculo.cantidadTotalVehiculo}" min="1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Cantidad de Vehículos Disponibles <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control" th:field="*{caracteristicaVehiculo.cantidadVehiculoDisponible}" min="0" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sección 3: Imagen -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 3: Imagen</h6></div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <input type="hidden" th:field="*{caracteristicaVehiculo.imagenVehiculo.id}">
-                                    <label>Imagen del Vehículo</label>
-                                    <input type="file" class="form-control-file" id="imagenVehiculo" name="imagenVehiculo" accept="image/*">
-                                    <small class="form-text text-muted">Subir imagen del vehículo</small>
-                                </div>
-                                <div th:if="${vehiculo?.caracteristicaVehiculo?.imagenVehiculo != null}">
-                                    <p><strong>Imagen actual:</strong> <span th:text="${vehiculo?.caracteristicaVehiculo?.imagenVehiculo?.nombre}">-</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sección 4: Costo -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Sección 4: Costo</h6></div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Fecha Desde</label>
-                                            <input type="date" class="form-control" th:field="*{caracteristicaVehiculo.costoVehiculo.fechaDesde}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Fecha Hasta</label>
-                                            <input type="date" class="form-control" th:field="*{caracteristicaVehiculo.costoVehiculo.fechaHasta}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Costo</label>
-                                            <input type="number" class="form-control" th:field="*{caracteristicaVehiculo.costoVehiculo.costo}" step="0.01" min="0">
+                                            <label>Característica del Vehículo <span class="text-danger">*</span></label>
+                                            <select class="form-control" th:field="*{caracteristicaVehiculo.id}" required>
+                                                <option value="">Seleccione una característica</option>
+                                                <option th:each="caracteristica : ${caracteristicasVehiculo}" 
+                                                        th:value="${caracteristica.id}"
+                                                        th:text="${caracteristica.marca + ' ' + caracteristica.modelo + ' (' + caracteristica.anio + ')'}"></option>
+                                            </select>
+                                            <small class="form-text text-muted">
+                                                Si no encuentra la característica que busca, puede 
+                                                <a th:href="@{/caracteristicas-vehiculo/nuevo}" target="_blank">crear una nueva</a>
+                                            </small>
                                         </div>
                                     </div>
                                 </div>

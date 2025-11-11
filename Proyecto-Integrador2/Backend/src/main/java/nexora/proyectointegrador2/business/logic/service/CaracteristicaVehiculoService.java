@@ -1,5 +1,7 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,8 @@ import nexora.proyectointegrador2.business.persistence.repository.Caracteristica
 
 @Service
 public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVehiculo, String> {
+
+  private static final Logger logger = LoggerFactory.getLogger(CaracteristicaVehiculoService.class);
 
   @Autowired
   private ImagenService imagenService;
@@ -51,9 +55,11 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
       // Si el ID es null o cadena vacía, tratar como nueva imagen
       if (imagenId == null || imagenId.trim().isEmpty()) {
         // Verificar si la imagen tiene contenido válido antes de guardarla
-        if (entity.getImagenVehiculo().getContenido() != null && entity.getImagenVehiculo().getContenido().length > 0) {
+        byte[] contenido = entity.getImagenVehiculo().getContenido();
+        if (contenido != null && contenido.length > 0) {
           Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
           entity.setImagenVehiculo(imagenGuardada);
+          logger.info("Imagen guardada exitosamente con ID: {}", imagenGuardada.getId());
         } else {
           // Si no tiene contenido, establecer como null
           entity.setImagenVehiculo(null);
@@ -63,7 +69,7 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
         Imagen imagenExistente = imagenService.findById(imagenId);
         entity.setImagenVehiculo(imagenExistente);
       }
-    }
+    } 
 
     // Manejar costoVehiculo
     if (entity.getCostoVehiculo() != null) {
