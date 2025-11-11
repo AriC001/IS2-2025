@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 public class LocalidadDTO extends BaseDTO {
 
   private String nombre;
   private String codigoPostal;
-  private String departamentoId;
+  private DepartamentoDTO departamento;
 
 }

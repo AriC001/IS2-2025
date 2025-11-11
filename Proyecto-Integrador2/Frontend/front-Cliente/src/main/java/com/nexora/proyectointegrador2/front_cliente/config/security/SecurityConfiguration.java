@@ -38,10 +38,20 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Allow public access to the home page (index), registration endpoints and static resources
-                        .requestMatchers("/", "/registro/**", "/persona/registro", "/css/**", "/js/**", "/img/**", "/vendor/**", "/scss/**").permitAll()
-                        .anyRequest().authenticated()
+                .requestMatchers(
+                        "/", 
+                        "/registro/**",
+                        "/clientes/registro",
+                        "/clientes/registrar",
+                        "/css/**", "/js/**", "/img/**", "/vendor/**", "/scss/**",
+                        
+                        // 🔥 Agregá esto
+                        "/api/v1/nacionalidades/**",
+                        "/api/v1/localidades/**"
+                ).permitAll()
+                .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .usernameParameter("nombreUsuario")   

@@ -46,7 +46,7 @@ public class HomeController {
     }
 
     // Dashboard protegido
-    @GetMapping("/dashboard")
+    @GetMapping("/home")
     public String dashboard(HttpSession session, Model model) {
 
         if (session.getAttribute("token") == null) {
@@ -56,7 +56,7 @@ public class HomeController {
         model.addAttribute("nombreUsuario", session.getAttribute("nombreUsuario"));
         model.addAttribute("rol", session.getAttribute("rol"));
 
-        return "index";
+        return "views/home";
     }
 
   

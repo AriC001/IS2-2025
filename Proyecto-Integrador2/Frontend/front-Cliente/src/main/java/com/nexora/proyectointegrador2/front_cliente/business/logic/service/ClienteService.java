@@ -1,12 +1,12 @@
-package com.nexora.proyecto.gestion.business.logic.service;
+package com.nexora.proyectointegrador2.front_cliente.business.logic.service;
 
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nexora.proyecto.gestion.business.persistence.dao.ClienteDAO;
-import com.nexora.proyecto.gestion.dto.ClienteDTO;
+import com.nexora.proyectointegrador2.front_cliente.business.persistence.dao.ClienteDAO;
+import com.nexora.proyectointegrador2.front_cliente.dto.ClienteDTO;
 
 @Service
 public class ClienteService extends BaseService<ClienteDTO, String> {
@@ -47,7 +47,15 @@ public class ClienteService extends BaseService<ClienteDTO, String> {
       }
     }
   }
-  
 
+  public ClienteDTO findByNombreUsuario(String nombreUsuario) {
+      try {
+          return ((ClienteDAO) dao).findByNombreUsuario(nombreUsuario);
+      } catch (Exception e) {
+          throw new RuntimeException("Error buscando cliente por nombreUsuario: " + e.getMessage());
+      }
+  }
+
+    
 }
 
