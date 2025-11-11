@@ -7,13 +7,16 @@ import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
 import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
 import org.springframework.transaction.annotation.Transactional;
-import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+// no unused imports
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Subquery;
+import jakarta.persistence.criteria.Root;
 
 @Service
 public class VehiculoService extends BaseService<Vehiculo, String> {
@@ -23,12 +26,9 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
   @Autowired
   private CaracteristicaVehiculoService caracteristicaVehiculoService;
 
-  private final AlquilerRepository alquilerRepository;
-
-  public VehiculoService(VehiculoRepository repository,AlquilerRepository alquilerRepository) {
+  public VehiculoService(VehiculoRepository repository) {
     super(repository);
     this.vehiculoRepository = repository;
-    this.alquilerRepository = alquilerRepository;
   }
 
   @Override
@@ -82,48 +82,65 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
    * Si fechaDesde es null se considerará la fecha actual (aunque el controller ya lo asigna).
    */
   @Transactional(readOnly = true)
-  public Collection<Vehiculo> findAllActivesDate(Date fechaDesde, Date fechaHasta) throws Exception {
-    if (fechaDesde == null) {
-      fechaDesde = new Date();
-    }
+  public Collection<Vehiculo> findAllActivesFilter(Date fechaDesde, Date fechaHasta, String marcaS, String modeloS,
+      Integer anioS) throws Exception {
+    // Normalizar filtros vacíos
+    final String marca = (marcaS == null || marcaS.trim().isEmpty()) ? null : marcaS.trim();
+    final String modelo = (modeloS == null || modeloS.trim().isEmpty()) ? null : modeloS.trim();
+    final Integer anio = (anioS == null || anioS == 0) ? null : anioS;
 
-    // Todos los vehículos activos
-    Collection<Vehiculo> vehiculos = this.findAllActives();
+    final Date qDesde = (fechaDesde == null) ? new Date() : fechaDesde;
+    final Date qHasta = fechaHasta; // may be null
 
-    // Obtener alquileres activos y determinar cuáles ocupan los vehículos en el periodo
-    Collection<nexora.proyectointegrador2.business.domain.entity.Alquiler> alquileres = alquilerRepository
-        .findAllByEliminadoFalse();
+    Specification<Vehiculo> spec = (root, query, cb) -> {
+      List<Predicate> preds = new ArrayList<>();
+      // Solo activos
+      preds.add(cb.isFalse(root.get("eliminado")));
 
-    Set<String> ocupados = new HashSet<>();
+      if (marca != null) {
+        preds.add(cb.like(cb.lower(root.get("marca")), "%" + marca.toLowerCase() + "%"));
+      }
+      if (modelo != null) {
+        preds.add(cb.like(cb.lower(root.get("modelo")), "%" + modelo.toLowerCase() + "%"));
+      }
+      if (anio != null) {
+        preds.add(cb.equal(root.get("anio"), anio));
+      }
 
-    for (nexora.proyectointegrador2.business.domain.entity.Alquiler a : alquileres) {
-      Date aDesde = a.getFechaDesde();
-      Date aHasta = a.getFechaHasta();
+      // Subquery que obtiene caracteristica_vehiculo_id que están completamente ocupadas
+      // Es decir, aquellas caracteristicas cuyo número de alquileres que se solapan >= cantidadVehiculoDisponible
+      Subquery<String> fullBooked = query.subquery(String.class);
+      Root<nexora.proyectointegrador2.business.domain.entity.Alquiler> aRoot = fullBooked
+          .from(nexora.proyectointegrador2.business.domain.entity.Alquiler.class);
+      // JOIN a.vehiculo -> vehiculo.caracteristicaVehiculo
+      jakarta.persistence.criteria.Join<?, ?> vehJoin = aRoot.join("vehiculo");
+      jakarta.persistence.criteria.Join<?, ?> carJoin = vehJoin.join("caracteristicaVehiculo");
 
-      boolean overlap = false;
-      if (fechaHasta == null) {
-        // Consulta por fecha única: fechaDesde
-        Date d = fechaDesde;
-        if (aDesde != null && !aDesde.after(d) && (aHasta == null || !aHasta.before(d))) {
-          overlap = true;
-        }
+      Predicate activoAlq = cb.isFalse(aRoot.get("eliminado"));
+
+      Predicate overlapAlq;
+      if (qHasta == null) {
+        overlapAlq = cb.and(cb.lessThanOrEqualTo(aRoot.get("fechaDesde"), qDesde),
+            cb.or(cb.isNull(aRoot.get("fechaHasta")), cb.greaterThanOrEqualTo(aRoot.get("fechaHasta"), qDesde)));
       } else {
-        // Consulta por rango [fechaDesde, fechaHasta]
-        Date qDesde = fechaDesde;
-        Date qHasta = fechaHasta;
-        // No se solapan si aHasta < qDesde OR aDesde > qHasta
-        boolean noSolapan = (aHasta != null && aHasta.before(qDesde)) || (aDesde != null && aDesde.after(qHasta));
-        overlap = !noSolapan;
+        Predicate aHastaBeforeQDesde = cb.and(cb.isNotNull(aRoot.get("fechaHasta")), cb.lessThan(aRoot.get("fechaHasta"), qDesde));
+        Predicate aDesdeAfterQHasta = cb.greaterThan(aRoot.get("fechaDesde"), qHasta);
+        overlapAlq = cb.not(cb.or(aHastaBeforeQDesde, aDesdeAfterQHasta));
       }
 
-      if (overlap && a.getVehiculo() != null && a.getVehiculo().getId() != null) {
-        ocupados.add(a.getVehiculo().getId());
-      }
-    }
+      // Seleccionamos id de caracteristica que están totalmente ocupadas
+      fullBooked.select(carJoin.get("id"))
+          .where(cb.and(activoAlq, overlapAlq))
+          .groupBy(carJoin.get("id"), carJoin.get("cantidadVehiculoDisponible"))
+          .having(cb.greaterThanOrEqualTo(cb.count(aRoot), carJoin.get("cantidadVehiculoDisponible").as(Long.class)));
 
-    // Filtrar los vehículos que no estén en el set ocupados
-    return vehiculos.stream().filter(v -> v != null && v.getId() != null && !ocupados.contains(v.getId()))
-        .collect(Collectors.toList());
+      // Excluir vehículos cuya caracteristica está en la lista de fully booked
+      preds.add(cb.not(root.get("caracteristicaVehiculo").get("id").in(fullBooked)));
+
+      return cb.and(preds.toArray(new Predicate[0]));
+    };
+
+    return vehiculoRepository.findAll(spec);
   }
 
 

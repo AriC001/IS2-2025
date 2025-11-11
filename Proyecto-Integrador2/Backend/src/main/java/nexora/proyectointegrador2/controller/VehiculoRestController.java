@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.servlet.http.HttpServletRequest;
 
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
@@ -26,37 +28,32 @@ public class VehiculoRestController extends BaseRestController<Vehiculo, Vehicul
     this.request = request;
   }
 
-  @Override
-  @GetMapping
-  public ResponseEntity<List<VehiculoDTO>> findAll() throws Exception {
-    logger.debug("Obteniendo todos los registros activos (filtrando por fecha)");
+  /**
+   * Endpoint separado y explícito para obtener vehículos disponibles
+   * utilizando binding estándar de Spring para parámetros de fecha.
+   * Evita ambigüedades y utiliza formato ISO (yyyy-MM-dd).
+   */
+  @GetMapping("/filter")
+  public ResponseEntity<List<VehiculoDTO>> findAvailable(
+      @RequestParam(value = "fechaDesde", required = false)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate fechaDesde,
+      @RequestParam(value = "fechaHasta", required = false)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate fechaHasta,
+      @RequestParam(value = "marca",required = false) String marca, @RequestParam(value = "modelo",required = false)String modelo,
+      @RequestParam(value = "anio",required = false) Integer anio
+      ) throws Exception {
+    logger.debug("GET /filetr called with fechaDesde={}, fechaHasta={}", fechaDesde, fechaHasta);
+      String  marcaS = (marca == null || marca.trim().isEmpty()) ? null : marca.trim();
+      String  modeloS = (modelo == null || modelo.trim().isEmpty()) ? null : modelo.trim();
+      Integer  anioS = (anio == null || anio == 0) ? null : anio;
+    Date desde = (fechaDesde == null) ? new java.util.Date()
+        : java.sql.Date.valueOf(fechaDesde);
+    Date hasta = (fechaHasta == null) ? null : java.sql.Date.valueOf(fechaHasta);
 
-    String sDesde = request.getParameter("fechaDesde");
-    String sHasta = request.getParameter("fechaHasta");
+    logger.debug(desde + " "+ hasta);
 
-    Date fechaDesde = null;
-    Date fechaHasta = null;
-
-    if (sDesde != null && !sDesde.isEmpty()) {
-      LocalDate ld = LocalDate.parse(sDesde);
-      fechaDesde = java.sql.Date.valueOf(ld);
-    }
-    if (sHasta != null && !sHasta.isEmpty()) {
-      LocalDate lh = LocalDate.parse(sHasta);
-      fechaHasta = java.sql.Date.valueOf(lh);
-    }
-
-    // Si no viene fechaDesde la consideramos hoy
-    if (fechaDesde == null) {
-      fechaDesde = new Date();
-    }
-
-    // Llamamos al service especializado
-    Collection<Vehiculo> vehiculos = ((VehiculoService) service)
-        .findAllActivesDate(fechaDesde, fechaHasta);
-
+    Collection<Vehiculo> vehiculos = ((VehiculoService) service).findAllActivesFilter(desde, hasta,marcaS,modeloS,anioS);
     List<VehiculoDTO> dtos = mapper.toDTOList(vehiculos);
-    logger.debug("Se obtuvieron {} registros", dtos.size());
     return ResponseEntity.ok(dtos);
   }
 }

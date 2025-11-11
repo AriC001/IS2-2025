@@ -58,5 +58,13 @@ public abstract class BaseService<T extends BaseDTO, ID> {
     return dao.findAllActives();
   }
 
+  /**
+   * Obtiene entidades aplicando parámetros de filtro. Delegado al DAO.
+   */
+  public List<T> findByFilters(java.util.Map<String, String> filters) throws Exception {
+    logger.debug("Obteniendo entidades con filtros: {}", filters);
+    return dao.findByQueryParams(filters);
+  }
+
   protected abstract void validateEntity(T entity) throws Exception;
 }

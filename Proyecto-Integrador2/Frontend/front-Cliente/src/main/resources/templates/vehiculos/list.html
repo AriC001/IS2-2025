@@ -51,30 +51,30 @@
         <aside class="filter-panel">
                 <h2>Filtros</h2>
                 <!-- Formulario de filtros: usa método GET para que los parámetros aparezcan en la URL -->
-                <form id="filterForm" action="/vehiculos" method="get">
+                <form id="filterForm" action="/vehiculos/filter" method="get">
                         <div class="filter-field">
                                 <label for="precio">Precio (máx)</label>
-                                <input type="number" id="precio" name="precioMax" placeholder="Precio máximo" min="0" step="1">
+                                <input type="number" id="precio" name="precioMax" placeholder="Precio máximo" min="0" step="1" th:value="${precioMax}">
                         </div>
 
                         <div class="filter-field">
                                 <label for="marca">Marca</label>
-                                <input type="text" id="marca" name="marca" placeholder="Ej: Toyota">
+                                <input type="text" id="marca" name="marca" placeholder="Ej: Toyota" th:value="${marca}">
                         </div>
 
                         <div class="filter-field">
                                 <label for="modelo">Modelo</label>
-                                <input type="text" id="modelo" name="modelo" placeholder="Ej: Corolla">
+                                <input type="text" id="modelo" name="modelo" placeholder="Ej: Corolla" th:value="${modelo}">
                         </div>
 
                         <div class="filter-field">
                                 <label for="fechaDesde">Fecha Desde</label>
-                                <input type="date" id="fechaDesde" name="fechaDesde">
+                                <input type="date" id="fechaDesde" name="fechaDesde" th:value="${fechaDesde}">
                         </div>
 
                         <div class="filter-field">
                                 <label for="fechaHasta">Fecha Hasta</label>
-                                <input type="date" id="fechaHasta" name="fechaHasta">
+                                <input type="date" id="fechaHasta" name="fechaHasta" th:value="${fechaHasta}">
                         </div>
 
                         <div class="filter-actions">

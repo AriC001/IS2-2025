@@ -161,7 +161,7 @@ public class DataInitializer {
                 .cantidadAsiento(5)
                 .cantidadPuerta(4)
                 .cantidadTotalVehiculo(2)
-                .cantidadVehiculoDisponible(2)
+                
                 .costoVehiculo(cost1)
                 .marca("BMW")
                 .modelo("1").build();
@@ -549,18 +549,17 @@ public class DataInitializer {
         costo1.setEliminado(false);
         costo1 = costoVehiculoService.save(costo1);
 
-        // Crear característica de vehículo 1
-        CaracteristicaVehiculo caracteristica1 = CaracteristicaVehiculo.builder()
-            .marca("Toyota")
-            .modelo("Corolla")
-            .anio(2020)
-            .cantidadPuerta(4)
-            .cantidadAsiento(5)
-            .cantidadTotalVehiculo(3)
-            .cantidadVehiculoDisponible(3)
-            .imagenVehiculo(imagenVehiculo1)
-            .costoVehiculo(costo1)
-            .build();
+    // Crear característica de vehículo 1
+    CaracteristicaVehiculo caracteristica1 = CaracteristicaVehiculo.builder()
+      .marca("Toyota")
+      .modelo("Corolla")
+      .anio(2020)
+      .cantidadPuerta(4)
+      .cantidadAsiento(5)
+      
+      .imagenVehiculo(imagenVehiculo1)
+      .costoVehiculo(costo1)
+      .build();
         caracteristica1.setEliminado(false);
         caracteristica1 = caracteristicaVehiculoService.save(caracteristica1);
 
@@ -600,18 +599,17 @@ public class DataInitializer {
         costo2.setEliminado(false);
         costo2 = costoVehiculoService.save(costo2);
 
-        // Crear característica de vehículo 2
-        CaracteristicaVehiculo caracteristica2 = CaracteristicaVehiculo.builder()
-            .marca("Honda")
-            .modelo("Civic")
-            .anio(2021)
-            .cantidadPuerta(4)
-            .cantidadAsiento(5)
-            .cantidadTotalVehiculo(2)
-            .cantidadVehiculoDisponible(2)
-            .imagenVehiculo(imagenVehiculo2)
-            .costoVehiculo(costo2)
-            .build();
+    // Crear característica de vehículo 2
+    CaracteristicaVehiculo caracteristica2 = CaracteristicaVehiculo.builder()
+      .marca("Honda")
+      .modelo("Civic")
+      .anio(2021)
+      .cantidadPuerta(4)
+      .cantidadAsiento(5)
+      
+      .imagenVehiculo(imagenVehiculo2)
+      .costoVehiculo(costo2)
+      .build();
         caracteristica2.setEliminado(false);
         caracteristica2 = caracteristicaVehiculoService.save(caracteristica2);
 

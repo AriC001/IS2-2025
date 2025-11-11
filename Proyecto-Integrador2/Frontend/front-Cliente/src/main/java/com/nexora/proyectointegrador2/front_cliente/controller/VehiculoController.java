@@ -47,7 +47,78 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
       addSessionAttributesToModel(model, session);
 
       // Llamar al servicio (heredado desde BaseController) para obtener DTOs
-      List<VehiculoDTO> vehiculos = service.findAllActives();
+      List<VehiculoDTO> vehiculos;
+      boolean hasFilter = (marca != null && !marca.isBlank()) || (modelo != null && !modelo.isBlank())
+          || (precioMax != null && !precioMax.isBlank()) || (fechaDesde != null && !fechaDesde.isBlank())
+          || (fechaHasta != null && !fechaHasta.isBlank());
+
+      if (hasFilter) {
+        java.util.Map<String, String> filters = new java.util.HashMap<>();
+        filters.put("marca", marca);
+        filters.put("modelo", modelo);
+        filters.put("precioMax", precioMax);
+        filters.put("fechaDesde", fechaDesde);
+        filters.put("fechaHasta", fechaHasta);
+        vehiculos = service.findByFilters(filters);
+      } else {
+        vehiculos = service.findAllActives();
+      }
+
+      // Añadir lista al modelo con el nombre del entityPath ("vehiculos")
+      model.addAttribute(entityPath, vehiculos);
+
+      // Pasar los valores de filtros de vuelta al template para retención en inputs
+      model.addAttribute("marca", marca);
+      model.addAttribute("modelo", modelo);
+      model.addAttribute("precioMax", precioMax);
+      model.addAttribute("fechaDesde", fechaDesde);
+      model.addAttribute("fechaHasta", fechaHasta);
+
+      return "vehiculos/list";
+    } catch (Exception e) {
+      // En caso de fallo, delegar en el manejo de excepciones del controlador base
+      e.printStackTrace();
+      model.addAttribute("error", "Error al obtener vehículos: " + e.getMessage());
+      return "vehiculos/list";
+    }
+  }
+  @GetMapping("/filter")
+  public String filtro(
+          @RequestParam(required = false) String marca,
+          @RequestParam(required = false) String modelo,
+          @RequestParam(required = false) String precioMax,
+          @RequestParam(required = false) String fechaDesde,
+          @RequestParam(required = false) String fechaHasta,
+          Model model,
+          HttpSession session
+  ) {
+    // Validar sesión (usa método protegido del BaseController)
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
+
+    try {
+      // Añadir atributos de sesión comunes al modelo
+      addSessionAttributesToModel(model, session);
+
+      // Llamar al servicio (heredado desde BaseController) para obtener DTOs
+      List<VehiculoDTO> vehiculos;
+      boolean hasFilter = (marca != null && !marca.isBlank()) || (modelo != null && !modelo.isBlank())
+              || (precioMax != null && !precioMax.isBlank()) || (fechaDesde != null && !fechaDesde.isBlank())
+              || (fechaHasta != null && !fechaHasta.isBlank());
+
+      if (hasFilter) {
+        java.util.Map<String, String> filters = new java.util.HashMap<>();
+        filters.put("marca", marca);
+        filters.put("modelo", modelo);
+        filters.put("precioMax", precioMax);
+        filters.put("fechaDesde", fechaDesde);
+        filters.put("fechaHasta", fechaHasta);
+        vehiculos = service.findByFilters(filters);
+      } else {
+        vehiculos = service.findAllActives();
+      }
 
       // Añadir lista al modelo con el nombre del entityPath ("vehiculos")
       model.addAttribute(entityPath, vehiculos);
