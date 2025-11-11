@@ -82,6 +82,8 @@ public abstract class BaseDAO<T extends BaseDTO, ID> {
     }
   }
 
+  
+
   public List<T> findAllActives() {
     try {
       String url = baseUrl + entityPath;

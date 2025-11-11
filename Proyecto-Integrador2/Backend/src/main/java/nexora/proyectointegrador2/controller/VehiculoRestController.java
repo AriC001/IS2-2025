@@ -22,10 +22,12 @@ import nexora.proyectointegrador2.utils.mapper.impl.VehiculoMapper;
 @RequestMapping("api/v1/vehiculos")
 public class VehiculoRestController extends BaseRestController<Vehiculo, VehiculoDTO, String> {
   private final HttpServletRequest request;
+  private final VehiculoService vehiculoService;
 
   public VehiculoRestController(VehiculoService service, VehiculoMapper mapper, HttpServletRequest request) {
     super(service, mapper);
     this.request = request;
+    this.vehiculoService = service;
   }
 
   /**
@@ -52,9 +54,25 @@ public class VehiculoRestController extends BaseRestController<Vehiculo, Vehicul
 
     logger.debug(desde + " "+ hasta);
 
-    Collection<Vehiculo> vehiculos = ((VehiculoService) service).findAllActivesFilter(desde, hasta,marcaS,modeloS,anioS);
+    Collection<Vehiculo> vehiculos = vehiculoService.findAllActivesFilter(desde, hasta,marcaS,modeloS,anioS);
     List<VehiculoDTO> dtos = mapper.toDTOList(vehiculos);
     return ResponseEntity.ok(dtos);
+  }
+
+  @GetMapping("/availability")
+  public ResponseEntity<Boolean> checkAvailability(
+      @RequestParam(value = "fechaDesde")
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate fechaDesde,
+      @RequestParam(value = "fechaHasta")
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate fechaHasta,
+      @RequestParam(value = "idVehiculo") String idVehiculo ) throws Exception{
+
+    Date desde = java.sql.Date.valueOf(fechaDesde);
+    Date hasta = java.sql.Date.valueOf(fechaHasta);
+
+    boolean availability = vehiculoService.checkAvailability(desde, hasta,idVehiculo);
+
+    return ResponseEntity.ok(availability);
   }
 }
 

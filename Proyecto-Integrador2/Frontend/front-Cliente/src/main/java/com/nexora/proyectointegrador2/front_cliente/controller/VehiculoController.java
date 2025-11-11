@@ -5,6 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -16,8 +19,11 @@ import com.nexora.proyectointegrador2.front_cliente.dto.VehiculoDTO;
 @RequestMapping("/vehiculos")
 public class VehiculoController extends BaseController<VehiculoDTO, String> {
 
+  private final VehiculoService vehiculoService;
+
   public VehiculoController(VehiculoService vehiculoService) {
     super(vehiculoService, "vehiculo", "vehiculos");
+    this.vehiculoService = vehiculoService;
   }
 
 
@@ -66,6 +72,39 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
       e.printStackTrace();
       model.addAttribute("error", "Error al obtener vehículos: " + e.getMessage());
       return "vehiculos/list";
+    }
+  }
+
+  /**
+   * Endpoint JSON que devuelve la lista de vehículos disponibles entre dos fechas.
+   * Se usa desde JS en la página para marcar disponibilidad sin recargar la plantilla.
+   */
+  @GetMapping("/available")
+  @ResponseBody
+  public boolean available(
+      @RequestParam String fechaDesde,
+      @RequestParam String fechaHasta,
+      @RequestParam String id,
+      HttpSession session
+  ) {
+    // Validar sesión (igual que en otros endpoints)
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No autenticado");
+    }
+
+    try {
+      java.util.Map<String,String> filters = new java.util.HashMap<>();
+      if (fechaDesde != null && !fechaDesde.isBlank()) filters.put("fechaDesde", fechaDesde);
+      if (fechaHasta != null && !fechaHasta.isBlank()) filters.put("fechaHasta", fechaHasta);
+      filters.put("idVehiculo",id);
+
+      // Delegar a service (findByFilters construye la consulta al backend)
+      return vehiculoService.findAvailability(filters);
+      //return service.findByFilters(filters);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar disponibilidad");
     }
   }
 

@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Collection;
+import java.util.Date;
+
 import org.springframework.stereotype.Repository;
 
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;

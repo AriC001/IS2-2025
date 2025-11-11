@@ -32,6 +32,14 @@ public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
     + "GROUP BY v.caracteristicaVehiculo.id")
   Collection<Object[]> countOverlappingByCaracteristicaForRange(java.util.Date qDesde, java.util.Date qHasta);
 
+  @Query("SELECT COUNT(a) FROM Alquiler a WHERE a.eliminado = false AND a.vehiculo.id = :vehiculoId "
+    + "AND a.fechaDesde <= :qDesde AND (a.fechaHasta IS NULL OR a.fechaHasta >= :qDesde)")
+  Long countOverlappingForVehicleDate(java.util.Date qDesde, String vehiculoId);
+
+  @Query("SELECT COUNT(a) FROM Alquiler a WHERE a.eliminado = false AND a.vehiculo.id = :vehiculoId "
+    + "AND NOT (a.fechaHasta IS NOT NULL AND a.fechaHasta < :qDesde OR a.fechaDesde > :qHasta)")
+  Long countOverlappingForVehicleRange(java.util.Date qDesde, java.util.Date qHasta, String vehiculoId);
+
 }
 
 

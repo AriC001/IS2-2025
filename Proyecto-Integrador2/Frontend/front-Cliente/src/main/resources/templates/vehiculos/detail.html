@@ -22,7 +22,7 @@
     <h1>Detalle del vehículo</h1>
 
     <!-- Versión que usa la variable 'vehiculo' (sin acento) -->
-    <div th:if="${vehiculo != null}" th:object="${vehiculo}" class="card">
+        <div th:if="${vehiculo != null}" th:object="${vehiculo}" class="card" th:attr="data-vehicle-id=${vehiculo.id}">
       <div class="row">
         <div class="thumb col">
           <span >
@@ -61,9 +61,30 @@
             <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.cantidadPuerta : ''}">4</dd>
           </dl>
 
-          <p>
-            <a th:href="@{'/vehiculos/' + *{id} + '/editar'}" class="btn">Editar</a>
-          </p>
+                                        <p>
+                                                <!-- <a th:href="@{'/vehiculos/' + *{id} + '/editar'}" class="btn">Editar</a> -->
+                                        </p>
+
+                                        <!-- Reserva: date pickers, total y disponibilidad -->
+                                        <div class="reservation-panel" style="margin-top:14px;border-top:1px dashed #eee;padding-top:12px">
+                                                <h3>Reservar</h3>
+                                                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                                                        <label style="display:flex;flex-direction:column;font-size:0.9rem">Desde
+                                                                <input type="date" id="fechaDesdeDetail" />
+                                                        </label>
+                                                        <label style="display:flex;flex-direction:column;font-size:0.9rem">Hasta
+                                                                <input type="date" id="fechaHastaDetail" />
+                                                        </label>
+                                                </div>
+
+                                                <p>Precio por día: <strong id="basePriceDetail" th:text="${vehiculo.caracteristicaVehiculo != null && vehiculo.caracteristicaVehiculo.costoVehiculo != null ? vehiculo.caracteristicaVehiculo.costoVehiculo.costo : 0}">0</strong></p>
+                                                <p>Total para las fechas seleccionadas: <strong id="totalPriceDetail">-</strong></p>
+                                                <p id="availabilityMsgDetail" style="font-weight:600;color:#333">Elige fechas para comprobar disponibilidad.</p>
+                                                <div style="margin-top:8px">
+                                                        <button id="reserveBtnDetail" class="btn" disabled>Reservar</button>
+                                                </div>
+                                        </div>
+
         </div>
       </div>
     </div>
@@ -72,4 +93,124 @@
 
   </div>
 </body>
+
+<style>
+
+
+/* Disabled button appearance */
+.btn-disabled { background: #cfcfcf !important; color: #666 !important; cursor: not-allowed !important; }
+</style>
+
+<script>
+// Detail page: date pickers compute price and check availability for this vehicle
+function daysBetweenInclusive(fromStr, toStr) {
+        const from = new Date(fromStr);
+        const to = new Date(toStr);
+        // Normalize time portion to avoid DST issues
+        from.setHours(0,0,0,0);
+        to.setHours(0,0,0,0);
+        const diff = to - from;
+        if (isNaN(diff)) return NaN;
+        return Math.floor(diff / (1000*60*60*24)) + 1; // inclusive
+}
+
+function formatMoney(v){
+        if (v == null || isNaN(v)) return '-';
+        return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits:0 }).format(v);
+}
+
+async function checkAvailabilityForVehicle(vehicleId, desde, hasta){
+        // Call the controller endpoint that validates params and delegates to service
+        // VehiculoController.available expects: fechaDesde, fechaHasta, id
+        const url = `/vehiculos/available?fechaDesde=${encodeURIComponent(desde)}&fechaHasta=${encodeURIComponent(hasta)}&id=${encodeURIComponent(vehicleId)}`;
+        const resp = await fetch(url, { credentials: 'same-origin' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const body = await resp.json();
+        // backend returns a boolean (true/false)
+        if (typeof body === 'boolean') return body;
+        // if backend wraps in object { available: true }
+        if (body && typeof body.available === 'boolean') return body.available;
+        // if backend returns list of ids, check inclusion
+        if (Array.isArray(body)) {
+                return body.some(v => (v.id || v) == vehicleId);
+        }
+        return false;
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+        const card = document.querySelector('[data-vehicle-id]');
+        if (!card) return;
+        const vehicleId = card.getAttribute('data-vehicle-id');
+        const desdeEl = document.getElementById('fechaDesdeDetail');
+        const hastaEl = document.getElementById('fechaHastaDetail');
+        const basePriceEl = document.getElementById('basePriceDetail');
+        const totalEl = document.getElementById('totalPriceDetail');
+        const availMsg = document.getElementById('availabilityMsgDetail');
+        const reserveBtn = document.getElementById('reserveBtnDetail');
+
+        const basePrice = parseFloat(basePriceEl ? basePriceEl.textContent.trim() : 0) || 0;
+
+        async function onDateChange(){
+                const desde = desdeEl.value;
+                const hasta = hastaEl.value;
+                totalEl.textContent = '-';
+                availMsg.textContent = 'Elige fechas para comprobar disponibilidad.';
+                reserveBtn.disabled = true;
+
+                if (!desde || !hasta) return;
+                const days = daysBetweenInclusive(desde, hasta);
+                if (!isFinite(days) || days <= 0) {
+                        availMsg.textContent = 'Rango de fechas inválido.';
+                        availMsg.style.color = 'crimson';
+                        reserveBtn.disabled = true;
+                        reserveBtn.classList.add('btn-disabled');
+                        return;
+                }
+
+                // Compute total using basePrice as price per day
+                const total = basePrice * days;
+                totalEl.textContent = formatMoney(total);
+
+                // Check availability via backend
+                try{
+                        availMsg.textContent = 'Comprobando disponibilidad...';
+                        const available = await checkAvailabilityForVehicle(vehicleId, desde, hasta);
+                        if (available) {
+                                availMsg.style.color = 'green';
+                                availMsg.textContent = `Disponible ${days} día(s)`;
+                                reserveBtn.disabled = false;
+                                reserveBtn.classList.remove('btn-disabled');
+                                // remove visual unavailable marker from card
+                                //card.classList.remove('unavailable');
+                        } else {
+                                availMsg.style.color = 'crimson';
+                                availMsg.textContent = 'No disponible en esas fechas.';
+                                reserveBtn.disabled = true;
+                                reserveBtn.classList.add('btn-disabled');
+                                // visually mark the card as unavailable
+                                //card.classList.add('unavailable');
+                        }
+                } catch(err){
+                        console.error('Error checking availability', err);
+                        availMsg.style.color = 'crimson';
+                        availMsg.textContent = 'Error al comprobar disponibilidad';
+                        reserveBtn.disabled = true;
+                        reserveBtn.classList.add('btn-disabled');
+                        // visually mark the card as unavailable
+                        //card.classList.add('unavailable');
+                }
+        }
+
+        desdeEl.addEventListener('change', onDateChange);
+        hastaEl.addEventListener('change', onDateChange);
+
+        reserveBtn.addEventListener('click', ()=>{
+                const desde = desdeEl.value;
+                const hasta = hastaEl.value;
+                if (!desde || !hasta) return alert('Seleccione rango válido');
+                // Redirect to a reservation flow. Adjust path if you have a dedicated reservation endpoint.
+                window.location.href = `/vehiculos/${encodeURIComponent(vehicleId)}/reservar?fechaDesde=${encodeURIComponent(desde)}&fechaHasta=${encodeURIComponent(hasta)}`;
+        });
+});
+</script>
 </html>

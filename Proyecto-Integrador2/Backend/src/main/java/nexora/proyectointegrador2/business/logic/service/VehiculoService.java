@@ -136,5 +136,25 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
   }
 
 
+  @Transactional(readOnly = true)
+  public boolean checkAvailability(Date fechaDesde, Date fechaHasta,String idVehiculo) throws Exception {
+    if (idVehiculo == null || idVehiculo.trim().isEmpty()) {
+      throw new IllegalArgumentException("idVehiculo es requerido");
+    }
+
+    final java.util.Date qDesde = (fechaDesde == null) ? new java.util.Date() : fechaDesde;
+    final java.util.Date qHasta = fechaHasta; // may be null
+
+    Long overlaps;
+    if (qHasta == null) {
+      overlaps = alquilerRepository.countOverlappingForVehicleDate(qDesde, idVehiculo);
+    } else {
+      overlaps = alquilerRepository.countOverlappingForVehicleRange(qDesde, qHasta, idVehiculo);
+    }
+
+    if (overlaps == null) overlaps = 0L;
+    return overlaps == 0L;
+  }
+
 
 }

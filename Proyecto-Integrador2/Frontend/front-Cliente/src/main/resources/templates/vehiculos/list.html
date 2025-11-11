@@ -86,7 +86,7 @@
                 <p style="font-size:0.85rem;color:#666">Pronto: más filtros (kilometraje, combustible, año).</p>
         </aside>
 
-                <main style="flex:1">
+                <<main style="flex:1">
                         <div class="cars-grid" th:if="${vehiculos != null}">
                                 <div class="car-card" th:each="vehiculo : ${vehiculos}">
                                                                 <!-- Render image directly from DTO using a data URI when available; otherwise show placeholder -->
@@ -107,6 +107,7 @@
                         </div>
                 </main>
 </div>
+
 
 </body>
 </html>
