@@ -22,5 +22,16 @@ public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
          "WHERE a.eliminado = false")
   Collection<Alquiler> findAllActivesWithRelations();
 
+  @Query("SELECT v.caracteristicaVehiculo.id, COUNT(a) FROM Alquiler a JOIN a.vehiculo v "
+    + "WHERE a.eliminado = false AND a.fechaDesde <= :qDesde AND (a.fechaHasta IS NULL OR a.fechaHasta >= :qDesde) "
+    + "GROUP BY v.caracteristicaVehiculo.id")
+  Collection<Object[]> countOverlappingByCaracteristicaForDate(java.util.Date qDesde);
+
+  @Query("SELECT v.caracteristicaVehiculo.id, COUNT(a) FROM Alquiler a JOIN a.vehiculo v "
+    + "WHERE a.eliminado = false AND NOT (a.fechaHasta IS NOT NULL AND a.fechaHasta < :qDesde OR a.fechaDesde > :qHasta) "
+    + "GROUP BY v.caracteristicaVehiculo.id")
+  Collection<Object[]> countOverlappingByCaracteristicaForRange(java.util.Date qDesde, java.util.Date qHasta);
+
 }
+
 

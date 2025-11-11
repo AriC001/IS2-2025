@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
 import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
+import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -15,8 +16,7 @@ import java.util.List;
 // no unused imports
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Subquery;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Join;
 
 @Service
 public class VehiculoService extends BaseService<Vehiculo, String> {
@@ -25,6 +25,9 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
 
   @Autowired
   private CaracteristicaVehiculoService caracteristicaVehiculoService;
+
+  @Autowired
+  private AlquilerRepository alquilerRepository;
 
   public VehiculoService(VehiculoRepository repository) {
     super(repository);
@@ -92,55 +95,44 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
     final Date qDesde = (fechaDesde == null) ? new Date() : fechaDesde;
     final Date qHasta = fechaHasta; // may be null
 
-    Specification<Vehiculo> spec = (root, query, cb) -> {
+    // Primero: obtener conteo total de vehículos por caracteristica (desde repo)
+    List<Object[]> totals = vehiculoRepository.countVehiclesGroupByCaracteristica();
+    java.util.Map<String, Long> totalByChar = new java.util.HashMap<>();
+    for (Object[] row : totals) {
+      if (row == null || row.length < 2) continue;
+      String charId = (String) row[0];
+      Long cnt = ((Number) row[1]).longValue();
+      totalByChar.put(charId, cnt);
+    }
+
+    // Segundo: obtener conteo de alquileres solapados por caracteristica según la ventana
+    Collection<Object[]> overlaps = (qHasta == null)
+        ? alquilerRepository.countOverlappingByCaracteristicaForDate(qDesde)
+        : alquilerRepository.countOverlappingByCaracteristicaForRange(qDesde, qHasta);
+    java.util.Set<String> fullyBookedIds = new java.util.HashSet<>();
+    for (Object[] row : overlaps) {
+      if (row == null || row.length < 2) continue;
+      String charId = (String) row[0];
+      Long alquCount = ((Number) row[1]).longValue();
+      Long total = totalByChar.getOrDefault(charId, 0L);
+      if (alquCount >= total && total > 0) {
+        fullyBookedIds.add(charId);
+      }
+    }
+
+    // Finalmente build Specification simple: filtros por marca/modelo/anio y excluir caracteristicas fully booked
+    Specification<Vehiculo> spec2 = (root, query, cb) -> {
       List<Predicate> preds = new ArrayList<>();
-      // Solo activos
+      Join<Object, Object> caracteristicaJoin = root.join("caracteristicaVehiculo");
       preds.add(cb.isFalse(root.get("eliminado")));
-
-      if (marca != null) {
-        preds.add(cb.like(cb.lower(root.get("marca")), "%" + marca.toLowerCase() + "%"));
-      }
-      if (modelo != null) {
-        preds.add(cb.like(cb.lower(root.get("modelo")), "%" + modelo.toLowerCase() + "%"));
-      }
-      if (anio != null) {
-        preds.add(cb.equal(root.get("anio"), anio));
-      }
-
-      // Subquery que obtiene caracteristica_vehiculo_id que están completamente ocupadas
-      // Es decir, aquellas caracteristicas cuyo número de alquileres que se solapan >= cantidadVehiculoDisponible
-      Subquery<String> fullBooked = query.subquery(String.class);
-      Root<nexora.proyectointegrador2.business.domain.entity.Alquiler> aRoot = fullBooked
-          .from(nexora.proyectointegrador2.business.domain.entity.Alquiler.class);
-      // JOIN a.vehiculo -> vehiculo.caracteristicaVehiculo
-      jakarta.persistence.criteria.Join<?, ?> vehJoin = aRoot.join("vehiculo");
-      jakarta.persistence.criteria.Join<?, ?> carJoin = vehJoin.join("caracteristicaVehiculo");
-
-      Predicate activoAlq = cb.isFalse(aRoot.get("eliminado"));
-
-      Predicate overlapAlq;
-      if (qHasta == null) {
-        overlapAlq = cb.and(cb.lessThanOrEqualTo(aRoot.get("fechaDesde"), qDesde),
-            cb.or(cb.isNull(aRoot.get("fechaHasta")), cb.greaterThanOrEqualTo(aRoot.get("fechaHasta"), qDesde)));
-      } else {
-        Predicate aHastaBeforeQDesde = cb.and(cb.isNotNull(aRoot.get("fechaHasta")), cb.lessThan(aRoot.get("fechaHasta"), qDesde));
-        Predicate aDesdeAfterQHasta = cb.greaterThan(aRoot.get("fechaDesde"), qHasta);
-        overlapAlq = cb.not(cb.or(aHastaBeforeQDesde, aDesdeAfterQHasta));
-      }
-
-      // Seleccionamos id de caracteristica que están totalmente ocupadas
-      fullBooked.select(carJoin.get("id"))
-          .where(cb.and(activoAlq, overlapAlq))
-          .groupBy(carJoin.get("id"), carJoin.get("cantidadVehiculoDisponible"))
-          .having(cb.greaterThanOrEqualTo(cb.count(aRoot), carJoin.get("cantidadVehiculoDisponible").as(Long.class)));
-
-      // Excluir vehículos cuya caracteristica está en la lista de fully booked
-      preds.add(cb.not(root.get("caracteristicaVehiculo").get("id").in(fullBooked)));
-
+      if (marca != null) preds.add(cb.like(cb.lower(caracteristicaJoin.get("marca")), "%" + marca.toLowerCase() + "%"));
+      if (modelo != null) preds.add(cb.like(cb.lower(caracteristicaJoin.get("modelo")), "%" + modelo.toLowerCase() + "%"));
+      if (anio != null) preds.add(cb.equal(caracteristicaJoin.get("anio"), anio));
+      if (!fullyBookedIds.isEmpty()) preds.add(cb.not(caracteristicaJoin.get("id").in(fullyBookedIds)));
       return cb.and(preds.toArray(new Predicate[0]));
     };
 
-    return vehiculoRepository.findAll(spec);
+    return vehiculoRepository.findAll(spec2);
   }
 
 
