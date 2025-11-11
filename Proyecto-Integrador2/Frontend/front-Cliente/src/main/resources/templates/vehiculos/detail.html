@@ -25,12 +25,14 @@
     <div th:if="${vehiculo != null}" th:object="${vehiculo}" class="card">
       <div class="row">
         <div class="thumb col">
-          <span th:if="${caracteristicaVehiculo != null and caracteristicaVehiculo.imagenVehiculo != null}">
+          <span >
             <!-- Si la imagen se sirve por endpoint, cambia por th:src -->
-            <img th:src="@{'/imagenes/' + ${caracteristicaVehiculo.imagenVehiculo.id}}" alt="Imagen vehículo" style="max-width:100%;max-height:100%;object-fit:cover;border-radius:6px" />
-          </span>
-          <span th:if="${caracteristicaVehiculo == null or caracteristicaVehiculo.imagenVehiculo == null}">
-            Sin imagen disponible
+             <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo != null and vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}"
+                  th:src="${vehiculo.caracteristicaVehiculo.imagenVehiculo.base64}"
+                  alt="Auto" style="max-width:100%;max-height:100%;object-fit:cover;border-radius:6px" />
+             <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo == null}"
+                 th:src="@{/img/placeholder.jpg}"
+                 alt="Sin imagen" style="max-width:100%;max-height:100%;object-fit:cover;border-radius:6px" />
           </span>
         </div>
         <div class="col">
