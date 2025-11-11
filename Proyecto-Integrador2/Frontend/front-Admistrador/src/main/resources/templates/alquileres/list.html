@@ -133,14 +133,14 @@
                                     </thead>
                                     <tbody>
                                         <tr th:each="alquiler : ${alquileres}">
-                                            <td th:text="${alquiler.cliente?.nombre + ' ' + alquiler.cliente?.apellido}">-</td>
-                                            <td th:text="${alquiler.vehiculo?.patente + ' - ' + alquiler.vehiculo?.caracteristicaVehiculo?.marca + ' ' + alquiler.vehiculo?.caracteristicaVehiculo?.modelo}">-</td>
-                                            <td th:text="${#temporals.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">-</td>
-                                            <td th:text="${#temporals.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">-</td>
+                                            <td th:text="${alquiler.cliente != null ? (alquiler.cliente.nombre + ' ' + alquiler.cliente.apellido) : '-'}">-</td>
+                                            <td th:text="${alquiler.vehiculo != null ? (alquiler.vehiculo.patente + (alquiler.vehiculo.caracteristicaVehiculo != null ? (' - ' + alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo) : '')) : '-'}">-</td>
+                                            <td th:text="${alquiler.fechaDesde != null ? #dates.format(alquiler.fechaDesde, 'dd/MM/yyyy') : '-'}">-</td>
+                                            <td th:text="${alquiler.fechaHasta != null ? #dates.format(alquiler.fechaHasta, 'dd/MM/yyyy') : '-'}">-</td>
                                             <td>
-                                                <a th:href="@{/alquileres/{id}(id=${alquiler.id})}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
-                                                <a th:href="@{/alquileres/{id}/editar(id=${alquiler.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
-                                                <form th:action="@{/alquileres/{id}/eliminar(id=${alquiler.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
+                                                <a th:if="${alquiler.id != null}" th:href="@{/alquileres/{id}(id=${alquiler.id})}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
+                                                <a th:if="${alquiler.id != null}" th:href="@{/alquileres/{id}/editar(id=${alquiler.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                                                <form th:if="${alquiler.id != null}" th:action="@{/alquileres/{id}/eliminar(id=${alquiler.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
                                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Eliminar</button>
                                                 </form>
                                             </td>

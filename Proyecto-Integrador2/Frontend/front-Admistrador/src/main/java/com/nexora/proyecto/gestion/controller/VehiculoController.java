@@ -133,20 +133,28 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
     }
     MultipartFile archivo = multipartRequest.getFile("imagenVehiculo");
     if (archivo != null && !archivo.isEmpty()) {
-      ImagenDTO imagen = entity.getCaracteristicaVehiculo().getImagenVehiculo();
-      if (imagen == null) {
-        imagen = new ImagenDTO();
-      }
+      // Hay archivo: crear nueva imagen
+      ImagenDTO imagen = new ImagenDTO();
       String nombre = StringUtils.hasText(archivo.getOriginalFilename()) ? archivo.getOriginalFilename()
           : archivo.getName();
       imagen.setNombre(nombre);
       imagen.setMime(archivo.getContentType());
       imagen.setContenido(archivo.getBytes());
       imagen.setTipoImagen(TipoImagen.VEHICULO);
+      // Asegurar que el ID sea null para nueva imagen
+      imagen.setId(null);
       entity.getCaracteristicaVehiculo().setImagenVehiculo(imagen);
-    } else if (entity.getCaracteristicaVehiculo().getImagenVehiculo() != null
-        && !StringUtils.hasText(entity.getCaracteristicaVehiculo().getImagenVehiculo().getId())) {
-      entity.getCaracteristicaVehiculo().setImagenVehiculo(null);
+    } else {
+      // No hay archivo: limpiar imagen si no tiene ID válido
+      ImagenDTO imagenActual = entity.getCaracteristicaVehiculo().getImagenVehiculo();
+      if (imagenActual != null) {
+        String imagenId = imagenActual.getId();
+        // Si el ID es null o vacío, establecer como null
+        if (imagenId == null || imagenId.trim().isEmpty()) {
+          entity.getCaracteristicaVehiculo().setImagenVehiculo(null);
+        }
+        // Si tiene ID válido, mantener la imagen existente (no hacer nada)
+      }
     }
   }
 
