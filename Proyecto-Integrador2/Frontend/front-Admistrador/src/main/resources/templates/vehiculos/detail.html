@@ -22,7 +22,9 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Gestión</div>
             <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+            <li class="nav-item active"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/costos-vehiculo}"><i class="fas fa-fw fa-dollar-sign"></i><span>Costos Vehículo</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/caracteristicas-vehiculo}"><i class="fas fa-fw fa-cog"></i><span>Características Vehículo</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
             <li class="nav-item">
@@ -125,7 +127,9 @@
                         </div>
                     </div>
                     <div class="card shadow mb-4" th:if="${vehiculo.caracteristicaVehiculo != null}">
-                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Características</h6></div>
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Característica del Vehículo</h6>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -139,6 +143,11 @@
                                     <p><strong>Disponibles:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.cantidadVehiculoDisponible + '/' + vehiculo.caracteristicaVehiculo?.cantidadTotalVehiculo}">-</span></p>
                                 </div>
                             </div>
+                            <div class="mt-3" th:if="${vehiculo.caracteristicaVehiculo?.id != null}">
+                                <a th:href="@{/caracteristicas-vehiculo/{id}(id=${vehiculo.caracteristicaVehiculo.id})}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Ver Detalle de la Característica
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card shadow mb-4" th:if="${vehiculo.caracteristicaVehiculo?.costoVehiculo != null}">
@@ -146,7 +155,12 @@
                         <div class="card-body">
                             <p><strong>Fecha Desde:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaDesde != null ? #dates.format(vehiculo.caracteristicaVehiculo.costoVehiculo.fechaDesde, 'dd/MM/yyyy') : '-'}">-</span></p>
                             <p><strong>Fecha Hasta:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaHasta != null ? #dates.format(vehiculo.caracteristicaVehiculo.costoVehiculo.fechaHasta, 'dd/MM/yyyy') : '-'}">-</span></p>
-                            <p><strong>Costo:</strong> $<span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.costo}">-</span></p>
+                            <p><strong>Costo:</strong> $<span th:text="${#numbers.formatDecimal(vehiculo.caracteristicaVehiculo?.costoVehiculo?.costo, 0, 'POINT', 2, 'POINT')}">-</span></p>
+                            <div class="mt-3" th:if="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.id != null}">
+                                <a th:href="@{/costos-vehiculo/{id}(id=${vehiculo.caracteristicaVehiculo.costoVehiculo.id})}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Ver Detalle del Costo
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
