@@ -89,7 +89,13 @@
                 <main style="flex:1">
                         <div class="cars-grid" th:if="${vehiculos != null}">
                                 <div class="car-card" th:each="vehiculo : ${vehiculos}">
-                                        <!-- <img th:src="${vehiculo.imageUrl}" src="https://via.placeholder.com/400x300?text=Sin+imagen" alt="Auto" /> -->
+                                                                <!-- Render image directly from DTO using a data URI when available; otherwise show placeholder -->
+                                                                <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo != null and vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}"
+                                                                        th:src="${vehiculo.caracteristicaVehiculo.imagenVehiculo.base64}"
+                                                                        alt="Auto" />
+                                                                <img th:if="${vehiculo.caracteristicaVehiculo == null or vehiculo.caracteristicaVehiculo.imagenVehiculo == null or vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 == null}"
+                                                                        th:src="@{/img/placeholder.jpg}"
+                                                                        alt="Sin imagen" />
                                         <h3 th:text="${vehiculo.caracteristicaVehiculo.marca} + ' ' + ${vehiculo.caracteristicaVehiculo.modelo}">Marca Modelo</h3>
                                         <!-- <p th:text="${vehiculo.caracteristicaVehiculo.descripcion}">Descripción breve</p> -->
                                          <p th:text="${vehiculo.caracteristicaVehiculo.costoVehiculo.costo}">Precio</p>

@@ -537,7 +537,7 @@ public class DataInitializer {
         byte[] imagenBytes1 = leerImagen("2020-toyota-corolla-xse.jpg");
         Imagen imagenVehiculo1 = Imagen.builder()
             .nombre("2020-toyota-corolla-xse.jpg")
-            .mime("image/jpeg")
+            .mime("image/jpg")
             .contenido(imagenBytes1)
             .tipoImagen(TipoImagen.VEHICULO)
             .build();

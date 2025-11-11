@@ -263,8 +263,13 @@
         </div>
 
         <div class="nav-links">
-            <a th:href="@{/auth/login}">Sign in</a>
-            <button class="btn-primary" >Sign up</button>
+            <!-- Si hay sesión (token o usuariosession), mostrar Vehículos y Logout -->
+            <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn" style="margin-right:8px">Vehículos</a>
+            <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-primary">Log out</a>
+
+            <!-- Si NO hay sesión, mostrar Sign in / Sign up -->
+            <a th:if="${session.usuariosession == null and session.token == null}" th:href="@{/auth/login}">Sign in</a>
+            <button th:if="${session.usuariosession == null and session.token == null}" class="btn-primary">Sign up</button>
         </div>
     </header>
 
