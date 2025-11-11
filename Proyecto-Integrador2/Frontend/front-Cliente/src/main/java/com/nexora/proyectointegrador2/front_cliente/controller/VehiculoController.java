@@ -1,8 +1,13 @@
 package com.nexora.proyectointegrador2.front_cliente.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 import com.nexora.proyectointegrador2.front_cliente.business.logic.service.VehiculoService;
 import com.nexora.proyectointegrador2.front_cliente.dto.VehiculoDTO;
@@ -21,12 +26,47 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
     return new VehiculoDTO();
   }
 
-  @GetMapping("/list")
-    public String autos(){
-        /*
-        Auto controller API CALL para trarse todos los autos
-         */
-        return "vehiculos/list";
+  @GetMapping({"/list","/"}) 
+  public String autos(
+    @RequestParam(required = false) String marca,
+    @RequestParam(required = false) String modelo,
+    @RequestParam(required = false) String precioMax,
+    @RequestParam(required = false) String fechaDesde,
+    @RequestParam(required = false) String fechaHasta,
+    Model model,
+    HttpSession session
+  ) {
+    // Validar sesión (usa método protegido del BaseController)
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
     }
+
+    try {
+      // Añadir atributos de sesión comunes al modelo
+      addSessionAttributesToModel(model, session);
+
+      // Llamar al servicio (heredado desde BaseController) para obtener DTOs
+      List<VehiculoDTO> vehiculos = service.findAllActives();
+
+      // Añadir lista al modelo con el nombre del entityPath ("vehiculos")
+      model.addAttribute(entityPath, vehiculos);
+
+      // Pasar los valores de filtros de vuelta al template para retención en inputs
+      model.addAttribute("marca", marca);
+      model.addAttribute("modelo", modelo);
+      model.addAttribute("precioMax", precioMax);
+      model.addAttribute("fechaDesde", fechaDesde);
+      model.addAttribute("fechaHasta", fechaHasta);
+
+      return "vehiculos/list";
+    } catch (Exception e) {
+      // En caso de fallo, delegar en el manejo de excepciones del controlador base
+      e.printStackTrace();
+      model.addAttribute("error", "Error al obtener vehículos: " + e.getMessage());
+      return "vehiculos/list";
+    }
+  }
+
 
 }

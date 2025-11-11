@@ -3,6 +3,10 @@ package  com.nexora.proyectointegrador2.front_cliente.config.security;
 import java.io.IOException;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -20,6 +24,8 @@ import jakarta.servlet.http.HttpSession;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UsuarioService usuarioService;
+  @Autowired(required = false)
+  private OAuth2AuthorizedClientService authorizedClientService;
 
     public CustomAuthenticationSuccessHandler(@Lazy UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
@@ -65,6 +71,23 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
           System.out.println("Usuario encontrado en BD: " + usuario.getNombreUsuario() + " (rol: " + usuario.getRol() + ")");
           HttpSession session = request.getSession();
           session.setAttribute("usuariosession", usuario);
+        }
+        // Si el método de autenticación fue OAuth2 y tenemos acceso al OAuth2AuthorizedClientService,
+        // almacenar el token de acceso OAuth2 en la sesión bajo la clave "token" para compatibilidad
+        // con los controladores que verifican la presencia de "token" en sesión.
+        if (authentication instanceof OAuth2AuthenticationToken && authorizedClientService != null) {
+          try {
+            OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) authentication;
+            OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(oauth2.getAuthorizedClientRegistrationId(), oauth2.getName());
+            if (client != null && client.getAccessToken() != null && client.getAccessToken().getTokenValue() != null) {
+              String oauth2Token = client.getAccessToken().getTokenValue();
+              HttpSession session = request.getSession();
+              session.setAttribute("token", oauth2Token);
+              System.out.println("OAuth2 access token guardado en sesión para usuario: " + oauth2.getName());
+            }
+          } catch (Exception e) {
+            System.err.println("No se pudo almacenar OAuth2 token en sesión: " + e.getMessage());
+          }
         }
         // Si no lo habíamos guardado en sesión aún (caso donde creamos desde AuthResponseDTO), guardarlo
         HttpSession session = request.getSession();
