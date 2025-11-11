@@ -81,7 +81,7 @@
                                                 <p>Total para las fechas seleccionadas: <strong id="totalPriceDetail">-</strong></p>
                                                 <p id="availabilityMsgDetail" style="font-weight:600;color:#333">Elige fechas para comprobar disponibilidad.</p>
                                                 <div style="margin-top:8px">
-                                                        <button id="reserveBtnDetail" class="btn" disabled>Reservar</button>
+                                                        <button id="reserveBtnDetail" class="btn">Reservar</button>
                                                 </div>
                                         </div>
 
@@ -208,8 +208,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 const desde = desdeEl.value;
                 const hasta = hastaEl.value;
                 if (!desde || !hasta) return alert('Seleccione rango válido');
-                // Redirect to a reservation flow. Adjust path if you have a dedicated reservation endpoint.
-                window.location.href = `/vehiculos/${encodeURIComponent(vehicleId)}/reservar?fechaDesde=${encodeURIComponent(desde)}&fechaHasta=${encodeURIComponent(hasta)}`;
+                // compute inclusive days and total so we can pass them to the alquiler form
+                const days = daysBetweenInclusive(desde, hasta);
+                if (!isFinite(days) || days <= 0) return alert('Rango de fechas inválido');
+                const total = Math.round((basePrice || 0) * days);
+                // Redirect to alquiler detail page with query params (the template reads ${param.*})
+                const url = '/alquiler/detail'
+                        + '?id=' + encodeURIComponent(vehicleId)
+                        + '&fechaDesde=' + encodeURIComponent(desde)
+                        + '&fechaHasta=' + encodeURIComponent(hasta)
+                        + '&basePrice=' + encodeURIComponent(basePrice || 0)
+                        + '&total=' + encodeURIComponent(total);
+                window.location.href = url;
         });
 });
 </script>

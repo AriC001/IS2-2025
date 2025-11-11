@@ -15,7 +15,7 @@ import nexora.proyectointegrador2.utils.dto.AlquilerDTO;
 import nexora.proyectointegrador2.utils.mapper.impl.AlquilerMapper;
 
 @RestController
-@RequestMapping("api/v1/alquileres")
+@RequestMapping("api/v1/alquiler")
 public class AlquilerRestController extends BaseRestController<Alquiler, AlquilerDTO, String> {
   
   private final AlquilerService alquilerService;

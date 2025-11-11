@@ -7,28 +7,32 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import nexora.proyectointegrador2.business.domain.entity.Documento;
+import nexora.proyectointegrador2.business.enums.TipoDocumentacion;
 import nexora.proyectointegrador2.business.persistence.repository.DocumentoRepository;
+import nexora.proyectointegrador2.utils.dto.DocumentoDTO;
 
 @Service
 public class DocumentoService extends BaseService<Documento, String> {
 
   private static final Logger logger = LoggerFactory.getLogger(DocumentoService.class);
-  
-  // Ruta fija en disco C
-  private static final String DIRECTORIO_BASE = "C:/documentos_alquileres/";
+
+  @Value("${documentos.dir:uploads/documentos}")
+  private String directorioBase;
 
   public DocumentoService(DocumentoRepository repository) {
     super(repository);
     logger.info("=================================================");
-    logger.info("📁 DocumentoService - Directorio de documentos:");
-    logger.info("   {}", DIRECTORIO_BASE);
+    logger.info("📁 DocumentoService - Directorio de documentos: {}", "(inicializando)");
     logger.info("=================================================");
   }
 
@@ -46,111 +50,136 @@ public class DocumentoService extends BaseService<Documento, String> {
   }
 
   /**
-   * Guarda un archivo en disco y retorna el Path completo del archivo guardado.
-   * Valida que sea PDF o WORD.
-   * 
-   * @param archivo Archivo a guardar
-   * @param nombreCliente Nombre del cliente para el nombre del archivo
-   * @param nombreVehiculo Nombre/patente del vehículo para el nombre del archivo
-   * @return Path completo del archivo guardado
-   * @throws Exception Si el archivo es inválido o hay error al guardar
+   * Sube un documento (PDF o Word) al filesystem y lo persiste en la BD.
+   * Devuelve un DTO con metadatos.
+   */
+  @Transactional
+  public DocumentoDTO subirDocumento(MultipartFile file, String tipoDocumentoStr, String clienteId, String alquilerId) throws Exception {
+    if (file == null || file.isEmpty()) {
+      throw new Exception("El archivo está vacío o es nulo.");
+    }
+
+    String contentType = file.getContentType();
+    if (!esTipoPermitido(contentType)) {
+      throw new Exception("Tipo de archivo no permitido. Sólo PDF y Word.");
+    }
+
+    TipoDocumentacion tipoEnum;
+    try {
+      tipoEnum = TipoDocumentacion.valueOf(tipoDocumentoStr);
+    } catch (Exception e) {
+      throw new Exception("Tipo de documentación inválido: " + tipoDocumentoStr);
+    }
+
+    Path uploadPath = Paths.get(directorioBase);
+    logger.info("📂 Verificando directorio de subida: {}", uploadPath.toAbsolutePath());
+    try {
+      if (!Files.exists(uploadPath)) {
+        Files.createDirectories(uploadPath);
+        logger.info("✅ Directorio creado: {}", uploadPath.toAbsolutePath());
+      }
+    } catch (IOException e) {
+      logger.error("❌ Error creando directorio de upload: {}", e.getMessage());
+      throw new Exception("No se pudo crear el directorio: " + e.getMessage(), e);
+    }
+
+    String originalName = file.getOriginalFilename();
+    String safeOriginal = (originalName == null) ? "archivo" : Paths.get(originalName).getFileName().toString();
+    safeOriginal = sanitizarNombre(safeOriginal);
+
+    String nombreFisico = UUID.randomUUID().toString() + "_" + safeOriginal;
+    Path destino = uploadPath.resolve(nombreFisico);
+
+    try {
+      Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+      logger.info("✅ Archivo guardado en disco: {} ({} bytes)", destino.toAbsolutePath(), Files.size(destino));
+    } catch (IOException e) {
+      logger.error("❌ Error guardando archivo en disco: {}", e.getMessage());
+      throw new Exception("Error al guardar el archivo en disco: " + e.getMessage(), e);
+    }
+
+    // Crear entidad Documento y persistir
+    Documento documento = Documento.builder()
+        .tipoDocumento(tipoEnum)
+        .nombreArchivo(originalName != null ? originalName : nombreFisico)
+        .pathArchivo(destino.toString())
+        .observacion(null)
+        .build();
+
+    Documento guardado;
+    try {
+      guardado = this.repository.save(documento);
+    } catch (Exception e) {
+      // Intentar compensación: borrar archivo físico si persistencia falla
+      try {
+        Files.deleteIfExists(destino);
+        logger.warn("⚠ Archivo borrado del disco por fallo en persistencia: {}", destino);
+      } catch (IOException ex) {
+        logger.error("❌ No se pudo borrar archivo tras fallo en persistencia: {}", ex.getMessage());
+      }
+      throw new Exception("Error al persistir documento: " + e.getMessage(), e);
+    }
+
+    DocumentoDTO dto = new DocumentoDTO();
+    dto.setId(guardado.getId());
+    dto.setNombreArchivo(guardado.getNombreArchivo());
+    dto.setTipoDocumento(guardado.getTipoDocumento());
+    dto.setPathArchivo(guardado.getPathArchivo());
+
+    logger.info("📄 Documento persistido: id={} path={}", guardado.getId(), guardado.getPathArchivo());
+    return dto;
+  }
+
+  /**
+   * Método auxiliar: guarda un archivo en disco con el esquema de nombres seguro.
+   * Mantiene compatibilidad con el código previo que usaba `guardarArchivoEnDisco`.
    */
   public Path guardarArchivoEnDisco(MultipartFile archivo, String nombreCliente, String nombreVehiculo) throws Exception {
+    // Delegar a subirDocumento pero sin persistir la entidad: simplificamos y reutilizamos lógica
     if (archivo == null || archivo.isEmpty()) {
       throw new Exception("El archivo no puede estar vacío");
     }
+    String originalName = archivo.getOriginalFilename();
+    String safeOriginal = (originalName == null) ? "archivo" : Paths.get(originalName).getFileName().toString();
+    safeOriginal = sanitizarNombre(safeOriginal);
+    String nombreFisico = UUID.randomUUID().toString() + "_" + safeOriginal;
 
-    // Validar tipo de contenido (PDF o WORD)
-    String contentType = archivo.getContentType();
-    if (contentType == null) {
-      throw new Exception("No se pudo determinar el tipo de contenido del archivo");
-    }
-    
-    boolean esPdf = contentType.equals("application/pdf");
-    boolean esWord = contentType.equals("application/msword") || 
-                     contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-    
-    if (!esPdf && !esWord) {
-      throw new Exception("Solo se permiten archivos PDF o WORD. Tipo recibido: " + contentType);
-    }
-
-    // Crear directorio si no existe
-    Path directorioPath = Paths.get(DIRECTORIO_BASE);
-    logger.info("📂 Verificando directorio: {}", directorioPath.toAbsolutePath());
-    
-    if (!Files.exists(directorioPath)) {
-      logger.info("⚠️  El directorio no existe, creándolo...");
-      try {
-        Files.createDirectories(directorioPath);
-        logger.info("✅ Directorio creado exitosamente");
-      } catch (IOException e) {
-        logger.error("❌ ERROR al crear directorio: {}", e.getMessage());
-        throw new Exception("No se pudo crear el directorio: " + e.getMessage(), e);
-      }
-    } else {
-      logger.info("✅ El directorio ya existe");
-    }
-
-    // Generar nombre del archivo: alquiler_{cliente}_{vehiculo}_{timestamp}.{ext}
-    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-    String nombreClienteSanitizado = sanitizarNombre(nombreCliente);
-    String nombreVehiculoSanitizado = sanitizarNombre(nombreVehiculo);
-    
-    // Determinar extensión según el tipo
-    String extension = esPdf ? "pdf" : "docx";
-    if (contentType.equals("application/msword")) {
-      extension = "doc"; // Word antiguo
-    }
-    
-    String nombreArchivo = String.format("alquiler_%s_%s_%s.%s", 
-        nombreClienteSanitizado, nombreVehiculoSanitizado, timestamp, extension);
-    
-    Path rutaArchivo = directorioPath.resolve(nombreArchivo);
-    logger.info("💾 Guardando archivo en: {}", rutaArchivo.toAbsolutePath());
-
-    // Guardar el archivo
+    Path uploadPath = Paths.get(directorioBase);
     try {
-      Files.copy(archivo.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
-      logger.info("✅ Archivo guardado exitosamente: {}", nombreArchivo);
+      if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+      Path destino = uploadPath.resolve(nombreFisico);
+      Files.copy(archivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+      logger.info("✅ Archivo guardado exitosamente: {}", destino.toAbsolutePath());
+      return destino;
     } catch (IOException e) {
       logger.error("❌ ERROR al guardar archivo: {}", e.getMessage());
       throw new Exception("Error al guardar el archivo: " + e.getMessage(), e);
     }
-
-    return rutaArchivo;
   }
 
-  /**
-   * Sanitiza un nombre para usarlo en nombres de archivo.
-   * Reemplaza caracteres no válidos por guiones bajos.
-   */
+  private boolean esTipoPermitido(String tipo) {
+    return tipo != null && (
+        tipo.equals("application/pdf") ||
+        tipo.equals("application/msword") ||
+        tipo.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    );
+  }
+
   private String sanitizarNombre(String nombre) {
-    if (nombre == null || nombre.trim().isEmpty()) {
-      return "sin_nombre";
-    }
-    // Reemplazar caracteres no válidos para nombres de archivo
-    return nombre.replaceAll("[^a-zA-Z0-9\\-_]", "_").toLowerCase();
+    if (nombre == null || nombre.trim().isEmpty()) return "archivo";
+      // In a Java string literal we don't need to escape '.' or '-' inside a character class;
+      // using [^a-zA-Z0-9._-] avoids illegal escape sequences like "\-" in the source.
+      return nombre.replaceAll("[^a-zA-Z0-9._-]", "_");
   }
 
-  /**
-   * Lee un archivo del disco y retorna su contenido como array de bytes.
-   * 
-   * @param documentoId ID del documento
-   * @return Contenido del archivo
-   * @throws Exception Si el documento no existe o hay error al leer
-   */
   public byte[] obtenerArchivo(String documentoId) throws Exception {
     Documento documento = findById(documentoId);
-    
     if (documento.getPathArchivo() == null || documento.getPathArchivo().trim().isEmpty()) {
       throw new Exception("El documento no tiene ruta de archivo asociada");
     }
-    
     try {
       Path rutaArchivo = Paths.get(documento.getPathArchivo());
-      if (!Files.exists(rutaArchivo)) {
-        throw new Exception("El archivo no existe en el sistema de archivos: " + rutaArchivo);
-      }
+      if (!Files.exists(rutaArchivo)) throw new Exception("El archivo no existe en el sistema de archivos: " + rutaArchivo);
       return Files.readAllBytes(rutaArchivo);
     } catch (IOException e) {
       logger.error("❌ ERROR al leer archivo: {}", e.getMessage());
@@ -158,17 +187,8 @@ public class DocumentoService extends BaseService<Documento, String> {
     }
   }
 
-  /**
-   * Elimina un archivo físico del disco.
-   * 
-   * @param pathArchivo Ruta del archivo a eliminar
-   * @throws Exception Si hay error al eliminar
-   */
   public void eliminarArchivoFisico(String pathArchivo) throws Exception {
-    if (pathArchivo == null || pathArchivo.trim().isEmpty()) {
-      return; // No hay archivo que eliminar
-    }
-    
+    if (pathArchivo == null || pathArchivo.trim().isEmpty()) return;
     try {
       Path rutaArchivo = Paths.get(pathArchivo);
       if (Files.exists(rutaArchivo)) {
