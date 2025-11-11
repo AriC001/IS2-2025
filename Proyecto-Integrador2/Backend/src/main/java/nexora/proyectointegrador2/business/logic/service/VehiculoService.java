@@ -6,6 +6,14 @@ import org.springframework.stereotype.Service;
 import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
 import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
+import org.springframework.transaction.annotation.Transactional;
+import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class VehiculoService extends BaseService<Vehiculo, String> {
@@ -15,9 +23,12 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
   @Autowired
   private CaracteristicaVehiculoService caracteristicaVehiculoService;
 
-  public VehiculoService(VehiculoRepository repository) {
+  private final AlquilerRepository alquilerRepository;
+
+  public VehiculoService(VehiculoRepository repository,AlquilerRepository alquilerRepository) {
     super(repository);
     this.vehiculoRepository = repository;
+    this.alquilerRepository = alquilerRepository;
   }
 
   @Override
@@ -64,5 +75,57 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
       }
     }
   }
+
+  /**
+   * Devuelve los vehículos activos que NO estén alquilados en la fecha o rango dado.
+   * Si fechaHasta es null se interpreta como consulta por la fecha única fechaDesde.
+   * Si fechaDesde es null se considerará la fecha actual (aunque el controller ya lo asigna).
+   */
+  @Transactional(readOnly = true)
+  public Collection<Vehiculo> findAllActivesDate(Date fechaDesde, Date fechaHasta) throws Exception {
+    if (fechaDesde == null) {
+      fechaDesde = new Date();
+    }
+
+    // Todos los vehículos activos
+    Collection<Vehiculo> vehiculos = this.findAllActives();
+
+    // Obtener alquileres activos y determinar cuáles ocupan los vehículos en el periodo
+    Collection<nexora.proyectointegrador2.business.domain.entity.Alquiler> alquileres = alquilerRepository
+        .findAllByEliminadoFalse();
+
+    Set<String> ocupados = new HashSet<>();
+
+    for (nexora.proyectointegrador2.business.domain.entity.Alquiler a : alquileres) {
+      Date aDesde = a.getFechaDesde();
+      Date aHasta = a.getFechaHasta();
+
+      boolean overlap = false;
+      if (fechaHasta == null) {
+        // Consulta por fecha única: fechaDesde
+        Date d = fechaDesde;
+        if (aDesde != null && !aDesde.after(d) && (aHasta == null || !aHasta.before(d))) {
+          overlap = true;
+        }
+      } else {
+        // Consulta por rango [fechaDesde, fechaHasta]
+        Date qDesde = fechaDesde;
+        Date qHasta = fechaHasta;
+        // No se solapan si aHasta < qDesde OR aDesde > qHasta
+        boolean noSolapan = (aHasta != null && aHasta.before(qDesde)) || (aDesde != null && aDesde.after(qHasta));
+        overlap = !noSolapan;
+      }
+
+      if (overlap && a.getVehiculo() != null && a.getVehiculo().getId() != null) {
+        ocupados.add(a.getVehiculo().getId());
+      }
+    }
+
+    // Filtrar los vehículos que no estén en el set ocupados
+    return vehiculos.stream().filter(v -> v != null && v.getId() != null && !ocupados.contains(v.getId()))
+        .collect(Collectors.toList());
+  }
+
+
 
 }
