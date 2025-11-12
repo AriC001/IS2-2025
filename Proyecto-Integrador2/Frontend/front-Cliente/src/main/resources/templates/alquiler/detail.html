@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crear alquiler</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 24px; background:#fafafa }
+    .card { max-width:760px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06) }
+    .row { display:flex; gap:12px; align-items:center }
+    label { display:block; font-weight:600; margin-bottom:6px }
+    input[type=text], input[type=date], input[type=file] { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px }
+    .muted { color:#666; font-size:0.95rem }
+    .actions { margin-top:14px }
+    .btn { background:#007bff; color:#fff; padding:10px 14px; border:none; border-radius:6px; cursor:pointer }
+    .btn[disabled] { background:#ccc; cursor:not-allowed }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Confirmar reserva</h2>
+
+    <!-- Mostrar usuario desde sesión si está disponible -->
+    <section>
+      <h3>Datos del usuario</h3>
+      <p class="muted">Los datos se obtienen de la sesión actual</p>
+      <div>
+        <div th:if="${session.usuariosession != null}">
+          <p><strong th:text="${session.usuariosession.nombre} + ' ' + ${session.usuariosession.apellido}">Nombre Apellido</strong></p>
+          <p class="muted" th:text="${session.usuariosession.email}">correo@ejemplo.com</p>
+        </div>
+        <div th:if="${session.usuariosession == null}">
+          <p class="muted">No hay sesión iniciada. Inicie sesión para continuar.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <section>
+      <h3>Detalles de la reserva</h3>
+      <form th:action="@{/alquiler}" method="post" enctype="multipart/form-data" id="alquilerForm">
+        <!-- Hidden values passed from vehiculo/detail via query params -->
+  <input type="hidden" name="vehiculoId" th:value="${param.id}" />
+  <input type="hidden" name="fechaDesdeParam" th:value="${param.fechaDesde}" />
+  <input type="hidden" name="fechaHastaParam" th:value="${param.fechaHasta}" />
+  <input type="hidden" name="total" id="totalInput" th:value="${param.total}" />
+
+        <div style="display:flex;gap:12px">
+          <div style="flex:1">
+            <label>Fecha desde</label>
+              <input type="date" id="fechaDesdeAlq" name="fechaDesdeVisible" th:value="${param.fechaDesde}" disabled />
+          </div>
+          <div style="flex:1">
+            <label>Fecha hasta</label>
+              <input type="date" id="fechaHastaAlq" name="fechaHastaVisible" th:value="${param.fechaHasta}" disabled />
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>ID vehículo</label>
+          <input type="text" name="vehiculoIdVisible" th:value="${param.id}" disabled />
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Total a pagar</label>
+          <p id="totalDisplay" style="font-size:1.1rem;font-weight:700"> <span th:text="${param.total != null}? ${param.total} : '-'">-</span> </p>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Documento (PDF o Word)</label>
+          <input type="file" id="documentFile" name="documentFile" accept=".pdf,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+          <p class="muted">Suba el documento identificatorio (PDF o Word).</p>
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="submitBtn" class="btn" disabled>Confirmar y pagar</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    // Enable submit when file present and dates exist
+    const fileEl = document.getElementById('documentFile');
+    const submitBtn = document.getElementById('submitBtn');
+    const totalInput = document.getElementById('totalInput');
+    const totalDisplay = document.getElementById('totalDisplay');
+
+    function validateForm(){
+      const hasFile = fileEl && fileEl.files && fileEl.files.length > 0;
+      const hasDates = !!(document.getElementById('fechaDesdeAlq').value && document.getElementById('fechaHastaAlq').value);
+      submitBtn.disabled = !(hasFile && hasDates);
+    }
+
+    fileEl.addEventListener('change', validateForm);
+
+    // If total is not provided, try to compute from query params basePrice
+    (function computeTotalIfNeeded(){
+      if (totalInput && (!totalInput.value || totalInput.value === '')){
+        const params = new URLSearchParams(window.location.search);
+        const base = parseFloat(params.get('basePrice') || params.get('precio') || '0') || 0;
+        const desde = params.get('fechaDesde');
+        const hasta = params.get('fechaHasta');
+        if (base && desde && hasta){
+          const from = new Date(desde); const to = new Date(hasta); from.setHours(0,0,0,0); to.setHours(0,0,0,0);
+          const days = Math.floor((to - from)/(1000*60*60*24)) + 1;
+          if (isFinite(days) && days > 0){
+            const total = Math.round(base * days);
+            totalInput.value = total;
+            totalDisplay.textContent = new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(total);
+          }
+        }
+      }
+      validateForm();
+    })();
+  </script>
+
+</body>
+</html>

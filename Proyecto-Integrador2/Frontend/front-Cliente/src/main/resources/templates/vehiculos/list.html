@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Listado de Autos</title>
         <style>
                 /* Estilos mínimos para el esqueleto */
+                .page { display: flex; gap: 24px; align-items: flex-start; }
+                aside.filter-panel { width: 280px; border: 1px solid #e6e6e6; padding: 16px; border-radius: 8px; background:#fafafa; }
+                aside.filter-panel h2 { margin-top: 0; font-size: 1.05rem; }
+                .filter-field { margin-bottom: 10px; }
+                .filter-field label { display:block; font-size:0.9rem; margin-bottom:4px; color:#333; }
+                .filter-field input[type="text"],
+                .filter-field input[type="number"],
+                .filter-field input[type="date"] { width:100%; padding:8px; box-sizing:border-box; border:1px solid #ccc; border-radius:4px }
+                .filter-actions { display:flex; gap:8px; margin-top:12px; }
+                .filter-actions .btn { flex:1; padding:8px 10px; text-align:center; border-radius:4px; text-decoration:none; cursor:pointer }
+                .btn-primary { background:#007bff; color:#fff; border: none }
+                .btn-secondary { background:#6c757d; color:#fff; border: none }
+
                 .cars-grid { display: flex; flex-wrap: wrap; gap: 16px; }
                 .car-card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; width: 260px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
                 .car-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
@@ -34,14 +47,67 @@
 -->
 
 <!-- Item de prueba funcional: al hacer click redirige a ejemplo.com -->
-<div class="cars-grid">
-        <div class="car-card">
-                <img src="https://via.placeholder.com/400x300?text=Auto+de+prueba" alt="Auto de prueba">
-                <h3>Prueba Marca Modelo</h3>
-                <p>Este es un auto de ejemplo para comprobar el layout y la navegación.</p>
-                <a href="/vehiculos/0c7a7b5f-e6ac-46d6-a779-3597df733b93" class="btn">Ver detalles (id=1)</a>
-        </div>
+<div class="page">
+        <aside class="filter-panel">
+                <h2>Filtros</h2>
+                <!-- Formulario de filtros: usa método GET para que los parámetros aparezcan en la URL -->
+                <form id="filterForm" action="/vehiculos/filter" method="get">
+                        <div class="filter-field">
+                                <label for="precio">Precio (máx)</label>
+                                <input type="number" id="precio" name="precioMax" placeholder="Precio máximo" min="0" step="1" th:value="${precioMax}">
+                        </div>
+
+                        <div class="filter-field">
+                                <label for="marca">Marca</label>
+                                <input type="text" id="marca" name="marca" placeholder="Ej: Toyota" th:value="${marca}">
+                        </div>
+
+                        <div class="filter-field">
+                                <label for="modelo">Modelo</label>
+                                <input type="text" id="modelo" name="modelo" placeholder="Ej: Corolla" th:value="${modelo}">
+                        </div>
+
+                        <div class="filter-field">
+                                <label for="fechaDesde">Fecha Desde</label>
+                                <input type="date" id="fechaDesde" name="fechaDesde" th:value="${fechaDesde}">
+                        </div>
+
+                        <div class="filter-field">
+                                <label for="fechaHasta">Fecha Hasta</label>
+                                <input type="date" id="fechaHasta" name="fechaHasta" th:value="${fechaHasta}">
+                        </div>
+
+                        <div class="filter-actions">
+                                <button type="submit" class="btn-primary btn">Filtrar</button>
+                                <button type="button" class="btn-secondary btn" onclick="window.location.href='/vehiculos'">Limpiar</button>
+                        </div>
+                </form>
+                <hr style="margin:12px 0">
+                <p style="font-size:0.85rem;color:#666">Pronto: más filtros (kilometraje, combustible, año).</p>
+        </aside>
+
+                <<main style="flex:1">
+                        <div class="cars-grid" th:if="${vehiculos != null}">
+                                <div class="car-card" th:each="vehiculo : ${vehiculos}">
+                                                                <!-- Render image directly from DTO using a data URI when available; otherwise show placeholder -->
+                                                                <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo != null and vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}"
+                                                                        th:src="${vehiculo.caracteristicaVehiculo.imagenVehiculo.base64}"
+                                                                        alt="Auto" />
+                                                                <img th:if="${vehiculo.caracteristicaVehiculo == null or vehiculo.caracteristicaVehiculo.imagenVehiculo == null or vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 == null}"
+                                                                        th:src="@{/img/placeholder.jpg}"
+                                                                        alt="Sin imagen" />
+                                        <h3 th:text="${vehiculo.caracteristicaVehiculo.marca} + ' ' + ${vehiculo.caracteristicaVehiculo.modelo}">Marca Modelo</h3>
+                                        <!-- <p th:text="${vehiculo.caracteristicaVehiculo.descripcion}">Descripción breve</p> -->
+                                         <p th:text="${vehiculo.caracteristicaVehiculo.costoVehiculo.costo}">Precio</p>
+                                        <a th:href="@{/vehiculos/{id}(id=${vehiculo.id})}" class="btn">Ver detalles</a>
+                                </div>
+                        </div>
+                        <div class="cars-grid" th:if="${vehiculos == null or #lists.isEmpty(vehiculos)}">
+                                <div style="padding:20px;color:#666">No hay vehículos para mostrar.</div>
+                        </div>
+                </main>
 </div>
+
 
 </body>
 </html>

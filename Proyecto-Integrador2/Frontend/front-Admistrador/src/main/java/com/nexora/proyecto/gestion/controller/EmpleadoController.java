@@ -1,7 +1,9 @@
 package com.nexora.proyecto.gestion.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -96,13 +98,35 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
           empleado.setImagenPerfil(new ImagenDTO());
         }
       }
-      model.addAttribute("localidades", localidadService.findAllActives());
-      model.addAttribute("direcciones", direccionService.findAllActives());
-      model.addAttribute("tiposEmpleado", TipoEmpleado.values());
-      model.addAttribute("rolesUsuario", RolUsuario.values());
     } catch (Exception e) {
-      logger.error("Error al preparar modelo del formulario: {}", e.getMessage());
+      logger.error("Error al inicializar empleado en el modelo: {}", e.getMessage(), e);
     }
+
+    // Cargar direcciones con manejo de errores específico
+    try {
+      List<DireccionDTO> direcciones = direccionService.findAllActives();
+      logger.debug("Cargadas {} direcciones para el formulario de empleado", direcciones != null ? direcciones.size() : 0);
+      model.addAttribute("direcciones", direcciones != null ? direcciones : Collections.emptyList());
+    } catch (Exception e) {
+      logger.error("Error al cargar direcciones para el formulario de empleado: {}", e.getMessage(), e);
+      logger.error("Stack trace completo:", e);
+      // Asegurar que siempre haya un atributo direcciones en el modelo, incluso si está vacío
+      model.addAttribute("direcciones", Collections.emptyList());
+    }
+
+    // Cargar localidades con manejo de errores específico
+    try {
+      List<LocalidadDTO> localidades = localidadService.findAllActives();
+      logger.debug("Cargadas {} localidades para el formulario de empleado", localidades != null ? localidades.size() : 0);
+      model.addAttribute("localidades", localidades != null ? localidades : Collections.emptyList());
+    } catch (Exception e) {
+      logger.error("Error al cargar localidades para el formulario de empleado: {}", e.getMessage(), e);
+      model.addAttribute("localidades", Collections.emptyList());
+    }
+
+    // Agregar enums (estos nunca fallan)
+    model.addAttribute("tiposEmpleado", TipoEmpleado.values());
+    model.addAttribute("rolesUsuario", RolUsuario.values());
   }
 
   /**

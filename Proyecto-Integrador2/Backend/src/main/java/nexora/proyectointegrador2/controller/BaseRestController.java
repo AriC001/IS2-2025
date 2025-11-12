@@ -53,9 +53,32 @@ public abstract class BaseRestController<E extends BaseEntity<ID>, D extends Bas
    */
   @GetMapping
   public ResponseEntity<List<D>> findAll() throws Exception {
-    logger.debug("Obteniendo todos los registros activos");
-    List<D> dtos = mapper.toDTOList(service.findAllActives());
-    logger.debug("Se obtuvieron {} registros", dtos.size());
+    String entityType = service.getClass().getSimpleName().replace("Service", "");
+    logger.debug("Obteniendo todos los registros activos de tipo: {}", entityType);
+    
+    var entities = service.findAllActives();
+    logger.debug("Se obtuvieron {} entidades desde el servicio", entities != null ? entities.size() : 0);
+    
+    List<D> dtos = mapper.toDTOList(entities);
+    logger.info("Se obtuvieron {} DTOs de tipo {}", dtos != null ? dtos.size() : 0, entityType);
+    
+    // Logging específico para direcciones
+    if (dtos != null && !dtos.isEmpty() && "Direccion".equals(entityType)) {
+      logger.debug("Direcciones retornadas:");
+      for (D dto : dtos) {
+        if (dto instanceof nexora.proyectointegrador2.utils.dto.DireccionDTO) {
+          nexora.proyectointegrador2.utils.dto.DireccionDTO dirDto = (nexora.proyectointegrador2.utils.dto.DireccionDTO) dto;
+          logger.debug("  - ID: {}, Calle: {}, Número: {}, Localidad: {}", 
+              dirDto.getId(), 
+              dirDto.getCalle(), 
+              dirDto.getNumero(),
+              dirDto.getLocalidad() != null ? dirDto.getLocalidad().getNombre() : "NULL");
+        }
+      }
+    } else if (dtos != null && dtos.isEmpty() && "Direccion".equals(entityType)) {
+      logger.warn("No se encontraron direcciones activas en la base de datos");
+    }
+    
     return ResponseEntity.ok(dtos);
   }
 

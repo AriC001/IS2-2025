@@ -20,6 +20,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.nexora.proyectointegrador2.front_cliente.dto.BaseDTO;
 import com.nexora.proyectointegrador2.front_cliente.exception.EntityNotFoundException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.StringJoiner;
 
 
 @Component
@@ -40,6 +44,45 @@ public abstract class BaseDAO<T extends BaseDTO, ID> {
     this.restTemplate = restTemplate;
     this.entityPath = entityPath;
   }
+
+  /**
+   * Obtiene entidades aplicando parámetros de consulta opcionale(s).
+   * Construye la query con los parámetros no-nulos y realiza GET.
+   */
+  public List<T> findByQueryParams(Map<String, String> params) {
+    try {
+      String url = baseUrl + entityPath + "/filter";
+      if (params != null && !params.isEmpty()) {
+        StringJoiner sj = new StringJoiner("&");
+        for (Map.Entry<String, String> e : params.entrySet()) {
+          if (e.getValue() != null && !e.getValue().isBlank()) {
+            sj.add(URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8));
+          }
+        }
+        String q = sj.toString();
+        if (!q.isBlank()) {
+          url = url + "?" + q;
+        }
+      }
+      logger.debug("Obteniendo entidades desde: {} con params: {}", url, params);
+      ResponseEntity<T[]> response = restTemplate.getForEntity(url, getArrayClass());
+      T[] body = response.getBody();
+      List<T> result = body != null ? Arrays.asList(body) : List.of();
+      logger.info("Se obtuvieron {} entidades (con filtros)", result.size());
+      return result;
+    } catch (HttpServerErrorException e) {
+      logger.error("Error del servidor al obtener entidades (filtros): {}", e.getMessage());
+      throw new RuntimeException("Error en el servidor: " + e.getStatusCode() + " - " + e.getMessage(), e);
+    } catch (ResourceAccessException e) {
+      logger.error("Error de conexión con la API: {}", baseUrl + entityPath);
+      throw new RuntimeException("No se pudo conectar con la API: " + baseUrl + entityPath, e);
+    } catch (RestClientException e) {
+      logger.error("Error al conectar con la API: {}", e.getMessage());
+      throw new RuntimeException("Error conectando con la API: " + baseUrl + entityPath + ". " + e.getMessage(), e);
+    }
+  }
+
+  
 
   public List<T> findAllActives() {
     try {

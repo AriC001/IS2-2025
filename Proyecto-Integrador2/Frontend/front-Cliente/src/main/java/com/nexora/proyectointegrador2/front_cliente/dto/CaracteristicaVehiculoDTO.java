@@ -23,4 +23,8 @@ public class CaracteristicaVehiculoDTO extends BaseDTO {
   private ImagenDTO imagenVehiculo;
   private CostoVehiculoDTO costoVehiculo;
 
+  public String descripcion(){
+    return "" + marca + " " + modelo + " año " + anio +  " cuenta con " + cantidadAsiento + " asientos" + " tiene " + cantidadPuerta + " puertas";
+  }
+
 }

@@ -1,23 +1,21 @@
 package com.nexora.proyectointegrador2.front_cliente.business.persistence.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
 import com.nexora.proyectointegrador2.front_cliente.dto.DocumentoDTO;
 
-@Component
-public class DocumentoDAO extends BaseDAO<DocumentoDTO, String> {
+@Repository
+public class DocumentoDAO extends BaseDAO<DocumentoDTO,String> {
 
-  @Autowired
+    
   public DocumentoDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/documentos");
+    super(restTemplate, "/documento");
   }
 
-  @Override
-  protected Class<DocumentoDTO> getEntityClass() {
-    return DocumentoDTO.class;
-  }
-
+    @Override
+    protected Class<DocumentoDTO> getEntityClass() {
+        return DocumentoDTO.class;
+    }
+    
 }
-

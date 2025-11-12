@@ -11,6 +11,7 @@
 </head>
 <body id="page-top">
     <div id="wrapper">
+        <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/dashboard}">
                 <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-car"></i></div>
@@ -21,21 +22,82 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Gestión</div>
             <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/clientes}"><i class="fas fa-fw fa-users"></i><span>Clientes</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+            <li class="nav-item active"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/costos-vehiculo}"><i class="fas fa-fw fa-dollar-sign"></i><span>Costos Vehículo</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/caracteristicas-vehiculo}"><i class="fas fa-fw fa-cog"></i><span>Características Vehículo</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+                    <i class="fas fa-fw fa-users"></i><span>Usuarios</span>
+                </a>
+                <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gestión de Usuarios:</h6>
+                        <a class="collapse-item" th:href="@{/clientes}"><i class="fas fa-fw fa-user"></i> Clientes</a>
+                        <a class="collapse-item" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i> Empleados</a>
+                    </div>
+                </div>
+            </li>
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Geografía</div>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeografia" aria-expanded="true" aria-controls="collapseGeografia">
+                    <i class="fas fa-fw fa-globe"></i><span>Geografía</span>
+                </a>
+                <div id="collapseGeografia" class="collapse" aria-labelledby="headingGeografia" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Datos Geográficos:</h6>
+                        <a class="collapse-item" th:href="@{/paises}"><i class="fas fa-fw fa-flag"></i> Países</a>
+                        <a class="collapse-item" th:href="@{/provincias}"><i class="fas fa-fw fa-map"></i> Provincias</a>
+                        <a class="collapse-item" th:href="@{/departamentos}"><i class="fas fa-fw fa-building"></i> Departamentos</a>
+                        <a class="collapse-item" th:href="@{/localidades}"><i class="fas fa-fw fa-map-marker-alt"></i> Localidades</a>
+                        <a class="collapse-item" th:href="@{/direcciones}"><i class="fas fa-fw fa-home"></i> Direcciones</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
                     <ul class="navbar-nav ml-auto">
+                        <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${nombreUsuario}">Usuario</span>
+                                <img class="img-profile rounded-circle"
+                                    th:src="@{/img/undraw_profile.svg}">
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Perfil
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Configuración
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <div class="px-3 py-2">
+                                    <small class="text-muted">Rol: <strong th:text="${rol}">ROL</strong></small>
+                                </div>
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar Sesión
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Cerrar Sesión
                                 </a>
                             </div>
                         </li>
@@ -65,7 +127,9 @@
                         </div>
                     </div>
                     <div class="card shadow mb-4" th:if="${vehiculo.caracteristicaVehiculo != null}">
-                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Características</h6></div>
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Característica del Vehículo</h6>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -79,6 +143,11 @@
                                     <p><strong>Disponibles:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.cantidadVehiculoDisponible + '/' + vehiculo.caracteristicaVehiculo?.cantidadTotalVehiculo}">-</span></p>
                                 </div>
                             </div>
+                            <div class="mt-3" th:if="${vehiculo.caracteristicaVehiculo?.id != null}">
+                                <a th:href="@{/caracteristicas-vehiculo/{id}(id=${vehiculo.caracteristicaVehiculo.id})}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Ver Detalle de la Característica
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card shadow mb-4" th:if="${vehiculo.caracteristicaVehiculo?.costoVehiculo != null}">
@@ -86,7 +155,12 @@
                         <div class="card-body">
                             <p><strong>Fecha Desde:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaDesde != null ? #dates.format(vehiculo.caracteristicaVehiculo.costoVehiculo.fechaDesde, 'dd/MM/yyyy') : '-'}">-</span></p>
                             <p><strong>Fecha Hasta:</strong> <span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.fechaHasta != null ? #dates.format(vehiculo.caracteristicaVehiculo.costoVehiculo.fechaHasta, 'dd/MM/yyyy') : '-'}">-</span></p>
-                            <p><strong>Costo:</strong> $<span th:text="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.costo}">-</span></p>
+                            <p><strong>Costo:</strong> $<span th:text="${#numbers.formatDecimal(vehiculo.caracteristicaVehiculo?.costoVehiculo?.costo, 0, 'POINT', 2, 'POINT')}">-</span></p>
+                            <div class="mt-3" th:if="${vehiculo.caracteristicaVehiculo?.costoVehiculo?.id != null}">
+                                <a th:href="@{/costos-vehiculo/{id}(id=${vehiculo.caracteristicaVehiculo.costoVehiculo.id})}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> Ver Detalle del Costo
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

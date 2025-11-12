@@ -56,6 +56,20 @@
                     <span>Vehículos</span></a>
             </li>
 
+            <!-- Nav Item - Costos Vehículo -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/costos-vehiculo}">
+                    <i class="fas fa-fw fa-dollar-sign"></i>
+                    <span>Costos Vehículo</span></a>
+            </li>
+
+            <!-- Nav Item - Características Vehículo -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/caracteristicas-vehiculo}">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Características Vehículo</span></a>
+            </li>
+
             <!-- Nav Item - Empresas -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/empresas}">
@@ -73,7 +87,7 @@
             <!-- Nav Item - Usuarios Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios"
-                    aria-expanded="true" aria-controls="collapseUsuarios">
+                    aria-expanded="false" aria-controls="collapseUsuarios">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Usuarios</span>
                 </a>
@@ -101,7 +115,7 @@
             <!-- Nav Item - Geografía Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeografia"
-                    aria-expanded="true" aria-controls="collapseGeografia">
+                    aria-expanded="false" aria-controls="collapseGeografia">
                     <i class="fas fa-fw fa-globe"></i>
                     <span>Geografía</span>
                 </a>
@@ -247,7 +261,7 @@
                                                 <option value="">Seleccione una localidad</option>
                                                 <option th:each="localidad : ${localidades}" 
                                                         th:value="${localidad.id}" 
-                                                        th:text="${localidad.nombre} + ' (' + ${localidad.codigoPostal} + ')'"></option>
+                                                        th:text="${localidad.nombre + ' (' + localidad.codigoPostal + ')'}"></option>
                                             </select>
                                         </div>
                                     </div>

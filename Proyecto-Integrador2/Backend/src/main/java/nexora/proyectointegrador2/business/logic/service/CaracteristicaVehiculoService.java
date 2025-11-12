@@ -1,5 +1,7 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,8 @@ import nexora.proyectointegrador2.business.persistence.repository.Caracteristica
 
 @Service
 public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVehiculo, String> {
+
+  private static final Logger logger = LoggerFactory.getLogger(CaracteristicaVehiculoService.class);
 
   @Autowired
   private ImagenService imagenService;
@@ -45,46 +49,81 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
 
   @Override
   protected void preAlta(CaracteristicaVehiculo entity) throws Exception {
-    if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() == null) {
-      Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
-      entity.setImagenVehiculo(imagenGuardada);
-    } else if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() != null) {
-      Imagen imagenExistente = imagenService.findById(entity.getImagenVehiculo().getId());
-      entity.setImagenVehiculo(imagenExistente);
-    }
+    // Manejar imagenVehiculo
+    if (entity.getImagenVehiculo() != null) {
+      String imagenId = entity.getImagenVehiculo().getId();
+      // Si el ID es null o cadena vacía, tratar como nueva imagen
+      if (imagenId == null || imagenId.trim().isEmpty()) {
+        // Verificar si la imagen tiene contenido válido antes de guardarla
+        byte[] contenido = entity.getImagenVehiculo().getContenido();
+        if (contenido != null && contenido.length > 0) {
+          Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
+          entity.setImagenVehiculo(imagenGuardada);
+          logger.info("Imagen guardada exitosamente con ID: {}", imagenGuardada.getId());
+        } else {
+          // Si no tiene contenido, establecer como null
+          entity.setImagenVehiculo(null);
+        }
+      } else {
+        // Si tiene ID válido, buscar la imagen existente
+        Imagen imagenExistente = imagenService.findById(imagenId);
+        entity.setImagenVehiculo(imagenExistente);
+      }
+    } 
 
-    if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() == null) {
-      CostoVehiculo costoGuardado = costoVehiculoService.save(entity.getCostoVehiculo());
-      entity.setCostoVehiculo(costoGuardado);
-    } else if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() != null) {
-      CostoVehiculo costoExistente = costoVehiculoService.findById(entity.getCostoVehiculo().getId());
-      entity.setCostoVehiculo(costoExistente);
+    // Manejar costoVehiculo
+    if (entity.getCostoVehiculo() != null) {
+      String costoId = entity.getCostoVehiculo().getId();
+      if (costoId == null || costoId.trim().isEmpty()) {
+        CostoVehiculo costoGuardado = costoVehiculoService.save(entity.getCostoVehiculo());
+        entity.setCostoVehiculo(costoGuardado);
+      } else {
+        CostoVehiculo costoExistente = costoVehiculoService.findById(costoId);
+        entity.setCostoVehiculo(costoExistente);
+      }
     }
   }
 
   @Override
   protected void preUpdate(String id, CaracteristicaVehiculo entity) throws Exception {
-    if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() == null) {
-      Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
-      entity.setImagenVehiculo(imagenGuardada);
-    } else if (entity.getImagenVehiculo() != null && entity.getImagenVehiculo().getId() != null) {
-      CaracteristicaVehiculo caracteristicaExistente = findById(id);
-      if (caracteristicaExistente.getImagenVehiculo() == null ||
-          !caracteristicaExistente.getImagenVehiculo().getId().equals(entity.getImagenVehiculo().getId())) {
-        Imagen imagenExistente = imagenService.findById(entity.getImagenVehiculo().getId());
-        entity.setImagenVehiculo(imagenExistente);
+    // Manejar imagenVehiculo
+    if (entity.getImagenVehiculo() != null) {
+      String imagenId = entity.getImagenVehiculo().getId();
+      // Si el ID es null o cadena vacía, tratar como nueva imagen
+      if (imagenId == null || imagenId.trim().isEmpty()) {
+        // Verificar si la imagen tiene contenido válido antes de guardarla
+        if (entity.getImagenVehiculo().getContenido() != null && entity.getImagenVehiculo().getContenido().length > 0) {
+          Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
+          entity.setImagenVehiculo(imagenGuardada);
+        } else {
+          // Si no tiene contenido, mantener la imagen existente si existe
+          CaracteristicaVehiculo caracteristicaExistente = findById(id);
+          entity.setImagenVehiculo(caracteristicaExistente.getImagenVehiculo());
+        }
+      } else {
+        // Si tiene ID válido, verificar si cambió
+        CaracteristicaVehiculo caracteristicaExistente = findById(id);
+        if (caracteristicaExistente.getImagenVehiculo() == null ||
+            !caracteristicaExistente.getImagenVehiculo().getId().equals(imagenId)) {
+          Imagen imagenExistente = imagenService.findById(imagenId);
+          entity.setImagenVehiculo(imagenExistente);
+        }
       }
     }
 
-    if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() == null) {
-      CostoVehiculo costoGuardado = costoVehiculoService.save(entity.getCostoVehiculo());
-      entity.setCostoVehiculo(costoGuardado);
-    } else if (entity.getCostoVehiculo() != null && entity.getCostoVehiculo().getId() != null) {
-      CaracteristicaVehiculo caracteristicaExistente = findById(id);
-      if (caracteristicaExistente.getCostoVehiculo() == null ||
-          !caracteristicaExistente.getCostoVehiculo().getId().equals(entity.getCostoVehiculo().getId())) {
-        CostoVehiculo costoExistente = costoVehiculoService.findById(entity.getCostoVehiculo().getId());
-        entity.setCostoVehiculo(costoExistente);
+    // Manejar costoVehiculo
+    if (entity.getCostoVehiculo() != null) {
+      String costoId = entity.getCostoVehiculo().getId();
+      if (costoId == null || costoId.trim().isEmpty()) {
+        CostoVehiculo costoGuardado = costoVehiculoService.save(entity.getCostoVehiculo());
+        entity.setCostoVehiculo(costoGuardado);
+      } else {
+        CaracteristicaVehiculo caracteristicaExistente = findById(id);
+        if (caracteristicaExistente.getCostoVehiculo() == null ||
+            !caracteristicaExistente.getCostoVehiculo().getId().equals(costoId)) {
+          CostoVehiculo costoExistente = costoVehiculoService.findById(costoId);
+          entity.setCostoVehiculo(costoExistente);
+        }
       }
     }
   }

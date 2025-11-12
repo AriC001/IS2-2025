@@ -59,8 +59,8 @@ public class CaracteristicaVehiculoMapper implements BaseMapper<CaracteristicaVe
     caracteristica.setCantidadPuerta(dto.getCantidadPuerta());
     caracteristica.setCantidadAsiento(dto.getCantidadAsiento());
     caracteristica.setAnio(dto.getAnio());
-    caracteristica.setCantidadTotalVehiculo(dto.getCantidadTotalVehiculo());
-    caracteristica.setCantidadVehiculoDisponible(dto.getCantidadVehiculoDisponible());
+    // cantidadTotalVehiculo y cantidadVehiculoDisponible son campos calculados (@Formula)
+    // No se deben mapear desde el DTO, se calculan automáticamente en la base de datos
     caracteristica.setImagenVehiculo(imagenMapper.toEntity(dto.getImagenVehiculo()));
     caracteristica.setCostoVehiculo(costoVehiculoMapper.toEntity(dto.getCostoVehiculo()));
     return caracteristica;

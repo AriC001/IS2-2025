@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simular pago</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding:24px; background:#fafafa }
+    .card { max-width:600px; margin:0 auto; background:#fff; padding:18px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06) }
+    .btn { display:inline-block; padding:10px 14px; background:#007bff; color:#fff; border-radius:6px; text-decoration:none }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Simular pago</h2>
+    <p>Use este formulario para simular que el pago fue aprobado y ver el comprobante de la reserva.</p>
+
+    <div th:if="${error}" style="color:crimson;margin-bottom:12px"> <span th:text="${error}"></span> </div>
+
+    <form th:action="@{/pago/confirm}" method="post">
+      <input type="hidden" name="alquilerId" th:value="${alquilerId}" />
+      <div style="margin-top:12px">
+        <button type="submit" class="btn">Simular pago aprobado</button>
+      </div>
+    </form>
+
+    <div style="margin-top:12px; font-size:0.9rem; color:#666">
+      <p>Si la reserva ya fue creada, ingrese el <strong>ID de reserva</strong> en la URL como <code>?alquilerId=...</code>.</p>
+    </div>
+  </div>
+</body>
+</html>

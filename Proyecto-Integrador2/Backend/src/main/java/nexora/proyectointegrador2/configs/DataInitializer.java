@@ -1,5 +1,9 @@
 package nexora.proyectointegrador2.configs;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -161,7 +165,7 @@ public class DataInitializer {
                 .cantidadAsiento(5)
                 .cantidadPuerta(4)
                 .cantidadTotalVehiculo(2)
-                .cantidadVehiculoDisponible(2)
+                
                 .costoVehiculo(cost1)
                 .marca("BMW")
                 .modelo("1").build();
@@ -402,6 +406,9 @@ public class DataInitializer {
             .calle("San Martín")
             .numero("1234")
             .barrio("Centro")
+            .manzanaPiso("Piso 3")
+            .casaDepartamento("Depto 5B")
+            .referencia("Cerca del supermercado, esquina con calle Mitre")
             .localidad(godoycruz)
             .build();
         direccion1.setEliminado(false);
@@ -421,6 +428,9 @@ public class DataInitializer {
             .calle("Belgrano")
             .numero("567")
             .barrio("El Plumerillo")
+            .manzanaPiso("Manzana 12")
+            .casaDepartamento("Casa 8")
+            .referencia("Frente a la plaza principal")
             .localidad(lasHeras)
             .build();
         direccion2.setEliminado(false);
@@ -529,11 +539,11 @@ public class DataInitializer {
       // 5. Crear 2 Vehículos con características y costos
       Vehiculo vehiculo1 = null;
       if (vehiculoRepository.findByPatenteAndEliminadoFalse("AB123CD").isEmpty()) {
-        // Crear imagen de vehículo 1
-        byte[] imagenBytes1 = "imagen-vehiculo-1-placeholder".getBytes();
+        // Crear imagen de vehículo 1 (Toyota Corolla)
+        byte[] imagenBytes1 = leerImagen("2020-toyota-corolla-xse.jpg");
         Imagen imagenVehiculo1 = Imagen.builder()
-            .nombre("vehiculo1.jpg")
-            .mime("image/jpeg")
+            .nombre("2020-toyota-corolla-xse.jpg")
+            .mime("image/jpg")
             .contenido(imagenBytes1)
             .tipoImagen(TipoImagen.VEHICULO)
             .build();
@@ -549,18 +559,17 @@ public class DataInitializer {
         costo1.setEliminado(false);
         costo1 = costoVehiculoService.save(costo1);
 
-        // Crear característica de vehículo 1
-        CaracteristicaVehiculo caracteristica1 = CaracteristicaVehiculo.builder()
-            .marca("Toyota")
-            .modelo("Corolla")
-            .anio(2020)
-            .cantidadPuerta(4)
-            .cantidadAsiento(5)
-            .cantidadTotalVehiculo(3)
-            .cantidadVehiculoDisponible(3)
-            .imagenVehiculo(imagenVehiculo1)
-            .costoVehiculo(costo1)
-            .build();
+    // Crear característica de vehículo 1
+    CaracteristicaVehiculo caracteristica1 = CaracteristicaVehiculo.builder()
+      .marca("Toyota")
+      .modelo("Corolla")
+      .anio(2020)
+      .cantidadPuerta(4)
+      .cantidadAsiento(5)
+      
+      .imagenVehiculo(imagenVehiculo1)
+      .costoVehiculo(costo1)
+      .build();
         caracteristica1.setEliminado(false);
         caracteristica1 = caracteristicaVehiculoService.save(caracteristica1);
 
@@ -580,10 +589,10 @@ public class DataInitializer {
 
       Vehiculo vehiculo2 = null;
       if (vehiculoRepository.findByPatenteAndEliminadoFalse("EF456GH").isEmpty()) {
-        // Crear imagen de vehículo 2
-        byte[] imagenBytes2 = "imagen-vehiculo-2-placeholder".getBytes();
+        // Crear imagen de vehículo 2 (Honda Civic)
+        byte[] imagenBytes2 = leerImagen("2021-honda-civic-sdn.jpg");
         Imagen imagenVehiculo2 = Imagen.builder()
-            .nombre("vehiculo2.jpg")
+            .nombre("2021-honda-civic-sdn.jpg")
             .mime("image/jpeg")
             .contenido(imagenBytes2)
             .tipoImagen(TipoImagen.VEHICULO)
@@ -600,18 +609,17 @@ public class DataInitializer {
         costo2.setEliminado(false);
         costo2 = costoVehiculoService.save(costo2);
 
-        // Crear característica de vehículo 2
-        CaracteristicaVehiculo caracteristica2 = CaracteristicaVehiculo.builder()
-            .marca("Honda")
-            .modelo("Civic")
-            .anio(2021)
-            .cantidadPuerta(4)
-            .cantidadAsiento(5)
-            .cantidadTotalVehiculo(2)
-            .cantidadVehiculoDisponible(2)
-            .imagenVehiculo(imagenVehiculo2)
-            .costoVehiculo(costo2)
-            .build();
+    // Crear característica de vehículo 2
+    CaracteristicaVehiculo caracteristica2 = CaracteristicaVehiculo.builder()
+      .marca("Honda")
+      .modelo("Civic")
+      .anio(2021)
+      .cantidadPuerta(4)
+      .cantidadAsiento(5)
+      
+      .imagenVehiculo(imagenVehiculo2)
+      .costoVehiculo(costo2)
+      .build();
         caracteristica2.setEliminado(false);
         caracteristica2 = caracteristicaVehiculoService.save(caracteristica2);
 
@@ -630,16 +638,16 @@ public class DataInitializer {
       }
 
       // 6. Crear 2 Empresas
-      if (empresaRepository.findByEmailAndEliminadoFalse("contacto@rentacar1.com").isEmpty()) {
+      if (empresaRepository.findByEmailAndEliminadoFalse("contacto@mycar1.com").isEmpty()) {
         Empresa empresa1 = Empresa.builder()
-            .nombre("RentaCar Mendoza")
+            .nombre("MyCar Mendoza")
             .telefono("261-4567890")
-            .email("contacto@rentacar1.com")
+            .email("contacto@mycar1.com")
             .direccion(direccion1)
             .build();
         empresa1.setEliminado(false);
         empresaService.save(empresa1);
-        logger.info("✅ Empresa 1 'RentaCar Mendoza' creada exitosamente");
+        logger.info("✅ Empresa 1 'MyCar Mendoza' creada exitosamente");
       } else {
         logger.info("✓ Empresa 1 ya existe");
       }
@@ -688,6 +696,40 @@ public class DataInitializer {
     } catch (Exception e) {
       logger.error("❌ Error al inicializar datos de prueba: {}", e.getMessage());
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Lee una imagen del sistema de archivos desde la carpeta Backend/image
+   * @param nombreArchivo Nombre del archivo de imagen
+   * @return Array de bytes con el contenido de la imagen
+   */
+  private byte[] leerImagen(String nombreArchivo) {
+    try {
+      // Intentar leer desde la carpeta Backend/image (relativa al directorio de trabajo)
+      Path rutaImagen = Paths.get("Backend", "image", nombreArchivo);
+      
+      // Si no existe, intentar desde el directorio actual
+      if (!Files.exists(rutaImagen)) {
+        rutaImagen = Paths.get("image", nombreArchivo);
+      }
+      
+      // Si aún no existe, intentar desde el directorio raíz del proyecto
+      if (!Files.exists(rutaImagen)) {
+        rutaImagen = Paths.get(System.getProperty("user.dir"), "Backend", "image", nombreArchivo);
+      }
+      
+      if (Files.exists(rutaImagen)) {
+        byte[] contenido = Files.readAllBytes(rutaImagen);
+        logger.info("✅ Imagen '{}' cargada exitosamente ({} bytes)", nombreArchivo, contenido.length);
+        return contenido;
+      } else {
+        logger.warn("⚠ No se encontró la imagen '{}'. Usando placeholder.", nombreArchivo);
+        return ("placeholder-" + nombreArchivo).getBytes();
+      }
+    } catch (IOException e) {
+      logger.error("❌ Error al leer la imagen '{}': {}", nombreArchivo, e.getMessage());
+      return ("error-" + nombreArchivo).getBytes();
     }
   }
 

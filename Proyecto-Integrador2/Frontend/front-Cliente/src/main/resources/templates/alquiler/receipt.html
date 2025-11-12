@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comprobante de reserva</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 24px; background:#fafafa }
+    .card { max-width:760px; margin:0 auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06) }
+    .muted { color:#666; font-size:0.95rem }
+    .actions { margin-top:18px }
+    .btn { background:#28a745; color:#fff; padding:10px 14px; border:none; border-radius:6px; cursor:pointer }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Reserva creada</h2>
+    <p class="muted">A continuación figura un resumen de su reserva.</p>
+
+    <div style="margin-top:12px">
+      <strong>ID de reserva:</strong>
+      <span th:text="${alquiler.id}">-</span>
+    </div>
+
+    <div style="margin-top:8px">
+      <strong>Vehículo:</strong>
+      <span th:text="${alquiler.vehiculo != null ? alquiler.vehiculo.marca + ' ' + alquiler.vehiculo.modelo : '-'}">-</span>
+    </div>
+
+    <div style="margin-top:8px">
+      <strong>Fechas:</strong>
+      <span th:text="${#dates.format(alquiler.fechaDesde, 'yyyy-MM-dd')}">-</span> -
+      <span th:text="${#dates.format(alquiler.fechaHasta, 'yyyy-MM-dd')}">-</span>
+    </div>
+
+    <div style="margin-top:8px">
+      <strong>Documento:</strong>
+      <span th:if="${alquiler.documento != null}">
+        <a th:href="${alquiler.documento.urlDescarga}" th:text="${alquiler.documento.nombreArchivo}">ver</a>
+      </span>
+      <span th:if="${alquiler.documento == null}">Sin documento asociado</span>
+    </div>
+
+    <div class="actions">
+       Placeholder: link hacia el flujo de pago 
+      <a th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" class="btn">Proceder al pago</a>
+    </div>
+  </div>
+</body>
+</html>

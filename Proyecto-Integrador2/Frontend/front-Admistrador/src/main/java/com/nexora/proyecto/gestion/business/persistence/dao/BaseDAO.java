@@ -48,20 +48,37 @@ public abstract class BaseDAO<T extends BaseDTO, ID> {
       ResponseEntity<T[]> response = restTemplate.getForEntity(url, getArrayClass());
       T[] body = response.getBody();
       List<T> result = body != null ? Arrays.asList(body) : List.of();
-      logger.info("Se obtuvieron {} entidades activas", result.size());
+      logger.info("Se obtuvieron {} entidades activas desde {}", result.size(), url);
+      if (result.isEmpty()) {
+        logger.warn("No se obtuvieron entidades activas desde {}", url);
+      }
       return result;
+    } catch (HttpClientErrorException e) {
+      logger.error("Error del cliente (HTTP {}) al obtener entidades desde {}: {}", 
+          e.getStatusCode(), baseUrl + entityPath, e.getMessage());
+      logger.error("Response body: {}", e.getResponseBodyAsString());
+      // Si es un error 401 o 403, podría ser un problema de autenticación
+      if (e.getStatusCode().value() == 401 || e.getStatusCode().value() == 403) {
+        logger.error("Error de autenticación/autorización. Verificar que el token JWT esté en la sesión.");
+      }
+      throw new RuntimeException("Error del cliente al obtener entidades: " + e.getStatusCode() + " - " + e.getMessage(), e);
     } catch (HttpServerErrorException e) {
-      logger.error("Error del servidor al obtener entidades: {}", e.getMessage());
+      logger.error("Error del servidor (HTTP {}) al obtener entidades desde {}: {}", 
+          e.getStatusCode(), baseUrl + entityPath, e.getMessage());
+      logger.error("Response body: {}", e.getResponseBodyAsString());
       throw new RuntimeException("Error en el servidor: " + e.getStatusCode() + " - " + e.getMessage(), e);
     } catch (ResourceAccessException e) {
-      logger.error("Error de conexión con la API: {}", baseUrl + entityPath);
+      logger.error("Error de conexión con la API: {}", baseUrl + entityPath, e);
       throw new RuntimeException("No se pudo conectar con la API: " + baseUrl + entityPath, e);
     } catch (RestClientException e) {
-      logger.error("Error al conectar con la API: {}", e.getMessage());
+      logger.error("Error al conectar con la API: {}", e.getMessage(), e);
       throw new RuntimeException("Error conectando con la API: " + baseUrl + entityPath + ". " + e.getMessage(), e);
     } catch (IllegalArgumentException e) {
-      logger.error("Configuración inválida para la entidad: {}", entityPath);
+      logger.error("Configuración inválida para la entidad: {}", entityPath, e);
       throw new RuntimeException("Configuración inválida para la entidad: " + entityPath + ". " + e.getMessage(), e);
+    } catch (Exception e) {
+      logger.error("Error inesperado al obtener entidades desde {}: {}", baseUrl + entityPath, e.getMessage(), e);
+      throw new RuntimeException("Error inesperado al obtener entidades: " + e.getMessage(), e);
     }
   }
 

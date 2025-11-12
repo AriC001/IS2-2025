@@ -11,6 +11,7 @@
 </head>
 <body id="page-top">
     <div id="wrapper">
+        <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/dashboard}">
                 <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-car"></i></div>
@@ -21,21 +22,82 @@
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Gestión</div>
             <li class="nav-item"><a class="nav-link" th:href="@{/alquileres}"><i class="fas fa-fw fa-key"></i><span>Alquileres</span></a></li>
-            <li class="nav-item"><a class="nav-link" th:href="@{/clientes}"><i class="fas fa-fw fa-users"></i><span>Clientes</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/vehiculos}"><i class="fas fa-fw fa-car"></i><span>Vehículos</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/costos-vehiculo}"><i class="fas fa-fw fa-dollar-sign"></i><span>Costos Vehículo</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/caracteristicas-vehiculo}"><i class="fas fa-fw fa-cog"></i><span>Características Vehículo</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+                    <i class="fas fa-fw fa-users"></i><span>Usuarios</span>
+                </a>
+                <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Gestión de Usuarios:</h6>
+                        <a class="collapse-item" th:href="@{/clientes}"><i class="fas fa-fw fa-user"></i> Clientes</a>
+                        <a class="collapse-item" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i> Empleados</a>
+                    </div>
+                </div>
+            </li>
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Geografía</div>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeografia" aria-expanded="true" aria-controls="collapseGeografia">
+                    <i class="fas fa-fw fa-globe"></i><span>Geografía</span>
+                </a>
+                <div id="collapseGeografia" class="collapse" aria-labelledby="headingGeografia" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Datos Geográficos:</h6>
+                        <a class="collapse-item" th:href="@{/paises}"><i class="fas fa-fw fa-flag"></i> Países</a>
+                        <a class="collapse-item" th:href="@{/provincias}"><i class="fas fa-fw fa-map"></i> Provincias</a>
+                        <a class="collapse-item" th:href="@{/departamentos}"><i class="fas fa-fw fa-building"></i> Departamentos</a>
+                        <a class="collapse-item" th:href="@{/localidades}"><i class="fas fa-fw fa-map-marker-alt"></i> Localidades</a>
+                        <a class="collapse-item" th:href="@{/direcciones}"><i class="fas fa-fw fa-home"></i> Direcciones</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
                     <ul class="navbar-nav ml-auto">
+                        <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${nombreUsuario}">Usuario</span>
+                                <img class="img-profile rounded-circle"
+                                    th:src="@{/img/undraw_profile.svg}">
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Perfil
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Configuración
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <div class="px-3 py-2">
+                                    <small class="text-muted">Rol: <strong th:text="${rol}">ROL</strong></small>
+                                </div>
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar Sesión
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Cerrar Sesión
                                 </a>
                             </div>
                         </li>
@@ -45,7 +107,7 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Detalle del Alquiler</h1>
                         <div>
-                            <a th:href="@{/alquileres/{id}/editar(id=${alquiler.id})}" class="btn btn-warning btn-sm">
+                            <a th:if="${alquiler.id != null}" th:href="@{/alquileres/{id}/editar(id=${alquiler.id})}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
                             <a th:href="@{/alquileres}" class="btn btn-secondary btn-sm">
@@ -59,28 +121,28 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h5>Cliente</h5>
-                                    <p><strong>Nombre:</strong> <span th:text="${alquiler.cliente?.nombre + ' ' + alquiler.cliente?.apellido}">-</span></p>
-                                    <p><strong>Documento:</strong> <span th:text="${alquiler.cliente?.tipoDocumento + ': ' + alquiler.cliente?.numeroDocumento}">-</span></p>
+                                    <p><strong>Nombre:</strong> <span th:text="${alquiler.cliente != null ? (alquiler.cliente.nombre + ' ' + alquiler.cliente.apellido) : '-'}">-</span></p>
+                                    <p><strong>Documento:</strong> <span th:text="${alquiler.cliente != null ? (alquiler.cliente.tipoDocumento + ': ' + alquiler.cliente.numeroDocumento) : '-'}">-</span></p>
                                 </div>
                                 <div class="col-md-6">
                                     <h5>Vehículo</h5>
-                                    <p><strong>Patente:</strong> <span th:text="${alquiler.vehiculo?.patente}">-</span></p>
-                                    <p><strong>Marca/Modelo:</strong> <span th:text="${alquiler.vehiculo?.caracteristicaVehiculo?.marca + ' ' + alquiler.vehiculo?.caracteristicaVehiculo?.modelo}">-</span></p>
-                                    <p><strong>Año:</strong> <span th:text="${alquiler.vehiculo?.caracteristicaVehiculo?.anio}">-</span></p>
+                                    <p><strong>Patente:</strong> <span th:text="${alquiler.vehiculo?.patente ?: '-'}">-</span></p>
+                                    <p><strong>Marca/Modelo:</strong> <span th:text="${alquiler.vehiculo?.caracteristicaVehiculo != null ? (alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo) : '-'}">-</span></p>
+                                    <p><strong>Año:</strong> <span th:text="${alquiler.vehiculo?.caracteristicaVehiculo?.anio ?: '-'}">-</span></p>
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
                                 <div class="col-md-6">
                                     <h5>Fechas</h5>
-                                    <p><strong>Fecha Desde:</strong> <span th:text="${#temporals.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">-</span></p>
-                                    <p><strong>Fecha Hasta:</strong> <span th:text="${#temporals.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">-</span></p>
+                                    <p><strong>Fecha Desde:</strong> <span th:text="${alquiler.fechaDesde != null ? #dates.format(alquiler.fechaDesde, 'dd/MM/yyyy') : '-'}">-</span></p>
+                                    <p><strong>Fecha Hasta:</strong> <span th:text="${alquiler.fechaHasta != null ? #dates.format(alquiler.fechaHasta, 'dd/MM/yyyy') : '-'}">-</span></p>
                                 </div>
                                 <div class="col-md-6" th:if="${alquiler.documento != null}">
                                     <h5>Documentación</h5>
-                                    <p><strong>Tipo:</strong> <span th:text="${alquiler.documento?.tipoDocumento}">-</span></p>
-                                    <p><strong>Observación:</strong> <span th:text="${alquiler.documento?.observacion}">-</span></p>
-                                    <p><strong>Archivo:</strong> <span th:text="${alquiler.documento?.nombreArchivo}">-</span></p>
+                                    <p><strong>Tipo:</strong> <span th:text="${alquiler.documento?.tipoDocumento ?: '-'}">-</span></p>
+                                    <p><strong>Observación:</strong> <span th:text="${alquiler.documento?.observacion ?: '-'}">-</span></p>
+                                    <p><strong>Archivo:</strong> <span th:text="${alquiler.documento?.nombreArchivo ?: '-'}">-</span></p>
                                 </div>
                             </div>
                         </div>

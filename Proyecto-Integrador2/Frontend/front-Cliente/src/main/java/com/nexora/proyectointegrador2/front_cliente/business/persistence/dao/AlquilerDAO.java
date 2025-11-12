@@ -1,23 +1,25 @@
 package com.nexora.proyectointegrador2.front_cliente.business.persistence.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import com.nexora.proyectointegrador2.front_cliente.dto.AlquilerDTO;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class AlquilerDAO extends BaseDAO<AlquilerDTO, String> {
 
-  @Autowired
   public AlquilerDAO(RestTemplate restTemplate) {
-    super(restTemplate, "/alquileres");
+    super(restTemplate, "/alquiler");
   }
 
   @Override
   protected Class<AlquilerDTO> getEntityClass() {
     return AlquilerDTO.class;
   }
+<<<<<<< HEAD
 
 }
 
+=======
+    
+}
+>>>>>>> 7371089156af9abfa0195bc80f465e0e9363c84c
