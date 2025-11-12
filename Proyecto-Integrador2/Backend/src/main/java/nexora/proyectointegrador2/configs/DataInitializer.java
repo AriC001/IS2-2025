@@ -94,57 +94,38 @@ public class DataInitializer {
                                         AlquilerService alquilerService,
                                         AlquilerRepository alquilerRepository) {
     return args -> {
-      // Verificar si ya existe un usuario admin
-      if (usuarioRepository.findByNombreUsuario("admin").isEmpty()) {
-        Usuario admin = Usuario.builder()
+      // Crear usuarios del sistema
+      Usuario admin = usuarioRepository.findByNombreUsuario("admin").orElse(null);
+      if (admin == null) {
+        admin = Usuario.builder()
             .nombreUsuario("admin")
             .clave(passwordEncoder.encode("admin123"))
             .rol(RolUsuario.JEFE)
             .build();
         admin.setEliminado(false);
-        
-        usuarioRepository.save(admin);
-        logger.info("✅ Usuario JEFE creado exitosamente");
-        logger.info("   Usuario: admin");
-        logger.info("   Contraseña: admin123");
-        logger.info("   Rol: JEFE");
-      } else {
-        logger.info("✓ Usuario admin ya existe en la base de datos");
+        admin = usuarioRepository.save(admin);
       }
 
-      // Crear usuario administrativo si no existe
-      if (usuarioRepository.findByNombreUsuario("operador").isEmpty()) {
-        Usuario operador = Usuario.builder()
+      Usuario operador = usuarioRepository.findByNombreUsuario("operador").orElse(null);
+      if (operador == null) {
+        operador = Usuario.builder()
             .nombreUsuario("operador")
             .clave(passwordEncoder.encode("operador123"))
             .rol(RolUsuario.ADMINISTRATIVO)
             .build();
         operador.setEliminado(false);
-        
-        usuarioRepository.save(operador);
-        logger.info("✅ Usuario ADMINISTRATIVO creado exitosamente");
-        logger.info("   Usuario: operador");
-        logger.info("   Contraseña: operador123");
-        logger.info("   Rol: ADMINISTRATIVO");
-      } else {
-        logger.info("✓ Usuario operador ya existe en la base de datos");
+        operador = usuarioRepository.save(operador);
       }
 
-      if (usuarioRepository.findByNombreUsuario("cliente").isEmpty()) {
-        Usuario cliente = Usuario.builder()
+      Usuario clienteUsuario = usuarioRepository.findByNombreUsuario("cliente").orElse(null);
+      if (clienteUsuario == null) {
+        clienteUsuario = Usuario.builder()
                 .nombreUsuario("cliente")
                 .clave(passwordEncoder.encode("cliente123"))
                 .rol(RolUsuario.CLIENTE)
                 .build();
-        cliente.setEliminado(false);
-
-        usuarioRepository.save(cliente);
-        logger.info("✅ Usuario CLIENTE creado exitosamente");
-        logger.info("   Usuario: cliente");
-        logger.info("   Contraseña: cliente123");
-        logger.info("   Rol: CLIENTE");
-      } else {
-        logger.info("✓ Usuario cliente ya existe en la base de datos");
+        clienteUsuario.setEliminado(false);
+        clienteUsuario = usuarioRepository.save(clienteUsuario);
       }
       
       // Inicializar datos geográficos de Mendoza, Argentina
@@ -180,12 +161,21 @@ public class DataInitializer {
         vehiculoRepository.save(v);
       }*/
       
-      // Inicializar datos de prueba
+      // Crear empleados para usuarios admin y operador si no existen
+      crearEmpleadosParaUsuariosSistema(empleadoService, empleadoRepository, direccionService, 
+                                        direccionRepository, localidadRepository, admin, operador);
+      
+      // Inicializar datos de prueba (esto crea direcciones y nacionalidad que necesitamos)
       initDatosPrueba(direccionService, direccionRepository, nacionalidadService, nacionalidadRepository,
                      empleadoService, empleadoRepository, clienteService, clienteRepository,
                      vehiculoService, vehiculoRepository, caracteristicaVehiculoService, costoVehiculoService,
                      imagenService, empresaService, empresaRepository, alquilerService, alquilerRepository,
                      localidadRepository, usuarioRepository, passwordEncoder);
+      
+      // Crear cliente para usuario "cliente" si no existe (después de inicializar datos de prueba)
+      crearClienteParaUsuarioSistema(clienteService, clienteRepository, direccionService,
+                                     direccionRepository, localidadRepository, nacionalidadService,
+                                     nacionalidadRepository, clienteUsuario);
       
     };
   }
@@ -209,12 +199,8 @@ public class DataInitializer {
             .build();
         argentina.setEliminado(false);
         argentina = paisService.save(argentina);
-        logger.info("✅ País 'Argentina' creado exitosamente");
-      } else {
-        logger.info("✓ País 'Argentina' ya existe en la base de datos");
       }
 
-      // 2. Crear Provincia: Mendoza
       Provincia mendoza = provinciaRepository.findByNombreAndEliminadoFalse("Mendoza")
           .orElse(null);
       
@@ -225,9 +211,6 @@ public class DataInitializer {
             .build();
         mendoza.setEliminado(false);
         mendoza = provinciaService.save(mendoza);
-        logger.info("✅ Provincia 'Mendoza' creada exitosamente");
-      } else {
-        logger.info("✓ Provincia 'Mendoza' ya existe en la base de datos");
       }
 
       // 3. Crear Departamentos de Mendoza
@@ -248,22 +231,13 @@ public class DataInitializer {
               .build();
           depto.setEliminado(false);
           depto = departamentoService.save(depto);
-          logger.info("✅ Departamento '{}' creado exitosamente", nombreDepto);
-        } else {
-          logger.info("✓ Departamento '{}' ya existe en la base de datos", nombreDepto);
         }
 
-        // 4. Crear Localidades según el departamento
         crearLocalidadesPorDepartamento(depto, localidadService, localidadRepository);
-
-
       }
-
-      logger.info("✅ Datos geográficos de Mendoza, Argentina inicializados correctamente");
       
     } catch (Exception e) {
-      logger.error("❌ Error al inicializar datos geográficos: {}", e.getMessage());
-      e.printStackTrace();
+      logger.error("Error al inicializar datos geográficos: {}", e.getMessage());
     }
   }
 
@@ -345,11 +319,9 @@ public class DataInitializer {
             .build();
         localidad.setEliminado(false);
         localidadService.save(localidad);
-        logger.debug("✅ Localidad '{}' (CP: {}) creada en departamento '{}'", 
-            nombre, codigoPostal, departamento.getNombre());
       }
     } catch (Exception e) {
-      logger.warn("⚠ No se pudo crear la localidad '{}': {}", nombre, e.getMessage());
+      logger.warn("No se pudo crear la localidad '{}': {}", nombre, e.getMessage());
     }
   }
 
@@ -374,9 +346,6 @@ public class DataInitializer {
                                UsuarioRepository usuarioRepository,
                                PasswordEncoder passwordEncoder) {
     try {
-      logger.info("🔄 Iniciando carga de datos de prueba...");
-
-      // 1. Crear Nacionalidad Argentina
       Nacionalidad argentina = nacionalidadRepository.findByNombreAndEliminadoFalse("Argentina")
           .orElse(null);
       if (argentina == null) {
@@ -385,9 +354,6 @@ public class DataInitializer {
             .build();
         argentina.setEliminado(false);
         argentina = nacionalidadService.save(argentina);
-        logger.info("✅ Nacionalidad 'Argentina' creada exitosamente");
-      } else {
-        logger.info("✓ Nacionalidad 'Argentina' ya existe");
       }
 
       // 2. Crear 2 Direcciones compartidas
@@ -413,9 +379,6 @@ public class DataInitializer {
             .build();
         direccion1.setEliminado(false);
         direccion1 = direccionService.save(direccion1);
-        logger.info("✅ Dirección 1 'San Martín 1234' creada exitosamente");
-      } else {
-        logger.info("✓ Dirección 1 ya existe");
       }
 
       Direccion direccion2 = direccionRepository.findAll().stream()
@@ -435,9 +398,6 @@ public class DataInitializer {
             .build();
         direccion2.setEliminado(false);
         direccion2 = direccionService.save(direccion2);
-        logger.info("✅ Dirección 2 'Belgrano 567' creada exitosamente");
-      } else {
-        logger.info("✓ Dirección 2 ya existe");
       }
 
       // 3. Crear 2 Empleados
@@ -446,7 +406,7 @@ public class DataInitializer {
         if (usuarioEmpleado1 == null) {
           usuarioEmpleado1 = Usuario.builder()
               .nombreUsuario("empleado1")
-              .clave(passwordEncoder.encode("empleado123"))
+              .clave(passwordEncoder.encode("mycar"))
               .rol(RolUsuario.JEFE)
               .build();
           usuarioEmpleado1.setEliminado(false);
@@ -464,9 +424,6 @@ public class DataInitializer {
         empleado1.setDireccion(direccion1);
         empleado1.setEliminado(false);
         empleadoService.save(empleado1);
-        logger.info("✅ Empleado 1 'Carlos Rodríguez' (JEFE) creado exitosamente");
-      } else {
-        logger.info("✓ Empleado 1 ya existe");
       }
 
       if (empleadoRepository.findByNumeroDocumentoAndEliminadoFalse("31234567").isEmpty()) {
@@ -474,7 +431,7 @@ public class DataInitializer {
         if (usuarioEmpleado2 == null) {
           usuarioEmpleado2 = Usuario.builder()
               .nombreUsuario("empleado2")
-              .clave(passwordEncoder.encode("empleado123"))
+              .clave(passwordEncoder.encode("mycar"))
               .rol(RolUsuario.ADMINISTRATIVO)
               .build();
           usuarioEmpleado2.setEliminado(false);
@@ -484,7 +441,7 @@ public class DataInitializer {
         Empleado empleado2 = new Empleado();
         empleado2.setNombre("María");
         empleado2.setApellido("González");
-        empleado2.setFechaNacimiento(new Date(92, 5, 20)); // 20/06/1992
+        empleado2.setFechaNacimiento(new Date(92, 5, 20));
         empleado2.setTipoDocumento(TipoDocumentacion.DNI);
         empleado2.setNumeroDocumento("31234567");
         empleado2.setTipoEmpleado(TipoEmpleado.ADMINISTRATIVO);
@@ -492,9 +449,6 @@ public class DataInitializer {
         empleado2.setDireccion(direccion2);
         empleado2.setEliminado(false);
         empleadoService.save(empleado2);
-        logger.info("✅ Empleado 2 'María González' (ADMINISTRATIVO) creado exitosamente");
-      } else {
-        logger.info("✓ Empleado 2 ya existe");
       }
 
       // 4. Crear 2 Clientes
@@ -511,10 +465,8 @@ public class DataInitializer {
         cliente1.setDireccion(direccion1);
         cliente1.setEliminado(false);
         cliente1 = clienteService.save(cliente1);
-        logger.info("✅ Cliente 1 'Juan Pérez' creado exitosamente");
       } else {
         cliente1 = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("32345678").get();
-        logger.info("✓ Cliente 1 ya existe");
       }
 
       Cliente cliente2 = null;
@@ -522,7 +474,7 @@ public class DataInitializer {
         cliente2 = new Cliente();
         cliente2.setNombre("Ana");
         cliente2.setApellido("Martínez");
-        cliente2.setFechaNacimiento(new Date(95, 7, 25)); // 25/08/1995
+        cliente2.setFechaNacimiento(new Date(95, 7, 25));
         cliente2.setTipoDocumento(TipoDocumentacion.DNI);
         cliente2.setNumeroDocumento("33456789");
         cliente2.setDireccionEstadia("Hostel Mendoza, Cama 12");
@@ -530,10 +482,8 @@ public class DataInitializer {
         cliente2.setDireccion(direccion2);
         cliente2.setEliminado(false);
         cliente2 = clienteService.save(cliente2);
-        logger.info("✅ Cliente 2 'Ana Martínez' creado exitosamente");
       } else {
         cliente2 = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("33456789").get();
-        logger.info("✓ Cliente 2 ya existe");
       }
 
       // 5. Crear 2 Vehículos con características y costos
@@ -581,10 +531,8 @@ public class DataInitializer {
             .build();
         vehiculo1.setEliminado(false);
         vehiculo1 = vehiculoService.save(vehiculo1);
-        logger.info("✅ Vehículo 1 'Toyota Corolla AB123CD' creado exitosamente");
       } else {
         vehiculo1 = vehiculoRepository.findByPatenteAndEliminadoFalse("AB123CD").get();
-        logger.info("✓ Vehículo 1 ya existe");
       }
 
       Vehiculo vehiculo2 = null;
@@ -631,13 +579,10 @@ public class DataInitializer {
             .build();
         vehiculo2.setEliminado(false);
         vehiculo2 = vehiculoService.save(vehiculo2);
-        logger.info("✅ Vehículo 2 'Honda Civic EF456GH' creado exitosamente");
       } else {
         vehiculo2 = vehiculoRepository.findByPatenteAndEliminadoFalse("EF456GH").get();
-        logger.info("✓ Vehículo 2 ya existe");
       }
 
-      // 6. Crear 2 Empresas
       if (empresaRepository.findByEmailAndEliminadoFalse("contacto@mycar1.com").isEmpty()) {
         Empresa empresa1 = Empresa.builder()
             .nombre("MyCar Mendoza")
@@ -647,9 +592,6 @@ public class DataInitializer {
             .build();
         empresa1.setEliminado(false);
         empresaService.save(empresa1);
-        logger.info("✅ Empresa 1 'MyCar Mendoza' creada exitosamente");
-      } else {
-        logger.info("✓ Empresa 1 ya existe");
       }
 
       if (empresaRepository.findByEmailAndEliminadoFalse("info@autosmendoza.com").isEmpty()) {
@@ -661,41 +603,179 @@ public class DataInitializer {
             .build();
         empresa2.setEliminado(false);
         empresaService.save(empresa2);
-        logger.info("✅ Empresa 2 'Autos Mendoza S.A.' creada exitosamente");
-      } else {
-        logger.info("✓ Empresa 2 ya existe");
       }
 
-      // 7. Crear 2 Alquileres
       if (alquilerRepository.count() == 0) {
         Alquiler alquiler1 = Alquiler.builder()
-            .fechaDesde(new Date(125, 0, 10)) // 10/01/2025
-            .fechaHasta(new Date(125, 0, 15)) // 15/01/2025
+            .fechaDesde(new Date(125, 0, 10))
+            .fechaHasta(new Date(125, 0, 15))
             .cliente(cliente1)
             .vehiculo(vehiculo1)
             .build();
         alquiler1.setEliminado(false);
         alquilerService.save(alquiler1);
-        logger.info("✅ Alquiler 1 creado exitosamente (Juan Pérez - Toyota Corolla)");
 
         Alquiler alquiler2 = Alquiler.builder()
-            .fechaDesde(new Date(125, 1, 1)) // 01/02/2025
-            .fechaHasta(new Date(125, 1, 7)) // 07/02/2025
+            .fechaDesde(new Date(125, 1, 1))
+            .fechaHasta(new Date(125, 1, 7))
             .cliente(cliente2)
             .vehiculo(vehiculo2)
             .build();
         alquiler2.setEliminado(false);
         alquilerService.save(alquiler2);
-        logger.info("✅ Alquiler 2 creado exitosamente (Ana Martínez - Honda Civic)");
-      } else {
-        logger.info("✓ Alquileres ya existen");
       }
 
-      logger.info("✅ Datos de prueba inicializados correctamente");
-
     } catch (Exception e) {
-      logger.error("❌ Error al inicializar datos de prueba: {}", e.getMessage());
-      e.printStackTrace();
+      logger.error("Error al inicializar datos de prueba: {}", e.getMessage());
+    }
+  }
+
+  /**
+   * Crea un cliente para el usuario "cliente" del sistema si no existe.
+   */
+  private void crearClienteParaUsuarioSistema(ClienteService clienteService,
+                                             ClienteRepository clienteRepository,
+                                             DireccionService direccionService,
+                                             DireccionRepository direccionRepository,
+                                             LocalidadRepository localidadRepository,
+                                             NacionalidadService nacionalidadService,
+                                             NacionalidadRepository nacionalidadRepository,
+                                             Usuario clienteUsuario) {
+    try {
+      // Obtener nacionalidad Argentina
+      Nacionalidad argentina = nacionalidadRepository.findByNombreAndEliminadoFalse("Argentina")
+          .orElse(null);
+      
+      if (argentina == null) {
+        argentina = Nacionalidad.builder()
+            .nombre("Argentina")
+            .build();
+        argentina.setEliminado(false);
+        argentina = nacionalidadService.save(argentina);
+      }
+
+      // Obtener o crear una dirección para el cliente del sistema
+      Localidad ciudadMendoza = localidadRepository.findByNombreAndEliminadoFalse("Ciudad de Mendoza")
+          .orElse(null);
+      
+      Direccion direccionCliente = null;
+      if (ciudadMendoza != null) {
+        direccionCliente = direccionRepository.findAll().stream()
+            .filter(d -> !d.isEliminado() && ciudadMendoza.equals(d.getLocalidad()))
+            .findFirst()
+            .orElse(null);
+        
+        if (direccionCliente == null) {
+          direccionCliente = Direccion.builder()
+              .calle("Av. San Martín")
+              .numero("1500")
+              .barrio("Centro")
+              .localidad(ciudadMendoza)
+              .build();
+          direccionCliente.setEliminado(false);
+          direccionCliente = direccionService.save(direccionCliente);
+        }
+      }
+
+      // Crear cliente para usuario "cliente" si no existe
+      // Verificar primero si ya existe un cliente asociado al usuario
+      boolean clienteAsociadoExiste = clienteUsuario != null && clienteRepository.findAll().stream()
+          .anyMatch(c -> !c.isEliminado() && clienteUsuario.equals(c.getUsuario()));
+      
+      // Verificar si ya existe un cliente con el número de documento "20222222"
+      boolean clientePorDocumentoExiste = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("20222222").isPresent();
+      
+      if (clienteUsuario != null && !clienteAsociadoExiste && !clientePorDocumentoExiste) {
+        Cliente clienteSistema = new Cliente();
+        clienteSistema.setNombre("Cliente");
+        clienteSistema.setApellido("Sistema");
+        clienteSistema.setFechaNacimiento(new Date(90, 2, 20)); // 20/03/1990
+        clienteSistema.setTipoDocumento(TipoDocumentacion.DNI);
+        clienteSistema.setNumeroDocumento("20222222");
+        clienteSistema.setDireccionEstadia("Hotel Central, Habitación 101");
+        clienteSistema.setNacionalidad(argentina);
+        clienteSistema.setUsuario(clienteUsuario);
+        if (direccionCliente != null) {
+          clienteSistema.setDireccion(direccionCliente);
+        }
+        clienteSistema.setEliminado(false);
+        clienteService.save(clienteSistema);
+      }
+    } catch (Exception e) {
+      logger.error("Error al crear cliente para usuario del sistema: {}", e.getMessage());
+    }
+  }
+
+  /**
+   * Crea empleados para los usuarios del sistema (admin y operador) si no existen.
+   */
+  private void crearEmpleadosParaUsuariosSistema(EmpleadoService empleadoService,
+                                                 EmpleadoRepository empleadoRepository,
+                                                 DireccionService direccionService,
+                                                 DireccionRepository direccionRepository,
+                                                 LocalidadRepository localidadRepository,
+                                                 Usuario admin,
+                                                 Usuario operador) {
+    try {
+      // Obtener o crear una dirección para los empleados del sistema
+      Localidad ciudadMendoza = localidadRepository.findByNombreAndEliminadoFalse("Ciudad de Mendoza")
+          .orElse(null);
+      
+      Direccion direccionSistema = null;
+      if (ciudadMendoza != null) {
+        direccionSistema = direccionRepository.findAll().stream()
+            .filter(d -> !d.isEliminado() && ciudadMendoza.equals(d.getLocalidad()))
+            .findFirst()
+            .orElse(null);
+        
+        if (direccionSistema == null) {
+          direccionSistema = Direccion.builder()
+              .calle("Av. San Martín")
+              .numero("1000")
+              .barrio("Centro")
+              .localidad(ciudadMendoza)
+              .build();
+          direccionSistema.setEliminado(false);
+          direccionSistema = direccionService.save(direccionSistema);
+        }
+      }
+
+      // Crear empleado para admin (JEFE) si no existe
+      if (admin != null && empleadoRepository.findAll().stream()
+          .noneMatch(e -> !e.isEliminado() && admin.equals(e.getUsuario()))) {
+        Empleado empleadoAdmin = new Empleado();
+        empleadoAdmin.setNombre("Administrador");
+        empleadoAdmin.setApellido("Sistema");
+        empleadoAdmin.setFechaNacimiento(new Date(80, 0, 1)); // 01/01/1980
+        empleadoAdmin.setTipoDocumento(TipoDocumentacion.DNI);
+        empleadoAdmin.setNumeroDocumento("20000000");
+        empleadoAdmin.setTipoEmpleado(TipoEmpleado.JEFE);
+        empleadoAdmin.setUsuario(admin);
+        if (direccionSistema != null) {
+          empleadoAdmin.setDireccion(direccionSistema);
+        }
+        empleadoAdmin.setEliminado(false);
+        empleadoService.save(empleadoAdmin);
+      }
+
+      if (operador != null && empleadoRepository.findAll().stream()
+          .noneMatch(e -> !e.isEliminado() && operador.equals(e.getUsuario()))) {
+        Empleado empleadoOperador = new Empleado();
+        empleadoOperador.setNombre("Operador");
+        empleadoOperador.setApellido("Sistema");
+        empleadoOperador.setFechaNacimiento(new Date(85, 5, 15));
+        empleadoOperador.setTipoDocumento(TipoDocumentacion.DNI);
+        empleadoOperador.setNumeroDocumento("20111111");
+        empleadoOperador.setTipoEmpleado(TipoEmpleado.ADMINISTRATIVO);
+        empleadoOperador.setUsuario(operador);
+        if (direccionSistema != null) {
+          empleadoOperador.setDireccion(direccionSistema);
+        }
+        empleadoOperador.setEliminado(false);
+        empleadoService.save(empleadoOperador);
+      }
+    } catch (Exception e) {
+      logger.error("Error al crear empleados para usuarios del sistema: {}", e.getMessage());
     }
   }
 
@@ -720,15 +800,13 @@ public class DataInitializer {
       }
       
       if (Files.exists(rutaImagen)) {
-        byte[] contenido = Files.readAllBytes(rutaImagen);
-        logger.info("✅ Imagen '{}' cargada exitosamente ({} bytes)", nombreArchivo, contenido.length);
-        return contenido;
+        return Files.readAllBytes(rutaImagen);
       } else {
-        logger.warn("⚠ No se encontró la imagen '{}'. Usando placeholder.", nombreArchivo);
+        logger.warn("No se encontró la imagen '{}'. Usando placeholder.", nombreArchivo);
         return ("placeholder-" + nombreArchivo).getBytes();
       }
     } catch (IOException e) {
-      logger.error("❌ Error al leer la imagen '{}': {}", nombreArchivo, e.getMessage());
+      logger.error("Error al leer la imagen '{}': {}", nombreArchivo, e.getMessage());
       return ("error-" + nombreArchivo).getBytes();
     }
   }

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Cambiar Contraseña - My Car</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <style>
+        .card {
+            border-radius: 1rem !important;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+        }
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+        .alert {
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block bg-password-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">
+                                            <i class="fas fa-lock text-warning mr-2"></i>
+                                            Cambiar Contraseña
+                                        </h1>
+                                        <p class="text-muted mb-4">
+                                            Por seguridad, debes cambiar tu contraseña por defecto antes de continuar.
+                                        </p>
+                                    </div>
+
+                                    <!-- Mensajes de error -->
+                                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                                        <span th:text="${error}">Error</span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Mensajes de éxito -->
+                                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        <span th:text="${success}">Éxito</span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <form class="user" th:action="@{/auth/cambiar-clave}" method="post" id="cambiarClaveForm">
+                                        <div class="form-group">
+                                            <label for="nuevaClave">Nueva Contraseña <span class="text-danger">*</span></label>
+                                            <input type="password" 
+                                                   class="form-control form-control-user" 
+                                                   id="nuevaClave" 
+                                                   name="nuevaClave" 
+                                                   placeholder="Ingresa tu nueva contraseña"
+                                                   required
+                                                   minlength="6"
+                                                   autocomplete="new-password">
+                                            <small class="form-text text-muted">
+                                                <i class="fas fa-info-circle mr-1"></i>
+                                                Mínimo 6 caracteres. No puede ser "mycar".
+                                            </small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirmarClave">Confirmar Contraseña <span class="text-danger">*</span></label>
+                                            <input type="password" 
+                                                   class="form-control form-control-user" 
+                                                   id="confirmarClave" 
+                                                   name="confirmarClave" 
+                                                   placeholder="Confirma tu nueva contraseña"
+                                                   required
+                                                   minlength="6"
+                                                   autocomplete="new-password">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                                            <i class="fas fa-key mr-2"></i>
+                                            Cambiar Contraseña
+                                        </button>
+                                    </form>
+                                    <hr>
+                                    <div class="text-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-shield-alt mr-1"></i>
+                                            Por tu seguridad, no compartas tu contraseña con nadie.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script>
+        // Validación del formulario
+        document.getElementById('cambiarClaveForm').addEventListener('submit', function(e) {
+            var nuevaClave = document.getElementById('nuevaClave').value;
+            var confirmarClave = document.getElementById('confirmarClave').value;
+            
+            if (nuevaClave !== confirmarClave) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden');
+                return false;
+            }
+            
+            if (nuevaClave === 'mycar') {
+                e.preventDefault();
+                alert('No se puede usar la contraseña por defecto');
+                return false;
+            }
+            
+            if (nuevaClave.length < 6) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 6 caracteres');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
+

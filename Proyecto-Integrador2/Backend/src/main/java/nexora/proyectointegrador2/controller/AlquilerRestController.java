@@ -33,20 +33,23 @@ public class AlquilerRestController extends BaseRestController<Alquiler, Alquile
   public ResponseEntity<AlquilerDTO> createWithDocument(
       @RequestParam("alquiler") String alquilerJson,
       @RequestParam(value = "archivoDocumento", required = false) MultipartFile archivoDocumento) throws Exception {
-    // El DTO viene como JSON string, necesitamos parsearlo
-    // Por simplicidad, usaremos ObjectMapper o similar
-    AlquilerDTO dto = parseJsonToAlquilerDTO(alquilerJson);
-    
-    // Procesar el documento con el archivo
-    if (archivoDocumento != null && !archivoDocumento.isEmpty()) {
+    try {
+      AlquilerDTO dto = parseJsonToAlquilerDTO(alquilerJson);
+      
+      if (archivoDocumento == null || archivoDocumento.isEmpty()) {
+        throw new IllegalArgumentException("El archivo del documento es obligatorio");
+      }
+      
       alquilerService.procesarDocumentoConArchivo(dto, archivoDocumento);
+      Alquiler entity = mapper.toEntity(dto);
+      Alquiler savedEntity = alquilerService.save(entity);
+      AlquilerDTO savedDto = mapper.toDTO(savedEntity);
+      
+      return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
+    } catch (Exception e) {
+      logger.error("Error al crear alquiler: {}", e.getMessage(), e);
+      throw e;
     }
-    
-    Alquiler entity = mapper.toEntity(dto);
-    Alquiler savedEntity = alquilerService.save(entity);
-    AlquilerDTO savedDto = mapper.toDTO(savedEntity);
-    
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
   }
 
   /**
@@ -57,26 +60,25 @@ public class AlquilerRestController extends BaseRestController<Alquiler, Alquile
       @org.springframework.web.bind.annotation.PathVariable String id,
       @RequestParam("alquiler") String alquilerJson,
       @RequestParam(value = "archivoDocumento", required = false) MultipartFile archivoDocumento) throws Exception {
-    AlquilerDTO dto = parseJsonToAlquilerDTO(alquilerJson);
-    
-    // Procesar el documento con el archivo
-    if (archivoDocumento != null && !archivoDocumento.isEmpty()) {
-      alquilerService.procesarDocumentoConArchivo(dto, archivoDocumento);
+    try {
+      AlquilerDTO dto = parseJsonToAlquilerDTO(alquilerJson);
+      
+      if (archivoDocumento != null && !archivoDocumento.isEmpty()) {
+        alquilerService.procesarDocumentoConArchivo(dto, archivoDocumento);
+      }
+      
+      Alquiler entity = mapper.toEntity(dto);
+      Alquiler updatedEntity = alquilerService.update(id, entity);
+      AlquilerDTO updatedDto = mapper.toDTO(updatedEntity);
+      
+      return ResponseEntity.ok(updatedDto);
+    } catch (Exception e) {
+      logger.error("Error al actualizar alquiler con ID {}: {}", id, e.getMessage(), e);
+      throw e;
     }
-    
-    Alquiler entity = mapper.toEntity(dto);
-    Alquiler updatedEntity = alquilerService.update(id, entity);
-    AlquilerDTO updatedDto = mapper.toDTO(updatedEntity);
-    
-    return ResponseEntity.ok(updatedDto);
   }
 
-  /**
-   * Parsea un JSON string a AlquilerDTO.
-   * Por simplicidad, usaremos Jackson ObjectMapper.
-   */
   private AlquilerDTO parseJsonToAlquilerDTO(String json) throws Exception {
-    // Necesitamos importar ObjectMapper de Jackson
     com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
     objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     return objectMapper.readValue(json, AlquilerDTO.class);

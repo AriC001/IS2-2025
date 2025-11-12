@@ -2,6 +2,8 @@ package nexora.proyectointegrador2.business.logic.service;
 
 import java.nio.file.Path;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,8 @@ import nexora.proyectointegrador2.utils.dto.AlquilerDTO;
 @Service
 public class AlquilerService extends BaseService<Alquiler, String> {
 
+  private static final Logger logger = LoggerFactory.getLogger(AlquilerService.class);
+  
   private final AlquilerRepository alquilerRepository;
 
   @Autowired
@@ -117,6 +121,26 @@ public class AlquilerService extends BaseService<Alquiler, String> {
     }
 
     if (entity.getDocumento() != null && entity.getDocumento().getId() == null) {
+      // Si se está creando un nuevo documento, eliminar el anterior si existe
+      Alquiler alquilerExistente = findById(id);
+      if (alquilerExistente.getDocumento() != null) {
+        Documento documentoAnterior = alquilerExistente.getDocumento();
+        // Eliminar archivo físico
+        if (documentoAnterior.getPathArchivo() != null && !documentoAnterior.getPathArchivo().trim().isEmpty()) {
+          try {
+            documentoService.eliminarArchivoFisico(documentoAnterior.getPathArchivo());
+          } catch (Exception e) {
+            logger.warn("No se pudo eliminar el archivo físico del documento anterior: {}", e.getMessage());
+          }
+        }
+        // Eliminar registro de la base de datos
+        try {
+          documentoService.delete(documentoAnterior.getId());
+        } catch (Exception e) {
+          logger.warn("No se pudo eliminar el documento anterior de la base de datos: {}", e.getMessage());
+        }
+      }
+      // Crear el nuevo documento
       Documento documentoGuardado = documentoService.save(entity.getDocumento());
       entity.setDocumento(documentoGuardado);
     } else if (entity.getDocumento() != null && entity.getDocumento().getId() != null) {
@@ -175,33 +199,47 @@ public class AlquilerService extends BaseService<Alquiler, String> {
       throw new Exception("El vehículo es obligatorio");
     }
 
-    Cliente cliente = clienteService.findById(dto.getCliente().getId());
-    Vehiculo vehiculo = vehiculoService.findById(dto.getVehiculo().getId());
-
-    if (cliente == null) {
-      throw new Exception("Cliente no encontrado");
+    // Obtener cliente y vehículo desde la base de datos
+    // findById puede lanzar excepción si no existe, la capturamos y damos un mensaje más claro
+    Cliente cliente;
+    try {
+      cliente = clienteService.findById(dto.getCliente().getId());
+    } catch (Exception e) {
+      throw new Exception("Cliente no encontrado con ID: " + dto.getCliente().getId() + ". " + e.getMessage(), e);
     }
-    if (vehiculo == null) {
-      throw new Exception("Vehículo no encontrado");
+    
+    Vehiculo vehiculo;
+    try {
+      vehiculo = vehiculoService.findById(dto.getVehiculo().getId());
+    } catch (Exception e) {
+      throw new Exception("Vehículo no encontrado con ID: " + dto.getVehiculo().getId() + ". " + e.getMessage(), e);
     }
 
-    // Generar nombres para el archivo
+    // Generar información para el nombre del archivo
     String nombreCliente = (cliente.getNombre() + " " + cliente.getApellido()).trim();
-    String nombreVehiculo = vehiculo.getPatente();
+    String marca = null;
+    String modelo = null;
     if (vehiculo.getCaracteristicaVehiculo() != null) {
-      String marca = vehiculo.getCaracteristicaVehiculo().getMarca();
-      String modelo = vehiculo.getCaracteristicaVehiculo().getModelo();
-      if (marca != null && modelo != null) {
-        nombreVehiculo = marca + "_" + modelo;
-      }
+      marca = vehiculo.getCaracteristicaVehiculo().getMarca();
+      modelo = vehiculo.getCaracteristicaVehiculo().getModelo();
+    }
+    // Si no hay marca/modelo, usar la patente como fallback
+    if (marca == null || modelo == null) {
+      marca = vehiculo.getPatente() != null ? vehiculo.getPatente() : "vehiculo";
+      modelo = "";
     }
 
     // Guardar archivo en disco usando DocumentoService
-    Path rutaArchivo = documentoService.guardarArchivoEnDisco(archivoDocumento, nombreCliente, nombreVehiculo);
+    // Retorna: [0] = Path completo, [1] = Nombre del archivo, [2] = MimeType
+    Object[] resultadoGuardado = documentoService.guardarArchivoEnDisco(archivoDocumento, nombreCliente, marca, modelo);
+    Path rutaArchivo = (Path) resultadoGuardado[0];
+    String nombreArchivo = (String) resultadoGuardado[1];
+    String mimeType = (String) resultadoGuardado[2];
 
     // Rellenar campos del documento en el DTO
     dto.getDocumento().setPathArchivo(rutaArchivo.toString());
-    dto.getDocumento().setNombreArchivo(rutaArchivo.getFileName().toString());
+    dto.getDocumento().setNombreArchivo(nombreArchivo);
+    dto.getDocumento().setMimeType(mimeType);
   }
 
 }

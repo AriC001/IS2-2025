@@ -19,5 +19,6 @@ public class AuthResponseDTO {
   private String id;
   private String nombreUsuario;
   private RolUsuario rol;
+  private Boolean requiereCambioClave;
 
 }

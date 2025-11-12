@@ -28,6 +28,8 @@ public class AuthService {
     this.jwtUtil = jwtUtil;
   }
 
+  private static final String CLAVE_POR_DEFECTO = "mycar";
+
   public AuthResponseDTO login(LoginRequestDTO loginRequest) throws Exception {
     logger.info("Intento de autenticación para usuario: {}", loginRequest.getNombreUsuario());
 
@@ -47,6 +49,10 @@ public class AuthService {
       throw new Exception("Credenciales inválidas");
     }
 
+    // Verificar si la contraseña es la por defecto "mycar"
+    // Comparar la contraseña encriptada del usuario con la contraseña por defecto encriptada
+    boolean requiereCambioClave = passwordEncoder.matches(CLAVE_POR_DEFECTO, usuario.getClave());
+
     // Generar token JWT
     String token = jwtUtil.generateToken(
         usuario.getId(), 
@@ -55,6 +61,9 @@ public class AuthService {
     );
 
     logger.info("Login exitoso para usuario: {}", loginRequest.getNombreUsuario());
+    if (requiereCambioClave) {
+      logger.warn("⚠ Usuario {} tiene contraseña por defecto, requiere cambio de contraseña", loginRequest.getNombreUsuario());
+    }
 
     return AuthResponseDTO.builder()
         .token(token)
@@ -62,6 +71,7 @@ public class AuthService {
         .id(usuario.getId())
         .nombreUsuario(usuario.getNombreUsuario())
         .rol(usuario.getRol())
+        .requiereCambioClave(requiereCambioClave)
         .build();
   }
 

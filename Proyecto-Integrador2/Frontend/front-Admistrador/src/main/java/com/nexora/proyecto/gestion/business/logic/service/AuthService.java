@@ -66,4 +66,56 @@ public class AuthService {
     }
   }
 
+  public void cambiarClave(String usuarioId, String nuevaClave, String token) throws Exception {
+    try {
+      // baseUrl ya incluye /api/v1, solo agregar el resto del path
+      String url = baseUrl + "/usuarios/" + usuarioId + "/cambiar-clave";
+      
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
+      headers.setBearerAuth(token);
+      
+      CambioClaveRequest request = new CambioClaveRequest();
+      request.setNuevaClave(nuevaClave);
+      
+      HttpEntity<CambioClaveRequest> httpRequest = new HttpEntity<>(request, headers);
+      
+      logger.debug("Enviando petición de cambio de contraseña a: {}", url);
+      
+      ResponseEntity<String> response = restTemplate.postForEntity(
+          url, 
+          httpRequest, 
+          String.class
+      );
+      
+      logger.info("Contraseña cambiada exitosamente para usuario ID: {}", usuarioId);
+      
+    } catch (HttpClientErrorException e) {
+      logger.error("Error del cliente en cambio de contraseña: {} - {}", e.getStatusCode(), e.getMessage());
+      String errorMessage = "Error al cambiar la contraseña";
+      if (e.getResponseBodyAsString() != null && !e.getResponseBodyAsString().isEmpty()) {
+        errorMessage = e.getResponseBodyAsString();
+      }
+      throw new Exception(errorMessage);
+    } catch (Exception e) {
+      logger.error("Error inesperado en cambio de contraseña: {}", e.getMessage());
+      throw new Exception("Error al conectar con el servidor para cambiar la contraseña");
+    }
+  }
+
+  /**
+   * DTO interno para la solicitud de cambio de contraseña.
+   */
+  public static class CambioClaveRequest {
+    private String nuevaClave;
+
+    public String getNuevaClave() {
+      return nuevaClave;
+    }
+
+    public void setNuevaClave(String nuevaClave) {
+      this.nuevaClave = nuevaClave;
+    }
+  }
+
 }

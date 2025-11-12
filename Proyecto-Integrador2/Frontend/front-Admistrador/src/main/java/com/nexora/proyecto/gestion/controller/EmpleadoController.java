@@ -160,12 +160,14 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
       
       // Si se proporcionaron datos para crear un nuevo usuario, crearlo primero
       if (nuevoNombreUsuario != null && !nuevoNombreUsuario.trim().isEmpty() &&
-          nuevaClave != null && !nuevaClave.trim().isEmpty() &&
           nuevoRol != null && !nuevoRol.trim().isEmpty()) {
         UsuarioDTO nuevoUsuario = new UsuarioDTO();
         nuevoUsuario.setNombreUsuario(nuevoNombreUsuario.trim());
-        nuevoUsuario.setClave(nuevaClave);
+        // Siempre usar "mycar" como contraseña por defecto para nuevos empleados
+        nuevoUsuario.setClave("mycar");
         nuevoUsuario.setRol(RolUsuario.valueOf(nuevoRol));
+        
+        logger.info("Creando nuevo usuario '{}' con contraseña por defecto 'mycar'", nuevoNombreUsuario);
         
         UsuarioDTO usuarioCreado = usuarioService.create(nuevoUsuario);
         entity.setUsuario(usuarioCreado);

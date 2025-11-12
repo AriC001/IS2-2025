@@ -172,6 +172,7 @@ nexora\proyectointegrador2\controller\VehiculoRestController.class
 nexora\proyectointegrador2\utils\dto\FacturaDTO$FacturaDTOBuilderImpl.class
 nexora\proyectointegrador2\utils\dto\ContactoDTO$ContactoDTOBuilder.class
 nexora\proyectointegrador2\utils\mapper\impl\VehiculoMapper.class
+nexora\proyectointegrador2\controller\UsuarioRestController$CambioClaveRequest.class
 nexora\proyectointegrador2\business\domain\entity\CaracteristicaVehiculo$CaracteristicaVehiculoBuilder.class
 nexora\proyectointegrador2\utils\dto\NacionalidadDTO$NacionalidadDTOBuilder.class
 nexora\proyectointegrador2\business\persistence\repository\ProvinciaRepository.class
