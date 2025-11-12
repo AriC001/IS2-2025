@@ -71,7 +71,7 @@ public class AuthController {
       logger.info("✅ Login exitoso para usuario: {} con rol: {}", nombreUsuario, authResponse.getRol());
       
       // Redirigir al dashboard principal (solo JEFE y ADMINISTRATIVO)
-      return "redirect:/dashboard";
+      return "views/home";
       
     } catch (Exception e) {
       logger.error("Error en el login: {}", e.getMessage());

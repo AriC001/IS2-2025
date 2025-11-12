@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mi Perfil</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <!-- SIDEBAR -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Puedes dejar tu sidebar normal aquí -->
+    </ul>
+
+    <!-- CONTENT WRAPPER -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- MAIN CONTENT -->
+        <div id="content">
+
+            <!-- TOPBAR -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <h4 class="m-0">Mi Perfil</h4>
+            </nav>
+
+            <!-- PAGE CONTENT -->
+            <div class="container-fluid">
+
+                <div class="row justify-content-center">
+                    <div class="col-xl-8 col-lg-10 col-md-12">
+
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Datos del Cliente</h6>
+                            </div>
+
+                            <div class="card-body">
+
+                                <form th:action="@{/cliente/perfil/guardar}" method="post" th:object="${cliente}">
+
+                                    <!-- ============================
+                                         DATOS PERSONALES
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mb-3">Datos personales</h5>
+
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" class="form-control" th:field="*{nombre}" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Apellido</label>
+                                        <input type="text" class="form-control" th:field="*{apellido}" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>DNI</label>
+                                        <input type="text" class="form-control" th:field="*{dni}" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Teléfono</label>
+                                        <input type="text" class="form-control" th:field="*{telefono}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" class="form-control" th:field="*{email}" required />
+                                    </div>
+
+                                    <!-- ============================
+                                         DATOS DE USUARIO
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mt-4 mb-3">Datos de Usuario</h5>
+
+                                    <div class="form-group">
+                                        <label>Nombre de usuario</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{usuario.nombreUsuario}" readonly />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Rol</label>
+                                        <input type="text" class="form-control"
+                                               th:value="${cliente.usuario.rol}" readonly />
+                                    </div>
+
+                                    <!-- ============================
+                                         DIRECCIÓN
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mt-4 mb-3">Dirección</h5>
+
+                                    <div class="form-group">
+                                        <label>Calle</label>
+                                        <input type="text" class="form-control" th:field="*{direccion.calle}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Número</label>
+                                        <input type="text" class="form-control" th:field="*{direccion.numero}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Localidad</label>
+                                        <select th:field="*{direccion.localidad.id}" class="form-control">
+                                            <option value="">Seleccione una localidad</option>
+                                            <option th:each="loc : ${localidades}"
+                                                    th:value="${loc.id}"
+                                                    th:text="${loc.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- ============================
+                                         NACIONALIDAD
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mt-4 mb-3">Nacionalidad</h5>
+
+                                    <div class="form-group">
+                                        <select th:field="*{nacionalidad.id}" class="form-control">
+                                            <option value="">Seleccione una nacionalidad</option>
+                                            <option th:each="n : ${nacionalidades}"
+                                                    th:value="${n.id}"
+                                                    th:text="${n.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="text-center mt-4">
+                                        <button class="btn btn-success px-4" type="submit">
+                                            Guardar cambios
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- END PAGE CONTENT -->
+
+        </div>
+    </div>
+
+</div>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+</body>
+</html>

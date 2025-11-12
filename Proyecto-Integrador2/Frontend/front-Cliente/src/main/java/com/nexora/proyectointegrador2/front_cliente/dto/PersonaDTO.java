@@ -1,6 +1,7 @@
 package  com.nexora.proyectointegrador2.front_cliente.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.nexora.proyectointegrador2.front_cliente.dto.enums.TipoDocumentacion;
 
@@ -20,9 +21,9 @@ public abstract class PersonaDTO extends BaseDTO {
   private Date fechaNacimiento;
   private TipoDocumentacion tipoDocumento;
   private String numeroDocumento;
-  private String usuarioId;
+  private UsuarioDTO usuario;
   private DireccionDTO direccion;
-  private ContactoDTO contacto;
-  private String imagenPerfilId;
+  private List<ContactoDTO> contactos;
+  private ImagenDTO imagenPerfil;
 
 }
