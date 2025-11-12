@@ -15,5 +15,5 @@ public class AlquilerDAO extends BaseDAO<AlquilerDTO, String> {
   protected Class<AlquilerDTO> getEntityClass() {
     return AlquilerDTO.class;
   }
-  
+    
 }

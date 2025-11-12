@@ -80,6 +80,9 @@
         color: #333;
     }
 
+    /* ********************************************************* */
+    /* *** MODIFICACIÓN CSS: Añadido text-decoration: none; *** */
+    /* ********************************************************* */
     .btn-primary {
         padding: 10px 25px;
         background: #1e6dfb;
@@ -87,6 +90,7 @@
         border: none;
         border-radius: 8px;
         cursor: pointer;
+        text-decoration: none; /* Añadido para quitar subrayado en elementos <a> */
     }
 
     /* HERO SECTION */
@@ -133,22 +137,22 @@
 
     /* Fondo abstracto (Detrás del auto) */
     /* Fondo abstracto */
-        .hero::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 700px;
-            height: 450px;
-            background-color: #bfe4ff;
-            border-top-left-radius: 50%;
-            transform: translateX(40%) translateY(0%);
-            z-index: 0;
-        }
+    .hero::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 700px;
+        height: 450px;
+        background-color: #bfe4ff;
+        border-top-left-radius: 50%;
+        transform: translateX(40%) translateY(0%);
+        z-index: 0;
+    }
 
 
     /* IMAGE - ESTILOS DEL AUTO (Corregido) */
-   /* Tus valores fijos implementados - AJUSTE TOP */
+    /* Tus valores fijos implementados - AJUSTE TOP */
     .hero-img {
         position: absolute;
         width: 1048px; 
@@ -263,13 +267,11 @@
         </div>
 
         <div class="nav-links">
-            <!-- Si hay sesión (token o usuariosession), mostrar Vehículos y Logout -->
             <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn" style="margin-right:8px">Vehículos</a>
             <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-primary">Log out</a>
 
-            <!-- Si NO hay sesión, mostrar Sign in / Sign up -->
             <a th:if="${session.usuariosession == null and session.token == null}" th:href="@{/auth/login}">Sign in</a>
-            <button th:if="${session.usuariosession == null and session.token == null}" class="btn-primary">Sign up</button>
+            <a th:if="${session.usuariosession == null and session.token == null}" th:href="@{/auth/registro}" class="btn-primary">Sign up</a>
         </div>
     </header>
 
