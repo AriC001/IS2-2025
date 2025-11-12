@@ -217,7 +217,7 @@
                         <span th:text="${error}"></span>
                         <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
                     </div>
-                    <form th:action="${cliente?.id != null ? '/clientes/' + cliente.id : '/clientes'}" th:object="${cliente}" method="post">
+                    <form th:action="${cliente?.id != null ? '/clientes/' + cliente.id + '/actualizar-con-contactos' : '/clientes/crear-con-contactos'}" th:object="${cliente}" method="post">
                         <input type="hidden" th:field="*{id}" th:if="${cliente?.id != null}">
                         
                         <!-- Sección 1: Datos Personales -->
@@ -322,6 +322,45 @@
                                 <div class="form-group">
                                     <label>Dirección de Estadía</label>
                                     <textarea class="form-control" th:field="*{direccionEstadia}" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 4: Contactos Básicos -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Sección 4: Contactos Básicos</h6>
+                                <small class="text-muted">Opcional: Puede agregar más contactos desde la sección de Contactos después de guardar</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Teléfono</label>
+                                            <input type="text" class="form-control" id="telefonoCliente" name="telefono" 
+                                                   placeholder="+54 9 261 0000000" maxlength="20">
+                                            <small class="form-text text-muted">Opcional: Teléfono de contacto del cliente</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Tipo de Teléfono</label>
+                                            <select class="form-control" id="tipoTelefonoCliente" name="tipoTelefono">
+                                                <option value="">Seleccione</option>
+                                                <option th:each="tipoTel : ${tiposTelefono}" 
+                                                        th:value="${tipoTel}" 
+                                                        th:text="${tipoTel}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Correo Electrónico</label>
+                                            <input type="email" class="form-control" id="emailCliente" name="email" 
+                                                   placeholder="ejemplo@correo.com" maxlength="120">
+                                            <small class="form-text text-muted">Opcional: Correo electrónico del cliente</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nexora.proyectointegrador2.business.domain.entity.Contacto;
-import nexora.proyectointegrador2.business.domain.entity.ContactoCorreoElectronico;
-import nexora.proyectointegrador2.business.domain.entity.ContactoTelefonico;
 import nexora.proyectointegrador2.business.domain.entity.Direccion;
 import nexora.proyectointegrador2.business.domain.entity.Empleado;
 import nexora.proyectointegrador2.business.persistence.repository.EmpleadoRepository;
@@ -18,11 +16,6 @@ public class EmpleadoService extends BaseService<Empleado, String> {
   @Autowired
   private DireccionService direccionService;
   
-  @Autowired
-  private ContactoTelefonicoService contactoTelefonicoService;
-  
-  @Autowired
-  private ContactoCorreoElectronicoService contactoCorreoElectronicoService;
 
   public EmpleadoService(EmpleadoRepository repository) {
     super(repository);
@@ -74,24 +67,12 @@ public class EmpleadoService extends BaseService<Empleado, String> {
       entity.setDireccion(direccionExistente);
     }
 
-    // Persistir Contactos si existen y son nuevos (no tienen ID)
+    // Asegurar que los contactos tengan la referencia a la persona
+    // NO guardarlos aquí, JPA los guardará automáticamente gracias a CascadeType.ALL
     if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
-      for (int i = 0; i < entity.getContactos().size(); i++) {
-        Contacto contacto = entity.getContactos().get(i);
-        if (contacto.getId() == null) {
-          Contacto contactoGuardado;
-          
-          // Determinar el tipo de contacto y usar el servicio correspondiente
-          if (contacto instanceof ContactoTelefonico) {
-            contactoGuardado = contactoTelefonicoService.save((ContactoTelefonico) contacto);
-          } else if (contacto instanceof ContactoCorreoElectronico) {
-            contactoGuardado = contactoCorreoElectronicoService.save((ContactoCorreoElectronico) contacto);
-          } else {
-            throw new Exception("Tipo de contacto no soportado");
-          }
-          
-          // Actualizar la referencia en la lista
-          entity.getContactos().set(i, contactoGuardado);
+      for (Contacto contacto : entity.getContactos()) {
+        if (contacto.getPersona() == null) {
+          contacto.setPersona(entity);
         }
       }
     }
@@ -117,22 +98,12 @@ public class EmpleadoService extends BaseService<Empleado, String> {
       }
     }
 
-    // Similar para Contactos
+    // Asegurar que los contactos nuevos tengan la referencia a la persona
+    // NO guardarlos aquí, JPA los guardará automáticamente gracias a CascadeType.ALL
     if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
-      for (int i = 0; i < entity.getContactos().size(); i++) {
-        Contacto contacto = entity.getContactos().get(i);
-        if (contacto.getId() == null) {
-          Contacto contactoGuardado;
-          if (contacto instanceof ContactoTelefonico) {
-            contactoGuardado = contactoTelefonicoService.save((ContactoTelefonico) contacto);
-          } else if (contacto instanceof ContactoCorreoElectronico) {
-            contactoGuardado = contactoCorreoElectronicoService.save((ContactoCorreoElectronico) contacto);
-          } else {
-            throw new Exception("Tipo de contacto no soportado");
-          }
-          
-          // Actualizar la referencia en la lista
-          entity.getContactos().set(i, contactoGuardado);
+      for (Contacto contacto : entity.getContactos()) {
+        if (contacto.getId() == null && contacto.getPersona() == null) {
+          contacto.setPersona(entity);
         }
       }
     }

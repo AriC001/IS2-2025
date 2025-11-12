@@ -2,7 +2,9 @@ package nexora.proyectointegrador2.business.logic.service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import nexora.proyectointegrador2.business.domain.entity.Cliente;
+import nexora.proyectointegrador2.business.domain.entity.Contacto;
+import nexora.proyectointegrador2.business.domain.entity.ContactoCorreoElectronico;
+import nexora.proyectointegrador2.business.domain.entity.ContactoTelefonico;
 import nexora.proyectointegrador2.business.domain.entity.Direccion;
 import nexora.proyectointegrador2.business.domain.entity.Localidad;
 import nexora.proyectointegrador2.business.domain.entity.Nacionalidad;
 import nexora.proyectointegrador2.business.domain.entity.Usuario;
 import nexora.proyectointegrador2.business.enums.RolUsuario;
+import nexora.proyectointegrador2.business.enums.TipoContacto;
 import nexora.proyectointegrador2.business.enums.TipoDocumentacion;
+import nexora.proyectointegrador2.business.enums.TipoTelefono;
 import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
 import nexora.proyectointegrador2.utils.dto.AuthResponseDTO;
 import nexora.proyectointegrador2.utils.dto.LoginRequestDTO;
@@ -159,9 +166,33 @@ public class AuthService {
     cliente.setDireccionEstadia(registerRequest.getDireccionEstadia() != null ? registerRequest.getDireccionEstadia() : "");
     cliente.setEliminado(false);
 
-    // 9. Los contactos son opcionales, se pueden agregar después si es necesario
-    // Dejamos la lista de contactos vacía/null
-    cliente.setContactos(null);
+    // 9. Crear contactos telefónico y correo electrónico si se proporcionaron
+    List<Contacto> contactos = new ArrayList<>();
+    
+    // Crear contacto telefónico si se proporcionó
+    if (registerRequest.getTelefono() != null && !registerRequest.getTelefono().trim().isEmpty()) {
+      ContactoTelefonico contactoTelefonico = ContactoTelefonico.builder()
+          .telefono(registerRequest.getTelefono().trim())
+          .tipoTelefono(TipoTelefono.CELULAR)
+          .build();
+      contactoTelefonico.setTipoContacto(TipoContacto.PERSONAL);
+      contactoTelefonico.setPersona(cliente);
+      contactoTelefonico.setEliminado(false);
+      contactos.add(contactoTelefonico);
+    }
+    
+    // Crear contacto de correo electrónico si se proporcionó
+    if (registerRequest.getEmail() != null && !registerRequest.getEmail().trim().isEmpty()) {
+      ContactoCorreoElectronico contactoCorreo = ContactoCorreoElectronico.builder()
+          .email(registerRequest.getEmail().trim())
+          .build();
+      contactoCorreo.setTipoContacto(TipoContacto.PERSONAL);
+      contactoCorreo.setPersona(cliente);
+      contactoCorreo.setEliminado(false);
+      contactos.add(contactoCorreo);
+    }
+    
+    cliente.setContactos(contactos.isEmpty() ? null : contactos);
 
     // 10. Guardar el Cliente (esto también guardará los contactos gracias a CascadeType.ALL)
     cliente = clienteService.save(cliente);

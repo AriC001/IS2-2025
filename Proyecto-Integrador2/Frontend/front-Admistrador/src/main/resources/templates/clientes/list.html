@@ -141,6 +141,17 @@
                                             <td>
                                                 <a th:href="@{/clientes/{id}(id=${cliente.id})}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
                                                 <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                                                <th:block th:if="${cliente.contactos != null and !cliente.contactos.isEmpty()}">
+                                                    <th:block th:with="telefonoCelular=${cliente.contactos.?[class.simpleName == 'ContactoTelefonicoDTO' and tipoTelefono != null and tipoTelefono.toString() == 'CELULAR'][0]}">
+                                                        <a th:if="${telefonoCelular != null}" 
+                                                           th:href="@{'https://wa.me/' + ${#strings.replace(#strings.replace(#strings.replace(telefonoCelular.telefono, ' ', ''), '+', ''), '-', '')}}" 
+                                                           target="_blank" 
+                                                           class="btn btn-success btn-sm ml-1" 
+                                                           title="Abrir WhatsApp Web">
+                                                            <i class="fab fa-whatsapp"></i>
+                                                        </a>
+                                                    </th:block>
+                                                </th:block>
                                                 <form th:action="@{/clientes/{id}/eliminar(id=${cliente.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
                                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Eliminar</button>
                                                 </form>

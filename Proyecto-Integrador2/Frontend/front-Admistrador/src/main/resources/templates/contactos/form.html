@@ -140,8 +140,24 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>Persona asociada (ID opcional)</label>
-                                            <input type="text" th:field="*{personaId}" class="form-control" maxlength="36" placeholder="UUID de la persona">
+                                            <label>Persona asociada</label>
+                                            <select class="form-control" th:field="*{personaId}">
+                                                <option value="">Ninguna</option>
+                                                <!-- Clientes -->
+                                                <optgroup label="Clientes">
+                                                    <option th:each="cliente : ${clientes}" 
+                                                            th:value="'CLIENTE-' + ${cliente.id}"
+                                                            th:text="'CLIENTE - ' + ${cliente.nombre} + ' ' + ${cliente.apellido} + ' (Doc: ' + ${cliente.numeroDocumento} + ')'">
+                                                    </option>
+                                                </optgroup>
+                                                <!-- Empleados -->
+                                                <optgroup label="Empleados">
+                                                    <option th:each="empleado : ${empleados}" 
+                                                            th:value="'EMPLEADO-' + ${empleado.id}"
+                                                            th:text="'EMPLEADO - ' + ${empleado.nombre} + ' ' + ${empleado.apellido} + ' (Doc: ' + ${empleado.numeroDocumento} + ')'">
+                                                    </option>
+                                                </optgroup>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-12">

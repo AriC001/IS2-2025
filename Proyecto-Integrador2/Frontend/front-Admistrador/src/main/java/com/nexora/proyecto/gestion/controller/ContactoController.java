@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.nexora.proyecto.gestion.business.logic.service.ClienteService;
 import com.nexora.proyecto.gestion.business.logic.service.ContactoCorreoElectronicoService;
 import com.nexora.proyecto.gestion.business.logic.service.ContactoTelefonicoService;
+import com.nexora.proyecto.gestion.business.logic.service.EmpleadoService;
+import com.nexora.proyecto.gestion.dto.ClienteDTO;
 import com.nexora.proyecto.gestion.dto.ContactoCorreoElectronicoDTO;
 import com.nexora.proyecto.gestion.dto.ContactoTelefonicoDTO;
+import com.nexora.proyecto.gestion.dto.EmpleadoDTO;
 import com.nexora.proyecto.gestion.dto.enums.TipoContacto;
 import com.nexora.proyecto.gestion.dto.enums.TipoTelefono;
 
@@ -27,11 +31,17 @@ public class ContactoController {
 
   private final ContactoTelefonicoService contactoTelefonicoService;
   private final ContactoCorreoElectronicoService contactoCorreoElectronicoService;
+  private final ClienteService clienteService;
+  private final EmpleadoService empleadoService;
 
   public ContactoController(ContactoTelefonicoService contactoTelefonicoService,
-                            ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
+                            ContactoCorreoElectronicoService contactoCorreoElectronicoService,
+                            ClienteService clienteService,
+                            EmpleadoService empleadoService) {
     this.contactoTelefonicoService = contactoTelefonicoService;
     this.contactoCorreoElectronicoService = contactoCorreoElectronicoService;
+    this.clienteService = clienteService;
+    this.empleadoService = empleadoService;
   }
 
   @GetMapping
@@ -50,10 +60,88 @@ public class ContactoController {
 
       // Crear lista unificada para mostrar
       List<ContactoUnificado> contactosUnificados = new ArrayList<>();
-      telefonos.forEach(t -> contactosUnificados.add(new ContactoUnificado(t.getId(), "TELEFONO", t.getTelefono(), 
-          t.getTipoContacto(), t.getTipoTelefono(), t.getObservacion(), null)));
-      correos.forEach(c -> contactosUnificados.add(new ContactoUnificado(c.getId(), "CORREO", c.getEmail(), 
-          c.getTipoContacto(), null, c.getObservacion(), null)));
+      
+      // Procesar teléfonos
+      for (ContactoTelefonicoDTO t : telefonos) {
+        String personaNombre = null;
+        String personaDocumento = null;
+        
+        if (t.getPersonaId() != null && !t.getPersonaId().trim().isEmpty()) {
+          try {
+            if (t.getPersonaId().startsWith("CLIENTE-")) {
+              String clienteId = t.getPersonaId().substring(8);
+              ClienteDTO cliente = clienteService.findById(clienteId);
+              if (cliente != null) {
+                personaNombre = cliente.getNombre() + " " + cliente.getApellido();
+                personaDocumento = cliente.getTipoDocumento() + ": " + cliente.getNumeroDocumento();
+              }
+            } else if (t.getPersonaId().startsWith("EMPLEADO-")) {
+              String empleadoId = t.getPersonaId().substring(9);
+              EmpleadoDTO empleado = empleadoService.findById(empleadoId);
+              if (empleado != null) {
+                personaNombre = empleado.getNombre() + " " + empleado.getApellido();
+                personaDocumento = empleado.getTipoDocumento() + ": " + empleado.getNumeroDocumento();
+              }
+            }
+          } catch (Exception e) {
+            // Si no se encuentra la persona, dejar null
+          }
+        }
+        
+        String tipoPersona = null;
+        if (t.getPersonaId() != null && !t.getPersonaId().trim().isEmpty()) {
+          if (t.getPersonaId().startsWith("CLIENTE-")) {
+            tipoPersona = "CLIENTE";
+          } else if (t.getPersonaId().startsWith("EMPLEADO-")) {
+            tipoPersona = "EMPLEADO";
+          }
+        }
+        
+        contactosUnificados.add(new ContactoUnificado(t.getId(), "TELEFONO", t.getTelefono(), 
+            t.getTipoContacto(), t.getTipoTelefono(), t.getObservacion(), t.getPersonaId(),
+            personaNombre, personaDocumento, tipoPersona));
+      }
+      
+      // Procesar correos
+      for (ContactoCorreoElectronicoDTO c : correos) {
+        String personaNombre = null;
+        String personaDocumento = null;
+        
+        if (c.getPersonaId() != null && !c.getPersonaId().trim().isEmpty()) {
+          try {
+            if (c.getPersonaId().startsWith("CLIENTE-")) {
+              String clienteId = c.getPersonaId().substring(8);
+              ClienteDTO cliente = clienteService.findById(clienteId);
+              if (cliente != null) {
+                personaNombre = cliente.getNombre() + " " + cliente.getApellido();
+                personaDocumento = cliente.getTipoDocumento() + ": " + cliente.getNumeroDocumento();
+              }
+            } else if (c.getPersonaId().startsWith("EMPLEADO-")) {
+              String empleadoId = c.getPersonaId().substring(9);
+              EmpleadoDTO empleado = empleadoService.findById(empleadoId);
+              if (empleado != null) {
+                personaNombre = empleado.getNombre() + " " + empleado.getApellido();
+                personaDocumento = empleado.getTipoDocumento() + ": " + empleado.getNumeroDocumento();
+              }
+            }
+          } catch (Exception e) {
+            // Si no se encuentra la persona, dejar null
+          }
+        }
+        
+        String tipoPersona = null;
+        if (c.getPersonaId() != null && !c.getPersonaId().trim().isEmpty()) {
+          if (c.getPersonaId().startsWith("CLIENTE-")) {
+            tipoPersona = "CLIENTE";
+          } else if (c.getPersonaId().startsWith("EMPLEADO-")) {
+            tipoPersona = "EMPLEADO";
+          }
+        }
+        
+        contactosUnificados.add(new ContactoUnificado(c.getId(), "CORREO", c.getEmail(), 
+            c.getTipoContacto(), null, c.getObservacion(), c.getPersonaId(),
+            personaNombre, personaDocumento, tipoPersona));
+      }
 
       model.addAttribute("contactos", contactosUnificados);
 
@@ -80,6 +168,10 @@ public class ContactoController {
         contacto.setTipoTelefono(form.getTipoTelefono());
         contacto.setTipoContacto(form.getTipoContacto());
         contacto.setObservacion(form.getObservacion());
+        // Establecer personaId si se proporciona (formato: "CLIENTE-{id}" o "EMPLEADO-{id}")
+        if (form.getPersonaId() != null && !form.getPersonaId().trim().isEmpty()) {
+          contacto.setPersonaId(form.getPersonaId());
+        }
 
         if (contacto.getId() == null || contacto.getId().isEmpty()) {
           contactoTelefonicoService.create(contacto);
@@ -96,6 +188,10 @@ public class ContactoController {
         contacto.setEmail(form.getEmail());
         contacto.setTipoContacto(form.getTipoContacto());
         contacto.setObservacion(form.getObservacion());
+        // Establecer personaId si se proporciona (formato: "CLIENTE-{id}" o "EMPLEADO-{id}")
+        if (form.getPersonaId() != null && !form.getPersonaId().trim().isEmpty()) {
+          contacto.setPersonaId(form.getPersonaId());
+        }
 
         if (contacto.getId() == null || contacto.getId().isEmpty()) {
           contactoCorreoElectronicoService.create(contacto);
@@ -147,6 +243,13 @@ public class ContactoController {
       model.addAttribute("contactoForm", new ContactoFormDTO());
       model.addAttribute("tiposContacto", TipoContacto.values());
       model.addAttribute("tiposTelefono", TipoTelefono.values());
+      
+      // Obtener listas de clientes y empleados activos
+      List<ClienteDTO> clientes = clienteService.findAllActives();
+      List<EmpleadoDTO> empleados = empleadoService.findAllActives();
+      model.addAttribute("clientes", clientes);
+      model.addAttribute("empleados", empleados);
+      
       return "contactos/form";
     } catch (Exception e) {
       model.addAttribute("error", "Error al cargar formulario: " + e.getMessage());
@@ -168,6 +271,12 @@ public class ContactoController {
       model.addAttribute("tiposContacto", TipoContacto.values());
       model.addAttribute("tiposTelefono", TipoTelefono.values());
 
+      // Obtener listas de clientes y empleados activos
+      List<ClienteDTO> clientes = clienteService.findAllActives();
+      List<EmpleadoDTO> empleados = empleadoService.findAllActives();
+      model.addAttribute("clientes", clientes);
+      model.addAttribute("empleados", empleados);
+
       ContactoFormDTO contactoForm = new ContactoFormDTO();
       if ("TELEFONO".equals(canal)) {
         ContactoTelefonicoDTO contacto = contactoTelefonicoService.findById(id);
@@ -177,6 +286,10 @@ public class ContactoController {
         contactoForm.setTipoTelefono(contacto.getTipoTelefono());
         contactoForm.setTipoContacto(contacto.getTipoContacto());
         contactoForm.setObservacion(contacto.getObservacion());
+        // Establecer personaId si está disponible
+        if (contacto.getPersonaId() != null && !contacto.getPersonaId().trim().isEmpty()) {
+          contactoForm.setPersonaId(contacto.getPersonaId());
+        }
       } else if ("CORREO".equals(canal)) {
         ContactoCorreoElectronicoDTO contacto = contactoCorreoElectronicoService.findById(id);
         contactoForm.setId(contacto.getId());
@@ -184,6 +297,10 @@ public class ContactoController {
         contactoForm.setEmail(contacto.getEmail());
         contactoForm.setTipoContacto(contacto.getTipoContacto());
         contactoForm.setObservacion(contacto.getObservacion());
+        // Establecer personaId si está disponible
+        if (contacto.getPersonaId() != null && !contacto.getPersonaId().trim().isEmpty()) {
+          contactoForm.setPersonaId(contacto.getPersonaId());
+        }
       }
       model.addAttribute("contactoForm", contactoForm);
       return "contactos/form";
@@ -202,9 +319,13 @@ public class ContactoController {
     private TipoTelefono tipoTelefono;
     private String observacion;
     private String personaId;
+    private String personaNombre;
+    private String personaDocumento;
+    private String tipoPersona; // "CLIENTE", "EMPLEADO" o null
 
     public ContactoUnificado(String id, String canal, String valorPrincipal, TipoContacto tipoContacto,
-                            TipoTelefono tipoTelefono, String observacion, String personaId) {
+                            TipoTelefono tipoTelefono, String observacion, String personaId,
+                            String personaNombre, String personaDocumento, String tipoPersona) {
       this.id = id;
       this.canal = canal;
       this.valorPrincipal = valorPrincipal;
@@ -212,6 +333,9 @@ public class ContactoController {
       this.tipoTelefono = tipoTelefono;
       this.observacion = observacion;
       this.personaId = personaId;
+      this.personaNombre = personaNombre;
+      this.personaDocumento = personaDocumento;
+      this.tipoPersona = tipoPersona;
     }
 
     // Getters
@@ -222,6 +346,9 @@ public class ContactoController {
     public TipoTelefono getTipoTelefono() { return tipoTelefono; }
     public String getObservacion() { return observacion; }
     public String getPersonaId() { return personaId; }
+    public String getPersonaNombre() { return personaNombre; }
+    public String getPersonaDocumento() { return personaDocumento; }
+    public String getTipoPersona() { return tipoPersona; }
   }
 
   // DTO para el formulario

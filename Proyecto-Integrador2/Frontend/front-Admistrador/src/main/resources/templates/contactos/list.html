@@ -107,8 +107,19 @@
 
                     <!-- Lista de Contactos -->
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">Contactos Registrados</h6>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="filterAll" onclick="filterByType('all')">
+                                    Todos
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="filterCliente" onclick="filterByType('CLIENTE')">
+                                    Clientes
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="filterEmpleado" onclick="filterByType('EMPLEADO')">
+                                    Empleados
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -119,7 +130,7 @@
                                             <th>Valor</th>
                                             <th>Tipo contacto</th>
                                             <th>Tipo teléfono</th>
-                                            <th>Persona (ID)</th>
+                                            <th>Persona</th>
                                             <th>Observación</th>
                                             <th class="text-right">Acciones</th>
                                         </tr>
@@ -128,12 +139,27 @@
                                         <tr th:if="${#lists.isEmpty(contactos)}">
                                             <td colspan="7" class="text-center text-muted py-4">No hay contactos cargados todavía.</td>
                                         </tr>
-                                        <tr th:each="registro : ${contactos}">
+                                        <tr th:each="registro : ${contactos}" th:attr="data-tipo-persona=${registro.tipoPersona}">
                                             <td th:text="${registro.canal == 'CORREO' ? 'Correo' : 'Teléfono'}">Canal</td>
-                                            <td th:text="${registro.valorPrincipal}">valor</td>
+                                            <td>
+                                                <span th:text="${registro.valorPrincipal}">valor</span>
+                                                <a th:if="${registro.canal == 'TELEFONO' and registro.tipoTelefono != null and registro.tipoTelefono.toString() == 'CELULAR'}" 
+                                                   th:href="@{'https://wa.me/' + ${#strings.replace(#strings.replace(#strings.replace(registro.valorPrincipal, ' ', ''), '+', ''), '-', '')}}" 
+                                                   target="_blank" 
+                                                   class="btn btn-sm btn-success ml-2" 
+                                                   title="Abrir WhatsApp Web">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </a>
+                                            </td>
                                             <td th:text="${registro.tipoContacto}">TIPO</td>
                                             <td th:text="${registro.tipoTelefono != null ? registro.tipoTelefono : '-'}">Tipo Teléfono</td>
-                                            <td th:text="${#strings.isEmpty(registro.personaId) ? '-' : registro.personaId}">Persona ID</td>
+                                            <td>
+                                                <div th:if="${registro.personaNombre != null and !#strings.isEmpty(registro.personaNombre)}">
+                                                    <strong th:text="${registro.personaNombre}">Nombre</strong><br>
+                                                    <small class="text-muted" th:text="${registro.personaDocumento}">Documento</small>
+                                                </div>
+                                                <span th:if="${registro.personaNombre == null or #strings.isEmpty(registro.personaNombre)}" class="text-muted">-</span>
+                                            </td>
                                             <td th:text="${#strings.isEmpty(registro.observacion) ? '-' : registro.observacion}">Observación</td>
                                             <td class="text-right">
                                                 <a class="btn btn-sm btn-warning" th:href="@{/contactos/{id}/editar(canal=${registro.canal}, id=${registro.id})}">
@@ -175,9 +201,52 @@
     <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
     <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
     <script>
+        var table;
+        var currentFilter = null;
+        
+        // Función de filtro personalizada para DataTables
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                if (currentFilter === null || currentFilter === 'all') {
+                    return true; // Mostrar todas las filas
+                }
+                var row = table.row(dataIndex).node();
+                var tipoPersona = $(row).attr('data-tipo-persona');
+                return tipoPersona === currentFilter;
+            }
+        );
+        
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            table = $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                }
+            });
+            
+            // Activar el botón "Todos" por defecto
+            $('#filterAll').addClass('active');
+            currentFilter = 'all';
         });
+        
+        function filterByType(tipo) {
+            // Remover clase active de todos los botones
+            $('.btn-group button').removeClass('active');
+            
+            // Actualizar el filtro actual
+            currentFilter = tipo;
+            
+            // Agregar clase active al botón seleccionado
+            if (tipo === 'all') {
+                $('#filterAll').addClass('active');
+            } else if (tipo === 'CLIENTE') {
+                $('#filterCliente').addClass('active');
+            } else if (tipo === 'EMPLEADO') {
+                $('#filterEmpleado').addClass('active');
+            }
+            
+            // Redibujar la tabla con el nuevo filtro
+            table.draw();
+        }
     </script>
 </body>
 </html>

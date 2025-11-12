@@ -10,24 +10,33 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.nexora.proyecto.gestion.business.logic.service.ContactoCorreoElectronicoService;
+import com.nexora.proyecto.gestion.business.logic.service.ContactoTelefonicoService;
 import com.nexora.proyecto.gestion.business.logic.service.DireccionService;
 import com.nexora.proyecto.gestion.business.logic.service.EmpleadoService;
 import com.nexora.proyecto.gestion.business.logic.service.LocalidadService;
 import com.nexora.proyecto.gestion.business.logic.service.UsuarioService;
+import com.nexora.proyecto.gestion.dto.ContactoCorreoElectronicoDTO;
+import com.nexora.proyecto.gestion.dto.ContactoTelefonicoDTO;
 import com.nexora.proyecto.gestion.dto.DireccionDTO;
 import com.nexora.proyecto.gestion.dto.EmpleadoDTO;
 import com.nexora.proyecto.gestion.dto.ImagenDTO;
 import com.nexora.proyecto.gestion.dto.LocalidadDTO;
 import com.nexora.proyecto.gestion.dto.UsuarioDTO;
 import com.nexora.proyecto.gestion.dto.enums.RolUsuario;
+import com.nexora.proyecto.gestion.dto.enums.TipoContacto;
 import com.nexora.proyecto.gestion.dto.enums.TipoEmpleado;
+import com.nexora.proyecto.gestion.dto.enums.TipoTelefono;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -40,14 +49,19 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
   private final EmpleadoService empleadoService;
   private final UsuarioService usuarioService;
   private final DireccionService direccionService;
+  private final ContactoTelefonicoService contactoTelefonicoService;
+  private final ContactoCorreoElectronicoService contactoCorreoElectronicoService;
 
   public EmpleadoController(EmpleadoService empleadoService, LocalidadService localidadService,
-      UsuarioService usuarioService, DireccionService direccionService) {
+      UsuarioService usuarioService, DireccionService direccionService,
+      ContactoTelefonicoService contactoTelefonicoService, ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
     super(empleadoService, "empleado", "empleados");
     this.empleadoService = empleadoService;
     this.localidadService = localidadService;
     this.usuarioService = usuarioService;
     this.direccionService = direccionService;
+    this.contactoTelefonicoService = contactoTelefonicoService;
+    this.contactoCorreoElectronicoService = contactoCorreoElectronicoService;
   }
 
   /**
@@ -127,14 +141,45 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
     // Agregar enums (estos nunca fallan)
     model.addAttribute("tiposEmpleado", TipoEmpleado.values());
     model.addAttribute("rolesUsuario", RolUsuario.values());
+    model.addAttribute("tiposTelefono", TipoTelefono.values());
+  }
+
+  /**
+   * Sobrescribe el método listar para limpiar los contactos y evitar problemas de deserialización
+   */
+  @Override
+  @GetMapping
+  public String listar(Model model, HttpSession session) {
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
+    try {
+      addSessionAttributesToModel(model, session);
+      // Obtener empleados y limpiar los contactos para evitar problemas de deserialización
+      List<EmpleadoDTO> empleados = empleadoService.findAllActives();
+      if (empleados != null) {
+        empleados.forEach(empleado -> {
+          if (empleado != null) {
+            empleado.setContactos(null);
+          }
+        });
+      }
+      model.addAttribute("empleados", empleados);
+      return "empleados/list";
+    } catch (Exception e) {
+      handleExceptionToModel(e, model, "listar");
+      return "empleados/list";
+    }
   }
 
   /**
    * Sobrescribe el método crear para agregar validación de rol JEFE y creación de usuario
    */
-  @Override
-  @PostMapping
-  public String crear(EmpleadoDTO entity, RedirectAttributes redirectAttributes, HttpSession session) {
+  @PostMapping("/crear-con-contactos")
+  public String crearConContactos(EmpleadoDTO entity, @RequestParam(required = false) String telefono,
+      @RequestParam(required = false) String tipoTelefono, @RequestParam(required = false) String email, 
+      RedirectAttributes redirectAttributes, HttpSession session) {
     String redirect = checkSession(session);
     if (redirect != null) {
       return redirect;
@@ -175,7 +220,9 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
 
       sanitizeUsuario(entity);
       
-      service.create(entity);
+      EmpleadoDTO empleadoCreado = service.create(entity);
+      // Crear los contactos básicos si se proporcionaron
+      crearContactosBasicos(empleadoCreado, telefono, tipoTelefono, email);
       addSuccessMessage(redirectAttributes, "Empleado creado exitosamente");
       return "redirect:/" + entityPath;
     } catch (Exception e) {
@@ -188,9 +235,10 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
   /**
    * Sobrescribe el método actualizar para agregar validación de rol JEFE
    */
-  @Override
-  @PostMapping("/{id}")
-  public String actualizar(String id, EmpleadoDTO entity, RedirectAttributes redirectAttributes, HttpSession session) {
+  @PostMapping("/{id}/actualizar-con-contactos")
+  public String actualizarConContactos(@PathVariable String id, EmpleadoDTO entity, @RequestParam(required = false) String telefono,
+      @RequestParam(required = false) String tipoTelefono, @RequestParam(required = false) String email, 
+      RedirectAttributes redirectAttributes, HttpSession session) {
     String redirect = checkSession(session);
     if (redirect != null) {
       return redirect;
@@ -209,12 +257,64 @@ public class EmpleadoController extends BaseController<EmpleadoDTO, String> {
         empleadoService.validateTipoEmpleado(entity, rolUsuario);
       }
       
-      service.update(id, entity);
+      EmpleadoDTO empleadoActualizado = service.update(id, entity);
+      // Crear/actualizar los contactos básicos si se proporcionaron
+      crearContactosBasicos(empleadoActualizado, telefono, tipoTelefono, email);
       addSuccessMessage(redirectAttributes, "Empleado actualizado exitosamente");
       return "redirect:/" + entityPath;
     } catch (Exception e) {
       handleException(e, redirectAttributes, "actualizar");
       return "redirect:/" + entityPath + "/" + id + "/editar";
+    }
+  }
+
+  /**
+   * Crea los contactos básicos (teléfono y email) para un empleado si se proporcionan.
+   */
+  private void crearContactosBasicos(EmpleadoDTO empleado, String telefono, String tipoTelefono, String email) {
+    if (empleado == null || empleado.getId() == null) {
+      return;
+    }
+
+    String personaId = "EMPLEADO-" + empleado.getId();
+
+    // Crear contacto telefónico si se proporcionó
+    if (telefono != null && !telefono.trim().isEmpty()) {
+      try {
+        ContactoTelefonicoDTO contactoTelefonico = new ContactoTelefonicoDTO();
+        contactoTelefonico.setTelefono(telefono.trim());
+        // Usar el tipo de teléfono proporcionado, o CELULAR por defecto si no se especificó
+        if (tipoTelefono != null && !tipoTelefono.trim().isEmpty()) {
+          try {
+            contactoTelefonico.setTipoTelefono(TipoTelefono.valueOf(tipoTelefono));
+          } catch (IllegalArgumentException e) {
+            logger.warn("Tipo de teléfono inválido '{}', usando CELULAR por defecto", tipoTelefono);
+            contactoTelefonico.setTipoTelefono(TipoTelefono.CELULAR);
+          }
+        } else {
+          contactoTelefonico.setTipoTelefono(TipoTelefono.CELULAR); // Por defecto CELULAR
+        }
+        contactoTelefonico.setTipoContacto(TipoContacto.PERSONAL);
+        contactoTelefonico.setPersonaId(personaId);
+        contactoTelefonicoService.create(contactoTelefonico);
+        logger.info("Contacto telefónico creado para empleado ID: {}", empleado.getId());
+      } catch (Exception e) {
+        logger.warn("No se pudo crear el contacto telefónico para el empleado {}: {}", empleado.getId(), e.getMessage());
+      }
+    }
+
+    // Crear contacto de correo electrónico si se proporcionó
+    if (email != null && !email.trim().isEmpty()) {
+      try {
+        ContactoCorreoElectronicoDTO contactoCorreo = new ContactoCorreoElectronicoDTO();
+        contactoCorreo.setEmail(email.trim());
+        contactoCorreo.setTipoContacto(TipoContacto.PERSONAL);
+        contactoCorreo.setPersonaId(personaId);
+        contactoCorreoElectronicoService.create(contactoCorreo);
+        logger.info("Contacto de correo electrónico creado para empleado ID: {}", empleado.getId());
+      } catch (Exception e) {
+        logger.warn("No se pudo crear el contacto de correo electrónico para el empleado {}: {}", empleado.getId(), e.getMessage());
+      }
     }
   }
 
