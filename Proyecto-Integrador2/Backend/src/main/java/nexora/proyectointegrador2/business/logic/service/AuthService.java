@@ -1,12 +1,22 @@
 package nexora.proyectointegrador2.business.logic.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import nexora.proyectointegrador2.business.domain.entity.Cliente;
+import nexora.proyectointegrador2.business.domain.entity.Direccion;
+import nexora.proyectointegrador2.business.domain.entity.Localidad;
+import nexora.proyectointegrador2.business.domain.entity.Nacionalidad;
 import nexora.proyectointegrador2.business.domain.entity.Usuario;
 import nexora.proyectointegrador2.business.enums.RolUsuario;
+import nexora.proyectointegrador2.business.enums.TipoDocumentacion;
 import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
 import nexora.proyectointegrador2.utils.dto.AuthResponseDTO;
 import nexora.proyectointegrador2.utils.dto.LoginRequestDTO;
@@ -21,6 +31,16 @@ public class AuthService {
   private final UsuarioRepository usuarioRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
+
+  @Autowired
+  private ClienteService clienteService;
+
+  @Autowired
+  private LocalidadService localidadService;
+
+  @Autowired
+  private NacionalidadService nacionalidadService;
+
 
   public AuthService(UsuarioRepository usuarioRepository, 
                      PasswordEncoder passwordEncoder,
@@ -76,34 +96,75 @@ public class AuthService {
         .requiereCambioClave(requiereCambioClave)
         .build();
   }
-  // Archivo: nexora.proyectointegrador2.business.logic.service.AuthService.java (o similar)
-
-public void register(RegisterRequestDTO registerRequest) throws Exception {
+  public void register(RegisterRequestDTO registerRequest) throws Exception {
     logger.info("Intento de registro para usuario: {}", registerRequest.getNombreUsuario());
 
     // 1. Verificar si el nombre de usuario ya existe
     if (usuarioRepository.findByNombreUsuario(registerRequest.getNombreUsuario()).isPresent()) {
         logger.warn("Fallo de registro: Nombre de usuario ya en uso: {}", registerRequest.getNombreUsuario());
-        
-        // Lanzar una excepción estándar con un mensaje específico
         throw new Exception("El nombre de usuario ya está registrado."); 
     }
-    
 
-    // 3. Cifrar la contraseña
+    // 2. Cifrar la contraseña
     String claveCifrada = passwordEncoder.encode(registerRequest.getClave());
 
-    // 4. Crear la entidad principal (Usuario / Cliente)
+    // 3. Crear el Usuario
     Usuario nuevoUsuario = Usuario.builder()
         .nombreUsuario(registerRequest.getNombreUsuario())
         .clave(claveCifrada)
-        .rol(RolUsuario.CLIENTE) // Asumo que el registro crea un rol CLIENTE
-        // ... otros campos obligatorios ...
+        .rol(RolUsuario.CLIENTE)
         .build();
-    
-    // 5. Guardar la entidad de Usuario (o Cliente/Usuario)
-    usuarioRepository.save(nuevoUsuario);
+    nuevoUsuario.setEliminado(false);
+    nuevoUsuario = usuarioRepository.save(nuevoUsuario);
+    logger.debug("Usuario creado con ID: {}", nuevoUsuario.getId());
 
-    logger.info("✅ Registro exitoso para usuario: {}", registerRequest.getNombreUsuario());
-}
+    // 4. Obtener Localidad y Nacionalidad
+    Localidad localidad = localidadService.findById(registerRequest.getLocalidadId());
+    Nacionalidad nacionalidad = nacionalidadService.findById(registerRequest.getNacionalidadId());
+
+    // 5. Crear la Dirección (sin guardarla aún, el ClienteService.preAlta() lo hará)
+    Direccion direccion = Direccion.builder()
+        .calle(registerRequest.getCalle())
+        .numero(registerRequest.getNumero())
+        .barrio(registerRequest.getBarrio())
+        .manzanaPiso(registerRequest.getManzanaPiso())
+        .casaDepartamento(registerRequest.getCasaDepartamento())
+        .referencia(registerRequest.getReferencia())
+        .localidad(localidad)
+        .build();
+    direccion.setEliminado(false);
+
+    // 6. Convertir LocalDate a Date para fechaNacimiento
+    LocalDate localDate = registerRequest.getFechaNacimiento();
+    Date fechaNacimiento = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    // 7. Convertir String a TipoDocumentacion
+    TipoDocumentacion tipoDocumento;
+    try {
+      tipoDocumento = TipoDocumentacion.valueOf(registerRequest.getTipoDocumento().toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new Exception("Tipo de documento inválido: " + registerRequest.getTipoDocumento());
+    }
+
+    // 8. Crear el Cliente
+    Cliente cliente = new Cliente();
+    cliente.setNombre(registerRequest.getNombre());
+    cliente.setApellido(registerRequest.getApellido());
+    cliente.setFechaNacimiento(fechaNacimiento);
+    cliente.setTipoDocumento(tipoDocumento);
+    cliente.setNumeroDocumento(registerRequest.getNumeroDocumento());
+    cliente.setUsuario(nuevoUsuario);
+    cliente.setDireccion(direccion);
+    cliente.setNacionalidad(nacionalidad);
+    cliente.setDireccionEstadia(registerRequest.getDireccionEstadia() != null ? registerRequest.getDireccionEstadia() : "");
+    cliente.setEliminado(false);
+
+    // 9. Los contactos son opcionales, se pueden agregar después si es necesario
+    // Dejamos la lista de contactos vacía/null
+    cliente.setContactos(null);
+
+    // 10. Guardar el Cliente (esto también guardará los contactos gracias a CascadeType.ALL)
+    cliente = clienteService.save(cliente);
+    logger.info("✅ Registro exitoso para usuario: {} con Cliente ID: {}", registerRequest.getNombreUsuario(), cliente.getId());
+  }
 }

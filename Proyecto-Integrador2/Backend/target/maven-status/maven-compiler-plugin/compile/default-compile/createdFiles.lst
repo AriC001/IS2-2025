@@ -36,6 +36,7 @@ nexora\proyectointegrador2\business\logic\service\UsuarioService.class
 nexora\proyectointegrador2\business\domain\entity\FormaDePago$FormaDePagoBuilder.class
 nexora\proyectointegrador2\business\domain\entity\ConfiguracionCorreoElectronico$ConfiguracionCorreoElectronicoBuilder.class
 nexora\proyectointegrador2\utils\dto\EmpleadoDTO.class
+nexora\proyectointegrador2\utils\dto\RegisterRequestDTO.class
 nexora\proyectointegrador2\business\domain\entity\Vehiculo.class
 nexora\proyectointegrador2\business\enums\TipoPago.class
 nexora\proyectointegrador2\business\domain\entity\Nacionalidad.class
@@ -45,6 +46,7 @@ nexora\proyectointegrador2\utils\mapper\impl\LocalidadMapper.class
 nexora\proyectointegrador2\controller\LocalidadRestController.class
 nexora\proyectointegrador2\utils\dto\LoginRequestDTO$LoginRequestDTOBuilder.class
 nexora\proyectointegrador2\configs\SecurityConfig.class
+nexora\proyectointegrador2\utils\dto\RegisterRequestDTO$Builder.class
 nexora\proyectointegrador2\business\domain\entity\Direccion.class
 nexora\proyectointegrador2\configs\DataInitializer.class
 nexora\proyectointegrador2\business\persistence\repository\ImagenRepository.class
