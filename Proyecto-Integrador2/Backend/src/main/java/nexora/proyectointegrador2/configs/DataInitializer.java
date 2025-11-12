@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import nexora.proyectointegrador2.business.domain.entity.Alquiler;
 import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
 import nexora.proyectointegrador2.business.domain.entity.Cliente;
+import nexora.proyectointegrador2.business.domain.entity.ContactoCorreoElectronico;
+import nexora.proyectointegrador2.business.domain.entity.ContactoTelefonico;
 import nexora.proyectointegrador2.business.domain.entity.CostoVehiculo;
 import nexora.proyectointegrador2.business.domain.entity.Departamento;
 import nexora.proyectointegrador2.business.domain.entity.Direccion;
@@ -25,17 +27,23 @@ import nexora.proyectointegrador2.business.domain.entity.Imagen;
 import nexora.proyectointegrador2.business.domain.entity.Localidad;
 import nexora.proyectointegrador2.business.domain.entity.Nacionalidad;
 import nexora.proyectointegrador2.business.domain.entity.Pais;
+import nexora.proyectointegrador2.business.domain.entity.Persona;
 import nexora.proyectointegrador2.business.domain.entity.Provincia;
 import nexora.proyectointegrador2.business.domain.entity.Usuario;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
+import nexora.proyectointegrador2.business.enums.EstadoAlquiler;
 import nexora.proyectointegrador2.business.enums.EstadoVehiculo;
 import nexora.proyectointegrador2.business.enums.RolUsuario;
+import nexora.proyectointegrador2.business.enums.TipoContacto;
 import nexora.proyectointegrador2.business.enums.TipoDocumentacion;
 import nexora.proyectointegrador2.business.enums.TipoEmpleado;
 import nexora.proyectointegrador2.business.enums.TipoImagen;
+import nexora.proyectointegrador2.business.enums.TipoTelefono;
 import nexora.proyectointegrador2.business.logic.service.AlquilerService;
 import nexora.proyectointegrador2.business.logic.service.CaracteristicaVehiculoService;
 import nexora.proyectointegrador2.business.logic.service.ClienteService;
+import nexora.proyectointegrador2.business.logic.service.ContactoCorreoElectronicoService;
+import nexora.proyectointegrador2.business.logic.service.ContactoTelefonicoService;
 import nexora.proyectointegrador2.business.logic.service.CostoVehiculoService;
 import nexora.proyectointegrador2.business.logic.service.DepartamentoService;
 import nexora.proyectointegrador2.business.logic.service.DireccionService;
@@ -59,6 +67,7 @@ import nexora.proyectointegrador2.business.persistence.repository.PaisRepository
 import nexora.proyectointegrador2.business.persistence.repository.ProvinciaRepository;
 import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
 import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
+import nexora.proyectointegrador2.business.persistence.repository.ContactoCorreoElectronicoRepository;
 
 @Configuration
 public class DataInitializer {
@@ -92,7 +101,10 @@ public class DataInitializer {
                                         EmpresaService empresaService,
                                         EmpresaRepository empresaRepository,
                                         AlquilerService alquilerService,
-                                        AlquilerRepository alquilerRepository) {
+                                        AlquilerRepository alquilerRepository,
+                                        ContactoTelefonicoService contactoTelefonicoService,
+                                        ContactoCorreoElectronicoService contactoCorreoElectronicoService,
+                                        ContactoCorreoElectronicoRepository contactoCorreoElectronicoRepository) {
     return args -> {
       // Crear usuarios del sistema
       Usuario admin = usuarioRepository.findByNombreUsuario("admin").orElse(null);
@@ -163,19 +175,22 @@ public class DataInitializer {
       
       // Crear empleados para usuarios admin y operador si no existen
       crearEmpleadosParaUsuariosSistema(empleadoService, empleadoRepository, direccionService, 
-                                        direccionRepository, localidadRepository, admin, operador);
+                                        direccionRepository, localidadRepository, admin, operador,
+                                        contactoTelefonicoService, contactoCorreoElectronicoService);
       
       // Inicializar datos de prueba (esto crea direcciones y nacionalidad que necesitamos)
       initDatosPrueba(direccionService, direccionRepository, nacionalidadService, nacionalidadRepository,
                      empleadoService, empleadoRepository, clienteService, clienteRepository,
                      vehiculoService, vehiculoRepository, caracteristicaVehiculoService, costoVehiculoService,
                      imagenService, empresaService, empresaRepository, alquilerService, alquilerRepository,
-                     localidadRepository, usuarioRepository, passwordEncoder);
+                     localidadRepository, usuarioRepository, passwordEncoder,
+                     contactoTelefonicoService, contactoCorreoElectronicoService);
       
       // Crear cliente para usuario "cliente" si no existe (después de inicializar datos de prueba)
       crearClienteParaUsuarioSistema(clienteService, clienteRepository, direccionService,
                                      direccionRepository, localidadRepository, nacionalidadService,
-                                     nacionalidadRepository, clienteUsuario);
+                                     nacionalidadRepository, clienteUsuario,
+                                     contactoTelefonicoService, contactoCorreoElectronicoService);
       
     };
   }
@@ -344,7 +359,9 @@ public class DataInitializer {
                                AlquilerRepository alquilerRepository,
                                LocalidadRepository localidadRepository,
                                UsuarioRepository usuarioRepository,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               ContactoTelefonicoService contactoTelefonicoService,
+                               ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
     try {
       Nacionalidad argentina = nacionalidadRepository.findByNombreAndEliminadoFalse("Argentina")
           .orElse(null);
@@ -423,7 +440,9 @@ public class DataInitializer {
         empleado1.setUsuario(usuarioEmpleado1);
         empleado1.setDireccion(direccion1);
         empleado1.setEliminado(false);
-        empleadoService.save(empleado1);
+        empleado1 = empleadoService.save(empleado1);
+        crearContactosParaPersona(empleado1, "+54 9 261 1234567", "carlos.rodriguez@mycar.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       }
 
       if (empleadoRepository.findByNumeroDocumentoAndEliminadoFalse("31234567").isEmpty()) {
@@ -448,7 +467,9 @@ public class DataInitializer {
         empleado2.setUsuario(usuarioEmpleado2);
         empleado2.setDireccion(direccion2);
         empleado2.setEliminado(false);
-        empleadoService.save(empleado2);
+        empleado2 = empleadoService.save(empleado2);
+        crearContactosParaPersona(empleado2, "+54 9 261 2345678", "maria.gonzalez@mycar.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       }
 
       // 4. Crear 2 Clientes
@@ -465,6 +486,8 @@ public class DataInitializer {
         cliente1.setDireccion(direccion1);
         cliente1.setEliminado(false);
         cliente1 = clienteService.save(cliente1);
+        crearContactosParaPersona(cliente1, "+54 9 261 3456789", "juan.perez@email.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       } else {
         cliente1 = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("32345678").get();
       }
@@ -482,8 +505,31 @@ public class DataInitializer {
         cliente2.setDireccion(direccion2);
         cliente2.setEliminado(false);
         cliente2 = clienteService.save(cliente2);
+        crearContactosParaPersona(cliente2, "+54 9 261 4567890", "ana.martinez@email.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       } else {
         cliente2 = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("33456789").get();
+      }
+
+      // Crear cliente con email específico juanimassacesi17@gmail.com si no existe
+      Cliente clienteEmailEspecifico = null;
+      if (clienteRepository.findByNumeroDocumentoAndEliminadoFalse("45143405").isEmpty()) {
+        clienteEmailEspecifico = new Cliente();
+        clienteEmailEspecifico.setNombre("Juan Ignacio");
+        clienteEmailEspecifico.setApellido("Massacesi");
+        clienteEmailEspecifico.setFechaNacimiento(new Date(95, 2, 17)); // 17/03/1995
+        clienteEmailEspecifico.setTipoDocumento(TipoDocumentacion.DNI);
+        clienteEmailEspecifico.setNumeroDocumento("45143405");
+        clienteEmailEspecifico.setDireccionEstadia("Hotel Plaza, Habitación 201");
+        clienteEmailEspecifico.setNacionalidad(argentina);
+        clienteEmailEspecifico.setDireccion(direccion1);
+        clienteEmailEspecifico.setEliminado(false);
+        clienteEmailEspecifico = clienteService.save(clienteEmailEspecifico);
+        crearContactosParaPersona(clienteEmailEspecifico, "+54 9 261 2505376", "juanimassacesi17@gmail.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
+      } else {
+        // Si el email existe, obtener el cliente asociado
+        clienteEmailEspecifico = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("45143405").get();
       }
 
       // 5. Crear 2 Vehículos con características y costos
@@ -583,6 +629,18 @@ public class DataInitializer {
         vehiculo2 = vehiculoRepository.findByPatenteAndEliminadoFalse("EF456GH").get();
       }
 
+      // Crear empresa MyCar con email específico
+      if (empresaRepository.findByEmailAndEliminadoFalse("mycar.mdz@gmail.com").isEmpty()) {
+        Empresa empresaMyCar = Empresa.builder()
+            .nombre("MyCar")
+            .telefono("261-1234567")
+            .email("mycar.mdz@gmail.com")
+            .direccion(direccion1)
+            .build();
+        empresaMyCar.setEliminado(false);
+        empresaService.save(empresaMyCar);
+      }
+
       if (empresaRepository.findByEmailAndEliminadoFalse("contacto@mycar1.com").isEmpty()) {
         Empresa empresa1 = Empresa.builder()
             .nombre("MyCar Mendoza")
@@ -611,6 +669,7 @@ public class DataInitializer {
             .fechaHasta(new Date(125, 0, 15))
             .cliente(cliente1)
             .vehiculo(vehiculo1)
+            .estadoAlquiler(EstadoAlquiler.PENDIENTE)
             .build();
         alquiler1.setEliminado(false);
         alquilerService.save(alquiler1);
@@ -620,6 +679,7 @@ public class DataInitializer {
             .fechaHasta(new Date(125, 1, 7))
             .cliente(cliente2)
             .vehiculo(vehiculo2)
+            .estadoAlquiler(EstadoAlquiler.PENDIENTE)
             .build();
         alquiler2.setEliminado(false);
         alquilerService.save(alquiler2);
@@ -640,7 +700,9 @@ public class DataInitializer {
                                              LocalidadRepository localidadRepository,
                                              NacionalidadService nacionalidadService,
                                              NacionalidadRepository nacionalidadRepository,
-                                             Usuario clienteUsuario) {
+                                             Usuario clienteUsuario,
+                                             ContactoTelefonicoService contactoTelefonicoService,
+                                             ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
     try {
       // Obtener nacionalidad Argentina
       Nacionalidad argentina = nacionalidadRepository.findByNombreAndEliminadoFalse("Argentina")
@@ -699,7 +761,9 @@ public class DataInitializer {
           clienteSistema.setDireccion(direccionCliente);
         }
         clienteSistema.setEliminado(false);
-        clienteService.save(clienteSistema);
+        Cliente clienteGuardado = clienteService.save(clienteSistema);
+        crearContactosParaPersona(clienteGuardado, "+54 9 261 5678901", "cliente.sistema@email.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       }
     } catch (Exception e) {
       logger.error("Error al crear cliente para usuario del sistema: {}", e.getMessage());
@@ -715,7 +779,9 @@ public class DataInitializer {
                                                  DireccionRepository direccionRepository,
                                                  LocalidadRepository localidadRepository,
                                                  Usuario admin,
-                                                 Usuario operador) {
+                                                 Usuario operador,
+                                                 ContactoTelefonicoService contactoTelefonicoService,
+                                                 ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
     try {
       // Obtener o crear una dirección para los empleados del sistema
       Localidad ciudadMendoza = localidadRepository.findByNombreAndEliminadoFalse("Ciudad de Mendoza")
@@ -755,7 +821,9 @@ public class DataInitializer {
           empleadoAdmin.setDireccion(direccionSistema);
         }
         empleadoAdmin.setEliminado(false);
-        empleadoService.save(empleadoAdmin);
+        Empleado empleadoAdminGuardado = empleadoService.save(empleadoAdmin);
+        crearContactosParaPersona(empleadoAdminGuardado, "+54 9 261 0000001", "admin@mycar.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       }
 
       if (operador != null && empleadoRepository.findAll().stream()
@@ -772,10 +840,50 @@ public class DataInitializer {
           empleadoOperador.setDireccion(direccionSistema);
         }
         empleadoOperador.setEliminado(false);
-        empleadoService.save(empleadoOperador);
+        Empleado empleadoOperadorGuardado = empleadoService.save(empleadoOperador);
+        crearContactosParaPersona(empleadoOperadorGuardado, "+54 9 261 0000002", "operador@mycar.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
       }
     } catch (Exception e) {
       logger.error("Error al crear empleados para usuarios del sistema: {}", e.getMessage());
+    }
+  }
+
+  /**
+   * Crea contactos telefónico y de correo electrónico para una persona.
+   */
+  private void crearContactosParaPersona(Persona persona, String telefono, String email,
+                                         ContactoTelefonicoService contactoTelefonicoService,
+                                         ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
+    try {
+      if (persona == null || persona.getId() == null) {
+        return;
+      }
+
+      // Crear contacto telefónico celular (personal o laboral alternando)
+      TipoContacto tipoContactoTelefono = (persona instanceof Empleado) ? TipoContacto.LABORAL : TipoContacto.PERSONAL;
+      
+      ContactoTelefonico contactoTelefonico = ContactoTelefonico.builder()
+          .telefono(telefono)
+          .tipoTelefono(TipoTelefono.CELULAR)
+          .build();
+      contactoTelefonico.setTipoContacto(tipoContactoTelefono);
+      contactoTelefonico.setPersona(persona);
+      contactoTelefonico.setEliminado(false);
+      contactoTelefonicoService.save(contactoTelefonico);
+
+      // Crear contacto de correo electrónico (personal o laboral alternando)
+      TipoContacto tipoContactoEmail = (persona instanceof Empleado) ? TipoContacto.LABORAL : TipoContacto.PERSONAL;
+      
+      ContactoCorreoElectronico contactoCorreo = ContactoCorreoElectronico.builder()
+          .email(email)
+          .build();
+      contactoCorreo.setTipoContacto(tipoContactoEmail);
+      contactoCorreo.setPersona(persona);
+      contactoCorreo.setEliminado(false);
+      contactoCorreoElectronicoService.save(contactoCorreo);
+    } catch (Exception e) {
+      // Silenciar errores al crear contactos
     }
   }
 

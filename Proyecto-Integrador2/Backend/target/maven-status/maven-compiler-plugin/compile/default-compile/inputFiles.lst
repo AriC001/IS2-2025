@@ -23,6 +23,7 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\domain\entity\Provincia.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\domain\entity\Usuario.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\domain\entity\Vehiculo.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\enums\EstadoAlquiler.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\enums\EstadoFactura.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\enums\EstadoVehiculo.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\enums\RolUsuario.java
@@ -44,8 +45,12 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\DepartamentoService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\DireccionService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\DocumentoService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\EmailService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\EmpleadoService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\EmpresaService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\FacturaPdfService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\FacturaService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\FormaDePagoService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\ImagenService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\LocalidadService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\NacionalidadService.java
@@ -96,6 +101,7 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\EmpleadoRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\EmpresaRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\exception\GlobalExceptionHandler.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\FacturaRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\ImagenRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\LocalidadRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\NacionalidadRestController.java
@@ -142,10 +148,13 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\ContactoTelefonicoMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\CostoVehiculoMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\DepartamentoMapper.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\DetalleFacturaMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\DireccionMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\DocumentoMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\EmpleadoMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\EmpresaMapper.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\FacturaMapper.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\FormaDePagoMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\ImagenMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\LocalidadMapper.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\mapper\impl\NacionalidadMapper.java

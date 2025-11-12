@@ -14,18 +14,25 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.nexora.proyecto.gestion.business.logic.service.ClienteService;
+import com.nexora.proyecto.gestion.business.logic.service.ContactoCorreoElectronicoService;
+import com.nexora.proyecto.gestion.business.logic.service.ContactoTelefonicoService;
 import com.nexora.proyecto.gestion.business.logic.service.DireccionService;
 import com.nexora.proyecto.gestion.business.logic.service.LocalidadService;
 import com.nexora.proyecto.gestion.business.logic.service.NacionalidadService;
 import com.nexora.proyecto.gestion.business.logic.service.UsuarioService;
 import com.nexora.proyecto.gestion.dto.ClienteDTO;
+import com.nexora.proyecto.gestion.dto.ContactoCorreoElectronicoDTO;
+import com.nexora.proyecto.gestion.dto.ContactoTelefonicoDTO;
 import com.nexora.proyecto.gestion.dto.DireccionDTO;
 import com.nexora.proyecto.gestion.dto.LocalidadDTO;
 import com.nexora.proyecto.gestion.dto.NacionalidadDTO;
 import com.nexora.proyecto.gestion.dto.UsuarioDTO;
+import com.nexora.proyecto.gestion.dto.enums.TipoContacto;
+import com.nexora.proyecto.gestion.dto.enums.TipoTelefono;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -37,14 +44,19 @@ public class ClienteController extends BaseController<ClienteDTO, String> {
   private final LocalidadService localidadService;
   private final UsuarioService usuarioService;
   private final DireccionService direccionService;
+  private final ContactoTelefonicoService contactoTelefonicoService;
+  private final ContactoCorreoElectronicoService contactoCorreoElectronicoService;
 
   public ClienteController(ClienteService clienteService, NacionalidadService nacionalidadService,
-      LocalidadService localidadService, UsuarioService usuarioService, DireccionService direccionService) {
+      LocalidadService localidadService, UsuarioService usuarioService, DireccionService direccionService,
+      ContactoTelefonicoService contactoTelefonicoService, ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
     super(clienteService, "cliente", "clientes");
     this.nacionalidadService = nacionalidadService;
     this.localidadService = localidadService;
     this.usuarioService = usuarioService;
     this.direccionService = direccionService;
+    this.contactoTelefonicoService = contactoTelefonicoService;
+    this.contactoCorreoElectronicoService = contactoCorreoElectronicoService;
   }
 
   /**
@@ -141,21 +153,103 @@ public class ClienteController extends BaseController<ClienteDTO, String> {
       logger.error("Error al cargar usuarios para el formulario de cliente: {}", e.getMessage(), e);
       model.addAttribute("usuarios", Collections.emptyList());
     }
+
+    // Agregar tipos de teléfono para el formulario
+    model.addAttribute("tiposTelefono", TipoTelefono.values());
   }
 
-  @Override
-  @PostMapping
-  public String crear(ClienteDTO entity, RedirectAttributes redirectAttributes, HttpSession session) {
-    normalizeCliente(entity);
-    return super.crear(entity, redirectAttributes, session);
+  @PostMapping("/crear-con-contactos")
+  public String crearConContactos(ClienteDTO entity, @RequestParam(required = false) String telefono,
+      @RequestParam(required = false) String tipoTelefono, @RequestParam(required = false) String email, 
+      RedirectAttributes redirectAttributes, HttpSession session) {
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
+    try {
+      normalizeCliente(entity);
+      ClienteDTO clienteCreado = service.create(entity);
+      // Crear los contactos básicos si se proporcionaron
+      crearContactosBasicos(clienteCreado, telefono, tipoTelefono, email);
+      addSuccessMessage(redirectAttributes, "Cliente creado exitosamente");
+      return "redirect:/clientes";
+    } catch (Exception e) {
+      handleException(e, redirectAttributes, "crear");
+      redirectAttributes.addFlashAttribute("cliente", entity);
+      return "redirect:/clientes/nuevo";
+    }
   }
 
-  @Override
-  @PostMapping("/{id}")
-  public String actualizar(@PathVariable String id, ClienteDTO entity, RedirectAttributes redirectAttributes,
-      HttpSession session) {
-    normalizeCliente(entity);
-    return super.actualizar(id, entity, redirectAttributes, session);
+  @PostMapping("/{id}/actualizar-con-contactos")
+  public String actualizarConContactos(@PathVariable String id, ClienteDTO entity, @RequestParam(required = false) String telefono,
+      @RequestParam(required = false) String tipoTelefono, @RequestParam(required = false) String email, 
+      RedirectAttributes redirectAttributes, HttpSession session) {
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
+    try {
+      normalizeCliente(entity);
+      ClienteDTO clienteActualizado = service.update(id, entity);
+      // Crear/actualizar los contactos básicos si se proporcionaron
+      crearContactosBasicos(clienteActualizado, telefono, tipoTelefono, email);
+      addSuccessMessage(redirectAttributes, "Cliente actualizado exitosamente");
+      return "redirect:/clientes";
+    } catch (Exception e) {
+      handleException(e, redirectAttributes, "actualizar");
+      redirectAttributes.addFlashAttribute("cliente", entity);
+      return "redirect:/clientes/" + id + "/editar";
+    }
+  }
+
+  /**
+   * Crea los contactos básicos (teléfono y email) para un cliente si se proporcionan.
+   */
+  private void crearContactosBasicos(ClienteDTO cliente, String telefono, String tipoTelefono, String email) {
+    if (cliente == null || cliente.getId() == null) {
+      return;
+    }
+
+    String personaId = "CLIENTE-" + cliente.getId();
+
+    // Crear contacto telefónico si se proporcionó
+    if (telefono != null && !telefono.trim().isEmpty()) {
+      try {
+        ContactoTelefonicoDTO contactoTelefonico = new ContactoTelefonicoDTO();
+        contactoTelefonico.setTelefono(telefono.trim());
+        // Usar el tipo de teléfono proporcionado, o CELULAR por defecto si no se especificó
+        if (tipoTelefono != null && !tipoTelefono.trim().isEmpty()) {
+          try {
+            contactoTelefonico.setTipoTelefono(TipoTelefono.valueOf(tipoTelefono));
+          } catch (IllegalArgumentException e) {
+            logger.warn("Tipo de teléfono inválido '{}', usando CELULAR por defecto", tipoTelefono);
+            contactoTelefonico.setTipoTelefono(TipoTelefono.CELULAR);
+          }
+        } else {
+          contactoTelefonico.setTipoTelefono(TipoTelefono.CELULAR); // Por defecto CELULAR
+        }
+        contactoTelefonico.setTipoContacto(TipoContacto.PERSONAL);
+        contactoTelefonico.setPersonaId(personaId);
+        contactoTelefonicoService.create(contactoTelefonico);
+        logger.info("Contacto telefónico creado para cliente ID: {}", cliente.getId());
+      } catch (Exception e) {
+        logger.warn("No se pudo crear el contacto telefónico para el cliente {}: {}", cliente.getId(), e.getMessage());
+      }
+    }
+
+    // Crear contacto de correo electrónico si se proporcionó
+    if (email != null && !email.trim().isEmpty()) {
+      try {
+        ContactoCorreoElectronicoDTO contactoCorreo = new ContactoCorreoElectronicoDTO();
+        contactoCorreo.setEmail(email.trim());
+        contactoCorreo.setTipoContacto(TipoContacto.PERSONAL);
+        contactoCorreo.setPersonaId(personaId);
+        contactoCorreoElectronicoService.create(contactoCorreo);
+        logger.info("Contacto de correo electrónico creado para cliente ID: {}", cliente.getId());
+      } catch (Exception e) {
+        logger.warn("No se pudo crear el contacto de correo electrónico para el cliente {}: {}", cliente.getId(), e.getMessage());
+      }
+    }
   }
 
   private void normalizeCliente(ClienteDTO entity) {

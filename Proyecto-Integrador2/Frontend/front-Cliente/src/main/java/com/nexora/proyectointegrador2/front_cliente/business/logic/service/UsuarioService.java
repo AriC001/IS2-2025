@@ -12,7 +12,7 @@ import java.util.Optional;
 public class UsuarioService extends BaseService<UsuarioDTO, String> {
 
   private static final int MIN_USERNAME_LENGTH = 4;
-  private static final int MIN_PASSWORD_LENGTH = 6;
+  private static final int MIN_PASSWORD_LENGTH = 4;
   private static final String USERNAME_PATTERN = "^[a-zA-Z0-9._-]{4,}$";
 
   public UsuarioService(UsuarioDAO dao) {

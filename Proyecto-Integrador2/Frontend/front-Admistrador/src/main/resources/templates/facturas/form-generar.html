@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Empleados - My Car</title>
+    <title>Generar Factura - My Car</title>
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
 </head>
 <body id="page-top">
     <div id="wrapper">
+        <!-- Sidebar (igual que en otras vistas) -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/dashboard}">
                 <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-car"></i></div>
@@ -27,15 +27,15 @@
             <li class="nav-item"><a class="nav-link" th:href="@{/caracteristicas-vehiculo}"><i class="fas fa-fw fa-cog"></i><span>Características Vehículo</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/empresas}"><i class="fas fa-fw fa-building"></i><span>Empresas</span></a></li>
             <li class="nav-item"><a class="nav-link" th:href="@{/contactos}"><i class="fas fa-fw fa-address-book"></i><span>Contactos</span></a></li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
                     <i class="fas fa-fw fa-users"></i><span>Usuarios</span>
                 </a>
-                <div id="collapseUsuarios" class="collapse show" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
+                <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Gestión de Usuarios:</h6>
                         <a class="collapse-item" th:href="@{/clientes}"><i class="fas fa-fw fa-user"></i> Clientes</a>
-                        <a class="collapse-item active" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i> Empleados</a>
+                        <a class="collapse-item" th:href="@{/empleados}"><i class="fas fa-fw fa-user-tie"></i> Empleados</a>
                     </div>
                 </div>
             </li>
@@ -56,47 +56,26 @@
                     </div>
                 </div>
             </li>
-
-            <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
         </ul>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
                     <ul class="navbar-nav ml-auto">
-                        <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${nombreUsuario}">Usuario</span>
                                 <img class="img-profile rounded-circle" th:src="@{/img/undraw_profile.svg}">
                             </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" th:href="@{/perfil}">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Perfil
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Configuración
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <div class="px-3 py-2">
-                                    <small class="text-muted">Rol: <strong th:text="${rol}">ROL</strong></small>
-                                </div>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                                <a class="dropdown-item" th:href="@{/perfil}"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Cerrar Sesión
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar Sesión
                                 </a>
                             </div>
                         </li>
@@ -104,50 +83,68 @@
                 </nav>
                 <div class="container-fluid">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Empleados</h1>
-                        <a th:href="@{/empleados/nuevo}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                            <i class="fas fa-plus fa-sm text-white-50"></i> Nuevo Empleado
+                        <h1 class="h3 mb-0 text-gray-800">Generar Factura</h1>
+                        <a th:href="@{/alquileres/{id}(id=${alquiler.id})}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Volver
                         </a>
-                    </div>
-                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <span th:text="${success}"></span>
-                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
                     </div>
                     <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                         <span th:text="${error}"></span>
                         <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
                     </div>
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${success}"></span>
+                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                    </div>
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Listado de Empleados</h6></div>
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Resumen del Alquiler</h6></div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre</th>
-                                            <th>Apellido</th>
-                                            <th>Documento</th>
-                                            <th>Tipo Empleado</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:each="empleado : ${empleados}">
-                                            <td th:text="${empleado.nombre}">-</td>
-                                            <td th:text="${empleado.apellido}">-</td>
-                                            <td th:text="${empleado.tipoDocumento + ': ' + empleado.numeroDocumento}">-</td>
-                                            <td th:text="${empleado.tipoEmpleado}">-</td>
-                                            <td>
-                                                <a th:href="@{/empleados/{id}(id=${empleado.id})}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
-                                                <a th:href="@{/empleados/{id}/editar(id=${empleado.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
-                                                <form th:action="@{/empleados/{id}/eliminar(id=${empleado.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
-                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Eliminar</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>Cliente</h5>
+                                    <p><strong>Nombre:</strong> <span th:text="${alquiler.cliente != null ? (alquiler.cliente.nombre + ' ' + alquiler.cliente.apellido) : '-'}">-</span></p>
+                                    <p><strong>Documento:</strong> <span th:text="${alquiler.cliente != null ? (alquiler.cliente.tipoDocumento + ': ' + alquiler.cliente.numeroDocumento) : '-'}">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Vehículo</h5>
+                                    <p><strong>Patente:</strong> <span th:text="${alquiler.vehiculo?.patente ?: '-'}">-</span></p>
+                                    <p><strong>Marca/Modelo:</strong> <span th:text="${alquiler.vehiculo?.caracteristicaVehiculo != null ? (alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo) : '-'}">-</span></p>
+                                </div>
                             </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Fecha Desde:</strong> <span th:text="${alquiler.fechaDesde != null ? #dates.format(alquiler.fechaDesde, 'dd/MM/yyyy') : '-'}">-</span></p>
+                                    <p><strong>Fecha Hasta:</strong> <span th:text="${alquiler.fechaHasta != null ? #dates.format(alquiler.fechaHasta, 'dd/MM/yyyy') : '-'}">-</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="text-primary">Total a Pagar: $<span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}">0.00</span></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Forma de Pago</h6></div>
+                        <div class="card-body">
+                            <form th:action="@{/facturas/generar}" method="post">
+                                <input type="hidden" name="alquilerId" th:value="${alquiler.id}">
+                                <input type="hidden" name="tipoPago" value="EFECTIVO">
+                                <div class="form-group">
+                                    <label>Forma de Pago</label>
+                                    <input type="text" class="form-control" value="EFECTIVO" readonly>
+                                    <small class="form-text text-muted">El pago desde el front administrativo es solo en efectivo.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Observación (opcional)</label>
+                                    <textarea class="form-control" name="observacion" rows="3" placeholder="Ingrese una observación si es necesario"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-file-invoice-dollar"></i> Confirmar y Generar Factura
+                                    </button>
+                                    <a th:href="@{/alquileres/{id}(id=${alquiler.id})}" class="btn btn-secondary">Cancelar</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -171,18 +168,6 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-    <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
-    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
-    <script>
-        $(document).ready(function() {
-            // Inicializar DataTables después de que Bootstrap esté completamente cargado
-            $('#dataTable').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-                }
-            });
-        });
-    </script>
 </body>
 </html>
 

@@ -107,6 +107,12 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Detalle del Alquiler</h1>
                         <div>
+                            <a th:if="${alquiler.id != null && !facturaExiste}" th:href="@{/facturas/generar/{id}(id=${alquiler.id})}" class="btn btn-success btn-sm">
+                                <i class="fas fa-file-invoice-dollar"></i> Generar Factura
+                            </a>
+                            <a th:if="${facturaExiste && factura != null}" th:href="@{/facturas/{id}(id=${factura.id})}" class="btn btn-info btn-sm">
+                                <i class="fas fa-file-invoice"></i> Ver Factura
+                            </a>
                             <a th:if="${alquiler.id != null}" th:href="@{/alquileres/{id}/editar(id=${alquiler.id})}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Editar
                             </a>

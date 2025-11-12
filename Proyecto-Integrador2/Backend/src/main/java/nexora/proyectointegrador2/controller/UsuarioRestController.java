@@ -46,8 +46,8 @@ public class UsuarioRestController extends BaseRestController<Usuario, UsuarioDT
       throw new Exception("La nueva contraseña es obligatoria");
     }
     
-    if (cambioClaveRequest.getNuevaClave().length() < 6) {
-      throw new Exception("La contraseña debe tener al menos 6 caracteres");
+    if (cambioClaveRequest.getNuevaClave().length() < 4) {
+      throw new Exception("La contraseña debe tener al menos 4 caracteres");
     }
     
     // Obtener el usuario
