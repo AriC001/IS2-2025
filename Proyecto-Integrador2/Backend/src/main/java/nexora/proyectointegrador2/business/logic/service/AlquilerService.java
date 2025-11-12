@@ -13,6 +13,7 @@ import nexora.proyectointegrador2.business.domain.entity.Cliente;
 import nexora.proyectointegrador2.business.domain.entity.Documento;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
 import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
+import nexora.proyectointegrador2.business.persistence.repository.ClienteRepository;
 import nexora.proyectointegrador2.utils.dto.AlquilerDTO;
 
 @Service
@@ -24,6 +25,9 @@ public class AlquilerService extends BaseService<Alquiler, String> {
 
   @Autowired
   private ClienteService clienteService;
+
+  @Autowired
+  private ClienteRepository clienteRepository;
 
   @Autowired
   private VehiculoService vehiculoService;
@@ -69,12 +73,37 @@ public class AlquilerService extends BaseService<Alquiler, String> {
 
   @Override
   protected void preAlta(Alquiler entity) throws Exception {
+    // Manejar cliente: si viene con ID, intentar buscarlo. Si no existe o es null, buscar por usuario
     if (entity.getCliente() != null && entity.getCliente().getId() == null) {
       Cliente clienteGuardado = clienteService.save(entity.getCliente());
       entity.setCliente(clienteGuardado);
     } else if (entity.getCliente() != null && entity.getCliente().getId() != null) {
-      Cliente clienteExistente = clienteService.findById(entity.getCliente().getId());
-      entity.setCliente(clienteExistente);
+      try {
+        Cliente clienteExistente = clienteService.findById(entity.getCliente().getId());
+        entity.setCliente(clienteExistente);
+      } catch (Exception e) {
+        // Si el cliente no existe por ID, puede ser que el ID sea del usuario
+        // Intentar buscar cliente por usuarioId
+        final String usuarioId;
+        
+        // Primero intentar obtener el usuarioId del usuario asociado al cliente
+        if (entity.getCliente().getUsuario() != null && entity.getCliente().getUsuario().getId() != null) {
+          usuarioId = entity.getCliente().getUsuario().getId();
+        } else {
+          // Si no hay usuario asociado, el ID del cliente probablemente es el ID del usuario
+          usuarioId = entity.getCliente().getId();
+        }
+        
+        // Buscar cliente por usuarioId
+        Cliente clientePorUsuario = clienteRepository.findByUsuarioIdAndEliminadoFalse(usuarioId)
+            .orElseThrow(() -> new Exception("No se encontró un cliente asociado al usuario con ID: " + usuarioId));
+        entity.setCliente(clientePorUsuario);
+      }
+    } else if (entity.getCliente() == null) {
+      // Si el cliente es null pero hay usuario en el alquiler, buscar cliente por usuario
+      // Nota: El alquiler no tiene usuario directamente, pero el cliente podría tenerlo
+      // Este caso se maneja mejor en el controller antes de llegar aquí
+      throw new Exception("El cliente es obligatorio");
     }
 
     if (entity.getVehiculo() != null && entity.getVehiculo().getId() == null) {

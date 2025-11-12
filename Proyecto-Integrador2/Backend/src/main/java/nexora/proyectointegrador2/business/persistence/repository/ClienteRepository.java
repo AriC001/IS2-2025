@@ -13,4 +13,6 @@ public interface ClienteRepository extends BaseRepository<Cliente, String> {
 
   boolean existsByNumeroDocumentoAndEliminadoFalse(String numeroDocumento);
 
+  Optional<Cliente> findByUsuarioIdAndEliminadoFalse(String usuarioId);
+
 }

@@ -24,7 +24,7 @@
 
     <div style="margin-top:8px">
       <strong>Vehículo:</strong>
-      <span th:text="${alquiler.vehiculo != null ? alquiler.vehiculo.marca + ' ' + alquiler.vehiculo.modelo : '-'}">-</span>
+      <span th:text="${alquiler.vehiculo != null && alquiler.vehiculo.caracteristicaVehiculo != null ? alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo : '-'}">-</span>
     </div>
 
     <div style="margin-top:8px">

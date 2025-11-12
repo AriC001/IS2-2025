@@ -1,9 +1,8 @@
 package com.nexora.proyectointegrador2.front_cliente.business.logic.service;
 
-import java.util.LinkedHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,10 @@ import com.nexora.proyectointegrador2.front_cliente.dto.DocumentoDTO;
 public class DocumentoService extends BaseService<DocumentoDTO, String> {
 
   private static final Logger logger = LoggerFactory.getLogger(DocumentoService.class);
-  private static final String DOCUMENTO_API_URL = "http://localhost:8080/api/v1/documentos/upload";
+  private static final String DOCUMENTO_API_URL = "http://localhost:9000/api/v1/documentos/upload";
+
+  @Autowired
+  private RestTemplate restTemplate;
 
   public DocumentoService(DocumentoDAO dao) {
     super(dao);
@@ -37,8 +39,6 @@ public class DocumentoService extends BaseService<DocumentoDTO, String> {
 
   public DocumentoDTO uploadDocumento(MultipartFile file, String tipoDocumento, String alquilerId) throws Exception {
     try {
-      RestTemplate restTemplate = new RestTemplate();
-
       MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
       body.add("file", new ByteArrayResource(file.getBytes()) {
         @Override
