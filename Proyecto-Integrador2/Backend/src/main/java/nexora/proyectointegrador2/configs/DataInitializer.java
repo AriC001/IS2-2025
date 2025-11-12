@@ -786,19 +786,31 @@ public class DataInitializer {
    */
   private byte[] leerImagen(String nombreArchivo) {
     try {
-      // Intentar leer desde la carpeta Backend/image (relativa al directorio de trabajo)
+      // Primero intentar cargar desde el classpath (si las imágenes fueron empaquetadas)
+      try (var is = Thread.currentThread().getContextClassLoader().getResourceAsStream("image/" + nombreArchivo)) {
+        if (is != null) {
+          return is.readAllBytes();
+        }
+      }
+
+      // Intentar leer desde la carpeta Backend/image (relativa al directorio de trabajo del proyecto)
       Path rutaImagen = Paths.get("Backend", "image", nombreArchivo);
-      
-      // Si no existe, intentar desde el directorio actual
+
+      // Si no existe, intentar desde la carpeta image en la raíz del contenedor/working dir
       if (!Files.exists(rutaImagen)) {
         rutaImagen = Paths.get("image", nombreArchivo);
       }
-      
-      // Si aún no existe, intentar desde el directorio raíz del proyecto
+
+      // Si aún no existe, intentar desde /app/image (donde se copian en el Dockerfile)
+      if (!Files.exists(rutaImagen)) {
+        rutaImagen = Paths.get("/app", "image", nombreArchivo);
+      }
+
+      // Último recurso: intentar desde el directorio actual + Backend/image
       if (!Files.exists(rutaImagen)) {
         rutaImagen = Paths.get(System.getProperty("user.dir"), "Backend", "image", nombreArchivo);
       }
-      
+
       if (Files.exists(rutaImagen)) {
         return Files.readAllBytes(rutaImagen);
       } else {

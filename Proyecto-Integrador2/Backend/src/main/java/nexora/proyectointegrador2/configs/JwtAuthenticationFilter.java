@@ -184,7 +184,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             
             // Endpoints públicos para el formulario de registro
             path.startsWith("/api/v1/nacionalidades") ||
-            path.startsWith("/api/v1/localidades")
+            path.startsWith("/api/v1/localidades") ||
+
+            path.startsWith("/favicon.ico") ||
+            path.startsWith("/webhook") ||
+            path.equals("/webhook")
         );
         
         if (shouldSkip) {

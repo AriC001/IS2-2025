@@ -17,7 +17,7 @@
 
     <div th:if="${error}" style="color:crimson;margin-bottom:12px"> <span th:text="${error}"></span> </div>
 
-    <form th:action="@{/pago/confirm}" method="post">
+    <form th:action="@{/payment/create}" method="get">
       <input type="hidden" name="alquilerId" th:value="${alquilerId}" />
       <div style="margin-top:12px">
         <button type="submit" class="btn">Simular pago aprobado</button>
