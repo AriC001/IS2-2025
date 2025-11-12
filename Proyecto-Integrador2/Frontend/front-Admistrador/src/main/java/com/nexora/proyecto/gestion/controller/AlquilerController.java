@@ -3,10 +3,12 @@ package com.nexora.proyecto.gestion.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +20,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.nexora.proyecto.gestion.business.logic.service.AlquilerService;
 import com.nexora.proyecto.gestion.business.logic.service.ClienteService;
 import com.nexora.proyecto.gestion.business.logic.service.VehiculoService;
+import com.nexora.proyecto.gestion.business.persistence.dao.FacturaDAO;
 import com.nexora.proyecto.gestion.dto.AlquilerDTO;
 import com.nexora.proyecto.gestion.dto.ClienteDTO;
 import com.nexora.proyecto.gestion.dto.DocumentoDTO;
+import com.nexora.proyecto.gestion.dto.FacturaDTO;
 import com.nexora.proyecto.gestion.dto.VehiculoDTO;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,11 +35,46 @@ public class AlquilerController extends BaseController<AlquilerDTO, String> {
 
   private final ClienteService clienteService;
   private final VehiculoService vehiculoService;
+  
+  @Autowired
+  private FacturaDAO facturaDAO;
 
   public AlquilerController(AlquilerService alquilerService, ClienteService clienteService, VehiculoService vehiculoService) {
     super(alquilerService, "alquiler", "alquileres");
     this.clienteService = clienteService;
     this.vehiculoService = vehiculoService;
+  }
+
+  @Override
+  @GetMapping("/{id}")
+  public String detalle(@PathVariable String id, Model model, HttpSession session) {
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
+    try {
+      addSessionAttributesToModel(model, session);
+      AlquilerDTO alquiler = service.findById(id);
+      model.addAttribute(entityName, alquiler);
+      
+      // Buscar factura asociada
+      FacturaDTO factura = null;
+      boolean facturaExiste = false;
+      try {
+        factura = facturaDAO.findByAlquilerId(id);
+        facturaExiste = factura != null;
+      } catch (Exception e) {
+        logger.debug("No se encontró factura para alquiler: {}", id);
+      }
+      
+      model.addAttribute("factura", factura);
+      model.addAttribute("facturaExiste", facturaExiste);
+      
+      return entityPath + "/detail";
+    } catch (Exception e) {
+      logger.error("Error al obtener {}: {}", entityName, e.getMessage());
+      return "redirect:/" + entityPath + "?error=" + e.getMessage();
+    }
   }
 
   @InitBinder

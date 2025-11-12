@@ -40,6 +40,19 @@ public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
     + "AND NOT (a.fechaHasta IS NOT NULL AND a.fechaHasta < :qDesde OR a.fechaDesde > :qHasta)")
   Long countOverlappingForVehicleRange(java.util.Date qDesde, java.util.Date qHasta, String vehiculoId);
 
+  /**
+   * Obtiene un alquiler por ID con todas sus relaciones cargadas.
+   */
+  @Query("SELECT DISTINCT a FROM Alquiler a " +
+         "LEFT JOIN FETCH a.cliente c " +
+         "LEFT JOIN FETCH c.contactos " +
+         "LEFT JOIN FETCH a.vehiculo v " +
+         "LEFT JOIN FETCH v.caracteristicaVehiculo cv " +
+         "LEFT JOIN FETCH cv.costoVehiculo " +
+         "LEFT JOIN FETCH a.documento d " +
+         "WHERE a.id = :id AND a.eliminado = false")
+  java.util.Optional<Alquiler> findByIdWithRelations(String id);
+
 }
 
 

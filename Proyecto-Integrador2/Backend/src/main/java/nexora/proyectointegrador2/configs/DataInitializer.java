@@ -31,6 +31,7 @@ import nexora.proyectointegrador2.business.domain.entity.Persona;
 import nexora.proyectointegrador2.business.domain.entity.Provincia;
 import nexora.proyectointegrador2.business.domain.entity.Usuario;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
+import nexora.proyectointegrador2.business.enums.EstadoAlquiler;
 import nexora.proyectointegrador2.business.enums.EstadoVehiculo;
 import nexora.proyectointegrador2.business.enums.RolUsuario;
 import nexora.proyectointegrador2.business.enums.TipoContacto;
@@ -66,6 +67,7 @@ import nexora.proyectointegrador2.business.persistence.repository.PaisRepository
 import nexora.proyectointegrador2.business.persistence.repository.ProvinciaRepository;
 import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
 import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
+import nexora.proyectointegrador2.business.persistence.repository.ContactoCorreoElectronicoRepository;
 
 @Configuration
 public class DataInitializer {
@@ -101,7 +103,8 @@ public class DataInitializer {
                                         AlquilerService alquilerService,
                                         AlquilerRepository alquilerRepository,
                                         ContactoTelefonicoService contactoTelefonicoService,
-                                        ContactoCorreoElectronicoService contactoCorreoElectronicoService) {
+                                        ContactoCorreoElectronicoService contactoCorreoElectronicoService,
+                                        ContactoCorreoElectronicoRepository contactoCorreoElectronicoRepository) {
     return args -> {
       // Crear usuarios del sistema
       Usuario admin = usuarioRepository.findByNombreUsuario("admin").orElse(null);
@@ -508,6 +511,27 @@ public class DataInitializer {
         cliente2 = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("33456789").get();
       }
 
+      // Crear cliente con email específico juanimassacesi17@gmail.com si no existe
+      Cliente clienteEmailEspecifico = null;
+      if (clienteRepository.findByNumeroDocumentoAndEliminadoFalse("45143405").isEmpty()) {
+        clienteEmailEspecifico = new Cliente();
+        clienteEmailEspecifico.setNombre("Juan Ignacio");
+        clienteEmailEspecifico.setApellido("Massacesi");
+        clienteEmailEspecifico.setFechaNacimiento(new Date(95, 2, 17)); // 17/03/1995
+        clienteEmailEspecifico.setTipoDocumento(TipoDocumentacion.DNI);
+        clienteEmailEspecifico.setNumeroDocumento("45143405");
+        clienteEmailEspecifico.setDireccionEstadia("Hotel Plaza, Habitación 201");
+        clienteEmailEspecifico.setNacionalidad(argentina);
+        clienteEmailEspecifico.setDireccion(direccion1);
+        clienteEmailEspecifico.setEliminado(false);
+        clienteEmailEspecifico = clienteService.save(clienteEmailEspecifico);
+        crearContactosParaPersona(clienteEmailEspecifico, "+54 9 261 2505376", "juanimassacesi17@gmail.com", 
+                                 contactoTelefonicoService, contactoCorreoElectronicoService);
+      } else {
+        // Si el email existe, obtener el cliente asociado
+        clienteEmailEspecifico = clienteRepository.findByNumeroDocumentoAndEliminadoFalse("45143405").get();
+      }
+
       // 5. Crear 2 Vehículos con características y costos
       Vehiculo vehiculo1 = null;
       if (vehiculoRepository.findByPatenteAndEliminadoFalse("AB123CD").isEmpty()) {
@@ -605,6 +629,18 @@ public class DataInitializer {
         vehiculo2 = vehiculoRepository.findByPatenteAndEliminadoFalse("EF456GH").get();
       }
 
+      // Crear empresa MyCar con email específico
+      if (empresaRepository.findByEmailAndEliminadoFalse("mycar.mdz@gmail.com").isEmpty()) {
+        Empresa empresaMyCar = Empresa.builder()
+            .nombre("MyCar")
+            .telefono("261-1234567")
+            .email("mycar.mdz@gmail.com")
+            .direccion(direccion1)
+            .build();
+        empresaMyCar.setEliminado(false);
+        empresaService.save(empresaMyCar);
+      }
+
       if (empresaRepository.findByEmailAndEliminadoFalse("contacto@mycar1.com").isEmpty()) {
         Empresa empresa1 = Empresa.builder()
             .nombre("MyCar Mendoza")
@@ -633,6 +669,7 @@ public class DataInitializer {
             .fechaHasta(new Date(125, 0, 15))
             .cliente(cliente1)
             .vehiculo(vehiculo1)
+            .estadoAlquiler(EstadoAlquiler.PENDIENTE)
             .build();
         alquiler1.setEliminado(false);
         alquilerService.save(alquiler1);
@@ -642,6 +679,7 @@ public class DataInitializer {
             .fechaHasta(new Date(125, 1, 7))
             .cliente(cliente2)
             .vehiculo(vehiculo2)
+            .estadoAlquiler(EstadoAlquiler.PENDIENTE)
             .build();
         alquiler2.setEliminado(false);
         alquilerService.save(alquiler2);

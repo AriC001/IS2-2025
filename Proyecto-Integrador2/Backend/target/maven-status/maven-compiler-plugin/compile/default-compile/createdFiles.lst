@@ -50,6 +50,7 @@ nexora\proyectointegrador2\utils\dto\RegisterRequestDTO$Builder.class
 nexora\proyectointegrador2\business\domain\entity\Direccion.class
 nexora\proyectointegrador2\configs\DataInitializer.class
 nexora\proyectointegrador2\business\persistence\repository\ImagenRepository.class
+nexora\proyectointegrador2\business\logic\service\FormaDePagoService.class
 nexora\proyectointegrador2\business\domain\entity\Imagen$ImagenBuilder.class
 nexora\proyectointegrador2\utils\mapper\impl\EmpresaMapper.class
 nexora\proyectointegrador2\utils\dto\EmpresaDTO$EmpresaDTOBuilderImpl.class
@@ -100,6 +101,7 @@ nexora\proyectointegrador2\ProyectoIntegrador2Application.class
 nexora\proyectointegrador2\utils\dto\BaseDTO$BaseDTOBuilder.class
 nexora\proyectointegrador2\business\domain\entity\ContactoCorreoElectronico$ContactoCorreoElectronicoBuilder.class
 nexora\proyectointegrador2\utils\dto\AlquilerDTO$AlquilerDTOBuilderImpl.class
+nexora\proyectointegrador2\business\logic\service\EmailService.class
 nexora\proyectointegrador2\utils\dto\CostoVehiculoDTO$CostoVehiculoDTOBuilderImpl.class
 nexora\proyectointegrador2\utils\dto\LoginRequestDTO.class
 nexora\proyectointegrador2\controller\DireccionRestController.class
@@ -114,6 +116,7 @@ nexora\proyectointegrador2\utils\security\GitHubTokenService.class
 nexora\proyectointegrador2\business\domain\entity\Imagen.class
 nexora\proyectointegrador2\business\enums\TipoEmpleado.class
 nexora\proyectointegrador2\business\logic\service\ProvinciaService.class
+nexora\proyectointegrador2\utils\mapper\impl\FormaDePagoMapper.class
 nexora\proyectointegrador2\business\domain\entity\Empleado$EmpleadoBuilder.class
 nexora\proyectointegrador2\controller\BaseRestController.class
 nexora\proyectointegrador2\utils\dto\PaisDTO.class
@@ -129,6 +132,7 @@ nexora\proyectointegrador2\business\persistence\repository\UsuarioRepository.cla
 nexora\proyectointegrador2\controller\EmpresaRestController.class
 nexora\proyectointegrador2\business\logic\service\DepartamentoService.class
 nexora\proyectointegrador2\business\persistence\repository\DocumentoRepository.class
+nexora\proyectointegrador2\business\logic\service\FacturaService.class
 nexora\proyectointegrador2\business\persistence\repository\CaracteristicaVehiculoRepository.class
 nexora\proyectointegrador2\utils\dto\ClienteDTO$ClienteDTOBuilderImpl.class
 nexora\proyectointegrador2\business\domain\entity\Vehiculo$VehiculoBuilder.class
@@ -143,6 +147,7 @@ nexora\proyectointegrador2\business\persistence\repository\VehiculoRepository.cl
 nexora\proyectointegrador2\utils\dto\DocumentoDTO.class
 nexora\proyectointegrador2\utils\mapper\BaseMapper.class
 nexora\proyectointegrador2\utils\mapper\impl\DocumentoMapper.class
+nexora\proyectointegrador2\business\enums\EstadoAlquiler.class
 nexora\proyectointegrador2\business\domain\entity\Documento.class
 nexora\proyectointegrador2\business\logic\service\VehiculoService.class
 nexora\proyectointegrador2\business\enums\TipoImagen.class
@@ -161,6 +166,7 @@ nexora\proyectointegrador2\business\enums\EstadoFactura.class
 nexora\proyectointegrador2\business\domain\entity\CostoVehiculo$CostoVehiculoBuilder.class
 nexora\proyectointegrador2\business\domain\entity\Usuario$UsuarioBuilder.class
 nexora\proyectointegrador2\business\logic\service\CostoVehiculoService.class
+nexora\proyectointegrador2\business\logic\service\EmailService$1.class
 nexora\proyectointegrador2\business\persistence\repository\ContactoTelefonicoRepository.class
 nexora\proyectointegrador2\utils\dto\DocumentoDTO$DocumentoDTOBuilderImpl.class
 nexora\proyectointegrador2\utils\security\JwtUtil.class
@@ -190,6 +196,7 @@ nexora\proyectointegrador2\business\domain\entity\Provincia$ProvinciaBuilder.cla
 nexora\proyectointegrador2\business\logic\service\PaisService.class
 nexora\proyectointegrador2\business\persistence\repository\DepartamentoRepository.class
 nexora\proyectointegrador2\utils\dto\ImagenDTO.class
+nexora\proyectointegrador2\utils\mapper\impl\FacturaMapper.class
 nexora\proyectointegrador2\business\domain\entity\Usuario.class
 nexora\proyectointegrador2\utils\dto\ContactoCorreoElectronicoDTO.class
 nexora\proyectointegrador2\business\logic\service\CaracteristicaVehiculoService.class
@@ -206,9 +213,11 @@ nexora\proyectointegrador2\utils\dto\ProvinciaDTO$ProvinciaDTOBuilder.class
 nexora\proyectointegrador2\business\domain\entity\Localidad$LocalidadBuilder.class
 nexora\proyectointegrador2\utils\dto\CostoVehiculoDTO.class
 nexora\proyectointegrador2\business\logic\service\LocalidadService.class
+nexora\proyectointegrador2\business\logic\service\FacturaPdfService.class
 nexora\proyectointegrador2\business\persistence\repository\AlquilerRepository.class
 nexora\proyectointegrador2\business\domain\entity\ContactoTelefonico.class
 nexora\proyectointegrador2\business\persistence\repository\PaisRepository.class
+nexora\proyectointegrador2\controller\FacturaRestController.class
 nexora\proyectointegrador2\business\logic\service\AlquilerService.class
 nexora\proyectointegrador2\utils\mapper\impl\PaisMapper.class
 nexora\proyectointegrador2\business\enums\TipoTelefono.class
@@ -217,6 +226,7 @@ nexora\proyectointegrador2\utils\mapper\impl\EmpleadoMapper.class
 nexora\proyectointegrador2\utils\dto\LocalidadDTO$LocalidadDTOBuilderImpl.class
 nexora\proyectointegrador2\utils\dto\DireccionDTO$DireccionDTOBuilderImpl.class
 nexora\proyectointegrador2\business\domain\entity\Pais.class
+nexora\proyectointegrador2\utils\mapper\impl\DetalleFacturaMapper.class
 nexora\proyectointegrador2\business\domain\entity\Cliente.class
 nexora\proyectointegrador2\utils\mapper\impl\ConfiguracionCorreoElectronicoMapper.class
 nexora\proyectointegrador2\utils\dto\ContactoTelefonicoDTO.class

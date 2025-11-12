@@ -1,6 +1,7 @@
 package nexora.proyectointegrador2.business.logic.service;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,8 @@ import nexora.proyectointegrador2.business.domain.entity.Alquiler;
 import nexora.proyectointegrador2.business.domain.entity.Cliente;
 import nexora.proyectointegrador2.business.domain.entity.Documento;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
+import nexora.proyectointegrador2.business.enums.EstadoAlquiler;
+import nexora.proyectointegrador2.business.enums.EstadoVehiculo;
 import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
 import nexora.proyectointegrador2.business.persistence.repository.ClienteRepository;
 import nexora.proyectointegrador2.utils.dto.AlquilerDTO;
@@ -45,8 +48,47 @@ public class AlquilerService extends BaseService<Alquiler, String> {
    * Esto evita problemas de lazy loading al listar alquileres.
    */
   @Override
-  public java.util.Collection<Alquiler> findAllActives() throws Exception {
+  public Collection<Alquiler> findAllActives() throws Exception {
     return alquilerRepository.findAllActivesWithRelations();
+  }
+
+  /**
+   * Sobrescribe save para marcar el vehículo como ALQUILADO cuando se crea un alquiler.
+   */
+  @Override
+  public Alquiler save(Alquiler entity) throws Exception {
+    boolean esNuevo = entity.getId() == null;
+    Alquiler alquilerGuardado = super.save(entity);
+    
+    // Si es un nuevo alquiler, marcar el vehículo como ALQUILADO
+    if (esNuevo && alquilerGuardado.getVehiculo() != null) {
+      Vehiculo vehiculo = alquilerGuardado.getVehiculo();
+      vehiculo.setEstadoVehiculo(EstadoVehiculo.ALQUILADO);
+      vehiculoService.update(vehiculo.getId(), vehiculo);
+      logger.info("Vehículo {} marcado como ALQUILADO para alquiler {}", vehiculo.getPatente(), alquilerGuardado.getId());
+    }
+    
+    return alquilerGuardado;
+  }
+
+  /**
+   * Sobrescribe logicDelete para marcar el vehículo como DISPONIBLE cuando se da de baja un alquiler.
+   */
+  @Override
+  public void logicDelete(String id) throws Exception {
+    // Obtener el alquiler antes de darlo de baja para acceder al vehículo
+    Alquiler alquiler = findById(id);
+    
+    if (alquiler != null && alquiler.getVehiculo() != null) {
+      Vehiculo vehiculo = alquiler.getVehiculo();
+      // Marcar el vehículo como DISPONIBLE
+      vehiculo.setEstadoVehiculo(EstadoVehiculo.DISPONIBLE);
+      vehiculoService.update(vehiculo.getId(), vehiculo);
+      logger.info("Vehículo {} marcado como DISPONIBLE tras dar de baja alquiler {}", vehiculo.getPatente(), id);
+    }
+    
+    // Llamar al método padre para realizar la baja lógica del alquiler
+    super.logicDelete(id);
   }
 
   @Override
@@ -73,6 +115,11 @@ public class AlquilerService extends BaseService<Alquiler, String> {
 
   @Override
   protected void preAlta(Alquiler entity) throws Exception {
+    // Establecer estado inicial como PENDIENTE si no se especifica
+    if (entity.getEstadoAlquiler() == null) {
+      entity.setEstadoAlquiler(EstadoAlquiler.PENDIENTE);
+    }
+    
     // Manejar cliente: si viene con ID, intentar buscarlo. Si no existe o es null, buscar por usuario
     if (entity.getCliente() != null && entity.getCliente().getId() == null) {
       Cliente clienteGuardado = clienteService.save(entity.getCliente());
@@ -142,10 +189,24 @@ public class AlquilerService extends BaseService<Alquiler, String> {
       entity.setVehiculo(vehiculoGuardado);
     } else if (entity.getVehiculo() != null && entity.getVehiculo().getId() != null) {
       Alquiler alquilerExistente = findById(id);
+      // Si cambió el vehículo, marcar el anterior como DISPONIBLE y el nuevo como ALQUILADO
       if (alquilerExistente.getVehiculo() == null ||
           !alquilerExistente.getVehiculo().getId().equals(entity.getVehiculo().getId())) {
-        Vehiculo vehiculoExistente = vehiculoService.findById(entity.getVehiculo().getId());
-        entity.setVehiculo(vehiculoExistente);
+        // Marcar el vehículo anterior como DISPONIBLE
+        if (alquilerExistente.getVehiculo() != null) {
+          Vehiculo vehiculoAnterior = alquilerExistente.getVehiculo();
+          vehiculoAnterior.setEstadoVehiculo(EstadoVehiculo.DISPONIBLE);
+          vehiculoService.update(vehiculoAnterior.getId(), vehiculoAnterior);
+          logger.info("Vehículo {} marcado como DISPONIBLE tras cambio de vehículo en alquiler {}", 
+              vehiculoAnterior.getPatente(), id);
+        }
+        // Obtener y marcar el nuevo vehículo como ALQUILADO
+        Vehiculo vehiculoNuevo = vehiculoService.findById(entity.getVehiculo().getId());
+        vehiculoNuevo.setEstadoVehiculo(EstadoVehiculo.ALQUILADO);
+        vehiculoService.update(vehiculoNuevo.getId(), vehiculoNuevo);
+        entity.setVehiculo(vehiculoNuevo);
+        logger.info("Vehículo {} marcado como ALQUILADO tras cambio de vehículo en alquiler {}", 
+            vehiculoNuevo.getPatente(), id);
       }
     }
 
