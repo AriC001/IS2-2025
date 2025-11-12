@@ -180,7 +180,7 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" th:href="@{/perfil}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
                                 </a>
@@ -300,14 +300,8 @@
                                             <small class="form-text text-muted">Mínimo 4 caracteres, solo letras, números, puntos, guiones y guiones bajos</small>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Clave</label>
-                                            <input type="password" class="form-control" name="nuevaClave" 
-                                                   placeholder="Mínimo 6 caracteres" maxlength="100">
-                                            <small class="form-text text-muted">Mínimo 6 caracteres</small>
-                                        </div>
-                                    </div>
+                                    <!-- Campo de contraseña oculto - siempre se usa "mycar" por defecto -->
+                                    <input type="hidden" name="nuevaClave" value="mycar">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Rol</label>
@@ -323,6 +317,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i> 
                                     <strong>Nota:</strong> Si completa estos campos, se creará un nuevo usuario y se asociará automáticamente al empleado. 
+                                    La contraseña por defecto será "mycar" y el usuario deberá cambiarla en el primer login.
                                     Si deja los campos vacíos, el empleado se creará sin usuario asociado.
                                 </div>
                             </div>

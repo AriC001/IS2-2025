@@ -68,7 +68,7 @@
                                 <img class="img-profile rounded-circle" th:src="@{/img/undraw_profile.svg}">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
-                                <a class="dropdown-item" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil</a>
+                                <a class="dropdown-item" th:href="@{/perfil}"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil</a>
                                 <a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Configuración</a>
                                 <div class="dropdown-divider"></div>
                                 <div class="px-3 py-2"><small class="text-muted">Rol: <strong th:text="${rol}">ROL</strong></small></div>

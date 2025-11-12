@@ -1,7 +1,5 @@
 package nexora.proyectointegrador2.utils.dto;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +18,7 @@ public class DocumentoDTO extends BaseDTO {
   private String observacion;
   private String pathArchivo;
   private String nombreArchivo;
+  private String mimeType;
 
 }
 

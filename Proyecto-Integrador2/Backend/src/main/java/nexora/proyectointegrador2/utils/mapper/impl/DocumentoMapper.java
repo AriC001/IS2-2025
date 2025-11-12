@@ -29,6 +29,7 @@ public class DocumentoMapper implements BaseMapper<Documento, DocumentoDTO, Stri
         .observacion(entity.getObservacion())
         .pathArchivo(entity.getPathArchivo())
         .nombreArchivo(entity.getNombreArchivo())
+        .mimeType(entity.getMimeType())
         .build();
   }
 
@@ -45,6 +46,7 @@ public class DocumentoMapper implements BaseMapper<Documento, DocumentoDTO, Stri
     documento.setObservacion(dto.getObservacion());
     documento.setPathArchivo(dto.getPathArchivo());
     documento.setNombreArchivo(dto.getNombreArchivo());
+    documento.setMimeType(dto.getMimeType());
     return documento;
   }
 
