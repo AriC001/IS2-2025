@@ -1,7 +1,6 @@
-package  com.nexora.proyectointegrador2.front_cliente.config.security;
+package com.nexora.proyectointegrador2.front_cliente.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -11,8 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -20,19 +17,15 @@ public class SecurityConfiguration {
 
     @Autowired
     private CustomAuthenticationSuccessHandler successHandler;
-    // Maneja qué hacer DESPUÉS de un login exitoso (redirigir según el rol)
 
     @Autowired
     private CustomLogoutSuccessHandler logoutSuccessHandler;
-    // Maneja qué hacer DESPUÉS de un logout (redirigir a /index)
 
     @Autowired
     private BackendAuthenticationProvider backendAuthenticationProvider;
-    // Carga usuarios desde tu base de datos para el login con formulario
 
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
-    // Maneja el login con GitHub OAuth2 y crea usuarios SOCIO automáticamente
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -43,11 +36,18 @@ public class SecurityConfiguration {
                         "/registro/**",
                         "/clientes/registro",
                         "/clientes/registrar",
-                        "/css/**", "/js/**", "/img/**", "/vendor/**", "/scss/**",
                         
-                        // 🔥 Agregá esto
+                        // Rutas de registro (auth)
+                        "/auth/registro",
+                        "/auth/login",
+                        
+                        // APIs públicas necesarias para el registro
                         "/api/v1/nacionalidades/**",
-                        "/api/v1/localidades/**"
+                        "/api/v1/localidades/**",
+                        "/api/v1/auth/register/cliente",
+                        
+                        // Recursos estáticos
+                        "/css/**", "/js/**", "/img/**", "/vendor/**", "/scss/**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 )
@@ -66,7 +66,6 @@ public class SecurityConfiguration {
                         )
                         .successHandler(successHandler)
                 )
-                // register authentication provider explicitly so the PasswordEncoder bean is used
                 .authenticationProvider(authenticationProvider())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -80,16 +79,13 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-        @Bean
-        public org.springframework.security.authentication.AuthenticationProvider authenticationProvider() {
-                // Use backend-based authentication provider that delegates to AuthService
-                return backendAuthenticationProvider;
-        }
+    @Bean
+    public org.springframework.security.authentication.AuthenticationProvider authenticationProvider() {
+        return backendAuthenticationProvider;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }

@@ -38,18 +38,28 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
           // IMPORTANTE: El orden de las reglas es crítico. Las más específicas primero.
+          
           // Permitir OPTIONS requests (preflight CORS) - debe ir primero
           .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-          // Permitir endpoints de autenticación - debe ir ANTES de /api/**
-          // Especificamos explícitamente el endpoint de login
+          
+          // Permitir endpoints de autenticación
           .requestMatchers("/api/v1/auth/login").permitAll()
           .requestMatchers("/api/v1/auth/**").permitAll()
-          // Permitir creación de usuarios desde el frontend (ej. flujo OAuth2)
+          
+          // Permitir endpoints públicos necesarios para el registro
+          .requestMatchers("/api/v1/nacionalidades/**").permitAll()
+          .requestMatchers("/api/v1/localidades/**").permitAll()
+          
+          // Permitir creación y consulta de usuarios desde el frontend
           .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/usuarios").permitAll()
+          .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/usuarios/**").permitAll()
+          
           // Permitir recursos estáticos
           .requestMatchers("/favicon.ico", "/public/**", "/error").permitAll()
-          // Proteger otros endpoints de la API (esto NO debe coincidir con /api/v1/auth/**)
+          
+          // Proteger otros endpoints de la API (esto va DESPUÉS de las excepciones públicas)
           .requestMatchers("/api/**").authenticated()
+          
           // Permitir cualquier otra petición
           .anyRequest().permitAll()
         )
@@ -61,8 +71,8 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-  // Allow common local dev origins used by the frontend (adjust as needed)
-  configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:8082"));
+    // Allow common local dev origins used by the frontend (adjust as needed)
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:8082"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);
@@ -71,8 +81,5 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-
-  // NOTE: RestTemplate bean has been moved to RestTemplateConfig to avoid
-  // circular dependencies between SecurityConfig -> JwtAuthenticationFilter -> GitHubTokenService
 
 }
