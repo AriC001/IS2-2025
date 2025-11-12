@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import nexora.proyectointegrador2.utils.security.JwtUtil;
 import nexora.proyectointegrador2.utils.security.GitHubTokenService;
+import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
+import nexora.proyectointegrador2.business.domain.entity.Usuario;
 
 /**
  * Filtro que intercepta cada petición HTTP y valida el token JWT
@@ -33,9 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtUtil jwtUtil;
         private final GitHubTokenService gitHubTokenService;
 
-        public JwtAuthenticationFilter(JwtUtil jwtUtil, GitHubTokenService gitHubTokenService) {
+        private final UsuarioRepository usuarioRepository;
+
+        public JwtAuthenticationFilter(JwtUtil jwtUtil, GitHubTokenService gitHubTokenService, UsuarioRepository usuarioRepository) {
             this.jwtUtil = jwtUtil;
             this.gitHubTokenService = gitHubTokenService;
+            this.usuarioRepository = usuarioRepository;
         }
 
   @Override
@@ -75,10 +80,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String githubLogin = gitHubTokenService.validateTokenAndGetLogin(token);
                     if (githubLogin != null) {
                         // Autenticamos al usuario usando el login de GitHub
-                        username = "github:" + githubLogin;
+                        // Use the provider login directly (no prefix) so it matches local Usuario.nombreUsuario
+                        username = githubLogin;
                         jwtValid = true;
                         isProviderToken = true;
                         log.debug("Token de proveedor válido (GitHub) para: {}", githubLogin);
+                        // Try to resolve a local Usuario with this login so downstream logic has an id/role
+                        try {
+                            java.util.Optional<Usuario> opt = usuarioRepository.findByNombreUsuarioAndEliminadoFalse(githubLogin);
+                            if (opt.isPresent()) {
+                                Usuario u = opt.get();
+                                // overwrite username to the exact stored nombreUsuario (already githubLogin)
+                                username = u.getNombreUsuario();
+                                // store usuarioId and role later when building authentication
+                                log.debug("GitHub login linked to local Usuario id={} rol={}", u.getId(), u.getRol());
+                            } else {
+                                log.debug("No se encontró Usuario local para GitHub login={}", githubLogin);
+                            }
+                        } catch (Exception ex) {
+                            log.warn("Error buscando Usuario local para login de proveedor: {}", ex.getMessage());
+                        }
                     }
                 }
 
@@ -87,8 +108,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String rol;
                     String usuarioId = null;
                     if (isProviderToken) {
-                        // Token de proveedor (GitHub): asignar rol por defecto
-                        rol = "USER";
+                        // Token de proveedor (GitHub): try to extract role/id from local user if available
+                        // If not available, default to USER
+                        try {
+                            java.util.Optional<Usuario> opt = usuarioRepository.findByNombreUsuarioAndEliminadoFalse(username);
+                            if (opt.isPresent()) {
+                                Usuario u = opt.get();
+                                rol = u.getRol() != null ? u.getRol().name() : "USER";
+                                usuarioId = u.getId();
+                            } else {
+                                rol = "USER";
+                            }
+                        } catch (Exception ex) {
+                            rol = "USER";
+                        }
                     } else {
                         rol = jwtUtil.extractRol(token);
                         usuarioId = jwtUtil.extractUsuarioId(token);

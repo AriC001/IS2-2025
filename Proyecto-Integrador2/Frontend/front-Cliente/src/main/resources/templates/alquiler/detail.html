@@ -43,6 +43,8 @@
       <form th:action="@{/alquiler}" method="post" enctype="multipart/form-data" id="alquilerForm">
         <!-- Hidden values passed from vehiculo/detail via query params -->
   <input type="hidden" name="vehiculoId" th:value="${param.id}" />
+      <!-- If session provides usuarioId (set by auth handler), forward it as clienteId -->
+      <input type="hidden" name="clienteId" th:if="${session.usuarioId != null}" th:value="${session.usuarioId}" />
   <input type="hidden" name="fechaDesdeParam" th:value="${param.fechaDesde}" />
   <input type="hidden" name="fechaHastaParam" th:value="${param.fechaHasta}" />
   <input type="hidden" name="total" id="totalInput" th:value="${param.total}" />
