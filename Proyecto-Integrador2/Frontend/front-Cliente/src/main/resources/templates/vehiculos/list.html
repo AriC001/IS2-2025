@@ -394,6 +394,7 @@
 
     <div class="nav-links">
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn-nav">Vehículos</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/alquiler}" class="btn-nav">Alquileres</a>
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/perfil}" class="btn-nav">Perfil</a>
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-nav btn-primary-nav">Log out</a>
     </div>

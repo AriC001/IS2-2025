@@ -682,24 +682,79 @@
         </h3>
         
         <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaCreacion, 'dd/MM/yyyy HH:mm')}">12/11/2024 10:30</div>
+          <!-- Creación del alquiler -->
+          <div class="timeline-item" th:if="${alquiler.fechaCreacion != null}">
+            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></div>
             <div class="timeline-content">Alquiler creado</div>
           </div>
           
-          <div class="timeline-item" th:if="${alquiler.pago != null}">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.pago.fechaPago, 'dd/MM/yyyy HH:mm')}">12/11/2024 10:35</div>
-            <div class="timeline-content">Pago confirmado</div>
+          <!-- Pago confirmado -->
+          <div class="timeline-item" th:if="${alquiler.pago != null && alquiler.pago.fechaPago != null}">
+            <div class="timeline-date" th:text="${#dates.format(alquiler.pago.fechaPago, 'dd/MM/yyyy HH:mm')}"></div>
+            <div class="timeline-content">Pago confirmado </div>
+        </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a th:if="${alquiler.estado == 'PENDIENTE'}" 
+         th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" 
+         class="btn btn-success">
+        <i class="fas fa-credit-card"></i>
+        Completar Pago
+      </a>
+      
+      <a th:if="${alquiler.estado == 'ACTIVO'}" 
+         th:href="@{'/alquileres/' + ${alquiler.id} + '/finalizar'}" 
+         class="btn btn-primary">
+        <i class="fas fa-check-double"></i>
+        Finalizar Alquiler
+      </a>
+      
+      <a th:if="${alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO'}" 
+         th:href="@{'/alquileres/' + ${alquiler.id} + '/cancelar'}" 
+         class="btn btn-danger"
+         onclick="return confirm('¿Estás seguro de que deseas cancelar este alquiler?')">
+        <i class="fas fa-times-circle"></i>
+        Cancelar Alquiler
+      </a>
+      
+      <a th:href="@{/alquileres/mis-alquileres}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        Volver
+      </a>
+    </div>
+  </div>
+
+  <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+  <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html> + #numbers.formatDecimal(alquiler.pago.monto, 0, 'COMMA', 0, 'POINT')}"></span></div>
           </div>
           
-          <div class="timeline-item" th:if="${alquiler.estado == 'ACTIVO'}">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">01/12/2024</div>
-            <div class="timeline-content">Inicio del alquiler</div>
+          <!-- Inicio del alquiler -->
+          <div class="timeline-item" th:if="${alquiler.fechaDesde != null}">
+            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}"></div>
+            <div class="timeline-content">
+              <span th:if="${alquiler.estado == 'ACTIVO' || alquiler.estado == 'FINALIZADO'}">Inicio del alquiler</span>
+              <span th:if="${alquiler.estado == 'PENDIENTE'}">Fecha de inicio programada</span>
+            </div>
           </div>
           
-          <div class="timeline-item" th:if="${alquiler.estado == 'FINALIZADO'}">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">07/12/2024</div>
-            <div class="timeline-content">Alquiler finalizado</div>
+          <!-- Fin del alquiler -->
+          <div class="timeline-item" th:if="${alquiler.fechaHasta != null}">
+            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}"></div>
+            <div class="timeline-content">
+              <span th:if="${alquiler.estado == 'FINALIZADO'}">Alquiler finalizado</span>
+              <span th:if="${alquiler.estado != 'FINALIZADO'}">Fecha de finalización programada</span>
+            </div>
+          </div>
+          
+          <!-- Cancelación (si existe) -->
+          <div class="timeline-item" th:if="${alquiler.estado == 'CANCELADO' && alquiler.fechaCancelacion != null}">
+            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaCancelacion, 'dd/MM/yyyy HH:mm')}"></div>
+            <div class="timeline-content" style="color: #dc3545;">Alquiler cancelado</div>
           </div>
         </div>
       </div>

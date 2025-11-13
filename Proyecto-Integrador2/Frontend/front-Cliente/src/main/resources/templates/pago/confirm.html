@@ -4,29 +4,326 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Simular pago</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,700" rel="stylesheet">
+  <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+
   <style>
-    body { font-family: Arial, sans-serif; padding:24px; background:#fafafa }
-    .card { max-width:600px; margin:0 auto; background:#fff; padding:18px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06) }
-    .btn { display:inline-block; padding:10px 14px; background:#007bff; color:#fff; border-radius:6px; text-decoration:none }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: 'Nunito', Arial, sans-serif; 
+      background: #f8f9fa; 
+      padding-top: 0;
+      min-height: 100vh;
+    }
+    
+    /* Navbar styles */
+    .nav {
+      background: #007bff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 0;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .logo-icon.rotate {
+      animation: rotate 3s ease-in-out infinite;
+    }
+    
+    @keyframes rotate {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(15deg); }
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .nav-links .btn-nav {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .nav-links .btn-nav:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .nav-links .btn-primary-nav {
+      background: white;
+      color: #007bff;
+      font-weight: 600;
+    }
+    
+    .nav-links .btn-primary-nav:hover {
+      background: #f0f0f0;
+    }
+    
+    /* Container */
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    
+    /* Card */
+    .card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    
+    .card-icon {
+      font-size: 64px;
+      color: #007bff;
+      margin-bottom: 24px;
+    }
+    
+    h2 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+    
+    .card-description {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    
+    /* Error message */
+    .error {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 15px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .error i {
+      font-size: 20px;
+      color: #ffc107;
+    }
+    
+    /* Form */
+    form {
+      margin: 32px 0;
+    }
+    
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+      width: 100%;
+      max-width: 400px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .btn-primary:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    }
+    
+    .btn-primary i {
+      font-size: 18px;
+    }
+    
+    /* Info box */
+    .info-box {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 32px;
+      text-align: left;
+    }
+    
+    .info-box-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #007bff;
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    
+    .info-box-title i {
+      font-size: 18px;
+    }
+    
+    .info-box p {
+      color: #666;
+      margin-bottom: 8px;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+    
+    code {
+      background: #e9ecef;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #007bff;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 32px 0;
+    }
+    
+    @media (max-width: 768px) {
+      .nav {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+      }
+      
+      .container {
+        margin: 24px auto;
+      }
+      
+      .card {
+        padding: 24px;
+      }
+      
+      .card-icon {
+        font-size: 48px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <h2>Simular pago</h2>
-    <p>Use este formulario para simular que el pago fue aprobado y ver el comprobante de la reserva.</p>
-
-    <div th:if="${error}" style="color:crimson;margin-bottom:12px"> <span th:text="${error}"></span> </div>
-
-    <form th:action="@{/payment/create}" method="get">
-      <input type="hidden" name="alquilerId" th:value="${alquilerId}" />
-      <div style="margin-top:12px">
-        <button type="submit" class="btn">Simular pago aprobado</button>
+  <!-- Navbar -->
+  <header class="nav">
+    <a href="/" class="logo">
+      <div class="logo-icon rotate">
+        <i class="fas fa-car"></i>
       </div>
-    </form>
+      <span>MyCar</span>
+    </a>
 
-    <div style="margin-top:12px; font-size:0.9rem; color:#666">
-      <p>Si la reserva ya fue creada, ingrese el <strong>ID de reserva</strong> en la URL como <code>?alquilerId=...</code>.</p>
+    <div class="nav-links">
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn-nav">Vehículos</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/alquileres/mis-alquileres}" class="btn-nav">Mis Alquileres</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/perfil}" class="btn-nav">Perfil</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-nav btn-primary-nav">Log out</a>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="container">
+    <div class="card">
+      <div class="card-icon">
+        <i class="fas fa-credit-card"></i>
+      </div>
+      
+      <h2>Simular Pago</h2>
+      
+      <p class="card-description">
+        Use este formulario para simular que el pago fue aprobado y ver el comprobante de la reserva.
+      </p>
+
+      <!-- Error message -->
+      <div th:if="${error}" class="error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span th:text="${error}">Error al procesar el pago</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Form -->
+      <form th:action="@{/payment/create}" method="get">
+        <input type="hidden" name="alquilerId" th:value="${alquilerId}" />
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-check-circle"></i>
+          Simular pago aprobado
+        </button>
+      </form>
+
+      <!-- Info box -->
+      <div class="info-box">
+        <div class="info-box-title">
+          <i class="fas fa-info-circle"></i>
+          <span>Información</span>
+        </div>
+        <p>
+          Si la reserva ya fue creada, ingrese el <strong>ID de reserva</strong> en la URL como:
+        </p>
+        <p>
+          <code>?alquilerId=123</code>
+        </p>
+        <p style="margin-top: 12px; font-size: 14px; color: #999;">
+          <i class="fas fa-lightbulb"></i> Esto es un simulador para propósitos de desarrollo y testing.
+        </p>
+      </div>
     </div>
   </div>
+
+  <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+  <script th:src="@{/js/sb-admin-2.min.js}"></script>
 </body>
 </html>

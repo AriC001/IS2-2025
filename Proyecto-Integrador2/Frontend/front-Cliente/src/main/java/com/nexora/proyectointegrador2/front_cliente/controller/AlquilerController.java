@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 import java.text.SimpleDateFormat;
 
 import com.nexora.proyectointegrador2.front_cliente.business.logic.service.AlquilerService;
@@ -19,6 +20,7 @@ import com.nexora.proyectointegrador2.front_cliente.dto.AlquilerDTO;
 import com.nexora.proyectointegrador2.front_cliente.dto.DocumentoDTO;
 import com.nexora.proyectointegrador2.front_cliente.dto.VehiculoDTO;
 import com.nexora.proyectointegrador2.front_cliente.business.logic.service.UsuarioService;
+import com.nexora.proyectointegrador2.front_cliente.business.logic.service.VehiculoService;
 import com.nexora.proyectointegrador2.front_cliente.dto.UsuarioDTO;
 import com.nexora.proyectointegrador2.front_cliente.dto.enums.TipoDocumentacion;
 @Controller
@@ -28,12 +30,14 @@ public class AlquilerController extends BaseController<AlquilerDTO, String> {
   private final AlquilerService alquilerervice;
   private final DocumentoService documentoService;
   private final UsuarioService usuarioService;
+  private final VehiculoService vehiculoService;
 
-  public AlquilerController(AlquilerService alquilerervice, DocumentoService documentoService, UsuarioService usuarioService) {
+  public AlquilerController(AlquilerService alquilerervice, DocumentoService documentoService, UsuarioService usuarioService,VehiculoService vehiculoService) {
     super(alquilerervice, "alquiler", "alquiler");
     this.alquilerervice = alquilerervice;
     this.documentoService = documentoService;
     this.usuarioService = usuarioService;
+    this.vehiculoService=vehiculoService;
   }
 
   @Override
@@ -51,6 +55,68 @@ public class AlquilerController extends BaseController<AlquilerDTO, String> {
    *  - actualiza el alquiler con el DocumentoDTO retornado
    *  - muestra una vista de recibo/summary
    */
+
+   /** GET PARA LISTA DE ALQUILERES
+  @GetMapping({"/list", "/"})
+public String alquileres(
+  @RequestParam(required = false) String fechaDesde,
+  @RequestParam(required = false) String fechaHasta,
+  Model model,
+  HttpSession session
+) {
+  // Validar sesión (usa método protegido del BaseController)
+  String redirect = checkSession(session);
+  if (redirect != null) {
+    return redirect;
+  }
+
+  try {
+    // Añadir atributos de sesión comunes al modelo
+    addSessionAttributesToModel(model, session);
+
+    // Obtener usuario logueado desde la sesión
+    Object usuObj = session.getAttribute("usuariosession");
+    UsuarioDTO sessionUser = null;
+    if (usuObj instanceof UsuarioDTO) {
+      sessionUser = (UsuarioDTO) usuObj;
+    }
+
+    // Obtener lista de alquileres
+    List<AlquilerDTO> alquileres;
+ 
+     if (sessionUser != null) {
+      alquileres = alquilerervice.findByUsuarioId(sessionUser.getId());
+    }
+
+    // Enriquecer los alquileres con el detalle del vehículo
+    // (por si el backend devuelve solo el id)
+    for (AlquilerDTO a : alquileres) {
+      if (a.getVehiculo() != null && a.getVehiculo().getId() != null) {
+        try {
+          VehiculoDTO vehiculo = vehiculoService.findById(a.getVehiculo().getId());
+          a.setVehiculo(vehiculo);
+        } catch (Exception ex) {
+          System.err.println("No se pudo obtener el vehículo del alquiler " + a.getId() + ": " + ex.getMessage());
+        }
+      }
+    }
+
+    // Añadir la lista al modelo
+    model.addAttribute(entityPath, alquileres);
+
+    // Añadir filtros al modelo (por consistencia)
+    model.addAttribute("fechaDesde", fechaDesde);
+    model.addAttribute("fechaHasta", fechaHasta);
+
+    return "alquiler/list";
+
+  } catch (Exception e) {
+    e.printStackTrace();
+    model.addAttribute("error", "Error al obtener alquileres: " + e.getMessage());
+    return "alquiler/list";
+  }
+}
+  */
   @PostMapping(consumes = {"multipart/form-data"})
   public String crearConDocumento(@ModelAttribute AlquilerDTO alquilerDTO,
                                    @RequestParam("documentFile") MultipartFile documento,

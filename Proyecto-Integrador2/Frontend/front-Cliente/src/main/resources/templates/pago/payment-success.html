@@ -1,56 +1,434 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Pago Aprobado</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        .card { display: inline-block; padding: 30px; border-radius: 8px; background-color: #f2f2f2; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-        h1 { color: green; }
-        table { margin: 20px auto; border-collapse: collapse; }
-        td { padding: 8px 15px; border: 1px solid #ddd; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pago Aprobado</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,700" rel="stylesheet">
+  <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: 'Nunito', Arial, sans-serif; 
+      background: #f8f9fa; 
+      padding-top: 0;
+      min-height: 100vh;
+    }
+    
+    /* Navbar styles */
+    .nav {
+      background: #007bff;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 0;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .logo-icon.rotate {
+      animation: rotate 3s ease-in-out infinite;
+    }
+    
+    @keyframes rotate {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(15deg); }
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .nav-links .btn-nav {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .nav-links .btn-nav:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .nav-links .btn-primary-nav {
+      background: white;
+      color: #007bff;
+      font-weight: 600;
+    }
+    
+    .nav-links .btn-primary-nav:hover {
+      background: #f0f0f0;
+    }
+    
+    /* Container */
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+    
+    /* Success Card */
+    .success-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 48px 40px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: slideUp 0.4s ease;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .success-icon {
+      font-size: 80px;
+      color: #28a745;
+      margin-bottom: 24px;
+      animation: checkPop 0.5s ease 0.2s backwards;
+    }
+    
+    @keyframes checkPop {
+      0% {
+        transform: scale(0);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    h1 {
+      color: #28a745;
+      font-size: 32px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+    
+    .success-description {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    
+    .divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 32px 0;
+    }
+    
+    /* Details section */
+    .details-title {
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .details-title i {
+      color: #007bff;
+    }
+    
+    .details-table {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 32px;
+    }
+    
+    .details-table tr {
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .details-table tr:last-child {
+      border-bottom: none;
+    }
+    
+    .details-table th {
+      padding: 12px 0;
+      font-weight: 600;
+      color: #666;
+      font-size: 14px;
+      width: 50%;
+    }
+    
+    .details-table td {
+      padding: 12px 0;
+      font-weight: 600;
+      color: #333;
+      text-align: right;
+      font-size: 14px;
+      word-break: break-all;
+    }
+    
+    /* Status badge */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    /* Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+    
+    /* Info box */
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 32px;
+      text-align: left;
+    }
+    
+    .info-box p {
+      color: #004085;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .info-box i {
+      margin-right: 8px;
+      color: #007bff;
+    }
+    
+    @media (max-width: 768px) {
+      .nav {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+      }
+      
+      .container {
+        margin: 24px auto;
+      }
+      
+      .success-card {
+        padding: 32px 24px;
+      }
+      
+      .success-icon {
+        font-size: 64px;
+      }
+      
+      h1 {
+        font-size: 26px;
+      }
+      
+      .details-table th,
+      .details-table td {
+        font-size: 13px;
+        padding: 10px 0;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="card">
-    <h1>¡Pago Aprobado!</h1>
-    <p>Gracias por tu compra. Aquí están los detalles:</p>
+  <!-- Navbar -->
+  <header class="nav">
+    <a href="/" class="logo">
+      <div class="logo-icon rotate">
+        <i class="fas fa-car"></i>
+      </div>
+      <span>MyCar</span>
+    </a>
 
-    <table class="table table-borderless text-white">
+    <div class="nav-links">
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn-nav">Vehículos</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/alquileres/mis-alquileres}" class="btn-nav">Mis Alquileres</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/perfil}" class="btn-nav">Perfil</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-nav btn-primary-nav">Log out</a>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="container">
+    <div class="success-card">
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      
+      <h1>¡Pago Aprobado!</h1>
+      
+      <p class="success-description">
+        Tu pago ha sido procesado exitosamente. A continuación encontrarás los detalles de la transacción.
+      </p>
+
+      <div class="divider"></div>
+
+      <!-- Details -->
+      <div class="details-title">
+        <i class="fas fa-file-invoice"></i>
+        <span>Detalles de la Transacción</span>
+      </div>
+
+      <table class="details-table">
         <tbody>
-        <tr>
-            <th>Collection ID:</th>
-            <td th:text="${paymentData['collection_id']}"></td>
-        </tr>
-        <tr>
-            <th>Status:</th>
-            <td th:text="${paymentData['collection_status']}"></td>
-        </tr>
-        <tr>
-            <th>Payment ID:</th>
-            <td th:text="${paymentData['payment_id']}"></td>
-        </tr>
-        <tr>
-            <th>Payment Type:</th>
-            <td th:text="${paymentData['payment_type']}"></td>
-        </tr>
-        <tr>
-            <th>Merchant Order ID:</th>
-            <td th:text="${paymentData['merchant_order_id']}"></td>
-        </tr>
-        <tr>
-            <th>Preference ID:</th>
-            <td th:text="${paymentData['preference_id']}"></td>
-        </tr>
-        <tr>
-            <th>Site ID:</th>
-            <td th:text="${paymentData['site_id']}"></td>
-        </tr>
+          <tr>
+            <th><i class="fas fa-hashtag"></i> Collection ID:</th>
+            <td th:text="${paymentData['collection_id']}">12345</td>
+          </tr>
+          <tr>
+            <th><i class="fas fa-check-circle"></i> Estado:</th>
+            <td>
+              <span class="status-badge status-approved" th:text="${paymentData['collection_status']}">Aprobado</span>
+            </td>
+          </tr>
+          <tr>
+            <th><i class="fas fa-credit-card"></i> Payment ID:</th>
+            <td th:text="${paymentData['payment_id']}">67890</td>
+          </tr>
+          <tr>
+            <th><i class="fas fa-money-check"></i> Tipo de Pago:</th>
+            <td th:text="${paymentData['payment_type']}">credit_card</td>
+          </tr>
+          <tr>
+            <th><i class="fas fa-receipt"></i> Merchant Order ID:</th>
+            <td th:text="${paymentData['merchant_order_id']}">11223</td>
+          </tr>
+          <tr>
+            <th><i class="fas fa-bookmark"></i> Preference ID:</th>
+            <td th:text="${paymentData['preference_id']}">pref-123-abc</td>
+          </tr>
+          <tr>
+            <th><i class="fas fa-globe"></i> Site ID:</th>
+            <td th:text="${paymentData['site_id']}">MLA</td>
+          </tr>
         </tbody>
-    </table>
+      </table>
 
-    <a href="/" class="btn btn-light mt-3">Volver al inicio</a>
-</div>
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <a th:href="@{/alquileres/mis-alquileres}" class="btn btn-primary">
+          <i class="fas fa-list"></i>
+          Ver Mis Reservas
+        </a>
+        <a href="/" class="btn btn-secondary">
+          <i class="fas fa-home"></i>
+          Volver al Inicio
+        </a>
+      </div>
+
+      <!-- Info Box -->
+      <div class="info-box">
+        <p>
+          <i class="fas fa-info-circle"></i>
+          <strong>Importante:</strong> Guarda el ID de transacción para futuras consultas. 
+          Recibirás un email de confirmación con todos los detalles de tu reserva.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+  <script th:src="@{/js/sb-admin-2.min.js}"></script>
 </body>
 </html>
