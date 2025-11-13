@@ -134,6 +134,25 @@
     .btn-danger { background: #dc3545; }
     .btn:hover { opacity: 0.85; }
 
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-pendiente {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-pagado {
+      background: #d4edda;
+      color: #155724;
+    }
+
     .no-results {
       padding: 40px;
       text-align: center;
@@ -161,13 +180,34 @@
 
     <div class="nav-links">
       <a th:href="@{/vehiculos}" class="btn-nav">Vehículos</a>
-      <a th:href="@{/perfil}" class="btn-nav">Perfil</a>
+      <a th:href="@{/mi-perfil}" class="btn-nav">Perfil</a>
       <a th:href="@{/auth/logout}" class="btn-nav btn-primary-nav">Log out</a>
     </div>
   </header>
 
   <div class="container">
-    <h1><i class="fas fa-file-contract"></i> Mis Alquileres</h1>
+    <!-- Error/Success messages -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+      <i class="fas fa-exclamation-triangle mr-2"></i>
+      <span th:text="${error}">Error</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span th:text="${success}">Éxito</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h1 style="margin: 0;"><i class="fas fa-file-contract"></i> Mis Alquileres</h1>
+      <a th:href="@{/home}" class="btn btn-secondary" style="text-decoration: none;">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+      </a>
+    </div>
 
     <div th:if="${alquileres != null and !#lists.isEmpty(alquileres)}" class="table-responsive">
       <table class="table table-bordered" id="dataTable">
@@ -177,6 +217,7 @@
             <th>Vehículo</th>
             <th>Fecha Desde</th>
             <th>Fecha Hasta</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -187,11 +228,16 @@
             <td th:text="${alquiler.fechaDesde != null ? #dates.format(alquiler.fechaDesde, 'dd/MM/yyyy') : '-'}">-</td>
             <td th:text="${alquiler.fechaHasta != null ? #dates.format(alquiler.fechaHasta, 'dd/MM/yyyy') : '-'}">-</td>
             <td>
-              <a th:if="${alquiler.id != null}" th:href="@{/alquileres/{id}(id=${alquiler.id})}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-              <a th:if="${alquiler.id != null}" th:href="@{/alquileres/{id}/editar(id=${alquiler.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-              <form th:if="${alquiler.id != null}" th:action="@{/alquileres/{id}/eliminar(id=${alquiler.id})}" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
-                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-              </form>
+              <span th:if="${alquiler.estado != null}" 
+                    class="status-badge" 
+                    th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" 
+                    th:text="${alquiler.estado}">
+                PENDIENTE
+              </span>
+              <span th:if="${alquiler.estado == null}" class="text-muted">-</span>
+            </td>
+            <td>
+              <a th:if="${alquiler.id != null}" th:href="@{/mis-alquileres/{id}(id=${alquiler.id})}" class="btn btn-info btn-sm">Detalle</a>
             </td>
           </tr>
         </tbody>

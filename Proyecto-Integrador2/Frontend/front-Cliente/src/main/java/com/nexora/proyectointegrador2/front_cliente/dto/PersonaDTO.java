@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.nexora.proyectointegrador2.front_cliente.dto.enums.TipoDocumentacion;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(value = {"contactos"}, ignoreUnknown = true)
 public abstract class PersonaDTO extends BaseDTO {
 
   private String nombre;
@@ -23,7 +26,8 @@ public abstract class PersonaDTO extends BaseDTO {
   private String numeroDocumento;
   private UsuarioDTO usuario;
   private DireccionDTO direccion;
-  private List<ContactoDTO> contactos;
+  @JsonIgnore
+  private transient List<ContactoDTO> contactos;
   private ImagenDTO imagenPerfil;
 
 }

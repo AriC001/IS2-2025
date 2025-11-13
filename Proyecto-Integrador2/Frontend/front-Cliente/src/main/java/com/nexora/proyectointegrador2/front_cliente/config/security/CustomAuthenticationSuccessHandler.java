@@ -96,8 +96,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
           System.out.println("Usuario guardado en sesión HTTP");
         }
 
-        // Redirigir según rol: ADMIN -> /portal/admin, EMPLEADO -> /portal/empleado, SOCIO -> /portal/socio
-        String targetUrl = "/";
+        // Redirigir según rol: CLIENTE -> /home, ADMIN -> /portal/admin, EMPLEADO -> /portal/empleado, SOCIO -> /portal/socio
+        String targetUrl = "/home"; // Por defecto redirigir a /home para clientes
         if (authentication.getAuthorities() != null) {
           boolean isAdmin = authentication.getAuthorities().stream()
               .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
@@ -105,6 +105,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
               .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLEADO"));
           boolean isSocio = authentication.getAuthorities().stream()
               .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"));
+          boolean isCliente = authentication.getAuthorities().stream()
+              .anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"));
 
           if (isAdmin) {
             targetUrl = "/portal/admin";
@@ -112,6 +114,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             targetUrl = "/portal/empleado";
           } else if (isSocio) {
             targetUrl = "/portal/socio";
+          } else if (isCliente) {
+            targetUrl = "/home";
+          }
+        } else {
+          // Si no hay authorities pero hay un rol en la sesión, verificar el rol
+          Object rolAttr = session.getAttribute("rol");
+          if (rolAttr != null) {
+            String rol = rolAttr.toString();
+            if ("CLIENTE".equals(rol)) {
+              targetUrl = "/home";
+            }
           }
         }
 

@@ -77,8 +77,10 @@ public class AuthController {
       
       logger.info("✅ Login exitoso para usuario: {} con rol: {}", nombreUsuario, authResponse.getRol());
       
-      // Redirigir al dashboard principal
-      return "redirect:/views/home";
+      // Redirigir al home del cliente
+      // Nota: La redirección real la maneja CustomAuthenticationSuccessHandler
+      // pero por si acaso, redirigimos aquí también
+      return "redirect:/home";
       
     } catch (Exception e) {
       logger.error("Error en el login: {}", e.getMessage());

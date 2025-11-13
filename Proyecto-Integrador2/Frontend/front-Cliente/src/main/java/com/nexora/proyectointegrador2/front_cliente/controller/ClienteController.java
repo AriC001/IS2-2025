@@ -197,19 +197,118 @@ public class ClienteController extends BaseController<ClienteDTO, String> {
       logger.error("Error al preparar modelo del formulario: {}", e.getMessage());
     }
   }
-  /** *
+  /**
+   * Muestra el perfil del cliente logueado
+   * Ruta: /clientes/perfil
+   */
   @GetMapping("/perfil")
-  public String verPerfil(Model model, Principal principal) {
+  public String verPerfil(Model model, HttpSession session) {
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
 
-      ClienteDTO cliente = clienteService.findByNombreUsuario(principal.getName());
+    try {
+      addSessionAttributesToModel(model, session);
+
+      // Obtener nombreUsuario desde la sesión
+      Object nombreUsuarioAttr = session.getAttribute("nombreUsuario");
+      if (nombreUsuarioAttr == null) {
+        logger.warn("No se encontró nombreUsuario en la sesión");
+        addErrorToModel(model, "No se pudo identificar al usuario");
+        return "redirect:/home";
+      }
+
+      String nombreUsuario = nombreUsuarioAttr.toString();
+      
+      // Buscar cliente por nombreUsuario
+      ClienteDTO cliente = ((ClienteService) service).findByNombreUsuario(nombreUsuario);
+      
+      if (cliente == null) {
+        logger.warn("No se encontró cliente con nombreUsuario: {}", nombreUsuario);
+        addErrorToModel(model, "No se encontró información del cliente");
+        return "redirect:/home";
+      }
+
+      // Inicializar objetos anidados si no existen
+      if (cliente.getDireccion() == null) {
+        DireccionDTO direccion = new DireccionDTO();
+        direccion.setLocalidad(new LocalidadDTO());
+        cliente.setDireccion(direccion);
+      } else if (cliente.getDireccion().getLocalidad() == null) {
+        cliente.getDireccion().setLocalidad(new LocalidadDTO());
+      }
+      if (cliente.getNacionalidad() == null) {
+        cliente.setNacionalidad(new NacionalidadDTO());
+      }
 
       model.addAttribute("cliente", cliente);
       model.addAttribute("localidades", localidadService.findAllActives());
       model.addAttribute("nacionalidades", nacionalidadService.findAllActives());
 
-      return "perfil";
+      return "views/perfil";
+    } catch (Exception e) {
+      logger.error("Error al obtener perfil: {}", e.getMessage(), e);
+      addErrorToModel(model, "Error al cargar el perfil: " + e.getMessage());
+      return "redirect:/home";
+    }
   }
-  **/
+
+  /**
+   * Guarda los cambios del perfil del cliente
+   * Ruta: /clientes/perfil/guardar
+   */
+  @PostMapping("/perfil/guardar")
+  public String guardarPerfil(@ModelAttribute ClienteDTO cliente, 
+                              RedirectAttributes redirectAttributes,
+                              HttpSession session) {
+    String redirect = checkSession(session);
+    if (redirect != null) {
+      return redirect;
+    }
+
+    try {
+      // Obtener nombreUsuario desde la sesión
+      Object nombreUsuarioAttr = session.getAttribute("nombreUsuario");
+      if (nombreUsuarioAttr == null) {
+        logger.warn("No se encontró nombreUsuario en la sesión");
+        addErrorMessage(redirectAttributes, "No se pudo identificar al usuario");
+        return "redirect:/home";
+      }
+
+      String nombreUsuario = nombreUsuarioAttr.toString();
+      
+      // Buscar cliente actual por nombreUsuario para obtener su ID
+      ClienteDTO clienteActual = ((ClienteService) service).findByNombreUsuario(nombreUsuario);
+      
+      if (clienteActual == null) {
+        logger.warn("No se encontró cliente con nombreUsuario: {}", nombreUsuario);
+        addErrorMessage(redirectAttributes, "No se encontró información del cliente");
+        return "redirect:/home";
+      }
+
+      // Asignar el ID del cliente actual al cliente recibido del formulario
+      cliente.setId(clienteActual.getId());
+      
+      // Mantener el usuario asociado (no se debe cambiar)
+      if (clienteActual.getUsuario() != null) {
+        cliente.setUsuario(clienteActual.getUsuario());
+      }
+
+      // Normalizar datos antes de actualizar
+      normalizeCliente(cliente);
+
+      // Actualizar el cliente
+      service.update(cliente.getId(), cliente);
+      
+      addSuccessMessage(redirectAttributes, "Perfil actualizado exitosamente");
+      return "redirect:/clientes/perfil";
+    } catch (Exception e) {
+      logger.error("Error al actualizar perfil: {}", e.getMessage(), e);
+      handleException(e, redirectAttributes, "actualizar");
+      return "redirect:/clientes/perfil";
+    }
+  }
 
 
   @Override

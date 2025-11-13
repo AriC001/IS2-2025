@@ -1,7 +1,10 @@
 package nexora.proyectointegrador2.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,6 +85,28 @@ public class AlquilerRestController extends BaseRestController<Alquiler, Alquile
     com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
     objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     return objectMapper.readValue(json, AlquilerDTO.class);
+  }
+
+  /**
+   * Endpoint para filtrar alquileres por usuarioId.
+   * 
+   * @param usuarioId ID del usuario
+   * @return Lista de alquileres del usuario
+   * @throws Exception si ocurre un error
+   */
+  @GetMapping("/filter")
+  public ResponseEntity<List<AlquilerDTO>> filterByUsuarioId(
+      @RequestParam(value = "usuarioId", required = false) String usuarioId) throws Exception {
+    if (usuarioId == null || usuarioId.trim().isEmpty()) {
+      // Si no se proporciona usuarioId, retornar todos los alquileres activos
+      var entities = service.findAllActives();
+      List<AlquilerDTO> dtos = mapper.toDTOList(entities);
+      return ResponseEntity.ok(dtos);
+    }
+    
+    var entities = alquilerService.findByUsuarioId(usuarioId);
+    List<AlquilerDTO> dtos = mapper.toDTOList(entities);
+    return ResponseEntity.ok(dtos);
   }
 }
 

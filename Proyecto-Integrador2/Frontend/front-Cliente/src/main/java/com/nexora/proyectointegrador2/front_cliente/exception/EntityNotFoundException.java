@@ -1,4 +1,4 @@
-package  com.nexora.proyectointegrador2.front_cliente.exception;
+package com.nexora.proyectointegrador2.front_cliente.exception;
 
 public class EntityNotFoundException extends RuntimeException {
 

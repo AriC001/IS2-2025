@@ -20,6 +20,12 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Configuration
 public class RestTemplateConfig {
@@ -32,6 +38,24 @@ public class RestTemplateConfig {
   @Bean
   public RestTemplate restTemplate(OAuth2AuthorizedClientService authorizedClientService) {
     RestTemplate restTemplate = new RestTemplate();
+    
+    // Configurar ObjectMapper para ignorar propiedades desconocidas y tipos abstractos
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
+    objectMapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+    // Configurar para leer enums como strings (para que estadoAlquiler se deserialice como String)
+    objectMapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
+    objectMapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+    // Configurar para serializar fechas como ISO-8601 strings
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    
+    // Reemplazar el converter de Jackson con uno configurado
+    restTemplate.getMessageConverters().removeIf(converter -> 
+        converter instanceof MappingJackson2HttpMessageConverter);
+    restTemplate.getMessageConverters().add(0, new MappingJackson2HttpMessageConverter(objectMapper));
 
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 

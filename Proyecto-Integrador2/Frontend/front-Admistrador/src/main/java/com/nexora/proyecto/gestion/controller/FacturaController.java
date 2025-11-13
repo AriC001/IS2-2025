@@ -1,10 +1,7 @@
 package com.nexora.proyecto.gestion.controller;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.nexora.proyecto.gestion.business.logic.service.AlquilerService;
 import com.nexora.proyecto.gestion.business.logic.service.FacturaService;
@@ -22,6 +20,7 @@ import com.nexora.proyecto.gestion.business.persistence.dao.FacturaDAO;
 import com.nexora.proyecto.gestion.dto.AlquilerDTO;
 import com.nexora.proyecto.gestion.dto.FacturaDTO;
 import com.nexora.proyecto.gestion.dto.enums.TipoPago;
+import com.nexora.proyecto.gestion.exception.EntityNotFoundException;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -120,7 +119,7 @@ public class FacturaController {
    * Descarga el PDF de una factura.
    */
   @GetMapping("/{id}/descargar")
-  public ResponseEntity<byte[]> descargarFactura(@PathVariable String id, HttpServletResponse response) {
+  public Object descargarFactura(@PathVariable String id, HttpServletResponse response, RedirectAttributes redirectAttributes) {
     try {
       byte[] pdfContent = facturaDAO.descargarPdf(id);
       
@@ -135,8 +134,12 @@ public class FacturaController {
       return ResponseEntity.ok()
           .headers(headers)
           .body(pdfContent);
+    } catch (EntityNotFoundException e) {
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
+      return new RedirectView("/facturas/" + id, true);
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      redirectAttributes.addFlashAttribute("error", "Error al descargar la factura: " + e.getMessage());
+      return new RedirectView("/facturas/" + id, true);
     }
   }
 

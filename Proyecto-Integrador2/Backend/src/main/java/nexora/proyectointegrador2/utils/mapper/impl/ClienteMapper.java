@@ -8,12 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import nexora.proyectointegrador2.business.domain.entity.Cliente;
-import nexora.proyectointegrador2.business.domain.entity.ContactoCorreoElectronico;
-import nexora.proyectointegrador2.business.domain.entity.ContactoTelefonico;
 import nexora.proyectointegrador2.utils.dto.ClienteDTO;
-import nexora.proyectointegrador2.utils.dto.ContactoCorreoElectronicoDTO;
-import nexora.proyectointegrador2.utils.dto.ContactoDTO;
-import nexora.proyectointegrador2.utils.dto.ContactoTelefonicoDTO;
 import nexora.proyectointegrador2.utils.mapper.BaseMapper;
 
 /**
@@ -28,12 +23,6 @@ public class ClienteMapper implements BaseMapper<Cliente, ClienteDTO, String> {
 
   @Autowired
   private NacionalidadMapper nacionalidadMapper;
-
-  @Autowired
-  private ContactoTelefonicoMapper contactoTelefonicoMapper;
-
-  @Autowired
-  private ContactoCorreoElectronicoMapper contactoCorreoElectronicoMapper;
 
   @Autowired
   private UsuarioMapper usuarioMapper;
@@ -61,21 +50,9 @@ public class ClienteMapper implements BaseMapper<Cliente, ClienteDTO, String> {
         .usuario(usuarioMapper.toDTO(entity.getUsuario()))
         .imagenPerfil(imagenMapper.toDTO(entity.getImagenPerfil()));
 
-    // Mapear lista de contactos según su tipo
-    if (entity.getContactos() != null && !entity.getContactos().isEmpty()) {
-      List<ContactoDTO> contactosDTO = entity.getContactos().stream()
-          .map(contacto -> {
-            if (contacto instanceof ContactoTelefonico contactoTelefonico) {
-              return contactoTelefonicoMapper.toDTO(contactoTelefonico);
-            } else if (contacto instanceof ContactoCorreoElectronico contactoCorreo) {
-              return contactoCorreoElectronicoMapper.toDTO(contactoCorreo);
-            }
-            return null;
-          })
-          .filter(contacto -> contacto != null)
-          .collect(Collectors.toList());
-      builder.contactos(contactosDTO);
-    }
+    // No mapear contactos ya que están marcados con @JsonIgnore en PersonaDTO
+    // y no son necesarios para el frontend. Esto evita problemas de serialización.
+    // Los contactos se pueden obtener mediante endpoints específicos si se necesitan.
 
     return builder.build();
   }
@@ -106,25 +83,9 @@ public class ClienteMapper implements BaseMapper<Cliente, ClienteDTO, String> {
     cliente.setDireccionEstadia(dto.getDireccionEstadia());
     cliente.setNacionalidad(nacionalidadMapper.toEntity(dto.getNacionalidad()));
 
-    // Mapear lista de contactos según su tipo
-    if (dto.getContactos() != null && !dto.getContactos().isEmpty()) {
-      List<nexora.proyectointegrador2.business.domain.entity.Contacto> contactos = dto.getContactos().stream()
-          .map(contactoDTO -> {
-            if (contactoDTO instanceof ContactoTelefonicoDTO contactoTelefonicoDTO) {
-              ContactoTelefonico contacto = contactoTelefonicoMapper.toEntity(contactoTelefonicoDTO);
-              contacto.setPersona(cliente);
-              return contacto;
-            } else if (contactoDTO instanceof ContactoCorreoElectronicoDTO contactoCorreoDTO) {
-              ContactoCorreoElectronico contacto = contactoCorreoElectronicoMapper.toEntity(contactoCorreoDTO);
-              contacto.setPersona(cliente);
-              return contacto;
-            }
-            return null;
-          })
-          .filter(contacto -> contacto != null)
-          .collect(Collectors.toList());
-      cliente.setContactos(contactos);
-    }
+    // No mapear contactos ya que están marcados con @JsonIgnore en PersonaDTO
+    // Los contactos no vendrán en el DTO desde el frontend y deben manejarse
+    // mediante endpoints específicos si se necesitan actualizar.
 
     // El usuario y la imagen de perfil se ignoran, deben ser seteados manualmente
 

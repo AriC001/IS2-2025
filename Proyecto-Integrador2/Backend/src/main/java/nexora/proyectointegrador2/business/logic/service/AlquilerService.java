@@ -332,5 +332,19 @@ public class AlquilerService extends BaseService<Alquiler, String> {
     dto.getDocumento().setMimeType(mimeType);
   }
 
+  /**
+   * Obtiene alquileres activos filtrados por usuarioId.
+   * 
+   * @param usuarioId ID del usuario
+   * @return Colección de alquileres del usuario
+   * @throws Exception si ocurre un error
+   */
+  public Collection<Alquiler> findByUsuarioId(String usuarioId) throws Exception {
+    if (usuarioId == null || usuarioId.trim().isEmpty()) {
+      throw new Exception("El usuarioId no puede ser null o vacío");
+    }
+    return alquilerRepository.findByUsuarioId(usuarioId);
+  }
+
 }
 

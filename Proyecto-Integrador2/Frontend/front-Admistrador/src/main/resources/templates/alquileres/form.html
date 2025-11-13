@@ -109,6 +109,21 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
+                Reportes
+            </div>
+
+            <!-- Nav Item - Reportes -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/reportes}">
+                    <i class="fas fa-fw fa-chart-bar"></i>
+                    <span>Reportes</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
                 Geografía
             </div>
 
@@ -246,13 +261,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Fecha Desde <span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" th:field="*{fechaDesde}" required>
+                                            <input type="date" class="form-control" th:field="*{fechaDesde}" id="fechaDesde" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Fecha Hasta <span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" th:field="*{fechaHasta}" required>
+                                            <input type="date" class="form-control" th:field="*{fechaHasta}" id="fechaHasta" required>
                                         </div>
                                     </div>
                                 </div>
@@ -348,6 +363,39 @@
 
     <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+    <script>
+        // Establecer fecha mínima para los campos de fecha (hoy)
+        document.addEventListener('DOMContentLoaded', function() {
+            var fechaDesdeInput = document.getElementById('fechaDesde');
+            var fechaHastaInput = document.getElementById('fechaHasta');
+            
+            if (fechaDesdeInput) {
+                // Establecer fecha mínima como hoy
+                var today = new Date();
+                var minDate = today.toISOString().split('T')[0];
+                fechaDesdeInput.setAttribute('min', minDate);
+                
+                // Validar que fechaHasta sea posterior a fechaDesde
+                fechaDesdeInput.addEventListener('change', function() {
+                    if (fechaHastaInput && this.value) {
+                        fechaHastaInput.setAttribute('min', this.value);
+                        // Si fechaHasta es anterior a fechaDesde, limpiarla
+                        if (fechaHastaInput.value && fechaHastaInput.value < this.value) {
+                            fechaHastaInput.value = '';
+                        }
+                    }
+                });
+            }
+            
+            if (fechaHastaInput) {
+                // Establecer fecha mínima como hoy inicialmente
+                var today = new Date();
+                var minDate = today.toISOString().split('T')[0];
+                fechaHastaInput.setAttribute('min', minDate);
+            }
+        });
+    </script>
 
 </body>
 

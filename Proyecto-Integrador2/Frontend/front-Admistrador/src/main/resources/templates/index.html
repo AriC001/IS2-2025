@@ -238,51 +238,189 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <!-- Company Description -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card shadow border-left-primary">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-4">
+                                            <i class="fas fa-car fa-3x text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h2 class="h4 mb-1 text-primary font-weight-bold">My Car</h2>
+                                            <p class="mb-0 text-gray-700">
+                                                Somos una empresa líder en el sector de alquiler de vehículos, especializada en brindar soluciones 
+                                                de movilidad confiables y eficientes. Con años de experiencia en el mercado, ofrecemos una amplia 
+                                                flota de vehículos modernos y un servicio de excelencia para satisfacer las necesidades de nuestros clientes.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
                     </div>
 
-                    <!-- Welcome Card -->
+                    <!-- Statistics Row -->
                     <div class="row">
-                        <div class="col-xl-12 col-lg-12">
+                        <!-- Total Alquileres Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Total Alquileres</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalAlquileres}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-key fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alquileres Activos Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Alquileres Activos</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${alquileresActivos}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Clientes Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Total Clientes</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalClientes}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Vehículos Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Total Vehículos</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalVehiculos}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-car fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- Alquileres Recientes -->
+                        <div class="col-xl-8 col-lg-7">
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">
-                                        <i class="fas fa-car mr-2"></i>Sistema de Gestión de Alquileres de Vehículos
+                                        <i class="fas fa-clock mr-2"></i>Alquileres Recientes
+                                    </h6>
+                                    <a th:href="@{/alquileres}" class="btn btn-sm btn-primary">Ver Todos</a>
+                                </div>
+                                <div class="card-body">
+                                    <div th:if="${alquileresRecientes != null and !#lists.isEmpty(alquileresRecientes)}" class="table-responsive">
+                                        <table class="table table-bordered table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Cliente</th>
+                                                    <th>Vehículo</th>
+                                                    <th>Fecha Desde</th>
+                                                    <th>Fecha Hasta</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="alquiler : ${alquileresRecientes}">
+                                                    <td th:text="${alquiler.cliente != null ? (alquiler.cliente.nombre + ' ' + alquiler.cliente.apellido) : '-'}">-</td>
+                                                    <td th:text="${alquiler.vehiculo != null ? (alquiler.vehiculo.patente + (alquiler.vehiculo.caracteristicaVehiculo != null ? (' - ' + alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo) : '')) : '-'}">-</td>
+                                                    <td th:text="${alquiler.fechaDesde != null ? #dates.format(alquiler.fechaDesde, 'dd/MM/yyyy') : '-'}">-</td>
+                                                    <td th:text="${alquiler.fechaHasta != null ? #dates.format(alquiler.fechaHasta, 'dd/MM/yyyy') : '-'}">-</td>
+                                                    <td>
+                                                        <a th:if="${alquiler.id != null}" 
+                                                           th:href="@{/alquileres/{id}(id=${alquiler.id})}" 
+                                                           class="btn btn-info btn-sm">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div th:if="${alquileresRecientes == null or #lists.isEmpty(alquileresRecientes)}" class="text-center py-4">
+                                        <i class="fas fa-inbox fa-3x text-gray-300 mb-3"></i>
+                                        <p class="text-gray-500">No hay alquileres recientes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Welcome Card -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-car mr-2"></i>Bienvenido
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="text-center mb-4">
-                                        <i class="fas fa-car fa-5x text-primary mb-3"></i>
-                                        <h2 class="h4 mb-3 text-gray-800">Bienvenido a My Car</h2>
-                                        <p class="lead text-gray-700 mb-4">
-                                            Sistema integral de gestión para alquileres de vehículos en el rubro de turismo
+                                    <div class="text-center mb-3">
+                                        <i class="fas fa-car fa-3x text-primary mb-3"></i>
+                                        <h5 class="text-gray-800 mb-2">My Car</h5>
+                                        <p class="text-gray-700 small">
+                                            Sistema integral de gestión para alquileres de vehículos
                                         </p>
                                     </div>
                                     <hr>
-                                    <div class="row mt-4">
-                                        <div class="col-md-12">
-                                            <h5 class="text-gray-800 mb-3">Descripción del Sistema</h5>
-                                            <p class="text-gray-700">
-                                                <strong>My Car</strong> es una plataforma completa diseñada para gestionar 
-                                                eficientemente el alquiler de vehículos. El sistema permite a los empleados 
-                                                de la empresa administrar vehículos, clientes y alquileres de manera centralizada 
-                                                y organizada.
-                                            </p>
-                                            <p class="text-gray-700">
-                                                Con esta herramienta podrás:
-                                            </p>
-                                            <ul class="text-gray-700">
-                                                <li>Gestionar el catálogo de vehículos disponibles con sus características, imágenes y costos</li>
-                                                <li>Administrar la información de clientes y sus datos de contacto</li>
-                                                <li>Registrar y controlar los alquileres de vehículos con sus fechas y documentación</li>
-                                                <li>Generar reportes y estadísticas de los alquileres realizados</li>
-                                            </ul>
-                                            <p class="text-gray-700 mt-3">
-                                                Utiliza el menú lateral para acceder a las diferentes secciones del sistema 
-                                                y comenzar a gestionar tu negocio de alquileres.
-                                            </p>
+                                    <div class="mt-4">
+                                        <h6 class="text-gray-800 mb-3 font-weight-bold">Accesos Rápidos</h6>
+                                        <div class="d-flex flex-column" style="gap: 12px;">
+                                            <a th:href="@{/alquileres/nuevo}" class="btn btn-primary btn-sm shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                                <i class="fas fa-plus mr-2"></i> Nuevo Alquiler
+                                            </a>
+                                            <a th:href="@{/vehiculos}" class="btn btn-sm shadow-sm" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: none; color: white;">
+                                                <i class="fas fa-car mr-2"></i> Ver Vehículos
+                                            </a>
+                                            <a th:href="@{/clientes}" class="btn btn-sm shadow-sm" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border: none; color: white;">
+                                                <i class="fas fa-users mr-2"></i> Ver Clientes
+                                            </a>
+                                            <a th:href="@{/reportes}" class="btn btn-sm shadow-sm" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border: none; color: white;">
+                                                <i class="fas fa-chart-bar mr-2"></i> Ver Reportes
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

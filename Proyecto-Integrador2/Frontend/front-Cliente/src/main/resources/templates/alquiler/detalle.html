@@ -163,6 +163,11 @@
       color: #856404;
     }
     
+    .status-pagado {
+      background: #d4edda;
+      color: #155724;
+    }
+    
     /* Main grid */
     .main-grid {
       display: grid;
@@ -485,15 +490,31 @@
 
     <div class="nav-links">
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn-nav">Vehículos</a>
-      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/alquileres/mis-alquileres}" class="btn-nav">Mis Alquileres</a>
-      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/perfil}" class="btn-nav">Perfil</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/mis-alquileres}" class="btn-nav">Mis Alquileres</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/mi-perfil}" class="btn-nav">Perfil</a>
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-nav btn-primary-nav">Log out</a>
     </div>
   </header>
 
   <!-- Content -->
   <div class="container">
-    <a th:href="@{/alquileres/mis-alquileres}" class="back-link">
+    <!-- Error/Success messages -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+      <i class="fas fa-exclamation-triangle mr-2"></i>
+      <span th:text="${error}">Error</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 20px;">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span th:text="${success}">Éxito</span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <a th:href="@{/mis-alquileres}" class="back-link">
       <i class="fas fa-arrow-left"></i>
       Volver a mis alquileres
     </a>
@@ -501,13 +522,17 @@
     <!-- Page Header -->
     <div class="page-header">
       <h1>Detalle del Alquiler</h1>
-      <span class="status-badge status-activo" th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" th:text="${alquiler.estado}">
-        ACTIVO
+      <span th:if="${alquiler.estado != null}" 
+            class="status-badge" 
+            th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" 
+            th:text="${alquiler.estado}">
+        PENDIENTE
       </span>
+      <span th:if="${alquiler.estado == null}" class="status-badge status-pendiente">No disponible</span>
     </div>
 
     <!-- Info Alert -->
-    <div class="info-alert" th:if="${alquiler.estado == 'PENDIENTE'}">
+    <div class="info-alert" th:if="${alquiler.estado != null and alquiler.estado == 'PENDIENTE'}">
       <p>
         <i class="fas fa-exclamation-circle"></i>
         <strong>Pago pendiente:</strong> Este alquiler está pendiente de pago. Completa el pago para confirmar tu reserva.
@@ -587,12 +612,14 @@
           <div class="detail-value" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">07/12/2024</div>
         </div>
         
-        <div class="detail-item">
+        <div class="detail-item" th:if="${alquiler.fechaDesde != null and alquiler.fechaHasta != null}">
           <div class="detail-label">
             <i class="fas fa-clock"></i>
             <span>Duración</span>
           </div>
-          <div class="detail-value" th:text="${alquiler.duracion + ' días'}">6 días</div>
+          <div class="detail-value" th:text="${(alquiler.fechaDesde != null and alquiler.fechaHasta != null) ? (T(java.time.temporal.ChronoUnit).DAYS.between(alquiler.fechaDesde.toInstant(), alquiler.fechaHasta.toInstant()) + ' días') : '-'}">
+            6 días
+          </div>
         </div>
         
         <div class="detail-item">
@@ -601,7 +628,11 @@
             <span>Estado</span>
           </div>
           <div class="detail-value">
-            <span class="status-badge status-activo" th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" th:text="${alquiler.estado}">ACTIVO</span>
+            <span th:if="${alquiler.estado != null}" 
+                  class="status-badge" 
+                  th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" 
+                  th:text="${alquiler.estado}">PENDIENTE</span>
+            <span th:if="${alquiler.estado == null}" class="text-muted">No disponible</span>
           </div>
         </div>
       </div>
@@ -618,14 +649,14 @@
           <span th:text="'$' + ${#numbers.formatDecimal(alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo.costo, 0, 'COMMA', 0, 'POINT')}">$15.000</span>
         </div>
         
-        <div class="price-row">
+        <div class="price-row" th:if="${alquiler.fechaDesde != null and alquiler.fechaHasta != null}">
           <span>Cantidad de días</span>
-          <span th:text="${alquiler.duracion}">6</span>
+          <span th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(alquiler.fechaDesde.toInstant(), alquiler.fechaHasta.toInstant())}">6</span>
         </div>
         
-        <div class="price-row total">
+        <div class="price-row total" th:if="${alquiler.vehiculo != null and alquiler.vehiculo.caracteristicaVehiculo != null and alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo != null and alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo.costo != null and alquiler.fechaDesde != null and alquiler.fechaHasta != null}">
           <span>Total</span>
-          <span th:text="'$' + ${#numbers.formatDecimal(alquiler.total, 0, 'COMMA', 0, 'POINT')}">$90.000</span>
+          <span th:text="'$' + ${#numbers.formatDecimal((alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo.costo * T(java.time.temporal.ChronoUnit).DAYS.between(alquiler.fechaDesde.toInstant(), alquiler.fechaHasta.toInstant())), 0, 'COMMA', 0, 'POINT')}">$90.000</span>
         </div>
       </div>
 
@@ -636,40 +667,17 @@
           Documentación
         </h3>
         
-        <div class="detail-item">
+        <div class="detail-item" th:if="${alquiler.estado != null and alquiler.estado == 'PAGADO'}">
           <div class="detail-label">
-            <i class="fas fa-file-pdf"></i>
-            <span>Contrato</span>
+            <i class="fas fa-file-invoice"></i>
+            <span>Factura</span>
           </div>
           <div class="detail-value">
-            <a th:if="${alquiler.documento != null}" 
-               th:href="${alquiler.documento.urlDescarga}" 
-               target="_blank"
-               class="btn btn-primary btn-sm">
+            <a th:href="@{'/mis-alquileres/' + ${alquiler.id} + '/factura'}" 
+               class="btn btn-success btn-sm">
               <i class="fas fa-download"></i>
-              Descargar
+              Descargar Factura PDF
             </a>
-            <span th:if="${alquiler.documento == null}" style="color: #999; font-style: italic;">
-              No disponible
-            </span>
-          </div>
-        </div>
-        
-        <div class="detail-item">
-          <div class="detail-label">
-            <i class="fas fa-receipt"></i>
-            <span>Comprobante de Pago</span>
-          </div>
-          <div class="detail-value">
-            <a th:if="${alquiler.pago != null}" 
-               th:href="@{'/pagos/' + ${alquiler.pago.id}}" 
-               class="btn btn-primary btn-sm">
-              <i class="fas fa-eye"></i>
-              Ver comprobante
-            </a>
-            <span th:if="${alquiler.pago == null}" style="color: #999; font-style: italic;">
-              Pendiente
-            </span>
           </div>
         </div>
       </div>
@@ -682,63 +690,13 @@
         </h3>
         
         <div class="timeline">
-          <!-- Creación del alquiler -->
-          <div class="timeline-item" th:if="${alquiler.fechaCreacion != null}">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></div>
-            <div class="timeline-content">Alquiler creado</div>
-          </div>
-          
-          <!-- Pago confirmado -->
-          <div class="timeline-item" th:if="${alquiler.pago != null && alquiler.pago.fechaPago != null}">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.pago.fechaPago, 'dd/MM/yyyy HH:mm')}"></div>
-            <div class="timeline-content">Pago confirmado </div>
-        </div>
-
-    <!-- Actions -->
-    <div class="actions">
-      <a th:if="${alquiler.estado == 'PENDIENTE'}" 
-         th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" 
-         class="btn btn-success">
-        <i class="fas fa-credit-card"></i>
-        Completar Pago
-      </a>
-      
-      <a th:if="${alquiler.estado == 'ACTIVO'}" 
-         th:href="@{'/alquileres/' + ${alquiler.id} + '/finalizar'}" 
-         class="btn btn-primary">
-        <i class="fas fa-check-double"></i>
-        Finalizar Alquiler
-      </a>
-      
-      <a th:if="${alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO'}" 
-         th:href="@{'/alquileres/' + ${alquiler.id} + '/cancelar'}" 
-         class="btn btn-danger"
-         onclick="return confirm('¿Estás seguro de que deseas cancelar este alquiler?')">
-        <i class="fas fa-times-circle"></i>
-        Cancelar Alquiler
-      </a>
-      
-      <a th:href="@{/alquileres/mis-alquileres}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i>
-        Volver
-      </a>
-    </div>
-  </div>
-
-  <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-  <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
-  <script th:src="@{/js/sb-admin-2.min.js}"></script>
-</body>
-</html> + #numbers.formatDecimal(alquiler.pago.monto, 0, 'COMMA', 0, 'POINT')}"></span></div>
-          </div>
-          
           <!-- Inicio del alquiler -->
           <div class="timeline-item" th:if="${alquiler.fechaDesde != null}">
             <div class="timeline-date" th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}"></div>
             <div class="timeline-content">
-              <span th:if="${alquiler.estado == 'ACTIVO' || alquiler.estado == 'FINALIZADO'}">Inicio del alquiler</span>
-              <span th:if="${alquiler.estado == 'PENDIENTE'}">Fecha de inicio programada</span>
+              <span th:if="${alquiler.estado != null and (alquiler.estado == 'ACTIVO' || alquiler.estado == 'FINALIZADO' || alquiler.estado == 'PAGADO')}">Inicio del alquiler</span>
+              <span th:if="${alquiler.estado != null and alquiler.estado == 'PENDIENTE'}">Fecha de inicio programada</span>
+              <span th:if="${alquiler.estado == null}">Fecha de inicio programada</span>
             </div>
           </div>
           
@@ -746,14 +704,13 @@
           <div class="timeline-item" th:if="${alquiler.fechaHasta != null}">
             <div class="timeline-date" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}"></div>
             <div class="timeline-content">
-              <span th:if="${alquiler.estado == 'FINALIZADO'}">Alquiler finalizado</span>
-              <span th:if="${alquiler.estado != 'FINALIZADO'}">Fecha de finalización programada</span>
+              <span th:if="${alquiler.estado != null and alquiler.estado == 'FINALIZADO'}">Alquiler finalizado</span>
+              <span th:if="${alquiler.estado == null or (alquiler.estado != null and alquiler.estado != 'FINALIZADO')}">Fecha de finalización programada</span>
             </div>
           </div>
           
           <!-- Cancelación (si existe) -->
-          <div class="timeline-item" th:if="${alquiler.estado == 'CANCELADO' && alquiler.fechaCancelacion != null}">
-            <div class="timeline-date" th:text="${#dates.format(alquiler.fechaCancelacion, 'dd/MM/yyyy HH:mm')}"></div>
+          <div class="timeline-item" th:if="${alquiler.estado != null and alquiler.estado == 'CANCELADO'}">
             <div class="timeline-content" style="color: #dc3545;">Alquiler cancelado</div>
           </div>
         </div>
@@ -762,29 +719,32 @@
 
     <!-- Actions -->
     <div class="actions">
-      <a th:if="${alquiler.estado == 'PENDIENTE'}" 
+      <a th:if="${alquiler.estado != null and alquiler.estado == 'PENDIENTE'}" 
          th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" 
          class="btn btn-success">
         <i class="fas fa-credit-card"></i>
         Completar Pago
       </a>
       
-      <a th:if="${alquiler.estado == 'ACTIVO'}" 
-         th:href="@{'/alquileres/' + ${alquiler.id} + '/finalizar'}" 
+      <a th:if="${alquiler.estado != null and alquiler.estado == 'ACTIVO'}" 
+         th:href="@{'/mis-alquileres/' + ${alquiler.id} + '/finalizar'}" 
          class="btn btn-primary">
         <i class="fas fa-check-double"></i>
         Finalizar Alquiler
       </a>
       
-      <a th:if="${alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO'}" 
-         th:href="@{'/alquileres/' + ${alquiler.id} + '/cancelar'}" 
-         class="btn btn-danger"
-         onclick="return confirm('¿Estás seguro de que deseas cancelar este alquiler?')">
-        <i class="fas fa-times-circle"></i>
-        Cancelar Alquiler
-      </a>
+      <form th:if="${alquiler.estado != null and (alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO')}" 
+            th:action="@{'/mis-alquileres/' + ${alquiler.id} + '/cancelar'}" 
+            method="post" 
+            style="display: inline;"
+            onsubmit="return confirm('¿Estás seguro de que deseas cancelar este alquiler?')">
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-times-circle"></i>
+          Cancelar Alquiler
+        </button>
+      </form>
       
-      <a th:href="@{/alquileres/mis-alquileres}" class="btn btn-secondary">
+      <a th:href="@{/mis-alquileres}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i>
         Volver
       </a>

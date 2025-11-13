@@ -30,6 +30,10 @@ public class AlquilerService extends BaseService<AlquilerDTO, String> {
       throw new Exception("La fecha Hasta es obligatoria");
     }
   }
+
+  public List<AlquilerDTO> findByUsuarioId(String usuarioId) throws Exception {
+    return ((AlquilerDAO) dao).findByUsuarioId(usuarioId);
+  }
   /*private VehiculoDTO vehiculo ;
   private UsuarioDTO usuario;
   private Date fechaDesde;

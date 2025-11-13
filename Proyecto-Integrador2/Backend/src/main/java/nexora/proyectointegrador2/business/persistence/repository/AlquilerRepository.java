@@ -97,6 +97,20 @@ public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
          "AND f.fechaFactura >= :fechaDesde AND f.fechaFactura <= :fechaHasta")
   Collection<Alquiler> findAlquileresConFacturaPorPeriodo(Date fechaDesde, Date fechaHasta);
 
+  /**
+   * Obtiene alquileres activos filtrados por usuarioId.
+   * Busca alquileres donde el cliente asociado tiene un usuario con el ID especificado.
+   * Carga todas las relaciones necesarias.
+   */
+  @Query("SELECT DISTINCT a FROM Alquiler a " +
+         "LEFT JOIN FETCH a.cliente c " +
+         "LEFT JOIN FETCH c.usuario u " +
+         "LEFT JOIN FETCH a.vehiculo v " +
+         "LEFT JOIN FETCH v.caracteristicaVehiculo cv " +
+         "LEFT JOIN FETCH a.documento d " +
+         "WHERE a.eliminado = false AND u.id = :usuarioId")
+  Collection<Alquiler> findByUsuarioId(String usuarioId);
+
 }
 
 

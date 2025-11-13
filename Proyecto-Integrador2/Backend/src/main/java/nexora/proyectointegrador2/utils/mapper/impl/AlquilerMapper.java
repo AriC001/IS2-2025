@@ -40,6 +40,7 @@ public class AlquilerMapper implements BaseMapper<Alquiler, AlquilerDTO, String>
         .eliminado(entity.isEliminado())
         .fechaDesde(entity.getFechaDesde())
         .fechaHasta(entity.getFechaHasta())
+        .estadoAlquiler(entity.getEstadoAlquiler())
         .cliente(clienteMapper.toDTO(entity.getCliente()))
         .vehiculo(vehiculoMapper.toDTO(entity.getVehiculo()))
         .documento(documentoMapper.toDTO(entity.getDocumento()))
@@ -57,6 +58,7 @@ public class AlquilerMapper implements BaseMapper<Alquiler, AlquilerDTO, String>
     alquiler.setEliminado(dto.isEliminado());
     alquiler.setFechaDesde(dto.getFechaDesde());
     alquiler.setFechaHasta(dto.getFechaHasta());
+    alquiler.setEstadoAlquiler(dto.getEstadoAlquiler());
     alquiler.setCliente(clienteMapper.toEntity(dto.getCliente()));
     alquiler.setVehiculo(vehiculoMapper.toEntity(dto.getVehiculo()));
     alquiler.setDocumento(documentoMapper.toEntity(dto.getDocumento()));

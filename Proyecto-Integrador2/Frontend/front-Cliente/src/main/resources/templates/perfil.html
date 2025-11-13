@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mi Perfil</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
+
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <!-- SIDEBAR -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/home}">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">My Car</div>
+        </a>
+        <hr class="sidebar-divider d-none d-md-block">
+    </ul>
+
+    <!-- CONTENT WRAPPER -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- MAIN CONTENT -->
+        <div id="content">
+
+            <!-- TOPBAR -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <div class="ml-auto"></div>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/mis-alquileres}">
+                            <i class="fas fa-file-contract"></i> Mis Alquileres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/auth/logout}">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- PAGE CONTENT -->
+            <div class="container-fluid">
+
+                <div class="row justify-content-center">
+                    <div class="col-xl-8 col-lg-10 col-md-12">
+
+                        <!-- Mostrar mensaje de error si existe -->
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span th:text="${error}">Error</span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <!-- Mostrar mensaje de éxito si existe -->
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span th:text="${success}">Éxito</span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <!-- Botón Volver -->
+                        <div style="margin-bottom: 20px;">
+                            <a th:href="@{/home}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver al Inicio
+                            </a>
+                        </div>
+
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Datos del Cliente</h6>
+                            </div>
+
+                            <div class="card-body">
+
+                                <form th:action="@{/mi-perfil/guardar}" method="post" th:object="${cliente}">
+
+                                    <!-- ============================
+                                         DATOS PERSONALES
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mb-3">Datos personales</h5>
+
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" class="form-control" th:field="*{nombre}" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Apellido</label>
+                                        <input type="text" class="form-control" th:field="*{apellido}" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Fecha de Nacimiento</label>
+                                        <input type="date" class="form-control" th:field="*{fechaNacimiento}" required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Tipo de Documento</label>
+                                        <select th:field="*{tipoDocumento}" class="form-control" required>
+                                            <option value="">Seleccione un tipo</option>
+                                            <option th:each="tipo : ${T(com.nexora.proyectointegrador2.front_cliente.dto.enums.TipoDocumentacion).values()}"
+                                                    th:value="${tipo}"
+                                                    th:text="${tipo}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Número de Documento</label>
+                                        <input type="text" class="form-control" th:field="*{numeroDocumento}" required />
+                                    </div>
+
+                                    <!-- ============================
+                                         DATOS DE USUARIO
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mt-4 mb-3">Datos de Usuario</h5>
+
+                                    <div class="form-group">
+                                        <label>Nombre de usuario</label>
+                                        <input type="text" class="form-control"
+                                               th:value="${cliente.usuario != null ? cliente.usuario.nombreUsuario : ''}" readonly />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Rol</label>
+                                        <input type="text" class="form-control"
+                                               th:value="${cliente.usuario != null ? cliente.usuario.rol : ''}" readonly />
+                                    </div>
+
+                                    <!-- ============================
+                                         DIRECCIÓN
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mt-4 mb-3">Dirección</h5>
+
+                                    <div class="form-group">
+                                        <label>Calle</label>
+                                        <input type="text" class="form-control" th:field="*{direccion.calle}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Número</label>
+                                        <input type="text" class="form-control" th:field="*{direccion.numero}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Barrio</label>
+                                        <input type="text" class="form-control" th:field="*{direccion.barrio}" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Localidad</label>
+                                        <select th:field="*{direccion.localidad.id}" class="form-control">
+                                            <option value="">Seleccione una localidad</option>
+                                            <option th:each="loc : ${localidades}"
+                                                    th:value="${loc.id}"
+                                                    th:text="${loc.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- ============================
+                                         NACIONALIDAD
+                                    ==============================-->
+                                    <h5 class="text-dark font-weight-bold mt-4 mb-3">Nacionalidad</h5>
+
+                                    <div class="form-group">
+                                        <select th:field="*{nacionalidad.id}" class="form-control">
+                                            <option value="">Seleccione una nacionalidad</option>
+                                            <option th:each="n : ${nacionalidades}"
+                                                    th:value="${n.id}"
+                                                    th:text="${n.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="text-center mt-4">
+                                        <button class="btn btn-success px-4" type="submit">
+                                            Guardar cambios
+                                        </button>
+                                        <a th:href="@{/home}" class="btn btn-secondary px-4 ml-2">Cancelar</a>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- END PAGE CONTENT -->
+
+        </div>
+    </div>
+
+</div>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+</body>
+</html>
+

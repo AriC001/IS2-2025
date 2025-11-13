@@ -58,6 +58,7 @@ import nexora.proyectointegrador2.business.logic.service.ProvinciaService;
 import nexora.proyectointegrador2.business.logic.service.VehiculoService;
 import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
 import nexora.proyectointegrador2.business.persistence.repository.ClienteRepository;
+import nexora.proyectointegrador2.business.persistence.repository.ContactoCorreoElectronicoRepository;
 import nexora.proyectointegrador2.business.persistence.repository.DepartamentoRepository;
 import nexora.proyectointegrador2.business.persistence.repository.DireccionRepository;
 import nexora.proyectointegrador2.business.persistence.repository.EmpleadoRepository;
@@ -68,7 +69,6 @@ import nexora.proyectointegrador2.business.persistence.repository.PaisRepository
 import nexora.proyectointegrador2.business.persistence.repository.ProvinciaRepository;
 import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
 import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
-import nexora.proyectointegrador2.business.persistence.repository.ContactoCorreoElectronicoRepository;
 
 @Configuration
 public class DataInitializer {
@@ -628,6 +628,56 @@ public class DataInitializer {
         vehiculo2 = vehiculoService.save(vehiculo2);
       } else {
         vehiculo2 = vehiculoRepository.findByPatenteAndEliminadoFalse("EF456GH").get();
+      }
+
+      // Crear Ferrari Testarossa 1984
+      Vehiculo vehiculoFerrari = null;
+      if (vehiculoRepository.findByPatenteAndEliminadoFalse("FT1984RR").isEmpty()) {
+        // Crear imagen del Ferrari Testarossa
+        byte[] imagenBytesFerrari = leerImagen("ferrari-testarossa.jpg");
+        Imagen imagenFerrari = Imagen.builder()
+            .nombre("ferrari-testarossa.jpg")
+            .mime("image/jpeg")
+            .contenido(imagenBytesFerrari)
+            .tipoImagen(TipoImagen.VEHICULO)
+            .build();
+        imagenFerrari.setEliminado(false);
+        imagenFerrari = imagenService.save(imagenFerrari);
+
+        // Crear costo del Ferrari Testarossa
+        CostoVehiculo costoFerrari = CostoVehiculo.builder()
+            .fechaDesde(new Date(125, 0, 1)) // 01/01/2025
+            .fechaHasta(new Date(125, 11, 31)) // 31/12/2025
+            .costo(15000.0) // Costo más alto por ser un vehículo de lujo
+            .build();
+        costoFerrari.setEliminado(false);
+        costoFerrari = costoVehiculoService.save(costoFerrari);
+
+        // Crear característica del Ferrari Testarossa
+        CaracteristicaVehiculo caracteristicaFerrari = CaracteristicaVehiculo.builder()
+            .marca("Ferrari")
+            .modelo("Testarossa")
+            .anio(1984)
+            .cantidadPuerta(2)
+            .cantidadAsiento(2)
+            .imagenVehiculo(imagenFerrari)
+            .costoVehiculo(costoFerrari)
+            .build();
+        caracteristicaFerrari.setEliminado(false);
+        caracteristicaFerrari = caracteristicaVehiculoService.save(caracteristicaFerrari);
+
+        // Crear vehículo Ferrari Testarossa
+        vehiculoFerrari = Vehiculo.builder()
+            .patente("FT1984RR")
+            .estadoVehiculo(EstadoVehiculo.DISPONIBLE)
+            .caracteristicaVehiculo(caracteristicaFerrari)
+            .build();
+        vehiculoFerrari.setEliminado(false);
+        vehiculoFerrari = vehiculoService.save(vehiculoFerrari);
+        logger.info("Ferrari Testarossa 1984 creado exitosamente con patente FT1984RR");
+      } else {
+        vehiculoFerrari = vehiculoRepository.findByPatenteAndEliminadoFalse("FT1984RR").get();
+        logger.info("Ferrari Testarossa 1984 ya existe con patente FT1984RR");
       }
 
       // Crear empresa MyCar con email específico

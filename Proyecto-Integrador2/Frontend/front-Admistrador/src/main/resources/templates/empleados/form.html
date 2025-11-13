@@ -109,6 +109,21 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
+                Reportes
+            </div>
+
+            <!-- Nav Item - Reportes -->
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/reportes}">
+                    <i class="fas fa-fw fa-chart-bar"></i>
+                    <span>Reportes</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
                 Geografía
             </div>
 
@@ -244,7 +259,7 @@
                                             <label>Fecha de Nacimiento <span class="text-danger">*</span></label>
                                             <input type="date" class="form-control" th:field="*{fechaNacimiento}" 
                                                    id="fechaNacimientoEmpleado" required>
-                                            <small class="form-text text-muted">No se puede seleccionar una fecha futura</small>
+                                            <small class="form-text text-muted">Debe ser mayor de 18 años</small>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -527,12 +542,13 @@
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
 
     <script>
-        // Establecer fecha máxima para fecha de nacimiento
+        // Establecer fecha máxima para fecha de nacimiento (18 años atrás desde hoy)
         document.addEventListener('DOMContentLoaded', function() {
             var fechaInput = document.getElementById('fechaNacimientoEmpleado');
             if (fechaInput) {
-                var today = new Date().toISOString().split('T')[0];
-                fechaInput.setAttribute('max', today);
+                var today = new Date();
+                var maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+                fechaInput.setAttribute('max', maxDate.toISOString().split('T')[0]);
             }
         });
 

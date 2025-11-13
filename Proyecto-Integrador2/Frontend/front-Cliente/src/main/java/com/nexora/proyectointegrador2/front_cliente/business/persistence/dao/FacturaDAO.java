@@ -1,9 +1,6 @@
-package com.nexora.proyecto.gestion.business.persistence.dao;
+package com.nexora.proyectointegrador2.front_cliente.business.persistence.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -12,9 +9,8 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.nexora.proyecto.gestion.dto.FacturaDTO;
-import com.nexora.proyecto.gestion.dto.enums.TipoPago;
-import com.nexora.proyecto.gestion.exception.EntityNotFoundException;
+import com.nexora.proyectointegrador2.front_cliente.dto.FacturaDTO;
+import com.nexora.proyectointegrador2.front_cliente.exception.EntityNotFoundException;
 
 @Component
 public class FacturaDAO extends BaseDAO<FacturaDTO, String> {
@@ -30,51 +26,6 @@ public class FacturaDAO extends BaseDAO<FacturaDTO, String> {
   }
 
   /**
-   * Genera una factura para un alquiler.
-   */
-  public FacturaDTO generarFactura(String alquilerId, TipoPago tipoPago, String observacion) {
-    try {
-      StringBuilder urlBuilder = new StringBuilder(baseUrl + entityPath + "/generar");
-      urlBuilder.append("?alquilerId=").append(alquilerId);
-      urlBuilder.append("&tipoPago=").append(tipoPago != null ? tipoPago.name() : "EFECTIVO");
-      if (observacion != null && !observacion.trim().isEmpty()) {
-        urlBuilder.append("&observacion=").append(java.net.URLEncoder.encode(observacion, "UTF-8"));
-      }
-      String url = urlBuilder.toString();
-      
-      logger.debug("Generando factura para alquiler: {}", alquilerId);
-
-      HttpHeaders headers = new HttpHeaders();
-      HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-      ResponseEntity<FacturaDTO> response = restTemplate.exchange(
-          url,
-          HttpMethod.POST,
-          requestEntity,
-          FacturaDTO.class
-      );
-
-      logger.info("Factura generada exitosamente para alquiler: {}", alquilerId);
-      return response.getBody();
-    } catch (java.io.UnsupportedEncodingException e) {
-      logger.error("Error al codificar parámetros: {}", e.getMessage());
-      throw new RuntimeException("Error al codificar parámetros: " + e.getMessage(), e);
-    } catch (HttpClientErrorException e) {
-      logger.error("Error del cliente al generar factura: {} - {}", e.getStatusCode(), e.getMessage());
-      throw new RuntimeException("Error al generar factura: " + e.getStatusCode() + " - " + e.getMessage(), e);
-    } catch (HttpServerErrorException e) {
-      logger.error("Error del servidor al generar factura: {}", e.getMessage());
-      throw new RuntimeException("Error en el servidor: " + e.getStatusCode() + " - " + e.getMessage(), e);
-    } catch (ResourceAccessException e) {
-      logger.error("Error de conexión con la API al generar factura");
-      throw new RuntimeException("No se pudo conectar con la API", e);
-    } catch (RestClientException e) {
-      logger.error("Error al generar factura: {}", e.getMessage());
-      throw new RuntimeException("Error al generar factura: " + e.getMessage(), e);
-    }
-  }
-
-  /**
    * Obtiene una factura por el ID del alquiler.
    */
   public FacturaDTO findByAlquilerId(String alquilerId) {
@@ -87,12 +38,14 @@ public class FacturaDAO extends BaseDAO<FacturaDTO, String> {
     } catch (HttpClientErrorException.NotFound e) {
       logger.debug("No se encontró factura para alquiler: {}", alquilerId);
       return null;
+    } catch (HttpServerErrorException e) {
+      // Si el backend devuelve 500, puede ser por problemas de serialización o porque no existe la factura
+      // En lugar de lanzar excepción, devolvemos null para que el controlador maneje el caso apropiadamente
+      logger.warn("Error del servidor al obtener factura por alquiler {}: {}. Tratando como factura no encontrada.", alquilerId, e.getResponseBodyAsString());
+      return null;
     } catch (HttpClientErrorException e) {
       logger.error("Error del cliente al obtener factura por alquiler: {} - {}", e.getStatusCode(), e.getMessage());
       throw new RuntimeException("Error al obtener factura: " + e.getStatusCode() + " - " + e.getMessage(), e);
-    } catch (HttpServerErrorException e) {
-      logger.error("Error del servidor al obtener factura por alquiler: {}", e.getMessage());
-      throw new RuntimeException("Error en el servidor: " + e.getStatusCode() + " - " + e.getMessage(), e);
     } catch (ResourceAccessException e) {
       logger.error("Error de conexión con la API al obtener factura por alquiler");
       throw new RuntimeException("No se pudo conectar con la API", e);

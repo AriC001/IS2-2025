@@ -2,6 +2,8 @@ package com.nexora.proyecto.gestion.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -26,6 +28,7 @@ import com.nexora.proyecto.gestion.dto.ClienteDTO;
 import com.nexora.proyecto.gestion.dto.DocumentoDTO;
 import com.nexora.proyecto.gestion.dto.FacturaDTO;
 import com.nexora.proyecto.gestion.dto.VehiculoDTO;
+import com.nexora.proyecto.gestion.dto.enums.EstadoVehiculo;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -99,7 +102,27 @@ public class AlquilerController extends BaseController<AlquilerDTO, String> {
     try {
       
       model.addAttribute("clientes", clienteService.findAllActives());
-      model.addAttribute("vehiculos", vehiculoService.findAllActives());
+      
+      // Filtrar solo vehículos disponibles (no alquilados)
+      List<VehiculoDTO> todosVehiculos = vehiculoService.findAllActives();
+      List<VehiculoDTO> vehiculosDisponibles = todosVehiculos.stream()
+          .filter(v -> v.getEstadoVehiculo() == EstadoVehiculo.DISPONIBLE)
+          .collect(Collectors.toList());
+      
+      // Si estamos editando un alquiler existente, incluir también su vehículo actual
+      // aunque esté alquilado, para que se pueda mantener la selección
+      AlquilerDTO alquiler = (AlquilerDTO) model.getAttribute("alquiler");
+      if (alquiler != null && alquiler.getId() != null && alquiler.getVehiculo() != null) {
+        VehiculoDTO vehiculoActual = alquiler.getVehiculo();
+        // Verificar si el vehículo actual no está ya en la lista de disponibles
+        boolean yaEstaEnLista = vehiculosDisponibles.stream()
+            .anyMatch(v -> v.getId() != null && v.getId().equals(vehiculoActual.getId()));
+        if (!yaEstaEnLista) {
+          vehiculosDisponibles.add(vehiculoActual);
+        }
+      }
+      
+      model.addAttribute("vehiculos", vehiculosDisponibles);
     } catch (Exception e) {
       logger.error("Error al preparar modelo del formulario: {}", e.getMessage());
     }

@@ -3,10 +3,14 @@ package nexora.proyectointegrador2.business.logic.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import nexora.proyectointegrador2.business.domain.entity.Cliente;
 import nexora.proyectointegrador2.business.domain.entity.Contacto;
 import nexora.proyectointegrador2.business.domain.entity.Direccion;
+import nexora.proyectointegrador2.business.domain.entity.Usuario;
 import nexora.proyectointegrador2.business.persistence.repository.ClienteRepository;
+import nexora.proyectointegrador2.business.persistence.repository.UsuarioRepository;
 
 @Service
 public class ClienteService extends BaseService<Cliente, String> {
@@ -15,6 +19,9 @@ public class ClienteService extends BaseService<Cliente, String> {
   
   @Autowired
   private DireccionService direccionService;
+  
+  @Autowired
+  private UsuarioRepository usuarioRepository;
   
 
   public ClienteService(ClienteRepository repository) {
@@ -114,6 +121,31 @@ public class ClienteService extends BaseService<Cliente, String> {
         }
       }
     }
+  }
+
+  /**
+   * Busca un cliente por nombre de usuario.
+   * 
+   * @param nombreUsuario nombre de usuario
+   * @return Cliente asociado al usuario, o null si no existe
+   * @throws Exception si ocurre un error
+   */
+  public Cliente findByNombreUsuario(String nombreUsuario) throws Exception {
+    if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+      throw new Exception("El nombreUsuario no puede ser null o vacío");
+    }
+    
+    // Buscar usuario por nombreUsuario
+    Optional<Usuario> usuarioOpt = usuarioRepository.findByNombreUsuarioAndEliminadoFalse(nombreUsuario);
+    if (usuarioOpt.isEmpty()) {
+      return null;
+    }
+    
+    Usuario usuario = usuarioOpt.get();
+    
+    // Buscar cliente por usuarioId
+    Optional<Cliente> clienteOpt = clienteRepository.findByUsuarioIdAndEliminadoFalse(usuario.getId());
+    return clienteOpt.orElse(null);
   }
 
 }

@@ -485,15 +485,15 @@
 
     <div class="nav-links">
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/vehiculos}" class="btn-nav">Vehículos</a>
-      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/alquileres/mis-alquileres}" class="btn-nav">Mis Alquileres</a>
-      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/perfil}" class="btn-nav">Perfil</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/mis-alquileres}" class="btn-nav">Mis Alquileres</a>
+      <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/mi-perfil}" class="btn-nav">Perfil</a>
       <a th:if="${session.usuariosession != null or session.token != null}" th:href="@{/auth/logout}" class="btn-nav btn-primary-nav">Log out</a>
     </div>
   </header>
 
   <!-- Content -->
   <div class="container">
-    <a th:href="@{/alquileres/mis-alquileres}" class="back-link">
+    <a th:href="@{/mis-alquileres}" class="back-link">
       <i class="fas fa-arrow-left"></i>
       Volver a mis alquileres
     </a>
@@ -715,21 +715,21 @@
       </a>
       
       <a th:if="${alquiler.estado == 'ACTIVO'}" 
-         th:href="@{'/alquileres/' + ${alquiler.id} + '/finalizar'}" 
+         th:href="@{'/mis-alquileres/' + ${alquiler.id} + '/finalizar'}" 
          class="btn btn-primary">
         <i class="fas fa-check-double"></i>
         Finalizar Alquiler
       </a>
       
       <a th:if="${alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO'}" 
-         th:href="@{'/alquileres/' + ${alquiler.id} + '/cancelar'}" 
+         th:href="@{'/mis-alquileres/' + ${alquiler.id} + '/cancelar'}" 
          class="btn btn-danger"
          onclick="return confirm('¿Estás seguro de que deseas cancelar este alquiler?')">
         <i class="fas fa-times-circle"></i>
         Cancelar Alquiler
       </a>
       
-      <a th:href="@{/alquileres/mis-alquileres}" class="btn btn-secondary">
+      <a th:href="@{/mis-alquileres}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i>
         Volver
       </a>
