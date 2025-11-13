@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -664,22 +665,41 @@ public class DataInitializer {
       }
 
       if (alquilerRepository.count() == 0) {
+        // Alquileres de prueba para recordatorios: todos vencen MAÑANA
+        // El sistema envía recordatorios "un día antes", es decir, HOY para alquileres que vencen MAÑANA
+        Date hoy = new Date();
+        Calendar calHoy = Calendar.getInstance();
+        calHoy.setTime(hoy);
+        calHoy.set(Calendar.HOUR_OF_DAY, 0);
+        calHoy.set(Calendar.MINUTE, 0);
+        calHoy.set(Calendar.SECOND, 0);
+        calHoy.set(Calendar.MILLISECOND, 0);
+        Date fechaHoyLimpia = calHoy.getTime();
+        
+        // Fecha de mañana (para que el recordatorio se envíe hoy)
+        Calendar calMañana = Calendar.getInstance();
+        calMañana.setTime(fechaHoyLimpia);
+        calMañana.add(Calendar.DAY_OF_MONTH, 1);
+        Date fechaMañana = calMañana.getTime();
+        
+        // Alquiler 1: vence mañana, usa clienteEmailEspecifico con email real
         Alquiler alquiler1 = Alquiler.builder()
-            .fechaDesde(new Date(125, 0, 10))
-            .fechaHasta(new Date(125, 0, 15))
-            .cliente(cliente1)
+            .fechaDesde(fechaHoyLimpia)
+            .fechaHasta(fechaMañana) // Vence MAÑANA - el recordatorio se envía HOY
+            .cliente(clienteEmailEspecifico != null ? clienteEmailEspecifico : cliente1)
             .vehiculo(vehiculo1)
-            .estadoAlquiler(EstadoAlquiler.PENDIENTE)
+            .estadoAlquiler(EstadoAlquiler.PAGADO) // Debe estar PAGADO para recibir recordatorio
             .build();
         alquiler1.setEliminado(false);
         alquilerService.save(alquiler1);
 
+        // Alquiler 2: también vence mañana
         Alquiler alquiler2 = Alquiler.builder()
-            .fechaDesde(new Date(125, 1, 1))
-            .fechaHasta(new Date(125, 1, 7))
-            .cliente(cliente2)
+            .fechaDesde(fechaHoyLimpia)
+            .fechaHasta(fechaMañana) // Vence MAÑANA - el recordatorio se envía HOY
+            .cliente(cliente1)
             .vehiculo(vehiculo2)
-            .estadoAlquiler(EstadoAlquiler.PENDIENTE)
+            .estadoAlquiler(EstadoAlquiler.PAGADO) // Debe estar PAGADO para recibir recordatorio
             .build();
         alquiler2.setEliminado(false);
         alquilerService.save(alquiler2);

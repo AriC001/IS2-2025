@@ -3,12 +3,16 @@ package nexora.proyectointegrador2.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import nexora.proyectointegrador2.business.logic.service.RecordatorioService;
 
 /**
  * Controller de prueba para demostrar el funcionamiento del filtro JWT
@@ -17,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
+
+    @Autowired(required = false)
+    private RecordatorioService recordatorioService;
 
     /**
      * Endpoint público de prueba (sin autenticación)
@@ -64,5 +71,34 @@ public class TestController {
         response.put("status", "success");
         
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Endpoint de prueba para ejecutar manualmente el proceso de recordatorios.
+     * Útil para testing sin esperar a las 9:00 AM.
+     * 
+     * Ejemplo de uso:
+     * POST http://localhost:9000/api/test/recordatorios/enviar
+     */
+    @PostMapping("/recordatorios/enviar")
+    public ResponseEntity<Map<String, Object>> enviarRecordatorios() {
+        Map<String, Object> response = new HashMap<>();
+        
+        if (recordatorioService == null) {
+            response.put("status", "error");
+            response.put("message", "RecordatorioService no está disponible");
+            return ResponseEntity.status(500).body(response);
+        }
+        
+        try {
+            recordatorioService.enviarRecordatoriosDevolucionManual();
+            response.put("status", "success");
+            response.put("message", "Proceso de recordatorios ejecutado. Revisa los logs para ver los detalles.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Error al ejecutar recordatorios: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 }
