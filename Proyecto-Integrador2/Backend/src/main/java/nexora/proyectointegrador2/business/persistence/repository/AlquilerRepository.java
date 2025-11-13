@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import nexora.proyectointegrador2.business.domain.entity.Alquiler;
+import java.util.Date;
 
 @Repository
 public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
@@ -52,6 +53,21 @@ public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
          "LEFT JOIN FETCH a.documento d " +
          "WHERE a.id = :id AND a.eliminado = false")
   java.util.Optional<Alquiler> findByIdWithRelations(String id);
+
+  /**
+   * Obtiene alquileres activos cuya fecha de devolución (fechaHasta) es la fecha especificada.
+   * Compara solo la parte de fecha (sin hora) usando DATE().
+   * Carga todas las relaciones necesarias para enviar recordatorios.
+   */
+  @Query("SELECT DISTINCT a FROM Alquiler a " +
+         "LEFT JOIN FETCH a.cliente c " +
+         "LEFT JOIN FETCH c.contactos " +
+         "LEFT JOIN FETCH a.vehiculo v " +
+         "LEFT JOIN FETCH v.caracteristicaVehiculo cv " +
+         "WHERE a.eliminado = false " +
+         "AND DATE(a.fechaHasta) = DATE(:fechaDevolucion) " +
+         "AND a.estadoAlquiler = 'PAGADO'")
+  Collection<Alquiler> findAlquileresConDevolucionMañana(Date fechaDevolucion);
 
 }
 

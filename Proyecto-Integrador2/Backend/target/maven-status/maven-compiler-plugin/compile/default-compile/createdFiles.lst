@@ -80,6 +80,7 @@ nexora\proyectointegrador2\business\domain\entity\Alquiler$AlquilerBuilder.class
 nexora\proyectointegrador2\business\logic\service\EmpresaService.class
 nexora\proyectointegrador2\utils\dto\AuthResponseDTO.class
 nexora\proyectointegrador2\utils\dto\FormaDePagoDTO$FormaDePagoDTOBuilderImpl.class
+nexora\proyectointegrador2\controller\WeatherRestController.class
 nexora\proyectointegrador2\controller\NacionalidadRestController.class
 nexora\proyectointegrador2\controller\exception\GlobalExceptionHandler.class
 nexora\proyectointegrador2\utils\dto\PersonaDTO.class
