@@ -107,6 +107,30 @@ public class CaracteristicaVehiculoController extends BaseController<Caracterist
     }
 
     if (archivoImagen != null && !archivoImagen.isEmpty()) {
+      // Validar tipo MIME
+      String contentType = archivoImagen.getContentType();
+      if (contentType == null || contentType.trim().isEmpty()) {
+        throw new Exception("No se pudo determinar el tipo de archivo");
+      }
+      
+      String mimeType = contentType.toLowerCase().trim();
+      if (!mimeType.equals("image/jpeg") && !mimeType.equals("image/jpg") && !mimeType.equals("image/png")) {
+        throw new Exception("El tipo de archivo debe ser JPG o PNG. Tipo recibido: " + contentType);
+      }
+      
+      // Validar extensión del archivo
+      String nombreArchivo = archivoImagen.getOriginalFilename();
+      if (nombreArchivo == null || nombreArchivo.trim().isEmpty()) {
+        nombreArchivo = archivoImagen.getName();
+      }
+      
+      if (nombreArchivo != null) {
+        String nombreLower = nombreArchivo.toLowerCase();
+        if (!nombreLower.endsWith(".jpg") && !nombreLower.endsWith(".jpeg") && !nombreLower.endsWith(".png")) {
+          throw new Exception("La extensión del archivo debe ser .jpg, .jpeg o .png. Archivo recibido: " + nombreArchivo);
+        }
+      }
+      
       // Hay archivo: crear nueva imagen
       logger.info("Procesando imagen: nombre={}, tamaño={} bytes, tipo={}", 
           archivoImagen.getOriginalFilename(), archivoImagen.getSize(), archivoImagen.getContentType());

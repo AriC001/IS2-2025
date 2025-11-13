@@ -69,7 +69,7 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .deleteCookies("JSESSIONID", "SESSION")
+                        .deleteCookies("JSESSIONID_CLIENTE", "SESSION")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .logoutSuccessHandler(logoutSuccessHandler)

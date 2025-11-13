@@ -57,6 +57,8 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
         // Verificar si la imagen tiene contenido válido antes de guardarla
         byte[] contenido = entity.getImagenVehiculo().getContenido();
         if (contenido != null && contenido.length > 0) {
+          // Validar tipo de imagen antes de guardar
+          validarTipoImagen(entity.getImagenVehiculo());
           Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
           entity.setImagenVehiculo(imagenGuardada);
           logger.info("Imagen guardada exitosamente con ID: {}", imagenGuardada.getId());
@@ -93,6 +95,8 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
       if (imagenId == null || imagenId.trim().isEmpty()) {
         // Verificar si la imagen tiene contenido válido antes de guardarla
         if (entity.getImagenVehiculo().getContenido() != null && entity.getImagenVehiculo().getContenido().length > 0) {
+          // Validar tipo de imagen antes de guardar
+          validarTipoImagen(entity.getImagenVehiculo());
           Imagen imagenGuardada = imagenService.save(entity.getImagenVehiculo());
           entity.setImagenVehiculo(imagenGuardada);
         } else {
@@ -124,6 +128,31 @@ public class CaracteristicaVehiculoService extends BaseService<CaracteristicaVeh
           CostoVehiculo costoExistente = costoVehiculoService.findById(costoId);
           entity.setCostoVehiculo(costoExistente);
         }
+      }
+    }
+  }
+
+  /**
+   * Valida que la imagen sea de tipo JPG o PNG.
+   */
+  private void validarTipoImagen(Imagen imagen) throws Exception {
+    if (imagen == null) {
+      return;
+    }
+    
+    // Validar tipo MIME
+    if (imagen.getMime() != null && !imagen.getMime().trim().isEmpty()) {
+      String mimeType = imagen.getMime().toLowerCase().trim();
+      if (!mimeType.equals("image/jpeg") && !mimeType.equals("image/jpg") && !mimeType.equals("image/png")) {
+        throw new Exception("El tipo de archivo debe ser JPG o PNG. Tipo recibido: " + imagen.getMime());
+      }
+    }
+    
+    // Validar extensión del archivo
+    if (imagen.getNombre() != null && !imagen.getNombre().trim().isEmpty()) {
+      String nombreArchivo = imagen.getNombre().toLowerCase();
+      if (!nombreArchivo.endsWith(".jpg") && !nombreArchivo.endsWith(".jpeg") && !nombreArchivo.endsWith(".png")) {
+        throw new Exception("La extensión del archivo debe ser .jpg, .jpeg o .png. Archivo recibido: " + imagen.getNombre());
       }
     }
   }

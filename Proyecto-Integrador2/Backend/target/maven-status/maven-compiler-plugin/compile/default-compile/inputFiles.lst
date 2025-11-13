@@ -57,6 +57,9 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\PaisService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\ProvinciaService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\RecordatorioService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\ReporteExcelService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\ReportePdfService.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\ReporteService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\UsuarioService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\VehiculoService.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\business\logic\service\WeatherService.java
@@ -109,6 +112,7 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\NacionalidadRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\PaisRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\ProvinciaRestController.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\ReporteRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\TestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\UsuarioRestController.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\controller\VehiculoRestController.java
@@ -140,6 +144,8 @@ C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\s
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\PersonaDTO.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\ProvinciaDTO.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\RegisterRequestDTO.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\ReporteAlquilerDTO.java
+C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\ReporteRecaudacionDTO.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\UsuarioDTO.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\VehiculoDTO.java
 C:\Users\massa\OneDrive\Desktop\Facultad\IS2-2025\Proyecto-Integrador2\Backend\src\main\java\nexora\proyectointegrador2\utils\dto\WeatherDTO.java

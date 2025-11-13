@@ -119,13 +119,14 @@ public class AuthController {
       return "redirect:/auth/login";
     }
     
-    // Verificar que realmente requiere cambio de contraseña
-    Boolean requiereCambio = (Boolean) session.getAttribute("requiereCambioClave");
-    if (requiereCambio == null || !requiereCambio) {
-      // Si no requiere cambio, redirigir al dashboard
-      return "redirect:/dashboard";
+    // Agregar información del usuario al modelo para mostrar en la vista
+    String nombreUsuario = (String) session.getAttribute("nombreUsuario");
+    if (nombreUsuario != null) {
+      model.addAttribute("nombreUsuario", nombreUsuario);
     }
     
+    // Permitir acceso a la vista de cambiar clave si tiene sesión válida
+    // El flag requiereCambioClave solo se usa para forzar el cambio después del login
     return "cambiar-clave";
   }
 

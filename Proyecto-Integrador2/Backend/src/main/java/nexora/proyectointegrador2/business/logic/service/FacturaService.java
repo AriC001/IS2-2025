@@ -11,22 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import nexora.proyectointegrador2.business.domain.entity.Alquiler;
+import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
 import nexora.proyectointegrador2.business.domain.entity.DetalleFactura;
 import nexora.proyectointegrador2.business.domain.entity.Factura;
 import nexora.proyectointegrador2.business.domain.entity.FormaDePago;
-import nexora.proyectointegrador2.business.domain.entity.ContactoCorreoElectronico;
-import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
-import nexora.proyectointegrador2.business.domain.entity.Cliente;
 import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
 import nexora.proyectointegrador2.business.enums.EstadoAlquiler;
 import nexora.proyectointegrador2.business.enums.EstadoFactura;
 import nexora.proyectointegrador2.business.enums.TipoPago;
 import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
 import nexora.proyectointegrador2.business.persistence.repository.FacturaRepository;
-import nexora.proyectointegrador2.business.logic.service.ContactoCorreoElectronicoService;
-import nexora.proyectointegrador2.business.persistence.repository.ContactoCorreoElectronicoRepository;
-
-import java.util.Optional;
 
 @Service
 public class FacturaService extends BaseService<Factura, String> {
@@ -48,9 +42,6 @@ public class FacturaService extends BaseService<Factura, String> {
   private FacturaPdfService facturaPdfService;
 
   @Autowired
-  private EmailService emailService;
-
-  @Autowired
   private EmpresaService empresaService;
 
   @Value("${facturas.dir:uploads/facturas_alquiler}")
@@ -63,7 +54,7 @@ public class FacturaService extends BaseService<Factura, String> {
 
   /**
    * Genera una factura para un alquiler.
-   * Calcula el costo total, crea la factura y detalle, genera el PDF y envía el email.
+   * Calcula el costo total, crea la factura y detalle, y genera el PDF.
    */
   @Transactional
   public Factura generarFacturaParaAlquiler(String alquilerId, TipoPago tipoPago, String observacion) throws Exception {
@@ -187,61 +178,6 @@ public class FacturaService extends BaseService<Factura, String> {
       return 1L;
     }
     return maxNumero + 1;
-  }
-
-  @Autowired
-  private ContactoCorreoElectronicoService contactoCorreoElectronicoService;
-
-  @Autowired
-  private ContactoCorreoElectronicoRepository contactoCorreoElectronicoRepository;
-
-  /**
-   * Obtiene el email del cliente desde sus contactos.
-   */
-  private String obtenerEmailCliente(Cliente cliente) {
-    if (cliente == null || cliente.getId() == null) {
-      logger.warn("Cliente o ID del cliente es null");
-      return null;
-    }
-    
-    logger.debug("Buscando email para cliente ID: {}, Nombre: {} {}", 
-        cliente.getId(), cliente.getNombre(), cliente.getApellido());
-    
-    // Intentar obtener email desde los contactos cargados del cliente
-    try {
-      if (cliente.getContactos() != null && !cliente.getContactos().isEmpty()) {
-        logger.debug("Cliente tiene {} contactos cargados", cliente.getContactos().size());
-        Optional<ContactoCorreoElectronico> contactoEmail = cliente.getContactos().stream()
-            .filter(c -> c instanceof ContactoCorreoElectronico && !c.isEliminado())
-            .map(c -> (ContactoCorreoElectronico) c)
-            .findFirst();
-        
-        if (contactoEmail.isPresent()) {
-          String email = contactoEmail.get().getEmail();
-          logger.info("Email encontrado en contactos cargados: {}", email);
-          return email;
-        } else {
-          logger.debug("No se encontró ContactoCorreoElectronico en los contactos cargados");
-        }
-      } else {
-        logger.debug("Cliente no tiene contactos cargados o la lista está vacía");
-      }
-      
-      // Si no se encontró en los contactos cargados, buscar directamente en el repositorio
-      logger.debug("Buscando email en repositorio para persona ID: {}", cliente.getId());
-      Optional<ContactoCorreoElectronico> contactoOpt = contactoCorreoElectronicoRepository.findByPersonaIdAndEliminadoFalse(cliente.getId());
-      
-      if (contactoOpt.isPresent()) {
-        String email = contactoOpt.get().getEmail();
-        logger.info("Email encontrado en repositorio: {}", email);
-        return email;
-      } else {
-        logger.warn("No se encontró email para el cliente ID: {}", cliente.getId());
-      }
-    } catch (Exception e) {
-      logger.error("Error al obtener email del cliente ID {}: {}", cliente.getId(), e.getMessage(), e);
-    }
-    return null;
   }
 
   /**

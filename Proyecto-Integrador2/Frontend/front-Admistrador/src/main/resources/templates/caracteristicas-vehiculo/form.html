@@ -73,7 +73,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" th:href="@{/perfil}"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil</a>
-                                <a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Configuración</a>
+                                <a class="dropdown-item" th:href="@{/auth/cambiar-clave}"><i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i> Cambiar Clave</a>
                                 <div class="dropdown-divider"></div>
                                 <div class="px-3 py-2"><small class="text-muted">Rol: <strong th:text="${rol}">ROL</strong></small></div>
                                 <div class="dropdown-divider"></div>
@@ -161,7 +161,7 @@
                                 <div class="form-group">
                                     <input type="hidden" th:field="*{imagenVehiculo.id}">
                                     <label>Imagen del Vehículo</label>
-                                    <input type="file" class="form-control-file" id="imagenVehiculo" name="imagenVehiculo" accept="image/*">
+                                    <input type="file" class="form-control-file" id="imagenVehiculo" name="imagenVehiculo" accept="image/jpeg,image/jpg,image/png">
                                     <small class="form-text text-muted">Subir imagen del vehículo</small>
                                 </div>
                                 <div th:if="${caracteristicaVehiculo?.imagenVehiculo != null}">

@@ -69,6 +69,34 @@ public interface AlquilerRepository extends BaseRepository<Alquiler, String> {
          "AND a.estadoAlquiler = 'PAGADO'")
   Collection<Alquiler> findAlquileresConDevolucionMañana(Date fechaDevolucion);
 
+  /**
+   * Obtiene todos los alquileres activos que tienen una factura asociada.
+   * Carga todas las relaciones necesarias para reportes.
+   */
+  @Query("SELECT DISTINCT a FROM Alquiler a " +
+         "LEFT JOIN FETCH a.cliente c " +
+         "LEFT JOIN FETCH a.vehiculo v " +
+         "LEFT JOIN FETCH v.caracteristicaVehiculo cv " +
+         "JOIN DetalleFactura df ON df.alquiler.id = a.id " +
+         "JOIN Factura f ON f.id = df.factura.id " +
+         "WHERE a.eliminado = false AND f.eliminado = false")
+  Collection<Alquiler> findAlquileresConFactura();
+
+  /**
+   * Obtiene alquileres activos con factura asociada en un periodo determinado.
+   * Filtra por fecha de factura dentro del rango especificado.
+   * Carga todas las relaciones necesarias para reportes.
+   */
+  @Query("SELECT DISTINCT a FROM Alquiler a " +
+         "LEFT JOIN FETCH a.cliente c " +
+         "LEFT JOIN FETCH a.vehiculo v " +
+         "LEFT JOIN FETCH v.caracteristicaVehiculo cv " +
+         "JOIN DetalleFactura df ON df.alquiler.id = a.id " +
+         "JOIN Factura f ON f.id = df.factura.id " +
+         "WHERE a.eliminado = false AND f.eliminado = false " +
+         "AND f.fechaFactura >= :fechaDesde AND f.fechaFactura <= :fechaHasta")
+  Collection<Alquiler> findAlquileresConFacturaPorPeriodo(Date fechaDesde, Date fechaHasta);
+
 }
 
 

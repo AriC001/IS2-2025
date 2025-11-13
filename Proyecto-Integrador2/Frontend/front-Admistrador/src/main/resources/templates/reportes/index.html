@@ -4,18 +4,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title th:text="${(pais != null and pais.id != null) ? 'Editar País' : 'Nuevo País'} + ' - My Car'">Formulario País - My Car</title>
+    <title>Reportes - My Car</title>
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 </head>
 <body id="page-top">
-    <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/dashboard}">
                 <div class="sidebar-brand-icon rotate-n-15">
@@ -23,71 +20,58 @@
                 </div>
                 <div class="sidebar-brand-text mx-3">My Car</div>
             </a>
-
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/dashboard}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider">
-
             <!-- Heading -->
-            <div class="sidebar-heading">
-                Gestión
-            </div>
-
+            <div class="sidebar-heading">Gestión</div>
             <!-- Nav Item - Alquileres -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/alquileres}">
                     <i class="fas fa-fw fa-key"></i>
                     <span>Alquileres</span></a>
             </li>
-
             <!-- Nav Item - Vehículos -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/vehiculos}">
                     <i class="fas fa-fw fa-car"></i>
                     <span>Vehículos</span></a>
             </li>
-
             <!-- Nav Item - Costos Vehículo -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/costos-vehiculo}">
                     <i class="fas fa-fw fa-dollar-sign"></i>
                     <span>Costos Vehículo</span></a>
             </li>
-
             <!-- Nav Item - Características Vehículo -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/caracteristicas-vehiculo}">
                     <i class="fas fa-fw fa-cog"></i>
                     <span>Características Vehículo</span></a>
             </li>
-
             <!-- Nav Item - Empresas -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/empresas}">
                     <i class="fas fa-fw fa-building"></i>
                     <span>Empresas</span></a>
             </li>
-
             <!-- Nav Item - Contactos -->
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/contactos}">
                     <i class="fas fa-fw fa-address-book"></i>
                     <span>Contactos</span></a>
             </li>
-
             <!-- Nav Item - Usuarios Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios"
-                    aria-expanded="false" aria-controls="collapseUsuarios">
+                    aria-expanded="true" aria-controls="collapseUsuarios">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Usuarios</span>
                 </a>
@@ -103,19 +87,24 @@
                     </div>
                 </div>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider">
-
             <!-- Heading -->
-            <div class="sidebar-heading">
-                Geografía
-            </div>
-
+            <div class="sidebar-heading">Reportes</div>
+            <!-- Nav Item - Reportes -->
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/reportes}">
+                    <i class="fas fa-fw fa-chart-bar"></i>
+                    <span>Reportes</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Heading -->
+            <div class="sidebar-heading">Geografía</div>
             <!-- Nav Item - Geografía Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeografia"
-                    aria-expanded="false" aria-controls="collapseGeografia">
+                    aria-expanded="true" aria-controls="collapseGeografia">
                     <i class="fas fa-fw fa-globe"></i>
                     <span>Geografía</span>
                 </a>
@@ -140,42 +129,27 @@
                     </div>
                 </div>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
-
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
         </ul>
         <!-- End of Sidebar -->
-
-        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
-            <!-- Main Content -->
             <div id="content">
-
-                <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-
-                    <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${nombreUsuario}">Usuario</span>
-                                <img class="img-profile rounded-circle"
-                                    th:src="@{/img/undraw_profile.svg}">
+                                <img class="img-profile rounded-circle" th:src="@{/img/undraw_profile.svg}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -199,49 +173,75 @@
                                 </a>
                             </div>
                         </li>
-
                     </ul>
-
                 </nav>
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800" th:text="${(pais != null and pais.id != null) ? 'Editar País' : 'Nuevo País'}">Formulario País</h1>
-                        <a th:href="@{/paises}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
-                    </div>
+                    <h1 class="h3 mb-4 text-gray-800">Reportes</h1>
+                    
                     <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                         <span th:text="${error}"></span>
-                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <form th:action="${(pais != null and pais.id != null) ? '/paises/' + pais.id : '/paises'}" th:object="${pais}" method="post">
-                        <input type="hidden" th:field="*{id}" th:if="${pais != null and pais.id != null}">
-                        
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Datos del País</h6></div>
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>Nombre <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" th:field="*{nombre}" required>
+
+                    <div class="row">
+                        <!-- Reporte de Alquileres con Factura -->
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-file-invoice"></i> Reporte de Alquileres con Factura
+                                    </h6>
                                 </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
-                                    <a th:href="@{/paises}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                                <div class="card-body">
+                                    <p class="text-gray-800">Muestra información de clientes, autos alquilados, fecha de alquiler y monto pagado.</p>
+                                    <form th:action="@{/reportes/alquileres-con-factura}" method="get">
+                                        <div class="form-group">
+                                            <label for="fechaDesde1">Fecha Desde (opcional)</label>
+                                            <input type="date" class="form-control" id="fechaDesde1" name="fechaDesde">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fechaHasta1">Fecha Hasta (opcional)</label>
+                                            <input type="date" class="form-control" id="fechaHasta1" name="fechaHasta">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-eye"></i> Ver Reporte
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </form>
 
+                        <!-- Reporte de Recaudación por Modelo -->
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-chart-line"></i> Reporte de Recaudación por Modelo
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-gray-800">Muestra el dinero recaudado en un periodo determinado discriminado por modelo de vehículo.</p>
+                                    <form th:action="@{/reportes/recaudacion-por-modelo}" method="get">
+                                        <div class="form-group">
+                                            <label for="fechaDesde2">Fecha Desde <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" id="fechaDesde2" name="fechaDesde" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fechaHasta2">Fecha Hasta <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" id="fechaHasta2" name="fechaHasta" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-eye"></i> Ver Reporte
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- /.container-fluid -->
-
             </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
@@ -249,19 +249,8 @@
                     </div>
                 </div>
             </footer>
-            <!-- End of Footer -->
-
         </div>
-        <!-- End of Content Wrapper -->
-
     </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -281,18 +270,12 @@
             </div>
         </div>
     </div>
-
     <!-- Bootstrap core JavaScript-->
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-
     <!-- Core plugin JavaScript-->
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
-
     <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-
 </body>
-
 </html>
-
