@@ -181,7 +181,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Frontend: formularios de auth
             path.startsWith("/auth/registro") ||
             path.startsWith("/auth/login") ||
-            
+             path.startsWith("/api/v1/weather") ||
             // Endpoints públicos para el formulario de registro
             path.startsWith("/api/v1/nacionalidades") ||
             path.startsWith("/api/v1/localidades") ||

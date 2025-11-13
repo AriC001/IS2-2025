@@ -1,107 +1,270 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Detalle vehículo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detalle del Vehículo | MyCar</title>
+
+  <!-- Fuentes y estilos -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    .container { max-width: 900px; margin: 24px auto; font-family: Arial, sans-serif; }
-    .card { border:1px solid #ddd; padding:16px; border-radius:8px; }
-    .row { display:flex; gap:16px; }
-    .col { flex:1 }
-    .thumb { width:300px; height:200px; background:#f4f4f4; display:flex;align-items:center;justify-content:center;border-radius:6px }
-    .btn { display:inline-block;padding:8px 12px;background:#007bff;color:#fff;text-decoration:none;border-radius:4px }
-    dt { font-weight:600 }
-    dd { margin:0 0 8px 0 }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+    }
+
+    /* Navbar */
+    header {
+      background: #007bff;
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    header .logo i {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px;
+      border-radius: 50%;
+    }
+
+    header nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 16px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: background 0.3s;
+      font-weight: 600;
+    }
+
+    header nav a:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Contenedor principal */
+    .container {
+      max-width: 1100px;
+      margin: 32px auto;
+      padding: 0 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #007bff;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* Tarjeta del vehículo */
+    .vehicle-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .vehicle-img {
+      flex: 1 1 380px;
+      max-width: 420px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f4f4f4;
+    }
+
+    .vehicle-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .vehicle-info {
+      flex: 1 1 360px;
+    }
+
+    dl {
+      margin-bottom: 16px;
+    }
+
+    dt {
+      font-weight: 700;
+      color: #007bff;
+      margin-top: 8px;
+    }
+
+    dd {
+      margin-left: 0;
+      margin-bottom: 8px;
+    }
+
+    /* Sección de reserva */
+    .reservation-panel {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    .reservation-panel h3 {
+      color: #007bff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .date-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .date-row label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    input[type="date"] {
+      padding: 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="date"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .btn-disabled {
+      background: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    #availabilityMsgDetail {
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .vehicle-card {
+        flex-direction: column;
+        align-items: center;
+      }
+      .vehicle-img {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Navbar -->
+  <header>
+    <div class="logo">
+      <i class="fas fa-car"></i> MyCar
+    </div>
+    <nav>
+      <a th:href="@{/vehiculos}">Vehículos</a>
+      <a th:href="@{/perfil}">Perfil</a>
+    </nav>
+  </header>
+
   <div class="container">
-    <a href="/vehiculos" class="btn">← Volver al listado</a>
+    <h1>Detalle del Vehículo</h1>
 
-    <h1>Detalle del vehículo</h1>
+    <div th:if="${vehiculo != null}" th:object="${vehiculo}" class="vehicle-card" th:attr="data-vehicle-id=${vehiculo.id}">
+      <div class="vehicle-img">
+        <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo != null and vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}"
+             th:src="${vehiculo.caracteristicaVehiculo.imagenVehiculo.base64}" alt="Vehículo" />
+        <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo == null}"
+             th:src="@{/img/placeholder.jpg}" alt="Sin imagen" />
+      </div>
 
-    <!-- Versión que usa la variable 'vehiculo' (sin acento) -->
-        <div th:if="${vehiculo != null}" th:object="${vehiculo}" class="card" th:attr="data-vehicle-id=${vehiculo.id}">
-      <div class="row">
-        <div class="thumb col">
-          <span >
-            <!-- Si la imagen se sirve por endpoint, cambia por th:src -->
-             <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo != null and vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}"
-                  th:src="${vehiculo.caracteristicaVehiculo.imagenVehiculo.base64}"
-                  alt="Auto" style="max-width:100%;max-height:100%;object-fit:cover;border-radius:6px" />
-             <img th:if="${vehiculo.caracteristicaVehiculo.imagenVehiculo == null}"
-                 th:src="@{/img/placeholder.jpg}"
-                 alt="Sin imagen" style="max-width:100%;max-height:100%;object-fit:cover;border-radius:6px" />
-          </span>
-        </div>
-        <div class="col">
-          <dl>
-            
+      <div class="vehicle-info">
+        <dl>
+          <dt>Patente</dt>
+          <dd th:text="*{patente}">ABC123</dd>
 
-            <dt>Patente</dt>
-            <dd th:text="*{patente}">ABC123</dd>
+          <dt>Estado</dt>
+          <dd th:text="*{estadoVehiculo}">DISPONIBLE</dd>
 
-            <dt>Estado</dt>
-            <dd th:text="*{estadoVehiculo}">DISPONIBLE</dd>
+          <dt>Marca</dt>
+          <dd th:text="*{caracteristicaVehiculo.marca}">Toyota</dd>
 
-            <dt>Marca</dt>
-            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.marca : ''}">Marca</dd>
+          <dt>Modelo</dt>
+          <dd th:text="*{caracteristicaVehiculo.modelo}">Corolla</dd>
 
-            <dt>Modelo</dt>
-            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.modelo : ''}">Modelo</dd>
+          <dt>Año</dt>
+          <dd th:text="*{caracteristicaVehiculo.anio}">2022</dd>
 
-            <dt>Año</dt>
-            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.anio : ''}">2020</dd>
+          <dt>Asientos</dt>
+          <dd th:text="*{caracteristicaVehiculo.cantidadAsiento}">5</dd>
 
-            <dt>Asientos</dt>
-            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.cantidadAsiento : ''}">5</dd>
+          <dt>Puertas</dt>
+          <dd th:text="*{caracteristicaVehiculo.cantidadPuerta}">4</dd>
+        </dl>
 
-            <dt>Puertas</dt>
-            <dd th:text="*{caracteristicaVehiculo != null ? caracteristicaVehiculo.cantidadPuerta : ''}">4</dd>
-          </dl>
+        <div class="reservation-panel">
+          <h3><i class="fas fa-calendar-check"></i> Reservar</h3>
 
-                                        <p>
-                                                <!-- <a th:href="@{'/vehiculos/' + *{id} + '/editar'}" class="btn">Editar</a> -->
-                                        </p>
+          <div class="date-row">
+            <label>Desde
+              <input type="date" id="fechaDesdeDetail" />
+            </label>
+            <label>Hasta
+              <input type="date" id="fechaHastaDetail" />
+            </label>
+          </div>
 
-                                        <!-- Reserva: date pickers, total y disponibilidad -->
-                                        <div class="reservation-panel" style="margin-top:14px;border-top:1px dashed #eee;padding-top:12px">
-                                                <h3>Reservar</h3>
-                                                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-                                                        <label style="display:flex;flex-direction:column;font-size:0.9rem">Desde
-                                                                <input type="date" id="fechaDesdeDetail" />
-                                                        </label>
-                                                        <label style="display:flex;flex-direction:column;font-size:0.9rem">Hasta
-                                                                <input type="date" id="fechaHastaDetail" />
-                                                        </label>
-                                                </div>
+          <p>Precio por día: <strong id="basePriceDetail" th:text="${vehiculo.caracteristicaVehiculo.costoVehiculo.costo}">0</strong></p>
+          <p>Total: <strong id="totalPriceDetail">-</strong></p>
+          <p id="availabilityMsgDetail">Elige fechas para comprobar disponibilidad.</p>
 
-                                                <p>Precio por día: <strong id="basePriceDetail" th:text="${vehiculo.caracteristicaVehiculo != null && vehiculo.caracteristicaVehiculo.costoVehiculo != null ? vehiculo.caracteristicaVehiculo.costoVehiculo.costo : 0}">0</strong></p>
-                                                <p>Total para las fechas seleccionadas: <strong id="totalPriceDetail">-</strong></p>
-                                                <p id="availabilityMsgDetail" style="font-weight:600;color:#333">Elige fechas para comprobar disponibilidad.</p>
-                                                <div style="margin-top:8px">
-                                                        <button id="reserveBtnDetail" class="btn">Reservar</button>
-                                                </div>
-                                        </div>
-
+          <button id="reserveBtnDetail" class="btn btn-disabled" disabled>Reservar</button>
         </div>
       </div>
     </div>
-
-    <!-- (Se eliminó la versión con variable con acento. Usar siempre 'vehiculo' sin tilde en el modelo) -->
-
   </div>
-</body>
 
-<style>
-
-
-/* Disabled button appearance */
-.btn-disabled { background: #cfcfcf !important; color: #666 !important; cursor: not-allowed !important; }
-</style>
-
-<script>
+ <script>
 // Detail page: date pickers compute price and check availability for this vehicle
 function daysBetweenInclusive(fromStr, toStr) {
         const from = new Date(fromStr);
@@ -223,4 +386,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
         });
 });
 </script>
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
 </html>

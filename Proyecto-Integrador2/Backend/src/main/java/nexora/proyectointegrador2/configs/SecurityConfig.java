@@ -45,7 +45,7 @@ public class SecurityConfig {
           // Permitir endpoints de autenticación
           .requestMatchers("/api/v1/auth/login").permitAll()
           .requestMatchers("/api/v1/auth/**").permitAll()
-          
+          .requestMatchers("/api/v1/weather/**").permitAll()
           // Permitir endpoints públicos necesarios para el registro
           .requestMatchers("/api/v1/nacionalidades/**").permitAll()
           .requestMatchers("/api/v1/localidades/**").permitAll()
