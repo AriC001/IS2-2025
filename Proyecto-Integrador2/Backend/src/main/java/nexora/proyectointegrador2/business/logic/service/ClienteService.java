@@ -148,4 +148,11 @@ public class ClienteService extends BaseService<Cliente, String> {
     return clienteOpt.orElse(null);
   }
 
+  public Cliente findByIdUsuario(String idUsuario) {
+    Cliente cliente = clienteRepository.findByUsuarioIdAndEliminadoFalse(idUsuario).get();
+
+    if (cliente == null) return null;
+
+    return cliente;
+  }
 }

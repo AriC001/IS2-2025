@@ -90,11 +90,20 @@ public abstract class BaseRestController<E extends BaseEntity<ID>, D extends Bas
    * @throws Exception manejada por GlobalExceptionHandler
    */
   @GetMapping("/{id}")
-  public ResponseEntity<D> findById(@PathVariable ID id) throws Exception {
+  public ResponseEntity<D> findById(@PathVariable ID id) {
     logger.debug("Buscando registro con ID: {}", id);
-    E entity = service.findById(id);
-    D dto = mapper.toDTO(entity);
-    return ResponseEntity.ok(dto);
+    try {
+      E entity = service.findById(id);
+      D dto = mapper.toDTO(entity);
+      return ResponseEntity.ok(dto);
+    } catch (Exception e) {
+      // Service throws generic Exception when entity not found in this project.
+      // Convert to 404 so clients that request an invalid id (or a path segment
+      // accidentally sent to this endpoint) receive a friendly response instead
+      // of an internal server error with a full stack trace.
+      logger.warn("Entidad no encontrada o error al buscar ID {}: {}", id, e.getMessage());
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 
   /**

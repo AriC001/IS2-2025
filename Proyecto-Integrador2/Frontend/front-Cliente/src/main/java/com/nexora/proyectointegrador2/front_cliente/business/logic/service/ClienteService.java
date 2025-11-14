@@ -49,13 +49,21 @@ public class ClienteService extends BaseService<ClienteDTO, String> {
   }
 
   public ClienteDTO findByNombreUsuario(String nombreUsuario) {
-      try {
-          return ((ClienteDAO) dao).findByNombreUsuario(nombreUsuario);
-      } catch (Exception e) {
-          throw new RuntimeException("Error buscando cliente por nombreUsuario: " + e.getMessage());
-      }
+    try {
+      return ((ClienteDAO) dao).findByNombreUsuario(nombreUsuario);
+    } catch (Exception e) {
+      throw new RuntimeException("Error buscando cliente por nombreUsuario: " + e.getMessage());
+    }
   }
 
-    
+
+  public ClienteDTO findByIdUsuario(String idUsuario) {
+    try {
+      return ((ClienteDAO) dao).findByIdUsuario(idUsuario);
+    } catch (Exception e) {
+      throw new RuntimeException("Error buscando cliente por idUsuario: " + e.getMessage());
+    }
+  }
+
 }
 
