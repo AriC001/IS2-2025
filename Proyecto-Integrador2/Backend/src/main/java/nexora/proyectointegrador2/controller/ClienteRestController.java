@@ -1,5 +1,7 @@
 package nexora.proyectointegrador2.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import nexora.proyectointegrador2.utils.mapper.impl.ClienteMapper;
 @RequestMapping("api/v1/clientes")
 public class ClienteRestController extends BaseRestController<Cliente, ClienteDTO, String> {
   
+  private static final Logger logger = LoggerFactory.getLogger(ClienteRestController.class);
   private final ClienteService clienteService;
   
   public ClienteRestController(ClienteService service, ClienteMapper mapper) {
@@ -31,12 +34,21 @@ public class ClienteRestController extends BaseRestController<Cliente, ClienteDT
    */
   @GetMapping("/por-usuario/{nombreUsuario}")
   public ResponseEntity<ClienteDTO> findByNombreUsuario(@PathVariable String nombreUsuario) throws Exception {
-    Cliente cliente = clienteService.findByNombreUsuario(nombreUsuario);
-    if (cliente == null) {
-      return ResponseEntity.notFound().build();
+    try {
+      logger.debug("Buscando cliente por nombreUsuario: {}", nombreUsuario);
+      Cliente cliente = clienteService.findByNombreUsuario(nombreUsuario);
+      if (cliente == null) {
+        logger.debug("No se encontró cliente para nombreUsuario: {}", nombreUsuario);
+        return ResponseEntity.notFound().build();
+      }
+      logger.debug("Cliente encontrado con ID: {}, convirtiendo a DTO...", cliente.getId());
+      ClienteDTO dto = mapper.toDTO(cliente);
+      logger.debug("DTO convertido exitosamente");
+      return ResponseEntity.ok(dto);
+    } catch (Exception e) {
+      logger.error("Error al buscar cliente por nombreUsuario {}: {}", nombreUsuario, e.getMessage(), e);
+      throw e;
     }
-    ClienteDTO dto = mapper.toDTO(cliente);
-    return ResponseEntity.ok(dto);
   }
 }
 

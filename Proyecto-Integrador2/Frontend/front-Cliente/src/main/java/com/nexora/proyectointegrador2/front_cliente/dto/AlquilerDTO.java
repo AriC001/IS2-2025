@@ -2,6 +2,7 @@ package  com.nexora.proyectointegrador2.front_cliente.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -27,6 +28,7 @@ public class AlquilerDTO extends BaseDTO {
   
   @Setter(AccessLevel.NONE) // Excluir del setter generado por Lombok
   @Getter
+  @JsonIgnore // Ignorar el getter de Lombok, usar getEstadoAlquiler() en su lugar
   private String estado; // Mapea desde estadoAlquiler del backend
   
   // Setter personalizado para manejar la conversión del enum a String

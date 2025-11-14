@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.validation.Valid;
@@ -28,6 +28,7 @@ import nexora.proyectointegrador2.utils.mapper.BaseMapper;
  * @param <D> Tipo del DTO
  * @param <ID> Tipo del identificador
  */
+
 public abstract class BaseRestController<E extends BaseEntity<ID>, D extends BaseDTO, ID> {
   
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -43,6 +44,38 @@ public abstract class BaseRestController<E extends BaseEntity<ID>, D extends Bas
   protected BaseRestController(BaseService<E, ID> service, BaseMapper<E, D, ID> mapper) {
     this.service = service;
     this.mapper = mapper;
+  }
+
+    /**
+   * Obtiene una entidad por ID y la convierte a DTO.
+   * 
+   * @param id identificador de la entidad
+   * @return ResponseEntity con el DTO
+   * @throws Exception manejada por GlobalExceptionHandler
+   */
+  @GetMapping("/{id}")
+  public ResponseEntity<D> findById(@PathVariable ID id) throws Exception {
+    logger.debug("Buscando registro con ID: {}", id);
+    E entity = service.findById(id);
+    D dto = mapper.toDTO(entity);
+    return ResponseEntity.ok(dto);
+  }
+
+  /**
+   * Crea una nueva entidad a partir de un DTO.
+   * 
+   * @param dto DTO recibido del cliente (validado con @Valid)
+   * @return ResponseEntity con el DTO de la entidad creada
+   * @throws Exception manejada por GlobalExceptionHandler
+   */
+  @PostMapping
+  public ResponseEntity<D> create(@Valid @RequestBody D dto) throws Exception {
+    logger.debug("Creando nuevo registro: {}", dto);
+    E entity = mapper.toEntity(dto);
+    E savedEntity = service.save(entity);
+    D savedDto = mapper.toDTO(savedEntity);
+    logger.info("Registro creado exitosamente con ID: {}", savedEntity.getId());
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
   }
 
   /**
@@ -80,38 +113,6 @@ public abstract class BaseRestController<E extends BaseEntity<ID>, D extends Bas
     }
     
     return ResponseEntity.ok(dtos);
-  }
-
-  /**
-   * Obtiene una entidad por ID y la convierte a DTO.
-   * 
-   * @param id identificador de la entidad
-   * @return ResponseEntity con el DTO
-   * @throws Exception manejada por GlobalExceptionHandler
-   */
-  @GetMapping("/{id}")
-  public ResponseEntity<D> findById(@PathVariable ID id) throws Exception {
-    logger.debug("Buscando registro con ID: {}", id);
-    E entity = service.findById(id);
-    D dto = mapper.toDTO(entity);
-    return ResponseEntity.ok(dto);
-  }
-
-  /**
-   * Crea una nueva entidad a partir de un DTO.
-   * 
-   * @param dto DTO recibido del cliente (validado con @Valid)
-   * @return ResponseEntity con el DTO de la entidad creada
-   * @throws Exception manejada por GlobalExceptionHandler
-   */
-  @PostMapping
-  public ResponseEntity<D> create(@Valid @RequestBody D dto) throws Exception {
-    logger.debug("Creando nuevo registro: {}", dto);
-    E entity = mapper.toEntity(dto);
-    E savedEntity = service.save(entity);
-    D savedDto = mapper.toDTO(savedEntity);
-    logger.info("Registro creado exitosamente con ID: {}", savedEntity.getId());
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
   }
 
   /**

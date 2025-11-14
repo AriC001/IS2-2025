@@ -32,10 +32,15 @@ import com.nexora.proyectointegrador2.front_cliente.dto.UsuarioDTO;
 import com.nexora.proyectointegrador2.front_cliente.dto.ClienteDTO;
 import com.nexora.proyectointegrador2.front_cliente.dto.FacturaDTO;
 import com.nexora.proyectointegrador2.front_cliente.dto.enums.TipoDocumentacion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/mis-alquileres")
 public class AlquilerController extends BaseController<AlquilerDTO, String> {
 
+  private static final Logger logger = LoggerFactory.getLogger(AlquilerController.class);
+  
   private final AlquilerService alquilerervice;
   private final DocumentoService documentoService;
   private final UsuarioService usuarioService;
@@ -340,12 +345,30 @@ public class AlquilerController extends BaseController<AlquilerDTO, String> {
     }
     // Exponer atributos comunes de sesión al modelo (nombreUsuario, rol)
     addSessionAttributesToModel(model, session);
-    // No necesitamos poblar el modelo con los params porque la plantilla
-    // usa ${param.*} para obtenerlos directamente. De todos modos, dejamos
-    // un objeto vacío por compatibilidad con el formulario th:object si se usa.
-    model.addAttribute("alquiler", createNewEntity());
+    
+    // Crear un AlquilerDTO y cargar el vehículo si se proporciona el id
+    AlquilerDTO alquiler = createNewEntity();
+    
+    if (id != null && !id.trim().isEmpty()) {
+      try {
+        // Cargar el vehículo desde el backend
+        VehiculoDTO vehiculo = vehiculoService.findById(id);
+        if (vehiculo != null) {
+          alquiler.setVehiculo(vehiculo);
+          logger.debug("Vehículo cargado para alquiler: {}", vehiculo.getId());
+        } else {
+          logger.warn("No se encontró vehículo con ID: {}", id);
+        }
+      } catch (Exception e) {
+        logger.error("Error al cargar vehículo con ID {}: {}", id, e.getMessage(), e);
+        // Continuar con el alquiler vacío, el template manejará el caso null
+      }
+    }
+    
+    model.addAttribute("alquiler", alquiler);
     return "alquiler/detail";
   }
+
 
   /**
    * Muestra el detalle de un alquiler específico

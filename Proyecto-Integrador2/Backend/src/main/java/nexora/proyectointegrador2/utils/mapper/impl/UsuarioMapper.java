@@ -36,12 +36,13 @@ public class UsuarioMapper implements BaseMapper<Usuario, UsuarioDTO, String> {
       return null;
     }
 
-    Usuario usuario = new Usuario();
+    Usuario usuario = Usuario.builder()
+        .nombreUsuario(dto.getNombreUsuario())
+        .clave(dto.getClave())
+        .rol(dto.getRol())
+        .build();
     usuario.setId(dto.getId());
     usuario.setEliminado(dto.isEliminado());
-    usuario.setNombreUsuario(dto.getNombreUsuario());
-    usuario.setClave(dto.getClave());
-    usuario.setRol(dto.getRol());
     return usuario;
   }
 

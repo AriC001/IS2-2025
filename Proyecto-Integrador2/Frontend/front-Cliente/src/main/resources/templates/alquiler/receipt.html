@@ -376,8 +376,26 @@
         <div class="success-icon">
           <i class="fas fa-check-circle"></i>
         </div>
-        <h2>¡Reserva Creada!</h2>
-        <p class="muted">A continuación figura un resumen de su reserva.</p>
+        <h2 th:if="${success != null}">¡Pago Confirmado!</h2>
+        <h2 th:if="${success == null}">¡Reserva Creada!</h2>
+        <p class="muted" th:if="${success != null}">Tu pago ha sido confirmado exitosamente. A continuación figura un resumen de tu reserva.</p>
+        <p class="muted" th:if="${success == null}">A continuación figura un resumen de su reserva.</p>
+      </div>
+      
+      <!-- Success Message -->
+      <div th:if="${success != null}" class="info-box" style="background: #d4edda; border-color: #c3e6cb; color: #155724; margin-bottom: 24px;">
+        <p style="margin: 0;">
+          <i class="fas fa-check-circle" style="color: #28a745;"></i>
+          <strong th:text="${success}">Pago confirmado exitosamente</strong>
+        </p>
+      </div>
+      
+      <!-- Error Message -->
+      <div th:if="${error != null}" class="info-box" style="background: #f8d7da; border-color: #f5c6cb; color: #721c24; margin-bottom: 24px;">
+        <p style="margin: 0;">
+          <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i>
+          <strong th:text="${error}">Error al procesar</strong>
+        </p>
       </div>
 
       <div class="divider"></div>
@@ -441,21 +459,50 @@
       </div>
 
       <!-- Info Box -->
-      <div class="info-box">
+      <div class="info-box" th:if="${alquiler.estado == null or alquiler.estado != 'PAGADO'}">
         <p>
           <i class="fas fa-info-circle"></i>
           <strong>Importante:</strong> Guarda el ID de reserva para futuras consultas. 
           Debes completar el pago para confirmar tu reserva.
         </p>
       </div>
+      
+      <!-- Success Info Box -->
+      <div class="info-box" th:if="${alquiler.estado == 'PAGADO'}" style="background: #d4edda; border-color: #c3e6cb;">
+        <p style="color: #155724; margin: 0;">
+          <i class="fas fa-check-circle" style="color: #28a745;"></i>
+          <strong>Reserva confirmada:</strong> Tu pago ha sido procesado exitosamente. 
+          Recibirás un email de confirmación con los detalles de tu reserva.
+        </p>
+      </div>
 
       <!-- Actions -->
       <div class="actions">
-        <a th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" class="btn btn-primary">
+        <!-- Botón de pago solo si no está pagado -->
+        <a th:if="${alquiler.estado == null or alquiler.estado != 'PAGADO'}" 
+           th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" 
+           class="btn btn-primary">
           <i class="fas fa-credit-card"></i>
           Proceder al pago
         </a>
-        <a th:href="@{/vehiculos}" class="btn btn-secondary">
+        
+        <!-- Botón para ver detalles del alquiler -->
+        <a th:href="@{'/mis-alquileres/' + ${alquiler.id}}" 
+           class="btn btn-secondary">
+          <i class="fas fa-eye"></i>
+          Ver detalles
+        </a>
+        
+        <!-- Botón para ver mis alquileres -->
+        <a th:href="@{/mis-alquileres}" 
+           class="btn btn-secondary">
+          <i class="fas fa-list"></i>
+          Mis Alquileres
+        </a>
+        
+        <!-- Botón para volver a vehículos -->
+        <a th:href="@{/vehiculos}" 
+           class="btn btn-secondary">
           <i class="fas fa-arrow-left"></i>
           Volver a vehículos
         </a>

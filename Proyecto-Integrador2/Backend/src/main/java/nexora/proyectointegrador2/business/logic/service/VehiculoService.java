@@ -1,22 +1,21 @@
 package nexora.proyectointegrador2.business.logic.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
-import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
-import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
-import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
-import org.springframework.transaction.annotation.Transactional;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.ArrayList;
 import java.util.List;
-// no unused imports
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Predicate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import nexora.proyectointegrador2.business.domain.entity.CaracteristicaVehiculo;
+import nexora.proyectointegrador2.business.domain.entity.Vehiculo;
+import nexora.proyectointegrador2.business.persistence.repository.AlquilerRepository;
+import nexora.proyectointegrador2.business.persistence.repository.VehiculoRepository;
 
 @Service
 public class VehiculoService extends BaseService<Vehiculo, String> {
@@ -137,23 +136,31 @@ public class VehiculoService extends BaseService<Vehiculo, String> {
 
 
   @Transactional(readOnly = true)
-  public boolean checkAvailability(Date fechaDesde, Date fechaHasta,String idVehiculo) throws Exception {
+  public boolean checkAvailability(Date fechaDesde, Date fechaHasta, String idVehiculo) throws Exception {
     if (idVehiculo == null || idVehiculo.trim().isEmpty()) {
       throw new IllegalArgumentException("idVehiculo es requerido");
     }
-
-    final java.util.Date qDesde = (fechaDesde == null) ? new java.util.Date() : fechaDesde;
-    final java.util.Date qHasta = fechaHasta; // may be null
-
-    Long overlaps;
-    if (qHasta == null) {
-      overlaps = alquilerRepository.countOverlappingForVehicleDate(qDesde, idVehiculo);
-    } else {
-      overlaps = alquilerRepository.countOverlappingForVehicleRange(qDesde, qHasta, idVehiculo);
+    if (fechaDesde == null) {
+      throw new IllegalArgumentException("fechaDesde es requerida");
+    }
+    if (fechaHasta == null) {
+      throw new IllegalArgumentException("fechaHasta es requerida");
+    }
+    if (fechaDesde.after(fechaHasta)) {
+      throw new IllegalArgumentException("fechaDesde no puede ser posterior a fechaHasta");
     }
 
-    if (overlaps == null) overlaps = 0L;
-    return overlaps == 0L;
+    final java.util.Date qDesde = fechaDesde;
+    final java.util.Date qHasta = fechaHasta;
+
+    Long overlaps = alquilerRepository.countOverlappingForVehicleRange(qDesde, qHasta, idVehiculo);
+    
+    if (overlaps == null) {
+      overlaps = 0L;
+    }
+    
+    boolean isAvailable = overlaps == 0L;
+    return isAvailable;
   }
 
 

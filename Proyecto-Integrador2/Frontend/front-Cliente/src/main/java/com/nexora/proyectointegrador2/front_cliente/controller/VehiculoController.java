@@ -94,17 +94,33 @@ public class VehiculoController extends BaseController<VehiculoDTO, String> {
     }
 
     try {
+      logger.debug("Verificando disponibilidad para vehículo {} desde {} hasta {}", id, fechaDesde, fechaHasta);
+      
+      if (fechaDesde == null || fechaDesde.isBlank()) {
+        throw new IllegalArgumentException("fechaDesde es requerida");
+      }
+      if (fechaHasta == null || fechaHasta.isBlank()) {
+        throw new IllegalArgumentException("fechaHasta es requerida");
+      }
+      if (id == null || id.isBlank()) {
+        throw new IllegalArgumentException("id es requerido");
+      }
+      
       java.util.Map<String,String> filters = new java.util.HashMap<>();
-      if (fechaDesde != null && !fechaDesde.isBlank()) filters.put("fechaDesde", fechaDesde);
-      if (fechaHasta != null && !fechaHasta.isBlank()) filters.put("fechaHasta", fechaHasta);
-      filters.put("idVehiculo",id);
+      filters.put("fechaDesde", fechaDesde);
+      filters.put("fechaHasta", fechaHasta);
+      filters.put("idVehiculo", id);
 
-      // Delegar a service (findByFilters construye la consulta al backend)
-      return vehiculoService.findAvailability(filters);
-      //return service.findByFilters(filters);
+      // Delegar a service (findAvailability construye la consulta al backend)
+      boolean result = vehiculoService.findAvailability(filters);
+      logger.debug("Resultado de disponibilidad para vehículo {}: {}", id, result);
+      return result;
+    } catch (IllegalArgumentException e) {
+      logger.warn("Error de validación en available: {}", e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar disponibilidad");
+      logger.error("Error al consultar disponibilidad: {}", e.getMessage(), e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar disponibilidad: " + e.getMessage());
     }
   }
 

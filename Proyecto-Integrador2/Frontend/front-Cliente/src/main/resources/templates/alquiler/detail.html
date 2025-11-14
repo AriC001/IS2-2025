@@ -501,16 +501,30 @@
     <!-- Page Header -->
     <div class="page-header">
       <h1>Detalle del Alquiler</h1>
-      <span class="status-badge status-activo" th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" th:text="${alquiler.estado}">
+      <span th:if="${alquiler.estado != null}" 
+            class="status-badge status-activo" 
+            th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" 
+            th:text="${alquiler.estado}">
         ACTIVO
+      </span>
+      <span th:if="${alquiler.estado == null}" 
+            class="status-badge status-pendiente" 
+            th:text="'PENDIENTE'">
+        PENDIENTE
       </span>
     </div>
 
     <!-- Info Alert -->
-    <div class="info-alert" th:if="${alquiler.estado == 'PENDIENTE'}">
+    <div class="info-alert" th:if="${alquiler.estado != null and alquiler.estado == 'PENDIENTE'}">
       <p>
         <i class="fas fa-exclamation-circle"></i>
         <strong>Pago pendiente:</strong> Este alquiler está pendiente de pago. Completa el pago para confirmar tu reserva.
+      </p>
+    </div>
+    <div class="info-alert" th:if="${alquiler.estado == null}">
+      <p>
+        <i class="fas fa-info-circle"></i>
+        <strong>Nueva reserva:</strong> Completa el formulario y sube tu documento para confirmar tu reserva.
       </p>
     </div>
 
@@ -523,20 +537,21 @@
           Vehículo
         </h3>
         
-        <img th:if="${alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo != null and alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}" 
+        <img th:if="${alquiler.vehiculo != null and alquiler.vehiculo.caracteristicaVehiculo != null and alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo != null and alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo.base64 != null}" 
              th:src="${alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo.base64}" 
              alt="Vehículo"
              class="vehicle-image" />
-        <img th:if="${alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo == null}" 
+        <img th:if="${alquiler.vehiculo == null or alquiler.vehiculo.caracteristicaVehiculo == null or alquiler.vehiculo.caracteristicaVehiculo.imagenVehiculo == null}" 
              th:src="@{/img/placeholder.jpg}" 
              alt="Sin imagen"
              class="vehicle-image" />
         
-        <div class="vehicle-name" th:text="${alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo}">
+        <div class="vehicle-name" th:if="${alquiler.vehiculo != null and alquiler.vehiculo.caracteristicaVehiculo != null}" 
+             th:text="${alquiler.vehiculo.caracteristicaVehiculo.marca + ' ' + alquiler.vehiculo.caracteristicaVehiculo.modelo}">
           Toyota Corolla
         </div>
         
-        <div class="vehicle-specs">
+        <div class="vehicle-specs" th:if="${alquiler.vehiculo != null and alquiler.vehiculo.caracteristicaVehiculo != null}">
           <div class="spec-item">
             <i class="fas fa-calendar"></i>
             <span th:text="${alquiler.vehiculo.caracteristicaVehiculo.anio}">2022</span>
@@ -576,7 +591,9 @@
             <i class="fas fa-calendar-alt"></i>
             <span>Fecha Inicio</span>
           </div>
-          <div class="detail-value" th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">01/12/2024</div>
+          <div class="detail-value" th:if="${alquiler.fechaDesde != null}" th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">01/12/2024</div>
+          <div class="detail-value" th:if="${alquiler.fechaDesde == null and param.fechaDesde != null}" th:text="${param.fechaDesde}">-</div>
+          <div class="detail-value" th:if="${alquiler.fechaDesde == null and param.fechaDesde == null}">-</div>
         </div>
         
         <div class="detail-item">
@@ -584,7 +601,9 @@
             <i class="fas fa-calendar-check"></i>
             <span>Fecha Fin</span>
           </div>
-          <div class="detail-value" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">07/12/2024</div>
+          <div class="detail-value" th:if="${alquiler.fechaHasta != null}" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">07/12/2024</div>
+          <div class="detail-value" th:if="${alquiler.fechaHasta == null and param.fechaHasta != null}" th:text="${param.fechaHasta}">-</div>
+          <div class="detail-value" th:if="${alquiler.fechaHasta == null and param.fechaHasta == null}">-</div>
         </div>
         
         <div class="detail-item">
@@ -592,7 +611,27 @@
             <i class="fas fa-clock"></i>
             <span>Duración</span>
           </div>
-          <div class="detail-value" th:text="${alquiler.duracion + ' días'}">6 días</div>
+          <div class="detail-value" th:if="${alquiler.duracion != null}" th:text="${alquiler.duracion + ' días'}">6 días</div>
+          <div class="detail-value" th:if="${alquiler.duracion == null and param.fechaDesde != null and param.fechaHasta != null}" 
+                th:inline="text">
+            <!-- Calcular días usando JavaScript en el cliente -->
+            <script th:inline="none">
+              (function() {
+                var desde = /*[[${param.fechaDesde}]]*/ '';
+                var hasta = /*[[${param.fechaHasta}]]*/ '';
+                if (desde && hasta) {
+                  var d1 = new Date(desde);
+                  var d2 = new Date(hasta);
+                  var diffTime = Math.abs(d2 - d1);
+                  var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                  document.currentScript.parentElement.textContent = diffDays + ' días';
+                } else {
+                  document.currentScript.parentElement.textContent = '-';
+                }
+              })();
+            </script>
+          </div>
+          <div class="detail-value" th:if="${alquiler.duracion == null and (param.fechaDesde == null or param.fechaHasta == null)}">-</div>
         </div>
         
         <div class="detail-item">
@@ -601,7 +640,13 @@
             <span>Estado</span>
           </div>
           <div class="detail-value">
-            <span class="status-badge status-activo" th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" th:text="${alquiler.estado}">ACTIVO</span>
+            <span th:if="${alquiler.estado != null}" 
+                  class="status-badge status-activo" 
+                  th:classappend="${'status-' + #strings.toLowerCase(alquiler.estado)}" 
+                  th:text="${alquiler.estado}">ACTIVO</span>
+            <span th:if="${alquiler.estado == null}" 
+                  class="status-badge status-pendiente" 
+                  th:text="'PENDIENTE'">PENDIENTE</span>
           </div>
         </div>
       </div>
@@ -615,17 +660,42 @@
         
         <div class="price-row">
           <span>Precio por día</span>
-          <span th:text="'$' + ${#numbers.formatDecimal(alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo.costo, 0, 'COMMA', 0, 'POINT')}">$15.000</span>
+          <span th:if="${alquiler.vehiculo != null and alquiler.vehiculo.caracteristicaVehiculo != null and alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo != null}" 
+                th:text="'$' + ${#numbers.formatDecimal(alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo.costo, 0, 'COMMA', 0, 'POINT')}">$15.000</span>
+          <span th:if="${alquiler.vehiculo == null or alquiler.vehiculo.caracteristicaVehiculo == null or alquiler.vehiculo.caracteristicaVehiculo.costoVehiculo == null}" 
+                th:text="${param.basePrice != null ? '$' + #numbers.formatDecimal(#numbers.parseDecimal(param.basePrice), 0, 'COMMA', 0, 'POINT') : '-'}">-</span>
         </div>
         
         <div class="price-row">
           <span>Cantidad de días</span>
-          <span th:text="${alquiler.duracion}">6</span>
+          <span th:if="${alquiler.duracion != null}" th:text="${alquiler.duracion}">6</span>
+          <span th:if="${alquiler.duracion == null and param.fechaDesde != null and param.fechaHasta != null}" 
+                th:inline="text">
+            <script th:inline="none">
+              (function() {
+                var desde = /*[[${param.fechaDesde}]]*/ '';
+                var hasta = /*[[${param.fechaHasta}]]*/ '';
+                if (desde && hasta) {
+                  var d1 = new Date(desde);
+                  var d2 = new Date(hasta);
+                  var diffTime = Math.abs(d2 - d1);
+                  var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                  document.currentScript.parentElement.textContent = diffDays;
+                } else {
+                  document.currentScript.parentElement.textContent = '-';
+                }
+              })();
+            </script>
+          </span>
+          <span th:if="${alquiler.duracion == null and (param.fechaDesde == null or param.fechaHasta == null)}">-</span>
         </div>
         
         <div class="price-row total">
           <span>Total</span>
-          <span th:text="'$' + ${#numbers.formatDecimal(alquiler.total, 0, 'COMMA', 0, 'POINT')}">$90.000</span>
+          <span th:if="${alquiler.total != null}" th:text="'$' + ${#numbers.formatDecimal(alquiler.total, 0, 'COMMA', 0, 'POINT')}">$90.000</span>
+          <span th:if="${alquiler.total == null and param.total != null}" 
+                th:text="'$' + ${#numbers.formatDecimal(#numbers.parseDecimal(param.total), 0, 'COMMA', 0, 'POINT')}">-</span>
+          <span th:if="${alquiler.total == null and param.total == null}">-</span>
         </div>
       </div>
 
@@ -692,12 +762,12 @@
             <div class="timeline-content">Pago confirmado</div>
           </div>
           
-          <div class="timeline-item" th:if="${alquiler.estado == 'ACTIVO'}">
+          <div class="timeline-item" th:if="${alquiler.estado != null and alquiler.estado == 'ACTIVO'}">
             <div class="timeline-date" th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">01/12/2024</div>
             <div class="timeline-content">Inicio del alquiler</div>
           </div>
           
-          <div class="timeline-item" th:if="${alquiler.estado == 'FINALIZADO'}">
+          <div class="timeline-item" th:if="${alquiler.estado != null and alquiler.estado == 'FINALIZADO'}">
             <div class="timeline-date" th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">07/12/2024</div>
             <div class="timeline-content">Alquiler finalizado</div>
           </div>
@@ -707,21 +777,45 @@
 
     <!-- Actions -->
     <div class="actions">
-      <a th:if="${alquiler.estado == 'PENDIENTE'}" 
+      <!-- Botón de pago para alquileres con ID -->
+      <a th:if="${alquiler.id != null and (alquiler.estado == null or alquiler.estado == 'PENDIENTE')}" 
          th:href="@{'/pago?alquilerId=' + ${alquiler.id}}" 
          class="btn btn-success">
         <i class="fas fa-credit-card"></i>
-        Completar Pago
+        <span th:text="${alquiler.estado == 'PENDIENTE' ? 'Completar Pago' : 'Realizar Pago'}">Realizar Pago</span>
       </a>
       
-      <a th:if="${alquiler.estado == 'ACTIVO'}" 
+      <!-- Botón de pago para alquileres nuevos sin ID pero con vehículo (usando parámetros de URL) -->
+      <a th:if="${alquiler.id == null and alquiler.vehiculo != null and alquiler.vehiculo.id != null}" 
+         th:href="@{'/pago?vehiculoId=' + ${alquiler.vehiculo.id} + '&fechaDesde=' + ${param.fechaDesde} + '&fechaHasta=' + ${param.fechaHasta} + '&total=' + ${param.total}}" 
+         class="btn btn-success">
+        <i class="fas fa-credit-card"></i>
+        Realizar Pago
+      </a>
+      
+      <!-- Botón de pago usando parámetros de URL directamente si no hay vehículo cargado -->
+      <a th:if="${alquiler.id == null and (alquiler.vehiculo == null or alquiler.vehiculo.id == null) and param.id != null}" 
+         th:href="@{'/pago?vehiculoId=' + ${param.id} + '&fechaDesde=' + ${param.fechaDesde} + '&fechaHasta=' + ${param.fechaHasta} + '&total=' + ${param.total}}" 
+         class="btn btn-success">
+        <i class="fas fa-credit-card"></i>
+        Realizar Pago
+      </a>
+      
+      <!-- Mensaje informativo si no hay información suficiente para pagar -->
+      <div th:if="${alquiler.id == null and (alquiler.vehiculo == null or alquiler.vehiculo.id == null) and param.id == null}" 
+           class="alert alert-info" style="margin-bottom: 1rem; padding: 1rem; border-radius: 8px; background-color: #e7f3ff; border-left: 4px solid #2196F3;">
+        <i class="fas fa-info-circle" style="color: #2196F3;"></i>
+        <strong>Paso siguiente:</strong> Completa el formulario de reserva con tu documento y luego podrás realizar el pago.
+      </div>
+      
+      <a th:if="${alquiler.estado != null and alquiler.estado == 'ACTIVO'}" 
          th:href="@{'/mis-alquileres/' + ${alquiler.id} + '/finalizar'}" 
          class="btn btn-primary">
         <i class="fas fa-check-double"></i>
         Finalizar Alquiler
       </a>
       
-      <a th:if="${alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO'}" 
+      <a th:if="${alquiler.estado != null and (alquiler.estado == 'PENDIENTE' or alquiler.estado == 'ACTIVO')}" 
          th:href="@{'/mis-alquileres/' + ${alquiler.id} + '/cancelar'}" 
          class="btn btn-danger"
          onclick="return confirm('¿Estás seguro de que deseas cancelar este alquiler?')">

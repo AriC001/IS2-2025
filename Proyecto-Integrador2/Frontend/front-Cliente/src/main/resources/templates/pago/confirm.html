@@ -294,13 +294,24 @@
       <div class="divider"></div>
 
       <!-- Form -->
-      <form th:action="@{/payment/create}" method="get">
+      <form th:action="@{/pago/confirm}" method="post">
         <input type="hidden" name="alquilerId" th:value="${alquilerId}" />
         <button type="submit" class="btn-primary">
           <i class="fas fa-check-circle"></i>
-          Simular pago aprobado
+          Confirmar Pago
         </button>
       </form>
+      
+      <!-- Opción alternativa para Mercado Pago -->
+      <div style="margin-top: 20px;">
+        <form th:action="@{/payment/create}" method="get">
+          <input type="hidden" name="alquilerId" th:value="${alquilerId}" />
+          <button type="submit" class="btn-primary" style="background: #009ee3;">
+            <i class="fas fa-credit-card"></i>
+            Pagar con Mercado Pago
+          </button>
+        </form>
+      </div>
 
       <!-- Info box -->
       <div class="info-box">
